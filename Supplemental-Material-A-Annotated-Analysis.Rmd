@@ -1510,7 +1510,7 @@ dtMedicalAvailability <- reshape::cast(dtMedicalMissing, PID ~ TID)
 write.csv(dtMedicalAvailability, "data/S3_Medical/processed/medicalAvailability.csv")
 ```
 
-# Mean Plots per Item
+# **Plots per Item**
 
 ## Study 1 (Worker):
 
@@ -1769,14 +1769,32 @@ dtStudents$viz$Event <- dtStudents$vizall %>%
 
 ```
 
+### Mean Plots
+
 ```{r studentMeanViz, echo=FALSE, results='hide',fig.keep='all'} 
-dtStudents$vizPlots <-
+dtStudents$vizPlotsMean <-
   lapply(seq_along(dtStudents$viz),
          function(i)
-           meanVarPlot(dataIn = dtStudents$viz[[i]], 
+           statVarPlot(dataIn = dtStudents$viz[[i]], 
                        name = names(dtStudents$viz)[[i]], 
-                       namList = varNameListStudent))
-dtStudents$vizPlots
+                       namList = varNameListStudent,
+                       stat = "mean")
+         )
+dtStudents$vizPlotsMean
+```
+
+### SD Plots
+
+```{r studentSdViz, echo=FALSE, results='hide',fig.keep='all'} 
+dtStudents$vizPlotsSd <-
+  lapply(seq_along(dtStudents$viz),
+         function(i)
+           statVarPlot(dataIn = dtStudents$viz[[i]], 
+                       name = names(dtStudents$viz)[[i]], 
+                       namList = varNameListStudent,
+                       stat = "sd")
+         )
+dtStudents$vizPlotsSd
 ```
 
 
@@ -2050,14 +2068,32 @@ dtMedical$viz$Event <- dtMedical$vizall %>%
 
 ```
 
+### Mean Plots
+
 ```{r medicalMeanViz, echo=FALSE, results='hide',fig.keep='all'} 
-dtMedical$vizPlots <-
+dtMedical$vizPlotsMean <-
   lapply(seq_along(dtMedical$viz),
          function(i)
-           meanVarPlot(dataIn = dtMedical$viz[[i]], 
+           statVarPlot(dataIn = dtMedical$viz[[i]], 
                        name = names(dtMedical$viz)[[i]], 
-                       namList = varNameListMedical))
-dtMedical$vizPlots
+                       namList = varNameListMedical,
+                       stat = "mean")
+         )
+dtMedical$vizPlotsMean
+```
+
+### SD Plots
+
+```{r medicalSdViz, echo=FALSE, results='hide',fig.keep='all'} 
+dtMedical$vizPlotsSd <-
+  lapply(seq_along(dtMedical$viz),
+         function(i)
+           statVarPlot(dataIn = dtMedical$viz[[i]], 
+                       name = names(dtMedical$viz)[[i]], 
+                       namList = varNameListMedical,
+                       stat = "sd")
+         )
+dtMedical$vizPlotsSd
 ```
 
 # **Software Information**  
@@ -2129,6 +2165,6 @@ kbl(
 
 </br>  
 
-# **References**  
+<!-- # **References**   -->
 
 <div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>

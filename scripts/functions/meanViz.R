@@ -6,10 +6,14 @@ lWideToLong <- function(data, ...){
 }
 
 
-meanVarPlot <- function(dataIn, name, namList,...){
-  # dataIn <- dtMedical$viz$InteractionNeed
-  # name <- "Interaction Core Need"
+statVarPlot <- function(dataIn, name, namList, stat = "mean", ...){
+  # dataIn <- dtMedical$viz$KeyNeedFulfillment
+  # name <- "Core Need Fulfillment"
   # namList <- varNameListMedical
+  # stat <- "sd"
+  
+  varNames <- names(dataIn)[!names(dataIn) %in% c("PID", "TID", "TIDnum")]
+  
   dataLong <- dataIn %>%
     mutate(TID = stri_replace_all_regex(
       TID,
@@ -20,27 +24,32 @@ meanVarPlot <- function(dataIn, name, namList,...){
     lWideToLong %>%
     mutate(variable = recode(variable, !!!namList))
   
+  dataLongNaRm <- dataLong %>% filter(!is.na(value))
+  
+  nTimeLong <- dataLongNaRm %>%
+    select(-PID) %>%
+    group_by(TIDnum, TID, variable) %>%
+    summarise(
+      n = n()
+    ) %>%
+    mutate(
+      perc = n/length(unique(dataLongNaRm$PID))*100
+    ) 
   
   
-  pTidMain <-
-    ggplot(dataLong,
-           aes(x = TIDnum, y = value, color = variable)) +
-    geom_point(alpha = 0) +
-    stat_summary(fun = mean, geom = "line") +
-    labs(y = "Mean per Day",
-         x = "Time Index") +
-    #scale_colour_manual(values = RColorBrewer::brewer.pal(length(unique(dataLong$variable)), "Set3")) +
+  
+  pTidTop <- ggplot(nTimeLong, aes(x = TIDnum, y = perc, color = variable, linetype = variable)) +
+    geom_line(
+      stat="smooth",
+      method = "loess",
+      formula = 'y ~ x',
+      span = 0.1,
+      se = FALSE,
+      #size = 1,
+      #color = "black",
+      alpha = 0.75
+    ) +
     ggthemes::scale_colour_calc() +
-    scale_x_continuous(breaks = seq(0, max(dataLong$TIDnum), 25)) +
-    theme_Publication() +
-    theme(
-      panel.border = element_rect(colour = "black"),
-      plot.margin = margin(0, 10, 10, 10, "mm")
-    )
-  pTidTop <-
-    ggplot(dataLong %>% filter(!is.na(value)), aes(x = TIDnum, y = (..count.. / max(count)) * 100),
-           color = variable) +
-    geom_freqpoly(binwidth = 2) +
     geom_hline(yintercept = 80,
                linetype = "dashed",
                color = "black") +
@@ -55,6 +64,7 @@ meanVarPlot <- function(dataIn, name, namList,...){
       label.size = NA
     )  +
     coord_cartesian(clip = "off") +
+    scale_y_continuous(limits = c(0, 100)) +
     labs(y = "Percentage") +
     #scale_colour_manual(values = rep("black", 20)) +
     theme_classic() +
@@ -66,7 +76,23 @@ meanVarPlot <- function(dataIn, name, namList,...){
       axis.ticks.x = element_blank(),
       plot.margin = margin(0, 10, 0, 10, "mm")
     )
-  
+  pTidMain <-
+    ggplot(dataLongNaRm,
+           aes(x = TIDnum, y = value, color = variable)) +
+    #geom_point(alpha = 0) +
+    stat_summary(fun = stat, geom = "line") +
+    labs(y = paste0(stat, " per Day"),
+         x = "Time Index") +
+    #scale_colour_manual(values = RColorBrewer::brewer.pal(length(unique(dataLong$variable)), "Set3")) +
+    ggthemes::scale_colour_calc() +
+    scale_x_continuous(breaks = seq(0, max(dataLongNaRm$TIDnum), 25)) +
+    scale_y_continuous(limits = switch((stat == "mean")+1, NULL, c(min(dataLongNaRm$value), max(dataLongNaRm$value))),
+                       breaks = switch((stat == "mean")+1, waiver(), seq(min(dataLongNaRm$value), max(dataLongNaRm$value), (max(dataLongNaRm$value)-min(dataLongNaRm$value))/5))) +
+    theme_Publication() +
+    theme(
+      panel.border = element_rect(colour = "black"),
+      plot.margin = margin(0, 10, 10, 10, "mm")
+    )
   pTidTitle <- cowplot::ggdraw() +
     cowplot::draw_label(
       paste("Variable Set:", name, "[Time Id Plot]"),
@@ -84,36 +110,27 @@ meanVarPlot <- function(dataIn, name, namList,...){
     rel_heights = c(0.1, 1 / 5, 4 / 5)
   )
   
-  pDateMain <-
-    ggplot(dataLong,
-           aes(x = TID, y = value, color = variable)) +
-    geom_point(alpha = 0) +
-    stat_summary(fun = mean, geom = "line") +
-    labs(y = "Mean per Day",
-         x = "Date") +
-    #scale_colour_manual(values = RColorBrewer::brewer.pal(length(unique(dataLong$variable)), "Set3")) +
+  
+  
+  pDateTop <- ggplot(nTimeLong, aes(x = TID, y = perc, color = variable, linetype = variable)) +
+    geom_line(
+      stat="smooth",
+      method = "loess",
+      formula = 'y ~ x',
+      span = 0.1,
+      se = FALSE,
+      #size = 1,
+      #color = "black",
+      alpha = 0.75
+    ) +
     ggthemes::scale_colour_calc() +
-    scale_x_datetime(breaks = scales::date_breaks("10 day")) +
-    theme_Publication() +
-    theme(
-      panel.border = element_rect(colour = "black"),
-      plot.margin = margin(0, 10, 10, 10, "mm")
-    )
-  pDateTop <-
-    ggplot(dataLong,
-           aes(
-             x = TID,
-             y = (..count.. / max(count)) * 100,
-             color = variable
-           )) +
-    geom_freqpoly(binwidth = 1 * 3600 * 24) +
     geom_hline(yintercept = 80,
                linetype = "dashed",
                color = "black") +
     annotate(
       # add white background
       "label",
-      x = max(unique(dataLong$TID)),
+      x = max(dataLong$TID),
       y = 80,
       label = "80%",
       vjust = 0.5,
@@ -121,8 +138,9 @@ meanVarPlot <- function(dataIn, name, namList,...){
       label.size = NA
     )  +
     coord_cartesian(clip = "off") +
+    scale_y_continuous(limits = c(0, 100)) +
     labs(y = "Percentage") +
-    scale_colour_manual(values = rep("black", 20)) +
+    #scale_colour_manual(values = rep("black", 20)) +
     theme_classic() +
     theme(
       legend.position = "none",
@@ -132,7 +150,22 @@ meanVarPlot <- function(dataIn, name, namList,...){
       axis.ticks.x = element_blank(),
       plot.margin = margin(0, 10, 0, 10, "mm")
     )
-  
+  pDateMain <-
+    ggplot(dataLongNaRm,
+           aes(x = TID, y = value, color = variable)) +
+    #geom_point(alpha = 0) +
+    stat_summary(fun = stat, geom = "line") +
+    labs(y = paste0(stat, " per day"),
+         x = "Date") +
+    ggthemes::scale_colour_calc() +
+    scale_x_datetime(breaks = scales::date_breaks("10 day")) +
+    scale_y_continuous(limits = switch((stat == "mean")+1, NULL, c(min(dataLongNaRm$value), max(dataLongNaRm$value))),
+                       breaks = switch((stat == "mean")+1, waiver(), seq(min(dataLongNaRm$value), max(dataLongNaRm$value), (max(dataLongNaRm$value)-min(dataLongNaRm$value))/5))) +
+    theme_Publication() +
+    theme(
+      panel.border = element_rect(colour = "black"),
+      plot.margin = margin(0, 10, 10, 10, "mm")
+    )
   pDateTitle <- cowplot::ggdraw() +
     cowplot::draw_label(
       paste("Variable Set: Key-Need", "[Date Plot]"),
