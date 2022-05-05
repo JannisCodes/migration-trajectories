@@ -1512,14 +1512,14 @@ write.csv(dtMedicalAvailability, "data/S3_Medical/processed/medicalAvailability.
 
 # **Plots per Item**
 
-## Study 1 (Worker):
+## Study 1 (Worker)
 
 ```{r workerDataSelection}
 
 ```
 
 
-## Study 2 (Student):
+## Study 2 (Student)
 
 ```{r studentDataSelection}
 varListStudent <- 
@@ -1798,7 +1798,7 @@ dtStudents$vizPlotsSd
 ```
 
 
-## Study 3 (Medical):
+## Study 3 (Medical)
 
 ```{r medicalDataSelection}
 varListMedical <- 
