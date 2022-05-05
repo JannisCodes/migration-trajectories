@@ -11,7 +11,7 @@ author:
 - "Author Information:"
 - "Correspondence concerning this article should be addressed to ██████ ██████████, ██████████ ██ ██████████, █████████ ██ ██████████, █████ ██████████ ███, ████ ██ █████████ ████████████████. E-mail: █████████████████"
 - 'The main manuscript is available at <a href="https://www.doi.org/ToBePublished" target="_blank">doi.org/ToBePublished</a>'
-- 'The data repository for this manuscript is available at <a href="https://osf.io/pr9zs/?view_only=1ea47bb646694632a764dead807ef970" target="_blank">osf.io/pr9zs/?view_only=1ea47bb646694632a764dead807ef970</a>'
+- 'The data repository for this manuscript is available at <a href="https://osf.io/TBD" target="_blank">osf.io/TBD</a>'
 - 'The GitHub repository for this manuscript is available at <a href="https://github.com/maskedForPeerReview" target="_blank">github.com/maskedForPeerReview</a>'
 date: "Last updated: `r format(Sys.time(), '%d %B, %Y')`"
 output: 
@@ -107,6 +107,7 @@ source("./scripts/functions/binaryCor.R")
 source("./scripts/functions/MlCorMat.R")
 source("./scripts/functions/MlTbl.R")
 source("./scripts/functions/metaLmer.R")
+source("./scripts/functions/meanViz.R")
 
 # Markdown Options
 knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file()) # set working directory
@@ -857,8 +858,7 @@ df <- dtStudents$clean
 df$PID <- as.numeric(factor(df$session)) # participant ID
 
 # order time
-df$TID <-
-  factor(df$date_period, levels = unique(dtStudents$raw.daily$date_period))
+df$TID <- factor(df$date_period, levels = unique(dtStudents$raw.daily$date_period))
 df$TIDnum <- as.numeric(df$TID) # get numeric TID
 
 # check whether time ordering worked
@@ -874,6 +874,11 @@ df$interaction.f <-
 df$intNL <- ifelse(df$Interaction == "Dutch", 1, 0)
 df$intNonNL <- ifelse(df$Interaction == "Non-Dutch", 1, 0)
 
+df$IntergroupContact <- (df$IntergroupContact-2)*-1
+
+# Fix naming issues
+df$AttitudesPartner <- df$AttitdutuesPartnerstick
+
 # -------------------------------------------------------------------------------------------------------------
 #                                       Combine Variables
 # -------------------------------------------------------------------------------------------------------------
@@ -885,16 +890,23 @@ pairs.panels.new(
     "X shared information about themselves."
   )
 )
-df$RelatednessInteraction <-
-  rowMeans(df[c("RelatednessSelf", "RelatednessOther")], na.rm = T)
-df$RelatednessInteraction[df$RelatednessInteraction == "NaN"] <-
-  NA
+df$RelatednessInteraction <- rowMeans(df[c("RelatednessSelf", "RelatednessOther")], na.rm = TRUE)
+df$RelatednessInteraction[df$RelatednessInteraction == "NaN"] <- NA
 # Relatedness Overall (JANNIS NOT SURE THESE ARE CORRECT, CHANGE ROWS?; J: Changed "NaN" in df$RelatednessInteraction to NA() should work now)
 df$Relatedness <-
   rowMeans(df[, c("RelatednessInteraction", "RelatednessNoInteraction")],
-    na.rm =
-      T
-  )
+           na.rm = TRUE) %>%
+  ifelse(is.nan(.), NA, .)
+
+# Core Need
+df$DaytimeNeedFullfillment[df$InteractionDum == 0 & !is.na(df$KeyNeedFullfillment)] <-
+  df$KeyNeedFullfillment[df$InteractionDum == 0 & !is.na(df$KeyNeedFullfillment)]
+
+df$InteractionNeedFullfillment <- NA 
+df$InteractionNeedFullfillment[df$InteractionDum == 1 & !is.na(df$KeyNeedFullfillment)] <- 
+  df$KeyNeedFullfillment[df$InteractionDum == 1 & !is.na(df$KeyNeedFullfillment)]
+
+
 # Pro-Sociality
 df$ProSo <-
   rowMeans(df[, c("ProSo1", "ProSo2", "ProSo3", "ProSo4")], na.rm = T)
@@ -1132,6 +1144,7 @@ df <- df %>%
     )
   )
 
+df$IntergroupContact <- (df$IntergroupContact-2)*-1
 
 
 # -------------------------------------------------------------------------------------------------------------
@@ -1146,9 +1159,8 @@ pairs.panels.new(
   )
 )
 df$RelatednessInteraction <-
-  rowMeans(df[c("RelatednessSelf", "RelatednessOther")], na.rm = T)
-df$RelatednessInteraction[df$RelatednessInteraction == "NaN"] <-
-  NA
+  rowMeans(df[c("RelatednessSelf", "RelatednessOther")], na.rm = TRUE)
+df$RelatednessInteraction[df$RelatednessInteraction == "NaN"] <- NA
 # Relatedness Overall (JANNIS NOT SURE THESE ARE CORRECT, CHANGE ROWS?; J: Changed "NaN" in df$RelatednessInteraction to NA() should work now)
 df$Relatedness <-
   rowMeans(df[, c("RelatednessInteraction", "RelatednessNoInteraction")],
@@ -1175,10 +1187,10 @@ df$InteractionNeedImportance[df$InteractionDum == 1 & !is.na(df$KeyNeedImp)] <-
 
 # Pro-Sociality
 df$ProSo <-
-  rowMeans(df[, c("ProSo1", "ProSo2", "ProSo3", "ProSo4")], na.rm = T)
+  rowMeans(df[, c("ProSo1", "ProSo2", "ProSo3", "ProSo4")], na.rm = TRUE)
 # Anti-Sociality
 df$AntiSo <-
-  rowMeans(df[, c("AntiSo1", "AntiSo2", "AntiSo3", "AntiSo4")], na.rm = T)
+  rowMeans(df[, c("AntiSo1", "AntiSo2", "AntiSo3", "AntiSo4")], na.rm = TRUE)
 
 # Allport's Conditions
 df %>%
@@ -1510,7 +1522,261 @@ write.csv(dtMedicalAvailability, "data/S3_Medical/processed/medicalAvailability.
 ## Study 2 (Student):
 
 ```{r studentDataSelection}
+varListStudent <- 
+  c(
+    "IntergroupContact",
+    "InteractionDum",
+    # "KeyNeedFullfillment",
+    # "KeyNeedImp",
+    "DaytimeNeedFullfillment",
+    #"DaytimeNeedImportance",
+    "InteractionNeedFullfillment",
+    #"InteractionNeedImportance",
+    "AntiSo1",
+    "AntiSo2",
+    "AntiSo3",
+    "AntiSo4",
+    "AntiSo5",
+    "AntiSo6",
+    "AntiSo7",
+    "ProSo1",
+    "ProSo2",
+    "ProSo3",
+    "ProSo4",
+    "StudentGoal01",
+    "StudentGoal02",
+    "StudentGoal03",
+    "StudentGoal04",
+    "StudentGoal05",
+    "StudentGoal06",
+    "StudentGoal07",
+    "StudentGoal08",
+    "StudentGoal09",
+    "StudentGoal10",
+    "Autonomy",
+    "Competence",
+    # Break relatedness up into interaction vs. no interaction(?)
+    # vars are already calculated
+    "Relatedness",
+    "AttitudesDutch",
+    "AttitudesPartner",
+    "ExWB",
+    #"angry",
+    #"afraid",
+    #"energy",
+    #"lonelyAlways",
+    "Event"
+  )
 
+varNameListStudent <- 
+  c(
+    "IntergroupContact" = "Dutch Interaction",
+    "InteractionDum" = "Any Interaction",
+    # "KeyNeedFulfillment" = "Key Need Fulfillment",
+    # "KeyNeedImp" = "Key Need Importance",
+    "DaytimeNeedFullfillment" = "Daytime Core Motive Fulfillment",
+    #"DaytimeNeedImportance" = "Daytime Core Motive Importance",
+    "InteractionNeedFullfillment" = "Interaction Core Motive Fulfillment",
+    #"InteractionNeedImportance" = "Interaction Core Motive Importance",
+    "AntiSo1" = "Put someone down",
+    "AntiSo2" = "Show little attention in someones opinion",
+    "AntiSo3" = "Demeaning remarks",
+    "AntiSo4" = "Inpropperly addressing someone",
+    "AntiSo5" = "Ignored or excluded someone",
+    "AntiSo6" = "Doubt someones judgement",
+    "AntiSo7" = "Unwanted attempts of personal matters",
+    "ProSo1" = "Listen to someones problems",
+    "ProSo2" = "Cheer someone up",
+    "ProSo3" = "Help someone get things done",
+    "ProSo4" = "Help someone with responsibilities",
+    "StudentGoal01" = "Social support and connectedness",
+    "StudentGoal02" = "Romantic or sexual relationship",
+    "StudentGoal03" = "Academic",
+    "StudentGoal04" = "Career",
+    "StudentGoal05" = "Financial",
+    "StudentGoal06" = "Health and fitness",
+    "StudentGoal07" = "Leasure and fun",
+    "StudentGoal08" = "Personal improvement and growth",
+    "StudentGoal09" = "Service and help",
+    "StudentGoal10" = "Spiritual or religious",
+    "Autonomy" = "Autonomy",
+    "Competence" = "Competence",
+    # Break relatedness up into interaction vs. no interaction(?)
+    # vars are already calculated
+    "Relatedness" = "Relatedness",
+    "AttitudesDutch" = "Outgroup Attitude",
+    "AttitudesPartner" = "Attitude Interaction Partner",
+    "ExWB" = "Sadness Happiness",
+    #"angry" = "Anger",
+    #"afraid" = "Anxiety",
+    #"energy" = "Energy",
+    #"lonelyAlways" = "Loneliness",
+    "Event" = "Positive or negative event present"
+  )
+
+dtStudents$viz <- list()
+
+dtStudents$vizall <- dtStudents$full %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    all_of(varListStudent)
+  )
+
+dtStudents$viz$Interaction <- dtStudents$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    IntergroupContact,
+    InteractionDum
+  )
+
+dtStudents$viz$KeyNeed <- dtStudents$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    DaytimeNeedFullfillment,
+    InteractionNeedFullfillment
+  )
+
+dtStudents$viz$AntiSocialBehaviorPt1 <- dtStudents$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    AntiSo1,
+    AntiSo2,
+    AntiSo3
+  )
+
+dtStudents$viz$AntiSocialBehaviorPt2 <- dtStudents$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    AntiSo4,
+    AntiSo5
+  )
+
+dtStudents$viz$AntiSocialBehaviorPt3 <- dtStudents$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    AntiSo6,
+    AntiSo7
+  )
+
+dtStudents$viz$ProSocialBehaviorPt1 <- dtStudents$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    ProSo1,
+    ProSo2
+  )
+
+dtStudents$viz$ProSocialBehaviorPt2 <- dtStudents$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    ProSo3,
+    ProSo4
+  )
+
+dtStudents$viz$GoalsPt1 <- dtStudents$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    StudentGoal01,
+    StudentGoal02
+  )
+
+dtStudents$viz$GoalsPt2 <- dtStudents$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    StudentGoal03,
+    StudentGoal04
+  )
+
+dtStudents$viz$GoalsPt3 <- dtStudents$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    StudentGoal05,
+    StudentGoal06
+  )
+
+dtStudents$viz$GoalsPt4 <- dtStudents$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    StudentGoal07,
+    StudentGoal08
+  )
+
+dtStudents$viz$GoalsPt5 <- dtStudents$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    StudentGoal09,
+    StudentGoal10
+  )
+
+dtStudents$viz$SDT <- dtStudents$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    Autonomy,
+    Relatedness, 
+    Competence
+  )
+
+dtStudents$viz$Attitudes <- dtStudents$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    starts_with("Attitudes")
+  )
+
+dtStudents$viz$WB <- dtStudents$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    ExWB
+  )
+
+dtStudents$viz$Event <- dtStudents$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    Event
+  )
+
+```
+
+```{r studentMeanViz, echo=FALSE, results='hide',fig.keep='all'} 
+dtStudents$vizPlots <-
+  lapply(seq_along(dtStudents$viz),
+         function(i)
+           meanVarPlot(dataIn = dtStudents$viz[[i]], 
+                       name = names(dtStudents$viz)[[i]], 
+                       namList = varNameListStudent))
+dtStudents$vizPlots
 ```
 
 
@@ -1519,6 +1785,8 @@ write.csv(dtMedicalAvailability, "data/S3_Medical/processed/medicalAvailability.
 ```{r medicalDataSelection}
 varListMedical <- 
   c(
+    "IntergroupContact",
+    "InteractionDum",
     # "KeyNeedFulfillment",
     # "KeyNeedImp",
     "DaytimeNeedFullfillment",
@@ -1563,6 +1831,8 @@ varListMedical <-
 
 varNameListMedical <- 
   c(
+    "IntergroupContact" = "Dutch Interaction",
+    "InteractionDum" = "Any Interaction",
     # "KeyNeedFulfillment" = "Key Need Fulfillment",
     # "KeyNeedImp" = "Key Need Importance",
     "DaytimeNeedFullfillment" = "Daytime Core Motive Fulfillment",
@@ -1612,23 +1882,34 @@ dtMedical$vizall <- dtMedical$full %>%
     PID,
     TID,
     TIDnum,
-    varListMedical
+    all_of(varListMedical)
   )
 
-dtMedical$viz$DaytimeNeed <- dtMedical$vizall %>%
+dtMedical$viz$Interaction <- dtMedical$vizall %>%
   select(
     PID,
     TID,
     TIDnum,
-    starts_with("DaytimeNeed")
+    IntergroupContact,
+    InteractionDum
   )
 
-dtMedical$viz$InteractionNeed <- dtMedical$vizall %>%
+dtMedical$viz$KeyNeedFulfillment <- dtMedical$vizall %>%
   select(
     PID,
     TID,
     TIDnum,
-    starts_with("InteractionNeed")
+    DaytimeNeedFullfillment,
+    InteractionNeedFullfillment
+  )
+
+dtMedical$viz$KeyNeedImportance <- dtMedical$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    DaytimeNeedImportance,
+    InteractionNeedImportance
   )
 
 dtMedical$viz$AntiSocialBehaviorPt1 <- dtMedical$vizall %>%
@@ -1767,187 +2048,9 @@ dtMedical$viz$Event <- dtMedical$vizall %>%
     Event
   )
 
-
-lWideToLong <- function(data, ...){
-  reshape2::melt(
-    data, 
-    id.vars = c("PID", "TIDnum")
-  )
-}
-  
-
-dtMedical$vizLong <- lapply(
-  dtMedical$viz,
-  lWideToLong
-)
-
-
-```
-
-```{r MeanVizFun}
-
-lWideToLong <- function(data, ...){
-  reshape2::melt(
-    data, 
-    id.vars = c("PID", "TID", "TIDnum")
-  )
-}
-
-
-meanVarPlot <- function(dataIn, name, namList,...){
-  # dataIn <- dtMedical$viz$InteractionNeed
-  # name <- "Interaction Core Need"
-  # namList <- varNameListMedical
-  dataLong <- dataIn %>%
-    mutate(TID = stri_replace_all_regex(
-      TID,
-      pattern = c('Morning', 'Afternoon'),
-      replacement = c('12:00:00', '19:00:00'),
-      vectorize = FALSE
-    ) %>% as.POSIXct) %>%
-    lWideToLong %>%
-    mutate(variable = recode(variable, !!!namList))
-  
-  
-  
-  pTidMain <-
-    ggplot(dataLong,
-           aes(x = TIDnum, y = value, color = variable)) +
-    geom_point(alpha = 0) +
-    stat_summary(fun = mean, geom = "line") +
-    labs(y = "Mean per Day",
-         x = "Time Index") +
-    #scale_colour_manual(values = RColorBrewer::brewer.pal(length(unique(dataLong$variable)), "Set3")) +
-    ggthemes::scale_colour_calc() +
-    scale_x_continuous(breaks = seq(0, max(dataLong$TIDnum), 25)) +
-    theme_Publication() +
-    theme(
-      panel.border = element_rect(colour = "black"),
-      plot.margin = margin(0, 10, 10, 10, "mm")
-    )
-  pTidTop <-
-    ggplot(dataLong %>% filter(!is.na(value)), aes(x = TIDnum, y = (..count.. / max(count)) * 100),
-           color = variable) +
-    geom_freqpoly(binwidth = 2) +
-    geom_hline(yintercept = 80,
-               linetype = "dashed",
-               color = "black") +
-    annotate(
-      # add white background
-      "label",
-      x = max(dataLong$TIDnum),
-      y = 80,
-      label = "80%",
-      vjust = 0.5,
-      hjust = -1,
-      label.size = NA
-    )  +
-    coord_cartesian(clip = "off") +
-    labs(y = "Percentage") +
-    #scale_colour_manual(values = rep("black", 20)) +
-    theme_classic() +
-    theme(
-      legend.position = "none",
-      axis.line.x = element_blank(),
-      axis.title.x = element_blank(),
-      axis.text.x = element_blank(),
-      axis.ticks.x = element_blank(),
-      plot.margin = margin(0, 10, 0, 10, "mm")
-    )
-  
-  pTidTitle <- cowplot::ggdraw() +
-    cowplot::draw_label(
-      paste("Variable Set:", name, "[Time Id Plot]"),
-      fontface = 'bold',
-      x = 0.5,
-      hjust = 0.5
-    )
-  
-  pTid <- cowplot::plot_grid(
-    pTidTitle,
-    pTidTop,
-    pTidMain,
-    align = "v",
-    nrow = 3,
-    rel_heights = c(0.1, 1 / 5, 4 / 5)
-  )
-
-  pDateMain <-
-    ggplot(dataLong,
-           aes(x = TID, y = value, color = variable)) +
-    geom_point(alpha = 0) +
-    stat_summary(fun = mean, geom = "line") +
-    labs(y = "Mean per Day",
-         x = "Date") +
-    #scale_colour_manual(values = RColorBrewer::brewer.pal(length(unique(dataLong$variable)), "Set3")) +
-    ggthemes::scale_colour_calc() +
-    scale_x_datetime(breaks = scales::date_breaks("10 day")) +
-    theme_Publication() +
-    theme(
-      panel.border = element_rect(colour = "black"),
-      plot.margin = margin(0, 10, 10, 10, "mm")
-    )
-  pDateTop <-
-    ggplot(dataLong,
-           aes(
-             x = TID,
-             y = (..count.. / max(count)) * 100,
-             color = variable
-           )) +
-    geom_freqpoly(binwidth = 1 * 3600 * 24) +
-    geom_hline(yintercept = 80,
-               linetype = "dashed",
-               color = "black") +
-    annotate(
-      # add white background
-      "label",
-      x = max(unique(dataLong$TID)),
-      y = 80,
-      label = "80%",
-      vjust = 0.5,
-      hjust = -1,
-      label.size = NA
-    )  +
-    coord_cartesian(clip = "off") +
-    labs(y = "Percentage") +
-    scale_colour_manual(values = rep("black", 20)) +
-    theme_classic() +
-    theme(
-      legend.position = "none",
-      axis.line.x = element_blank(),
-      axis.title.x = element_blank(),
-      axis.text.x = element_blank(),
-      axis.ticks.x = element_blank(),
-      plot.margin = margin(0, 10, 0, 10, "mm")
-    )
-
-  pDateTitle <- cowplot::ggdraw() +
-    cowplot::draw_label(
-      paste("Variable Set: Key-Need", "[Date Plot]"),
-      fontface = 'bold',
-      x = 0.5,
-      hjust = 0.5
-    )
-
-  pDate <- cowplot::plot_grid(
-    pDateTitle,
-    pDateTop,
-    pDateMain,
-    align = "v",
-    nrow = 3,
-    rel_heights = c(0.1, 1 / 5, 4 / 5)
-  )
-  
-  list(pTid, pDate)
-  pTid
-}
 ```
 
 ```{r medicalMeanViz, echo=FALSE, results='hide',fig.keep='all'} 
-#, warning=FALSE, message=FALSE, error=FALSE
-# meanVarPlot(dtMedical$viz$DaytimeNeed, "Key-Need")
-# meanVarPlot(dtMedical$viz$AntiSocialBehavior, "Anti-Social Behavior")
-
 dtMedical$vizPlots <-
   lapply(seq_along(dtMedical$viz),
          function(i)
