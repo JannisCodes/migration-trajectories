@@ -7,10 +7,10 @@ lWideToLong <- function(data, ...){
 
 
 statVarPlot <- function(dataIn, name, namList, stat = "mean", ...){
-  # dataIn <- dtMedical$viz$KeyNeedFulfillment
-  # name <- "Core Need Fulfillment"
-  # namList <- varNameListMedical
-  # stat <- "sd"
+  # dataIn <- dtWorker$viz$MoodOverall
+  # name <- "Mood"
+  # namList <- varNameListWorker
+  # stat <- "mean"
   
   varNames <- names(dataIn)[!names(dataIn) %in% c("PID", "TID", "TIDnum")]
   
@@ -81,7 +81,7 @@ statVarPlot <- function(dataIn, name, namList, stat = "mean", ...){
            aes(x = TIDnum, y = value, color = variable)) +
     #geom_point(alpha = 0) +
     stat_summary(fun = stat, geom = "line") +
-    labs(y = paste0(stat, " per Day"),
+    labs(y = paste0(stat),
          x = "Time Index") +
     #scale_colour_manual(values = RColorBrewer::brewer.pal(length(unique(dataLong$variable)), "Set3")) +
     ggthemes::scale_colour_calc() +
@@ -155,7 +155,7 @@ statVarPlot <- function(dataIn, name, namList, stat = "mean", ...){
            aes(x = TID, y = value, color = variable)) +
     #geom_point(alpha = 0) +
     stat_summary(fun = stat, geom = "line") +
-    labs(y = paste0(stat, " per day"),
+    labs(y = paste0(stat),
          x = "Date") +
     ggthemes::scale_colour_calc() +
     scale_x_datetime(breaks = scales::date_breaks("10 day")) +

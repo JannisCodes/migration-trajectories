@@ -1,17 +1,20 @@
 ---
 title: "Supplemental Information A: Full Annotated Analysis and Reproducible Code"
-subtitle: "Supplemental Material for 'Qualitative Goals'"
+subtitle: "Supplemental Material for 'Migration Trajectories [working title]'"
 author:
-- ██████ ██████████^1^
-- ██████████ ████████^1^
-- █████ █████████^1^
-- █████ ██ █████^1^
-- ███ ███████^1^
-- ^1^██████████ ██ █████████, Department of Psychology
+- Jannis Kreienkamp^1,3^
+- Kai Epstude^1,3^
+- Laura F. Bringmann^1,3^
+- Maximilian Agostini^1,3^
+- Peter de Jonge^1,3^
+- Rei Tendeiro-Monden^2,3^
+- ^1^University of Groningen, Department of Psychology
+- ^2^Hiroshima University, Graduate School of Advanced Science and Engineering
+- ^3^Author order TBD [currently in first name alphabetical order]
 - "Author Information:"
-- "Correspondence concerning this article should be addressed to ██████ ██████████, ██████████ ██ ██████████, █████████ ██ ██████████, █████ ██████████ ███, ████ ██ █████████ ████████████████. E-mail: █████████████████"
+- "Correspondence concerning this article should be addressed to Jannis Kreienkamp, Department of Psychology, University of Groningen, Grote Kruisstraat 2/1, 9712 TS Groningen (The Netherlands).  E-mail: j.kreienkamp@rug.nl"
 - 'The main manuscript is available at <a href="https://www.doi.org/ToBePublished" target="_blank">doi.org/ToBePublished</a>'
-- 'The data repository for this manuscript is available at <a href="https://osf.io/TBD" target="_blank">osf.io/TBD</a>'
+- 'The data repository for this manuscript is available at <a href="https://osf.io/TBA" target="_blank">osf.io/TBA</a>'
 - 'The GitHub repository for this manuscript is available at <a href="https://github.com/maskedForPeerReview" target="_blank">github.com/maskedForPeerReview</a>'
 date: "Last updated: `r format(Sys.time(), '%d %B, %Y')`"
 output: 
@@ -154,11 +157,19 @@ knitr::opts_chunk$set(
 )
 ```
 
-<br/>
+</br>
+
+--------------------------------------------------------------------
+
+</br> 
 
 <i class="fas fa-exclamation-circle"></i> Note. Boxplots display the interquartile range (IQR, center box), and the whiskers extend 1.5*IQR from the lower and upper hinge. The white point indicates the mean and the white center line indicates the median.   
 
-<br/>
+</br>
+
+--------------------------------------------------------------------
+
+</br> 
 
 
 # **Data Preparation**  
@@ -336,6 +347,44 @@ names.m <- c(
   "thermometerDutch_1",
   "thermometerDutchInt_2",
   "ExWB_1",
+  "MDMQ.v1_1",
+  "MDMQ.v1_2",
+  "MDMQ.v1_3",
+  #"MDMQ.v1_3r",
+  "MDMQ.v1_4",
+  #"MDMQ.v1_4r",
+  "MDMQ.v1_5",
+  #"MDMQ.v1_5r",
+  "MDMQ.v1_6",
+  "MDMQ.v1_7",
+  #"MDMQ.v1_7r",
+  "MDMQ.v1_8",
+  "MDMQ.v1_9",
+  #"MDMQ.v1_9r",
+  "MDMQ.v1_10",
+  "MDMQ.v1_11",
+  #"MDMQ.v1_11r",
+  "MDMQ.v1_12",
+  "MDMQ.v1_13",
+  "MDMQ.v2_1",
+  #"MDMQ.v2_1r",
+  "MDMQ.v2_2",
+  "MDMQ.v2_3",
+  "MDMQ.v2_4",
+  #"MDMQ.v2_4r",
+  "MDMQ.v2_5",
+  "MDMQ.v2_6",
+  #"MDMQ.v2_6r",
+  "MDMQ.v2_7",
+  #"MDMQ.v2_7r",
+  "MDMQ.v2_8",
+  "MDMQ.v2_9",
+  "MDMQ.v2_10",
+  #"MDMQ.v2_10r",
+  "MDMQ.v2_11",
+  #"MDMQ.v2_11r",
+  "MDMQ.v2_12",
+  "MDMQ.v2_13",
   "alertness1",
   "calmness1",
   "valence1",
@@ -379,7 +428,6 @@ daily.dat <- rbind.fill(dat.mo, dat.af)
 daily.dat <- daily.dat[daily.dat$ExternalReference != 55951, ]
 dtWorker$daily <- daily.dat
 rm(dat.mo, dat.af, names.m, names.a, daily.dat)
-
 
 # names for pre-measurement
 names.pre <- c(
@@ -710,7 +758,28 @@ df$PPDate[df$SubTime < "18:50:00" &
   df$daytime == "afternoon"] <- df$PPDate[df$SubTime < "18:50:00" &
   df$daytime == "afternoon"] - 1
 
+# Make time IDs consistent with later studies
+df$TID <- paste(df$PPDate, str_to_title(df$daytime))
+df$TIDnum <- as.numeric(factor(df$TID %>% gsub(" Morning", "-A", .) %>% gsub(" Afternoon", "-B", .)))
+
+# Make contact dummies consistent with later studies
+df$IntergroupContact <- df$Contact_dum
+
+df <- df %>%
+  rowwise() %>%
+  mutate(
+    InteractionDum = sum(Contact_dum, inNonDutch, na.rm = FALSE),
+    InteractionDum = if_else(InteractionDum > 0, 1, InteractionDum),
+    alertness = sum(alertness1, alertness2, na.rm = TRUE),
+    calmness = sum(calmness1, calmness2, na.rm = TRUE),
+    valence = sum(valence1, valence2, na.rm = TRUE)
+  ) %>%
+  ungroup()
+
 # Need scales
+df$InteractionNeedFullfillment <- df$keymotive_fulfillemt_1
+df$DaytimeNeedFullfillment <- df$keyMotive_noInt_fulf_1
+
 df$keyMotiveFulfilled <- rowSums(df[, c("keymotive_fulfillemt_1", "keyMotive_noInt_fulf_1")], na.rm = T)
 df$autonomy.daily.all <- rowSums(df[, c("autonomy_1", "autonomy_NoInt_1")], na.rm = T)
 df$competence.daily.all <- rowSums(df[, c("competence_1", "competence_NoInt_1")], na.rm = T)
@@ -729,6 +798,17 @@ pairs.panels.new(
   )
 )
 df$relatedness_1 <- rowMeans(df[, c("relatedness_other_1", "relatedness_self_1")], na.rm = T)
+
+df$Autonomy <- df$autonomy.daily.all
+df$Competence <- df$competence.daily.all
+df$Relatedness <- df$relatedness.daily.all
+
+# Make Outgroup Attitudes consistent with later studies
+df$AttitudesDutch <- df$thermometerDutch_1
+df$AttitudesPartner <- df$thermometerDutchInt_2
+
+# Make experienced well-being consistent with later studies
+df$ExWB <- df$ExWB_1
 
 # summarize by participant (check that everything is within pp might not be the case for )
 between <- df %>%
@@ -1285,7 +1365,8 @@ as.data.frame(psych::describe(df$AllportsCondition, skew=T)) %>%
   kable_styling("hover", full_width = F, latex_options = "hold_position")
 
 ggplot(df, aes(x = AllportsCondition)) +
-  geom_histogram()
+  geom_histogram() +
+  theme_Publication()
 
 # -------------------------------------------------------------------------------------------------------------
 #                                 Add Variables related to interaction partner
@@ -1455,6 +1536,8 @@ medicalOutPltIDs <-
 
 ## Data Availability and Time Scales
 
+As one of our main analyses is a three-mode principal component analysis (3MPCA) we begin by assessing the amount of missing data in each of the ESM studies. To assess the missingness in detail, we prepare a data availability table of whether data is available or missing for each possible measurement point (data + morning/afternoon) for all individual participants. We then export the data availability tables as comma separated value files (.csv) to be assessed in detail using a spreadsheet program (such as MS Excel).   
+
 ```{r workerDataAvailability}
 dtworkerMissing <- dtWorker$full %>%
   select(
@@ -1510,16 +1593,322 @@ dtMedicalAvailability <- reshape::cast(dtMedicalMissing, PID ~ TID)
 write.csv(dtMedicalAvailability, "data/S3_Medical/processed/medicalAvailability.csv")
 ```
 
+</br>
+
+--------------------------------------------------------------------
+
+</br> 
+
 # **Plots per Item**
+
+The three-mode PCA ultimately aims to explain the most variance with the fewest components (by maximizing the variance of data mapped in a lower dimensional space --- often by maximally separating groups of cases with similar variable patterns). Importantly, this procedure depends on variances and covariances to be present within the data. As one of our three modes is time and variance over time is not always given (e.g., because a variable is stable over the measured time span, such as personality over a month), it becomes important to assess whether a dimension reduction is possible for the variables measured during the measured time period. We, thus, start by visually inspecting the average changes and variance developments of all potentially relevant variables. We hope so see changes within the means and standard deviations over the measurement period. 
 
 ## Study 1 (Worker)
 
-```{r workerDataSelection}
+The first study, utilized not only the smallest sample but also a slightly different set of measured variables compared to the later two studies. Several variables are consistent across all three studies (e.g., types of social interactions, interaction needs, self-determiantion theory needs, outgroup attitudes, and experienced well-being). Study 1 additionally included several emotion and mood measurements but fewer cognitive and behavioral measures than studies two and three.  
 
+We first select all potentially relevant variables and their labels, and then group the variables in small groups of one to three variables for plotting. 
+
+```{r workerDataSelection}
+varListWorker <- 
+  c(
+    "IntergroupContact",
+    "InteractionDum",
+    "DaytimeNeedFullfillment",
+    "InteractionNeedFullfillment",
+    "Autonomy",
+    "Competence",
+    "Relatedness",
+    "AttitudesDutch",
+    "AttitudesPartner",
+    "ExWB",
+    "alertness",
+    "calmness",
+    "valence",
+    "MDMQ.v1_1",
+    "MDMQ.v1_2",
+    "MDMQ.v1_3",
+    "MDMQ.v1_4",
+    "MDMQ.v1_5",
+    "MDMQ.v1_6",
+    "MDMQ.v1_7",
+    "MDMQ.v1_8",
+    "MDMQ.v1_9",
+    "MDMQ.v1_10",
+    "MDMQ.v1_11",
+    "MDMQ.v1_12",
+    "MDMQ.v1_13",
+    "MDMQ.v2_1",
+    "MDMQ.v2_2",
+    "MDMQ.v2_3",
+    "MDMQ.v2_4",
+    "MDMQ.v2_5",
+    "MDMQ.v2_6",
+    "MDMQ.v2_7",
+    "MDMQ.v2_8",
+    "MDMQ.v2_9",
+    "MDMQ.v2_10",
+    "MDMQ.v2_11",
+    "MDMQ.v2_12",
+    "MDMQ.v2_13"
+  )
+
+varNameListWorker <- 
+  c(
+    "IntergroupContact" = "Dutch Interaction",
+    "InteractionDum" = "Any Interaction",
+    "DaytimeNeedFullfillment" = "Daytime Core Motive Fulfillment",
+    "InteractionNeedFullfillment" = "Interaction Core Motive Fulfillment",
+    "Autonomy" = "Autonomy",
+    "Competence" = "Competence",
+    "Relatedness" = "Relatedness",
+    "AttitudesDutch" = "Outgroup Attitude",
+    "AttitudesPartner" = "Attitude Interaction Partner",
+    "ExWB" = "Sadness Happiness",
+    "alertness" = "Alertness",
+    "calmness" = "Calmness",
+    "valence" = "Emotional Valence",
+    "MDMQ.v1_1" = "content",
+    "MDMQ.v1_2" = "rested",
+    "MDMQ.v1_3" = "restless",
+    "MDMQ.v1_4" = "bad",
+    "MDMQ.v1_5" = "worn-out",
+    "MDMQ.v1_6" = "composed",
+    "MDMQ.v1_7" = "tired",
+    "MDMQ.v1_8" = "great",
+    "MDMQ.v1_9" = "uneasy",
+    "MDMQ.v1_10" = "energetic",
+    "MDMQ.v1_11" = "uncomfortable",
+    "MDMQ.v1_12" = "relaxed",
+    "MDMQ.v1_13" = "alive and vital",
+    "MDMQ.v2_1" = "sleepy",
+    "MDMQ.v2_2" = "good",
+    "MDMQ.v2_3" = "at ease",
+    "MDMQ.v2_4" = "unhappy",
+    "MDMQ.v2_5" = "alert",
+    "MDMQ.v2_6" = "discontent",
+    "MDMQ.v2_7" = "tense",
+    "MDMQ.v2_8" = "fresh",
+    "MDMQ.v2_9" = "happy",
+    "MDMQ.v2_10" = "nervous",
+    "MDMQ.v2_11" = "exhausted",
+    "MDMQ.v2_12" = "calm",
+    "MDMQ.v2_13" = "alive and vital"
+  )
+
+dtWorker$viz <- list()
+
+dtWorker$vizall <- dtWorker$full %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    all_of(varListWorker)
+  )
+
+dtWorker$viz$Interaction <- dtWorker$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    IntergroupContact,
+    InteractionDum
+  )
+
+dtWorker$viz$KeyNeed <- dtWorker$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    DaytimeNeedFullfillment,
+    InteractionNeedFullfillment
+  )
+
+dtWorker$viz$SDT <- dtWorker$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    Autonomy,
+    Relatedness, 
+    Competence
+  )
+
+dtWorker$viz$Attitudes <- dtWorker$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    starts_with("Attitudes")
+  )
+
+dtWorker$viz$WB <- dtWorker$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    ExWB
+  )
+
+dtWorker$viz$MoodOverall <- dtWorker$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    alertness,
+    calmness,
+    valence
+  )
+
+dtWorker$viz$MoodV01Pt01 <- dtWorker$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    MDMQ.v1_1,
+    MDMQ.v1_2
+  )
+
+dtWorker$viz$MoodV01Pt02 <- dtWorker$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    MDMQ.v1_3,
+    MDMQ.v1_4
+  )
+
+dtWorker$viz$MoodV01Pt03 <- dtWorker$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    MDMQ.v1_5,
+    MDMQ.v1_6
+  )
+
+dtWorker$viz$MoodV01Pt04 <- dtWorker$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    MDMQ.v1_7,
+    MDMQ.v1_8
+  )
+
+dtWorker$viz$MoodV01Pt05 <- dtWorker$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    MDMQ.v1_9,
+    MDMQ.v1_10
+  )
+
+dtWorker$viz$MoodV01Pt06 <- dtWorker$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    MDMQ.v1_11,
+    MDMQ.v1_12,
+    MDMQ.v1_13
+  )
+
+dtWorker$viz$MoodV02Pt01 <- dtWorker$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    MDMQ.v2_1,
+    MDMQ.v2_2
+  )
+
+dtWorker$viz$MoodV02Pt02 <- dtWorker$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    MDMQ.v2_3,
+    MDMQ.v2_4
+  )
+
+dtWorker$viz$MoodV02Pt03 <- dtWorker$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    MDMQ.v2_5,
+    MDMQ.v2_6
+  )
+
+dtWorker$viz$MoodV02Pt04 <- dtWorker$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    MDMQ.v2_7,
+    MDMQ.v2_8
+  )
+
+dtWorker$viz$MoodV02Pt05 <- dtWorker$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    MDMQ.v2_9,
+    MDMQ.v2_10
+  )
+
+dtWorker$viz$MoodV02Pt06 <- dtWorker$vizall %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    MDMQ.v2_11,
+    MDMQ.v2_12,
+    MDMQ.v2_13
+  )
+```
+
+### Mean Plots  
+
+We begin by plotting the item means of all variables. We always only display one to three variables jointly to improve visual inspection. We plot the means of the individual variables for each measurement occasion, summarizing the responses of all participants at any given time point. We additionally plot the data availability of each variable as a marginal plot above the main plot. The displayed time axis is the measurement index rather than the actual date to ensure comparability of the changes between each measurement. Plots with the raw date-time axis are saved and can be displayed if necessary.  
+
+```{r workerMeanViz, echo=FALSE, results='hide',fig.keep='all'} 
+dtWorker$vizPlotsMean <-
+  lapply(seq_along(dtWorker$viz),
+         function(i)
+           statVarPlot(dataIn = dtWorker$viz[[i]], 
+                       name = names(dtWorker$viz)[[i]], 
+                       namList = varNameListWorker,
+                       stat = "mean")
+         )
+dtWorker$vizPlotsMean
+```
+
+### SD Plots
+
+To illustrate the developments of variance around the previously displayed means, we then plot the item standard deviations of all variables. We, thus, plot the average variation from the mean for each individual variable, again summarizing the responses of all participants at any given time point. We retain the same variable grouping, the data availability line plot, and the measurement index as the x axis.  
+
+```{r WorkerSdViz, echo=FALSE, results='hide',fig.keep='all'} 
+dtWorker$vizPlotsSd <-
+  lapply(seq_along(dtWorker$viz),
+         function(i)
+           statVarPlot(dataIn = dtWorker$viz[[i]], 
+                       name = names(dtWorker$viz)[[i]], 
+                       namList = varNameListWorker,
+                       stat = "sd")
+         )
+dtWorker$vizPlotsSd
 ```
 
 
 ## Study 2 (Student)
+
+During the second study we collected the largest sample and additionally collected a range of motivations as well as pro-social and anti-social behaviors. 
+
+We, again, select all potentially relevant variables and their labels, and then group the variables in small groups of one to three variables for plotting. 
 
 ```{r studentDataSelection}
 varListStudent <- 
@@ -1771,6 +2160,8 @@ dtStudents$viz$Event <- dtStudents$vizall %>%
 
 ### Mean Plots
 
+We again begin by plotting the item means of all variables. The plotting method is identical to that of Study 1. 
+
 ```{r studentMeanViz, echo=FALSE, results='hide',fig.keep='all'} 
 dtStudents$vizPlotsMean <-
   lapply(seq_along(dtStudents$viz),
@@ -1784,6 +2175,8 @@ dtStudents$vizPlotsMean
 ```
 
 ### SD Plots
+
+We then also plot the average variation around the mean for each time point and variable. The plotting method is identical to that of Study 1. 
 
 ```{r studentSdViz, echo=FALSE, results='hide',fig.keep='all'} 
 dtStudents$vizPlotsSd <-
@@ -1799,6 +2192,10 @@ dtStudents$vizPlotsSd
 
 
 ## Study 3 (Medical)
+
+The third study uses a similar set up as Study 2 but targets a more vulnerable sample (of young medical professionals). While most key variables are identical to Study 2, in this last study we additionally collected several cognitive evaluations (e.g., importance ratings) and emotional status measures (e.g., anger, nervousness, energy, and loneliness).
+
+We, again, select all potentially relevant variables and their labels, and then group the variables in small groups of one to three variables for plotting. 
 
 ```{r medicalDataSelection}
 varListMedical <- 
@@ -2070,6 +2467,8 @@ dtMedical$viz$Event <- dtMedical$vizall %>%
 
 ### Mean Plots
 
+As with the previous studies, we begin by plotting the item means of all variables. The plotting method is identical to that of Studies 1 and 2.  
+
 ```{r medicalMeanViz, echo=FALSE, results='hide',fig.keep='all'} 
 dtMedical$vizPlotsMean <-
   lapply(seq_along(dtMedical$viz),
@@ -2084,6 +2483,8 @@ dtMedical$vizPlotsMean
 
 ### SD Plots
 
+Lastly, also again plot the item standard deviations of all variables at each time point. The plotting procedures are again identical to Studies 1 and 2.  
+
 ```{r medicalSdViz, echo=FALSE, results='hide',fig.keep='all'} 
 dtMedical$vizPlotsSd <-
   lapply(seq_along(dtMedical$viz),
@@ -2095,6 +2496,12 @@ dtMedical$vizPlotsSd <-
          )
 dtMedical$vizPlotsSd
 ```
+
+</br>
+
+--------------------------------------------------------------------
+
+</br> 
 
 # **Software Information**  
 The full session information with all relevant system information and all loaded and installed packages is available in the collapsible section below.  
