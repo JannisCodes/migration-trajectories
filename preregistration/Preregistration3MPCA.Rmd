@@ -74,6 +74,30 @@ Example: Effect of sugar on brownie tastiness. -->
 
 Example: Though there is strong evidence to suggest that sugar affects taste preferences, the effect has never been demonstrated in brownies. Therefore, we will measure taste preference for four different levels of sugar concentration in a standard brownie recipe to determine if the effect exists in this pastry. -->
 
+Recent calls for:   
+- ABCD model (esp., affect and desire)   
+- longitudinal data (for both acculturation and intergroup literature)   
+- real-life data (for both acculturation and intergroup literature)   
+
+Recent developments:  
+In the past, such data collections were often unfeasible because they were either physically impractical or too expensive. However, recent technological developments allow us to easily collect experience sampling data on mobile devices \citep[e.g.,][]{Keil2020} or using web-based applications \citep[e.g.,][]{Arslan2020}  
+- data collection possible (e.g., ContactLogger [@Keil2020], FormR [@Arslan2020])  
+- analyses become more accessible [@ODonnell2021]  
+
+Problem: HOWEVER, ...   
+- unclear how do deal with this more complex data (many variables, persons, and time points)   
+    - many different variables could be important    
+    - how to consider them jointly (e.g., VAR, DSEM, ARIMA, cross-lagged panel analysis for testing model predictions, limited to specified lag and mean stationarity; Trajectory focused: mixed effects model, spline regressions, latent growth curve modeling, limited: often univariate outcome)   
+- heterogeneity between people, over time, and across variables   
+- **unclear how to identify core/important developments.** Especially across multiple variables at he same time (i.e., multiple aspects).  
+- unclear which variables, time scales, and methods are useful in practice  
+
+Solution:   
+- 3MPCA uses the data cube   
+
+not merely important for hypothesis generation, but also for identifying and understanding adaptive and maladaptive patterns. Allows us to identify clusters of similar individuals and developments, and whether these clusters differ in key adaptation markers (including, well-being, intergroup anxiety, outgroup trust, or societal participation).  
+
+We recently proposed that migration experiences and the resulting psychological changes (i.e., acculturation) can be structured in terms of affect, behavior, cognition, and desire developments (ABCD of acculturation). However, while there have been several calls for intensive longitudinal and real-life data on acculturation, little data has thus far investigated the development of migration experiences and no research has assessed the co-development of all four experience aspects. Yet, understanding how people differ in their migration trajectories, can be crucial in understanding adaptive and maladaptive patterns. Simultaneously clustering the person-, experience aspect-, and time level of migration experiences, using a three mode PCA, may allow to identify clusters of similar developments and whether these clusters differ in key adaptation markers (including, well-being, anxiety, trust, or societal inclusion).
 
 
 In its most essential interpretation, the intergroup contact hypothesis postulates that frequent and positive contact with an out-group reduces prejudice and increases favorable attitudes towards the other group [@Hewstone1996; @Pettigrew1998]. A key condition for these contact benefits has been that the interaction is perceived as positive --- making the interaction quality a crucial mechanism of inter-group contact [e.g., @MacInnis2015]. It is widely accepted that equal status, common goals, collaboration, and structural support during the interaction form the optimal conditions for a positive contact [Allport's Optimal Contact conditions, @Allport1954b]. And indeed a major meta-analytic review showed, that intergroup contact benefits were larger when Allport's conditions were met. However, the meta-analysis also showed that contact resulted in more positive intergroup relations even when Allport's conditions were not met [@Pettigrew2006]. It, thus, remains unclear why and how exactly Allport's conditions work.
@@ -143,7 +167,10 @@ No randomization is involved in this study.
 ## Existing data
 <!-- Preregistration is designed to make clear the distinction between confirmatory tests, specified prior to seeing the data, and exploratory analyses conducted after observing the data. Therefore, creating a research plan in which existing data will be used presents unique challenges. Please select the description that best describes your situation. Please do not hesitate to contact us if you have questions about how to answer this question (prereg@cos.io). -->
 
-**Registration prior to accessing the data**. As of the date of submission, the data exist, but have not been accessed by you or your collaborators. Commonly, this includes data that has been collected by another researcher or institution.
+<!-- **Registration prior to analysis of the data**. As of the date of submission, the data exist and you have accessed it, though no analysis has been conducted related to the research plan (including calculation of summary statistics). A common situation for this scenario when a large dataset exists that is used for many different studies over time, or when a data set is randomly split into a sample for exploratory analyses, and the other section of data is reserved for later confirmatory data analysis. -->
+
+**Registration following analysis of the data**: As of the date of submission, you have accessed and analyzed some of the data relevant to the research plan. This includes preliminary analysis of variables, calculation of descriptive statistics, and observation of data distributions. Please see cos.io/prereg for more information.
+
 
 ## Explanation of existing data
 <!-- If you indicate that you will be using some data that already exist in this study, please describe the steps you have taken to assure that you are unaware of any patterns or summary statistics in the data. This may include an explanation of how access to the data has been limited, who has observed the data, or how you have avoided observing any analysis of the specific data you will use in your study.
