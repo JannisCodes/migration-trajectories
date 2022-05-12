@@ -74,13 +74,11 @@ Example: Effect of sugar on brownie tastiness. -->
 
 Example: Though there is strong evidence to suggest that sugar affects taste preferences, the effect has never been demonstrated in brownies. Therefore, we will measure taste preference for four different levels of sugar concentration in a standard brownie recipe to determine if the effect exists in this pastry. -->
 
-Two important developments, within the psychological sciences in general and in inter-ethnic/migrantion research in particular, have been (1) a shift towards more comprehensive assessment of human experiences and (2) a growing focus on longitudinal real-life data. For the migration research field, recent reviews have been pushing for models that take into account affects, behaviors, cognitions, and desires when it comes to migrant adaptations [@Kreienkamp2022d, @Ward2019, @Cottam2010, @Hogg2005, @Jhangiani2014].
-At the same time prominent figures in the field have called for studies that collect longitudinal [@Pettigrew1998, @Pettigrew2008, @Pettigrew2008b, @Pettigrew2011] and real-life experience-sampling data outside the lab [@MacInnis2015, @McKeown2017, @Dixon2005].
+Two important developments, within the psychological sciences in general and in migration research in particular, have been (1) a shift towards more comprehensive assessment of human experiences and (2) a growing focus on longitudinal real-life data. 
+For the migration research field, recent reviews have been pushing for models that take into account affects, behaviors, cognitions, and desires when it comes to migrant adaptations [@Kreienkamp2022d; @Ward2019; @Cottam2010; @Hogg2005; @Jhangiani2014]. At the same time prominent figures in the field have called for studies that collect longitudinal [@Pettigrew1998; @Pettigrew2008; @Pettigrew2008b; @Pettigrew2011] and real-life experience-sampling data outside the lab [@MacInnis2015; @McKeown2017; @Dixon2005].
 
 In the past, such data collections were often unfeasible because they were either physically impractical or too expensive. However, recent technological developments allow us to easily collect experience sampling data on mobile devices [e.g., @Keil2020] or using web-based applications [@Arslan2020]. At the same time, analytical methods for such more complex data have become more readily available, making the analyses more approachable [@ODonnell2021]. Given these, technological and methodological developments, we were able to collect a large amount of real-life data following the daily intergroup interactions of recent migrants with the majority group members.
 
-* data collection possible (e.g., ContactLogger [@Keil2020], FormR [@Arslan2020])
-* analyses become more accessible [@ODonnell2021]
 
 
 Problem: HOWEVER, ...
