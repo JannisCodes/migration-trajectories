@@ -74,35 +74,32 @@ Example: Effect of sugar on brownie tastiness. -->
 
 Example: Though there is strong evidence to suggest that sugar affects taste preferences, the effect has never been demonstrated in brownies. Therefore, we will measure taste preference for four different levels of sugar concentration in a standard brownie recipe to determine if the effect exists in this pastry. -->
 
-Recent calls for:   
-- ABCD model (esp., affect and desire)   
-- longitudinal data (for both acculturation and intergroup literature)   
-- real-life data (for both acculturation and intergroup literature)   
+Two important developments, within the psychological sciences in general and in inter-ethnic/migrantion research in particular, have been (1) a shift towards more comprehensive assessment of human experiences and (2) a growing focus on longitudinal real-life data. For the migration research field, recent reviews have been pushing for models that take into account affects, behaviors, cognitions, and desires when it comes to migrant adaptations [@Kreienkamp2022d, @Ward2019, @Cottam2010, @Hogg2005, @Jhangiani2014].
+At the same time prominent figures in the field have called for studies that collect longitudinal [@Pettigrew1998, @Pettigrew2008, @Pettigrew2008b, @Pettigrew2011] and real-life experience-sampling data outside the lab [@MacInnis2015, @McKeown2017, @Dixon2005].
 
-Recent developments:  
-In the past, such data collections were often unfeasible because they were either physically impractical or too expensive. However, recent technological developments allow us to easily collect experience sampling data on mobile devices \citep[e.g.,][]{Keil2020} or using web-based applications \citep[e.g.,][]{Arslan2020}  
-- data collection possible (e.g., ContactLogger [@Keil2020], FormR [@Arslan2020])  
-- analyses become more accessible [@ODonnell2021]  
+In the past, such data collections were often unfeasible because they were either physically impractical or too expensive. However, recent technological developments allow us to easily collect experience sampling data on mobile devices [e.g., @Keil2020] or using web-based applications [@Arslan2020]. At the same time, analytical methods for such more complex data have become more readily available, making the analyses more approachable [@ODonnell2021]. Given these, technological and methodological developments, we were able to collect a large amount of real-life data following the daily intergroup interactions of recent migrants with the majority group members.
 
-Problem: HOWEVER, ...   
-- unclear how do deal with this more complex data (many variables, persons, and time points)   
-    - many different variables could be important    
-    - how to consider them jointly (e.g., VAR, DSEM, ARIMA, cross-lagged panel analysis for testing model predictions, limited to specified lag and mean stationarity; Trajectory focused: mixed effects model, spline regressions, latent growth curve modeling, limited: often univariate outcome)   
-- heterogeneity between people, over time, and across variables   
-- **unclear how to identify core/important developments.** Especially across multiple variables at he same time (i.e., multiple aspects).  
-- unclear which variables, time scales, and methods are useful in practice  
+* data collection possible (e.g., ContactLogger [@Keil2020], FormR [@Arslan2020])
+* analyses become more accessible [@ODonnell2021]
+
+
+Problem: HOWEVER, ...
+
+* unclear how do deal with this more complex data (many variables, persons, and time points).
+  + many different variables could be important.
+  + how to consider them jointly (e.g., VAR, DSEM, ARIMA, cross-lagged panel analysis for testing model predictions, limited to specified lag and mean stationarity; Trajectory focused: mixed effects model, spline regressions, latent growth curve modeling, limited: often univariate outcome). 
+* heterogeneity between people, over time, and across variables.
+* **unclear how to identify core/important developments.** Especially across multiple variables at he same time (i.e., multiple aspects).
+* unclear which variables, time scales, and methods are useful in practice.
+
 
 Solution:   
-- 3MPCA uses the data cube   
+
+* 3MPCA uses the data cube   
 
 not merely important for hypothesis generation, but also for identifying and understanding adaptive and maladaptive patterns. Allows us to identify clusters of similar individuals and developments, and whether these clusters differ in key adaptation markers (including, well-being, intergroup anxiety, outgroup trust, or societal participation).  
 
 We recently proposed that migration experiences and the resulting psychological changes (i.e., acculturation) can be structured in terms of affect, behavior, cognition, and desire developments (ABCD of acculturation). However, while there have been several calls for intensive longitudinal and real-life data on acculturation, little data has thus far investigated the development of migration experiences and no research has assessed the co-development of all four experience aspects. Yet, understanding how people differ in their migration trajectories, can be crucial in understanding adaptive and maladaptive patterns. Simultaneously clustering the person-, experience aspect-, and time level of migration experiences, using a three mode PCA, may allow to identify clusters of similar developments and whether these clusters differ in key adaptation markers (including, well-being, anxiety, trust, or societal inclusion).
-
-
-In its most essential interpretation, the intergroup contact hypothesis postulates that frequent and positive contact with an out-group reduces prejudice and increases favorable attitudes towards the other group [@Hewstone1996; @Pettigrew1998]. A key condition for these contact benefits has been that the interaction is perceived as positive --- making the interaction quality a crucial mechanism of inter-group contact [e.g., @MacInnis2015]. It is widely accepted that equal status, common goals, collaboration, and structural support during the interaction form the optimal conditions for a positive contact [Allport's Optimal Contact conditions, @Allport1954b]. And indeed a major meta-analytic review showed, that intergroup contact benefits were larger when Allport's conditions were met. However, the meta-analysis also showed that contact resulted in more positive intergroup relations even when Allport's conditions were not met [@Pettigrew2006]. It, thus, remains unclear why and how exactly Allport's conditions work.
-
-We propose that Allport's optimal contact conditions are effective in creating positive contact because they constitute common psychological needs of the interacting individuals. If this is indeed the case, the impact of fulfilling other fundamental needs should produce similar beneficial contact results. And more importantly, the satisfaction of key situation needs during the interaction should predict the positive contact effects most strongly.
 
 
 ## Hypotheses
