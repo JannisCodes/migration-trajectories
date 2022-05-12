@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2022/dev) (preloaded format=pdflatex 2021.10.29)  12 MAY 2022 23:03
+This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2022/dev) (preloaded format=pdflatex 2021.10.29)  13 MAY 2022 00:54
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -525,87 +525,88 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 Package hyperref Warning: The anchor of a bookmark and its parent's must not
 (hyperref)                be the same. Added a new anchor on input line 150.
 
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10> on input line 183.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7> on input line 183.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5> on input line 183.
 [1
 
-{/Users/jannis/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 1
-85.
+{/Users/jannis/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [
+2]
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 2
+20.
 (/Users/jannis/Library/TinyTeX/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-) [2] [3] [4]
+) [3]
 
 Package hyperref Warning: The anchor of a bookmark and its parent's must not
-(hyperref)                be the same. Added a new anchor on input line 364.
+(hyperref)                be the same. Added a new anchor on input line 275.
 
 
 Package hyperref Warning: The anchor of a bookmark and its parent's must not
-(hyperref)                be the same. Added a new anchor on input line 393.
+(hyperref)                be the same. Added a new anchor on input line 304.
 
-[5] [6]
+[4] [5]
 
 Package hyperref Warning: The anchor of a bookmark and its parent's must not
-(hyperref)                be the same. Added a new anchor on input line 491.
+(hyperref)                be the same. Added a new anchor on input line 401.
 
-[7] [8] [9]
-Underfull \hbox (badness 5832) in paragraph at lines 721--722
+[6] [7]
+Underfull \hbox (badness 5832) in paragraph at lines 631--632
 []\T1/lmr/m/it/10 Full vari-able in-for-ma-tion is avail-able in the code-book 
 (`Codebook_AOT-
  []
 
+[8]
 
-Package natbib Warning: Citation `Pettigrew2006' on page 10 undefined on input 
-line 734.
+Package natbib Warning: Citation `Pettigrew2006' on page 9 undefined on input l
+ine 644.
 
 
-Package natbib Warning: Citation `Pettigrew2006' on page 10 undefined on input 
-line 735.
+Package natbib Warning: Citation `Pettigrew2006' on page 9 undefined on input l
+ine 645.
 
-[10]
 
 Package hyperref Warning: The anchor of a bookmark and its parent's must not
-(hyperref)                be the same. Added a new anchor on input line 788.
+(hyperref)                be the same. Added a new anchor on input line 698.
 
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 792.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 792.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 792.
 
-Package natbib Warning: Citation `Bliese2013' on page 11 undefined on input lin
-e 796.
+Package natbib Warning: Citation `Bliese2013' on page 9 undefined on input line
+ 706.
 
-[11] [12]
+[9] [10] [11]
 
-Package natbib Warning: Citation `Hamaker2014' on page 13 undefined on input li
-ne 1050.
+Package natbib Warning: Citation `Hamaker2014' on page 12 undefined on input li
+ne 960.
+
+[12]
+
+Package natbib Warning: Citation `Brown2005' on page 13 undefined on input line
+ 994.
 
 [13]
 
-Package natbib Warning: Citation `Brown2005' on page 14 undefined on input line
- 1084.
-
-[14]
-
 Package hyperref Warning: The anchor of a bookmark and its parent's must not
-(hyperref)                be the same. Added a new anchor on input line 1114.
+(hyperref)                be the same. Added a new anchor on input line 1024.
 
-(./Preregistration3MPCA.bbl [15])
+(./Preregistration3MPCA.bbl [14])
 
 Package natbib Warning: There were undefined citations.
 
-[16] (./Preregistration3MPCA.aux)
+[15] (./Preregistration3MPCA.aux)
 Package rerunfilecheck Info: File `Preregistration3MPCA.out' has not changed.
-(rerunfilecheck)             Checksum: AF88322B4F8321A85601D2C95BBFFA6B;3715.
+(rerunfilecheck)             Checksum: C68CC8787F83CC8DC2D8ABD724BD0BE2;3723.
  ) 
 Here is how much of TeX's memory you used:
- 10927 strings out of 480514
- 158504 string characters out of 5900804
- 475539 words of memory out of 5000000
- 28200 multiletter control sequences out of 15000+600000
- 463368 words of font info for 70 fonts, out of 8000000 for 9000
+ 10883 strings out of 480514
+ 157870 string characters out of 5900804
+ 475903 words of memory out of 5000000
+ 28174 multiletter control sequences out of 15000+600000
+ 466356 words of font info for 71 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 60i,22n,66p,281b,525s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 60i,22n,66p,281b,526s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/Users/jannis/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}{/
 Users/jannis/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/Users/ja
 nnis/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/Users/jannis
@@ -620,15 +621,16 @@ type1/public/lm/lmmi10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type
 1/public/lm/lmmi7.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/pub
 lic/lm/lmr10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/l
 m/lmr12.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr
-17.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb
-></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb></Use
-rs/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb></Users/j
-annis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri12.pfb></Users/janni
-s/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb>
-Output written on Preregistration3MPCA.pdf (16 pages, 318729 bytes).
+17.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr6.pfb
+></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb></Use
+rs/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb></Users/jan
+nis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb></Users/jannis/
+Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri12.pfb></Users/jannis/Libr
+ary/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb>
+Output written on Preregistration3MPCA.pdf (15 pages, 338503 bytes).
 PDF statistics:
- 506 PDF objects out of 1000 (max. 8388607)
- 453 compressed objects within 5 object streams
- 190 named destinations out of 1000 (max. 500000)
+ 473 PDF objects out of 1000 (max. 8388607)
+ 418 compressed objects within 5 object streams
+ 171 named destinations out of 1000 (max. 500000)
  241 words of extra memory for PDF output out of 10000 (max. 10000000)
 
