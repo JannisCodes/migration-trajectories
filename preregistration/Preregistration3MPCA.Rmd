@@ -109,7 +109,7 @@ little data has thus far investigated the development of migration experiences a
 
 Example: If taste affects preference, then mean preference indices will be higher with higher concentrations of sugar. -->
 
-We do not have any hypotheses in the traditional sense. Our analysis plan is based on ... .  
+We do not have hypotheses in the traditional sense. Our analysis plan is based on the aim of describing and understanding a complex data set of extensive longitudinal data. We propose that the dimension reduction procedure we employ will identify meaningful patterns and developments within the data, which are useful to migration researchers and practitioners.    
 
 # Design Plan
 <!-- In this section, you will be asked to describe the overall design of your study. Remember that this research plan is designed to register a single study, so if you have multiple experimental designs, please complete a separate preregistration. -->
@@ -162,7 +162,7 @@ An appropriate instance of using existing data would be collecting a sample size
 
 Example: An appropriate instance of using existing data would be collecting a sample size much larger than is required for the study, using a small portion of it to conduct exploratory analysis, and then registering one particular analysis that showed promising results. After registration, conduct the specified analysis on that part of the dataset that had not been investigated by the researcher up to that point. -->
 
-The data was collected as part of a larger collaboration on daily intergroup relations. A sub-sample of variables has recently been accessed by the research team for an unrelated analysis. Not relevant, no insight for the current analysis.
+The data was collected as part of a larger collaboration on daily intergroup relations. A sub-sample of variables has recently been accessed by the research team for an unrelated analysis [@Kreienkamp2022b]. Additionally, several of the variables were prepared for a graphical presentation of the dataset. Thus far, none of the proposed analyses have been conducted and none of the previous analyses have been related to dimension reductions or longitudinal trajectories.  
 
 
 ## Data collection procedures
@@ -185,7 +185,9 @@ For the third study, participants had the option of continuing the study for an 
 
 Example: Our target sample size is 280 participants. We will attempt to recruit up to 320, assuming that not all will complete the total task. -->
 
-Our target sample size is a sum of 4,000 daily diary measurements. With 100% completion rate that would be archived with 67 participants (60 daily diary responses each). Given that we expect some incomplete daily diary measurements, we aimed to recruit 80 participants.
+For Study 1 (initial preliminary study) our target sample size is a sum of 1,000 daily diary measurements. As we expected a completion rate of around 80% we aimed to recruite 20 participants (20 participants X 50 measurements). We ultimately over-sampled slightly to compensate for potential drop outs given the length and intensity of the study. We then used several key relationships (relevant to the broader research team) to estimate sufficient power for a range of different analyses (i.e., using power simulations). 
+
+For Studies 2 and 3, our target sample size is a sum of 4,000 daily diary measurements. With 100% completion rate that would be archived with 67 participants (60 daily diary responses each). Given that we expect some incomplete daily diary measurements, we aimed to recruit 80 participants. For both studies we again over-sampled slightly to account for expected drop outs within each target population.
 
 ## Sample size rationale
 <!-- This could include a power analysis or an arbitrary constraint such as time, money, or personnel. This gives you an opportunity to specifically state how the sample size will be determined. A wide range of possible answers is acceptable; remember that transparency is more important than principled justifications. If you state any reason for a sample size upfront, it is better than stating no reason and leaving the reader to "fill in the blanks." Acceptable rationales include: a power analysis, an arbitrary number of subjects, or a number based on time or monetary constraints.
@@ -194,9 +196,9 @@ Example: We used the software program G*Power to conduct a power analysis. Our g
 
 The targeted sample size depended on a combination of different factors. Different analyses were planned as part of the collaboration and budgeting was a practical constraint. Some analyses were planned based on (1) the pre- to post measurements, (2) the dynamic developments over the daily diary measurements, or (3) the contemporary effects within the daily diary measurements.
 
-Power considerations of mixed effects model such as with extensive longitudinal data are difficult to estimate because of the complex covariance structures. Simulation studies based on the first two samples within this project indicated that with well-distributed scales, and small to medium effect sizes, 70-80 participants with at least seven daily diary measurements and a simple pre--post survey were sufficiently powerful (power = .8, alpha = .05) to answer most of the key research questions of the collaboration.
+Power considerations of mixed effects model such as with extensive longitudinal data are difficult to estimate because of the complex covariance structures. Simulation studies based on the first sample within this project indicated that with well-distributed scales, and small to medium effect sizes, 70-80 participants with at least seven daily diary measurements and a simple pre--post survey were sufficiently powerful (power = .8, alpha = .05) to answer most of the key research questions of the collaboration.
 
-The ultimate sampling procedure decision was made as a practical balancing of the number of participants and the number of measurements provided by each participants. Given that this study primarily focuses on the contemporaneous effects within the daily diary measurements, power should be high enough. 
+The ultimate sampling procedure decision was made as a practical balancing of the number of participants and the number of measurements provided by each participants. 
 
 ## Stopping rule
 <!-- If your data collection procedures do not give you full control over your exact sample size, specify how you will decide when to terminate your data collection. 
@@ -205,7 +207,7 @@ You may specify a stopping rule based on p-values only in the specific case of s
 
 Example: We will post participant sign-up slots by week on the preceding Friday night, with 20 spots posted per week. We will post 20 new slots each week if, on that Friday night, we are below 320 participants. -->
 
-Participants will be recruited until 80 participants finish the pre-measurement. Invitations to complete additional daily diary measurements will be extended until participants chose to leave the study or at the most until two months (i.e., 64 days) after the initial entry survey (i.e., from the pre measurement survey).
+Participants were recruited until the targeted participant number finish the pre-measurement. Invitations to complete additional daily diary measurements (in Study 3) were extended until participants chose to leave the study or at the most until two months (i.e., 64 days) after the initial entry survey (i.e., from the pre measurement survey).
 
 # Variables
 <!-- In this section you can describe all variables (both manipulated and measured variables) that will later be used in your confirmatory analysis plan. In your analysis plan, you will have the opportunity to describe how each variable will be used. If you have variables which you are measuring for exploratory analyses, you are not required to list them, though you are permitted to do so. -->
@@ -227,6 +229,9 @@ Observational studies and meta-analyses will include only measured variables. As
 Example: The single outcome variable will be the perceived tastiness of the single brownie each participant will eat. We will measure this by asking participants ‘How much did you enjoy eating the brownie’ (on a scale of 1-7, 1 being 'not at all', 7 being 'a great deal') and 'How good did the brownie taste' (on a scale of 1-7, 1 being 'very bad', 7 being 'very good'). -->
 
 **Key variables:**
+
+
+
 
 1. Whether an interaction happened during the past daytime period
     a. Did you meet a Dutch person this [morning/afternoon]?
@@ -334,204 +339,92 @@ This is perhaps the most important and most complicated question within the prer
 
 Example:  We will use a one-way between subjects ANOVA to analyze our results. The manipulated, categorical independent variable is 'sugar' whereas the dependent variable is our taste index. -->
 
-We will use a sequential analysis strategy in line with our proposed hypotheses. Given the nested structure of much of our data we test many of our hypotheses using a multilevel approach, where $y_{ti}$ denotes the response at measurement occasion $t$ ($t = 1, ...,T_i$; level 1) for individual $i$ ($i = 1, ..., n$; level 2). It should be noted that we will follow a hierarchical modeling approach. We follow the common four-step procedure [e.g., @Bliese2013]: (1) Test whether enough variation exists within and between participants to justify a multilevel structure, (2) (sequentially) add key predictors, (3) check whether a random slope explains an adequate amount of variance, and (4) check for autocorrelations and heteroscedasticity. For brevity we will only present the full multilevel regression formulas below.
+In our analysis, we follow the procedure outlined by @Monden2015
 
+1. **Sample Selection.** Our sample selection consists of three main steps. We (1) aggregate the key variables over time to archive a reasonably interpretable number of time points and the remove a first proportion of missing data. We then address the selection of time point and participants. Given that multiple imputation procedures even work well with large proportions of missing data [assuming missingness at random; @Madley-Dowd2019], we decided on a general criterion of less than 45% missingness to balance sample size retention and bias in the multiple imputation model. Thus, we then (2) select the time points for which we have responses from 55% of the participants and (3) select participants who have responded to at least 55% of the surveys across the selected time range.
+    1. Time point aggregation: Given that little data is available on the meaningful time scales of the selected psychological variables, we chose to choose the appropriate time scales using variance decomposition [e.g., see @Ram2014]. This is to say that we create multi-level unconditional means models (without predictors) that include possible nested time scales as levels. For example, assess the explained variances for measurements nested in days, nested in weeks, nested in months. 
+    \fbox{
+    \parbox{0.5\linewidth}{%
+    Potentially nested measurements:\\
+    1 - 2 - 4 - 8 - 16 - 32 - 64\\
+    1 - 2 - 6 - 12 - 24 - 48\\
+    1 - 2 - 10 - 30 - 60\\
+    1 - 2 - 14 - 28 - 56\\
+    Weird but possible (uneven):\\
+    1 - 3 - 6 - 12 - 24 - 48\\
+    1 - 5 - 10 - 30 - 60\\
+    1 - 7 - 14 - 28 - 56
+    }}  
+    \vspace{12pt}  
+    We then chose the ideal time scale for each of the key variables.  
+\newlength{\mylength}
+\[
+\setlength{\fboxsep}{15pt}
+\setlength{\mylength}{\linewidth}
+\addtolength{\mylength}{-2\fboxsep}
+\addtolength{\mylength}{-2\fboxrule}
+\fbox{%
+\parbox{\mylength}{
 \setlength{\abovedisplayskip}{0pt}
 \setlength{\belowdisplayskip}{0pt}
-\setlength{\abovedisplayshortskip}{0pt}
-\setlength{\belowdisplayshortskip}{0pt}
-
-1. Contact Hypothesis (partially using between participant aggregates to meaningfully include interaction frequency)
-    a. Correlation:
-      \begin{fleqn}[\parindent] 
-        \begin{equation}
-          r_{ContactFreq, Attitude} \neq 0
-        \end{equation}
-      \end{fleqn}
-    a. Regression:
-        <!-- 
-          Explanation: 
-          - 'fleqn' aligns whole math left 
-          - 'equation' adds number
-          - 'split' aligns after level header
-          - 'aligned[t]' aligns after equal sign
-        -->
-        \begin{fleqn}[\parindent] 
-        \begin{equation}
-          \begin{split}
-            \textrm{Level 1:} &
-              \begin{aligned}[t]
-                \ Attitude_{ti} =  &\ \beta_{0i} + \beta_{1i}OutgroupInteraction_{ti} + \\
-                                   &\ \beta_{2i}NonOutgroupInteraction_{ti} + e_{ti}
-              \end{aligned} \\
-            \textrm{Level 2:} &\ \beta_{0i} = \gamma_{00} + u_{0i} \\
-                              &\ \beta_{1i} = \gamma_{10} + u_{1i} \\
-                              &\ \beta_{2i} = \gamma_{20} + u_{2i}
-          \end{split} 
-        \end{equation}
-        \end{fleqn}
-    a. Regression: 
-      \begin{fleqn}[\parindent] 
-        \begin{equation}
-          Attitude = ContactFreq \times AverageQual
-        \end{equation}
-      \end{fleqn}
-1. Allport's Conditions
-    a. Regression:
-        \begin{fleqn}[\parindent]
-          \begin{equation} \label{eq:SlopesAttAllport}
-            \begin{split}
-                \textrm{Level 1:} &\ Attitude_{ti} = \beta_{0i} + \beta_{1i}AllportConditions_{ti} + e_{ti}\\
-                \textrm{Level 2:} &\ \beta_{0i} = \gamma_{00} + u_{0i} \\
-                                  &\ \beta_{1i} = \gamma_{10} + u_{1i}
-            \end{split}
-          \end{equation}
-        \end{fleqn}
-    a. Regression:
-        \begin{fleqn}[\parindent]
-          \begin{equation} \label{eq:SlopesQualAllport}
-            \begin{split}
-                \textrm{Level 1:} &\ InteractionQuality_{ti} = \beta_{0i} + \beta_{1i}AllportConditions_{ti} + e_{ti}\\
-                \textrm{Level 2:} &\ \beta_{0i} = \gamma_{00} + u_{0i} \\
-                                  &\ \beta_{1i} = \gamma_{10} + u_{1i}
-            \end{split}
-          \end{equation}
-        \end{fleqn}
-    a. Regression:
-        \begin{fleqn}[\parindent]
-          \begin{equation} \label{eq:SlopesAttAllportQual}
-            \begin{split}
-              \textrm{Level 1:} &
-                \begin{aligned}[t]
-                  \ Attitude_{ti} =  &\ \beta_{0i} + \beta_{1i}AllportConditions_{ti} + \\
-                                     &\ \beta_{2i}InteractionQuality_{ti} + e_{ti}
-                \end{aligned} \\
-              \textrm{Level 2:} &\ \beta_{0i} = \gamma_{00} + u_{0i} \\
-                                &\ \beta_{1i} = \gamma_{10} + u_{1i} \\
-                                &\ \beta_{2i} = \gamma_{20} + u_{2i}
-            \end{split} 
-          \end{equation}
-        \end{fleqn}  
-1. Key Need fulfillment
-    a. Regression: 
-        \begin{fleqn}[\parindent]
-          \begin{equation} \label{eq:SlopesAttCore}
-            \begin{split}
-                \textrm{Level 1:} &\ Attitude_{ti} = \beta_{0i} + \beta_{1i}KeyNeedFulfill_{ti} + e_{ti}\\
-                \textrm{Level 2:} &\ \beta_{0i} = \gamma_{00} + u_{0i} \\
-                                  &\ \beta_{1i} = \gamma_{10} + u_{1i}
-            \end{split}
-          \end{equation}
-        \end{fleqn}
-    a. Regression:
-        \begin{fleqn}[\parindent]
-          \begin{equation} \label{eq:SlopesQltCore}
-            \begin{split}
-                \textrm{Level 1:} &\ InteractionQuality_{ti} = \beta_{0i} + \beta_{1i}KeyNeedFulfill_{ti} + e_{ti}\\
-                \textrm{Level 2:} &\ \beta_{0i} = \gamma_{00} + u_{0i} \\
-                                  &\ \beta_{1i} = \gamma_{10} + u_{1i}
-            \end{split}
-          \end{equation}
-        \end{fleqn}
-    a. Regression:
-        \begin{fleqn}[\parindent]
-          \begin{equation} \label{eq:SlopesAttCoreQual}
-            \begin{split}
-              \textrm{Level 1:} &
-                \begin{aligned}[t]
-                  \ Attitude_{ti} =  &\ \beta_{0i} + \beta_{1i}KeyNeedFulfill_{ti} + \\
-                                     &\ \beta_{2i}InteractionQuality_{ti} + e_{ti}
-                \end{aligned} \\
-              \textrm{Level 2:} &\ \beta_{0i} = \gamma_{00} + u_{0i} \\
-                                &\ \beta_{1i} = \gamma_{10} + u_{1i} \\
-                                &\ \beta_{2i} = \gamma_{20} + u_{2i}
-            \end{split} 
-          \end{equation}
-        \end{fleqn}
-    a. Regression: 
-        \begin{fleqn}[\parindent]
-          \begin{equation} \label{eq:SlopesAttCoreQualX}
-            \begin{split}
-              \textrm{Level 1:} &
-                \begin{aligned}[t]
-                  \ Attitude_{ti} =  &\ \beta_{0i} + \beta_{1i}KeyNeedFulfill_{ti} + \\
-                                     &\ \beta_{2i}InteractionQuality_{ti} + \\
-                                     &\ \beta_{3i}KeyNeedFulfill*InteractionQuality_{ti} + e_{ti}
-                \end{aligned} \\
-              \textrm{Level 2:} &\ \beta_{0i} = \gamma_{00} + u_{0i} \\
-                                &\ \beta_{1i} = \gamma_{10} + u_{1i} \\
-                                &\ \beta_{2i} = \gamma_{20} + u_{2i} \\
-                                &\ \beta_{3i} = \gamma_{30} + u_{3i}
-            \end{split} 
-          \end{equation}
-        \end{fleqn}
-    a. Regression: 
-        \begin{fleqn}[\parindent]
-          \begin{equation} \label{eq:SlopesAttCoreSdt}
-            \begin{split}
-              \textrm{Level 1:} &
-                \begin{aligned}[t]
-                  \ Attitude_{ti} =  &\ \beta_{0i} + \beta_{1i}KeyNeedFulfill_{ti} + \beta_{2i}Autonomy_{ti} + \\
-                                     &\ \beta_{3i}Competence_{ti} + \beta_{4i}Relatedness_{ti} + e_{ti}
-                \end{aligned} \\
-              \textrm{Level 2:} &\ \beta_{0i} = \gamma_{00} + u_{0i} \\
-                                &\ \beta_{1i} = \gamma_{10} + u_{1i} \\
-                                &\ \beta_{2i} = \gamma_{20} + u_{2i} \\
-                                &\ \beta_{3i} = \gamma_{30} + u_{3i} \\
-                                &\ \beta_{4i} = \gamma_{40} + u_{4i}
-            \end{split} 
-          \end{equation}
-        \end{fleqn}
-1. Comparison with Allport's Conditions
-    a. Model Comparison:
-      \begin{fleqn}[\parindent] 
-        \begin{equation}
-          AIC_{KeyNeedModel} < AIC_{AllportModel}
-        \end{equation}
-      \end{fleqn}
-    a. Regression: 
-        \begin{fleqn}[\parindent]
-          \begin{equation} \label{eq:SlopesAttCoreAllport}
-            \begin{split}
-              \textrm{Level 1:} &
-                \begin{aligned}[t]
-                  \ Attitude_{ti} =  &\ \beta_{0i} + \beta_{1i}KeyNeedFulfill_{ti} + \\
-                                     &\ \beta_{2i}AllportConditions_{ti} + e_{ti}
-                \end{aligned} \\
-              \textrm{Level 2:} &\ \beta_{0i} = \gamma_{00} + u_{0i} \\
-                                &\ \beta_{1i} = \gamma_{10} + u_{1i} \\
-                                &\ \beta_{2i} = \gamma_{20} + u_{2i}
-            \end{split} 
-          \end{equation}
-        \end{fleqn}
-        
-All multilevel assumptions are tested as usual including (e.g., for random slopes model with _j_ within person predictors):
-
-\begin{flalign}
-  &\textrm{Level 1 Variance:}\ e_{ti} \sim \mathcal{N}(0,\sigma^2) \\
-  &\textrm{Level 2 Variance:}\ \begin{bmatrix} u_{0i}\\ \vdots\\ u_{ji}\end{bmatrix} 
-  \sim \mathcal{N}
-  \begin{pmatrix}
-    \begin{bmatrix} 
-      0 \\ 
-      \vdots \\
-      0
-    \end{bmatrix}, 
-    \begin{bmatrix} 
-      \tau_{00}^2 &  & \\ 
-      \vdots & \ddots & \\
-      \tau_{j0} & \ldots & \tau_{jj}^2
-    \end{bmatrix}
-  \end{pmatrix}
-\end{flalign}
-    
+\textbf{Question:}  Should the aggregation happen after the multiple imputation? The current procedure would reduce missing data but the aggregated values would be based on differing amounts of data (depending on the amount of missingness). Yet again, a daily or weekly summary this is probably still more accurate then a single later recall response.
+}}
+\]
+2. **Multiple Imputation.** We then create 20 imputed datasets to perform the analyses on. As outlined by @Monden2015, we will use the key variables themself as well as auxiliary variables to impute missing values. Auxiliary variables are any pre-, post-, or daily dairy variables that are significantly ($p$ < .01) and meaningfully ($r$ > .3) correlated with (1) the key variables or (2) missingness on the key variables.   
+3. **Three-way ANOVA.** We assess the percentages of explained variance for the person-, variable-, and time aspects --- which offers an indication of whether a 3MPCA is useful for the dataset. Based on the grand mean centered variables we conduct a fixed-effects three-way ANOVA of the person-, variable-, and time modes as well as their various interactions. We are particularly interested in the highest order interaction term Person * Variable * Time + error, as a large amount of variance in this effect would speak towards the interdependence of the three modes.
+\[
+\fbox{%
+\parbox{\linewidth}{
+\textbf{Question:}  What is the DV of the three-way ANOVA?
+}}
+\]
+4. **Data preprocessing.** For the three mode PCA, we center (across participants but within time point) and to normalize (within variable but across time points) all key variables. The between-person centering, ensures that all variations are around the mean trend (which is removed by the centering). The normalization within variable are important for ensuring equal variances across variables, which ensures equal weighting of the variables in the 3MPCA. For methodological detail see [Transformations].
+5. **Selection of 3MPCA model complexity** We then run the 3MPCA. We use a generalized scree plot to select the appropriate number of components for each of the three modes (i.e., person, variable, time). To test the stability of the solution results are compared across the 20 imputed datasets.
+\[
+\fbox{%
+\parbox{\linewidth}{
+\textbf{Question:}  Additionally split-half procedures? How does this work is this the same as split-half reliability?
+}}
+\]
+6. **3MPCA model fitting.** For the selected complexities we then extract simple component structures (i.e., for each mode individually) as well as the array core (the full 3MPCA array, which holds the weights of all combinations of the three modes). A Joint Orthomax orthogonal rotation and standard weights (when necessary) are used to extract human interpretable component scores. This procedure is done on all 20 imputed data sets.
+\[
+\fbox{%
+\parbox{\linewidth}{
+\textbf{Question:}  What exactly does the core array entail? In the @Monden2015 article it says: "the core-array, which describes the patterns of interaction between the symptom- and time-components in each person-component.". Additionally, in a more mathematical piece by Jorge it reads: "a three-way array called the core array, which holds the weights for the joint impact of any triple of components (one from each mode)." Does this mean that this is basically an array of loading scores in the lower dimensional space (similar to fitted values in regressions)? Or does it store the weights (i.e., interactions scores) that combines the loading scores of all three dimension reductions (not sure I express this right :-D )? I think this comes down to: What is the interpretation of a core element? 
+}}
+\]
+7. **Generalized Procrustes rotation.** In order to combine the three individual component structure from the 20 data sets, we use a generalized Procrustes rotation --- calculating the average of each compontent and core array.
+<!-- The 3PCA model has been proposed by Tucker [114]. Given an array X of order I×J×K, 3PCA determines component matrices for each of the three modes (individuals, variables and occasions) and a three-way array called the core array, which holds the weights for the joint impact of any triple of components (one from each mode). -->
+8. **Explained variance.** As fit indices we then calculate (1) fit percentage of the estimated array for each imputed data set (i.e., explained variance around the removed general trend) as well as (2) an _overall_ fit percentage of the estimated array (i.e., explained variance including the general trend). Both these fit metrices should give an indication of how much of the original variance the reduced component structure was able to capture.
+9. **Component interpretation** To embed and interpret the resulting components (especially the person components), we calculate correlations of the component scores with key adaptation markers (including, well-being, anxiety, trust, or societal inclusion). If components remain unclear still we can additionally perform k-means clustering on the lower dimensional space to identify clearer groups which can be compared on the adaptation markers if necessary.
 
 ## Transformations
 <!-- If you plan on transforming, centering, recoding the data, or will require a coding scheme for categorical variables, please describe that process. If any categorical predictors are included in a regression, indicate how those variables will be coded (e.g. dummy coding, summation coding, etc.) and what the reference category will be.
 
 Example: The "Effect of sugar on brownie tastiness" does not require any additional transformations. However, if it were using a regression analysis and each level of sweet had been categorically described (e.g. not sweet, somewhat sweet, sweet, and very sweet), 'sweet' could be dummy coded with 'not sweet' as the reference category. -->
 
-We will mean-center all level-one predictors within participants (i.e., cluster mean centering). This is relevant for any predictor variable during the interaction (e.g., key need fulfillment, interaction quality, ...). We mean-center within-person predictors, to meaningfully distinguish within and between person variances and because we obtain a meaningful intercept when having a random slope model [e.g., @Hamaker2014].
+<!-- We will mean-center all level-one predictors within participants (i.e., cluster mean centering). This is relevant for any predictor variable during the interaction (e.g., key need fulfillment, interaction quality, ...). We mean-center within-person predictors, to meaningfully distinguish within and between person variances and because we obtain a meaningful intercept when having a random slope model [e.g., @Hamaker2014]. -->
+
+\setlength{\abovedisplayskip}{0pt}
+\setlength{\belowdisplayskip}{0pt}
+\setlength{\abovedisplayshortskip}{0pt}
+\setlength{\belowdisplayshortskip}{0pt}
+
+For three mode PCA it is custom to center (across participants but within time point) and to normalize (within variable but across time points). This is done to create a meaningful zero value for each time point (to compare participants) and a variance of 1 across all time points of a variable (removing any overall trends).
+
+We provide the main equations of the procedure below, where individual $i$ ($i = 1,\ ...,\ I$) reported variable $k$ ($k = 1,\ ...,\ K$) at time point $t$ ($t = 1,\ ...,\ T$), so that $I$=number of persons, $K$=number of items, $T$=number of time points are within the dataset. For further information as well as an example illustration see Supplemental Material 3 in @Monden2015.
+
+\begin{equation} \label{eq:Mean}
+  \overline{x}_{kt} =  \sum_{i=1}^I x_{ikt}
+\end{equation}
+
+\begin{equation} \label{eq:NormalizationSd}
+  \sigma_{k} =  \sqrt{\sum_{i=1}^I \sum_{k=1}^K \frac{(x_{ikt}-\overline{x}_{kt})^2}{I*T}}
+\end{equation}
+
+\begin{equation} \label{eq:NormalizedScore}
+  z_{ikt} =  \frac{x_{ikt}-\overline{x}_{kt}}{\sigma_{k}}
+\end{equation}
 
 
 ## Inference criteria
@@ -541,14 +434,15 @@ p-values, confidence intervals, and effect sizes are standard means for making a
 
 Example: We will use the standard p<.05 criteria for determining if the ANOVA and the post hoc test suggest that the results are significantly different from those expected if the null hypothesis were correct. The post-hoc Tukey-Kramer test adjusts for multiple comparisons. -->
 
-We will use the standard p<.05 criteria for determining whether the correlation and regression coefficients are statistically significant. However, given the large sample size we will place a particular emphasis on effect sizes in our interpretations of the results.
+Many of the proposed procedures are more descriptive rather then inferential. Importantly, we will use amounts of variances explained as our main fit indices. 
+If we perform inferential analyses, we will use the standard p<.05 criteria for determining whether the correlation and regression coefficients are statistically significant. We will place particular emphasis on effect sizes in our interpretations of the results.
 
 ## Data exclusion
 <!-- How will you determine what data or samples, if any, to exclude from your analyses? How will outliers be handled? Will you use any awareness check? Any rule for excluding a particular set of data is acceptable. One may describe rules for excluding a participant or for identifying outlier data.
 
 Example: No checks will be performed to determine eligibility for inclusion besides verification that each subject answered each of the three tastiness indices. Outliers will be included in the analysis. -->
 
-No checks will be performed to determine eligibility for inclusion besides verification that each subject answered each of the variables of interest for a given analysis. Outliers will generally be included in analyses, however we will use sensitivity analyses to assess the robustness of the results to outliers.
+No checks will be performed to determine eligibility for inclusion besides verification that each subject answered each of the variables of interest for a given analysis. Outliers will generally be included in analyses, however we will use sensitivity analyses to assess the robustness of the results to outliers.  
 
 
 ## Missing data
@@ -556,7 +450,7 @@ No checks will be performed to determine eligibility for inclusion besides verif
 
 Example: If a subject does not complete any of the three indices of tastiness, that subject will not be included in the analysis. -->
 
-Given the (expectedly) large sample size of contemporaneous measurements, we will remove all instances during which a participant did not respond to any of the relevant variables. Given that we are not necessarily interested in individual trajectories in our analyses, we will use all available data (i.e., will not remove entire participants but rather individual incomplete daily diary measurements). 
+The sample selection based on proportions of missing data and the multiple imputation procedures are described in [Statistical models].  
 
 
 ## Exploratory analyses (optional)
@@ -565,11 +459,7 @@ Given the (expectedly) large sample size of contemporaneous measurements, we wil
 Example: We expect that certain demographic traits may be related to taste preferences. Therefore, we will look for relationships between demographic variables (age, gender, income, and marital status) and the primary outcome measures of taste preferences. -->
 
 
-@Brown2005 proposed in their integrative theory of intergroup contact that "group salience" should moderate the positive effect of intergroup contact on outgroup attitudes. They argue that especially when the outgroup membership is salient, the positive attitudes should generalize from the outgroup individual to the general outgroup. We have data to test this hypothesis within a large intensive longitudinal dataset of daily intergroup interactions. We do this by separately assessing attitudes towards the outgroup interaction partner and the outgroup generally. And by assessing whether perceiving the interaction as representative of the outgroup moderates the positive contact effects.
-
-To build confidence in our conclusions about the role of contact quality we calculate an alternative measure of interaction quality that includes perceived pleasantness, meaning, effectiveness, and importance of the interaction.
-
-We expect that certain contextual characteristics may be related to the positive effects of high quality outgroup interactions. Therefore, we will look for the effect of key need fulfillment on outgroup attitudes while also including information about the interaction partner (perceived closeness, trust, relationship), the interaction characteristics (duration, interaction language, group vs. dyadic), as well as characteristics of the key need (importance of the need, fulfillment due to the interaction partner).
+A recent alternative for trajectory dimension reduction has been the use of LSTM auto encoders. The encoder decoder classification procedure has the advantage of being extremely flexible in the use of the data set and could be interpreted in a similar way as the 3MPCA (see [Statistical models] 9).
 
 
 # Other
