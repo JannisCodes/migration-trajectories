@@ -74,34 +74,13 @@ Example: Effect of sugar on brownie tastiness. -->
 
 Example: Though there is strong evidence to suggest that sugar affects taste preferences, the effect has never been demonstrated in brownies. Therefore, we will measure taste preference for four different levels of sugar concentration in a standard brownie recipe to determine if the effect exists in this pastry. -->
 
-Two important developments, within the psychological sciences in general and in migration research in particular, have been (1) a shift towards more comprehensive assessment of human experiences and (2) a growing focus on longitudinal real-life data. Within the migration research field, recent reviews have been pushing for models that take into account affects, behaviors, cognitions, and desires when it comes to migrant adaptations [@Kreienkamp2022d; @Ward2019]. At the same time prominent figures in the field have called for studies that collect longitudinal [@Pettigrew1998; @Pettigrew2008; @Pettigrew2008b; @Pettigrew2011] and real-life experience-sampling data outside the lab [@MacInnis2015; @McKeown2017; @Dixon2005].
+Recent reviews have called for more comprehensive assessment of human experiences and for more longitudinal real-life data, within the psychological sciences more broadly and in migration research in particular [e.g., @Kreienkamp2022d; @MacInnis2015; @McKeown2017; @Pettigrew2011; @Ward2019]. However, while generally speaking analytical methods for such, more complex, data have become more readily available [e.g., @ODonnell2021], it remains unclear how we should identify key developmental patterns --- especially across multiple variables at the same time.
 
-In the past, such data collections were often unfeasible because they were either physically impractical or too expensive. However, recent technological developments now allow us to easily collect large amounts of experience sampling data on mobile devices [e.g., @Keil2020] or using web-based applications [@Arslan2020]. And while generally speaking analytical methods for such, more complex, data have become more readily available [e.g., @ODonnell2021], it remains unclear how we should identify key developmental patterns --- especially across multiple variables at the same time (i.e., multiple aspects). In essence, the new extensive longitudinal data comes with new forms of heterogeneity when jointly considering differences between people, over time, and across variables. Yet, past analytical advances have almost exclusively pushed for stationary lagged regression models^[meaning models that assume stable means and variances over time; e.g., vector autoregression models, dynamic structural equation models, autoregressive integrated moving average models, and cross-lagged panel analyses] or basic trajectory models^[e.g., mixed effects models, spline regression models, and latent growth curve modeling.]. 
-And while these two approaches are important for inferential model testing, both approaches ignore the more fundamental task of describing and unraveling the developmental data patterns.  
-And while these two approaches are important for inferential model testing, we still miss methods for the more fundamental task of describing and unraveling the developmental data patterns. 
+In essence, the novel extensive longitudinal datasets come with new forms of heterogeneity, where we have to consider differences between people, over time, and across variables. Yet, past analytical advances have almost exclusively pushed for top-down inferential modeling procedures^[For example, stationary lagged regression models that assume stable means and variances over time (incl., vector autoregression models, dynamic structural equation models, autoregressive integrated moving average models, and cross-lagged panel analyses) or basic trajectory models (e.g., mixed effects models, spline regression models, and latent growth curve modeling).]. And while inferential model testing is certainly important, we still miss discussions of methods for the more fundamental task of describing, summarizing, and understanding the developmental data patterns. 
 
-Such descriptive methods are not merely important for hypothesis generation, but also for identifying and understanding adaptive and maladaptive patterns. We we need to identify which variables are most important in the adaptation of migrants, we need methods to identify clusters of similar individuals and developments, and we need to assess whether such clusters differ in key adaptation markers (including, well-being, intergroup anxiety, outgroup trust, or societal participation). 
+As an example, little data has thus far investigated the development of migration experiences and no research has assessed the co-development of multiple experience aspects. Yet, understanding how people differ in their migration trajectories, can be crucial in understanding adaptive and maladaptive patterns. We we need to identify which variables are most important in the adaptation of migrants, we need methods to identify clusters of similar individuals and developments, and we need to assess whether such clusters differ in key adaptation markers (including, well-being, intergroup anxiety, outgroup trust, or societal participation). There is, thus, a clear need to assess the utility of analysis procedures focused on the description and understanding of complex dynamical data. 
 
-We recently conducted three experience sampling studies, following the migration experiences of recent migrants to the Netherlands. In this manuscript, we aim to assess the utility of an analytical methods that has recently received increasing attention for simultaneously decomposing/considering person-, variable-, and time heterogeneity. The proposed three mode principle component analysis is of particular interest because its approach mirrors the famous data box of participants, variables, and measurement occasions (Catell's data box) for understanding psychological data.
-
-
-
-Problem: HOWEVER, ...
-
-* unclear how do deal with this more complex data (many variables, persons, and time points).
-  + many different variables could be important.
-  + how to consider them jointly (e.g., VAR, DSEM, ARIMA, cross-lagged panel analysis for testing model predictions, limited to specified lag and mean stationarity; Trajectory focused: mixed effects model, spline regressions, latent growth curve modeling, limited: often univariate outcome). At the same time, analytical methods for such more complex data have become more readily available, making the analyses more approachable [@ODonnell2021]. 
-* heterogeneity between people, over time, and across variables.
-* **unclear how to identify core/important developments.** Especially across multiple variables at he same time (i.e., multiple aspects).
-* unclear which variables, time scales, and methods are useful in practice.
-
-
-Solution:   
-
-* 3MPCA uses the data cube   
-
-
-little data has thus far investigated the development of migration experiences and no research has assessed the co-development of multiple experience aspects. Yet, understanding how people differ in their migration trajectories, can be crucial in understanding adaptive and maladaptive patterns. Simultaneously clustering the person-, experience aspect-, and time level of migration experiences, using a three mode PCA, may allow to identify clusters of similar developments and whether these clusters differ in key adaptation markers (including, well-being, anxiety, trust, or societal inclusion).
+In this manuscript, we aim to assess the utility of one such promising analysis for the use of social psychological experience sampling data. Recent studies have laid out the potential effectiveness of dimension reduction procedures, which can address the new forms of person-, variable-, and time point heterogeneity jointly [i.e., three-mode principle component analyses, 3MPCA; e.g., @Monden2015]. We will, particularly, analyse three experience sampling studies, which followed the migration experiences of recent migrants to the Netherlands.
 
 
 ## Hypotheses
@@ -109,7 +88,7 @@ little data has thus far investigated the development of migration experiences a
 
 Example: If taste affects preference, then mean preference indices will be higher with higher concentrations of sugar. -->
 
-We do not have hypotheses in the traditional sense. Our analysis plan is based on the aim of describing and understanding a complex data set of extensive longitudinal data. We propose that the dimension reduction procedure we employ will identify meaningful patterns and developments within the data, which are useful to migration researchers and practitioners.    
+We do not have hypotheses in the traditional sense. Our analysis plan is based on the aim of describing, summarizing, and understanding a complex data set of extensive longitudinal data. We propose that the dimension reduction procedure we employ will identify meaningful patterns and developments within the data, which are useful to migration researchers and practitioners.    
 
 # Design Plan
 <!-- In this section, you will be asked to describe the overall design of your study. Remember that this research plan is designed to register a single study, so if you have multiple experimental designs, please complete a separate preregistration. -->
@@ -185,9 +164,9 @@ For the third study, participants had the option of continuing the study for an 
 
 Example: Our target sample size is 280 participants. We will attempt to recruit up to 320, assuming that not all will complete the total task. -->
 
-For Study 1 (initial preliminary study) our target sample size is a sum of 1,000 daily diary measurements. As we expected a completion rate of around 80% we aimed to recruite 20 participants (20 participants X 50 measurements). We ultimately over-sampled slightly to compensate for potential drop outs given the length and intensity of the study. We then used several key relationships (relevant to the broader research team) to estimate sufficient power for a range of different analyses (i.e., using power simulations). 
+For Study 1 (initial preliminary study) our target sample size is a sum of 1,000 daily diary measurements. As we expected a completion rate of around 80% we aimed to recruite 20 participants (20 participants X 50 measurements). We further over-sampled slightly to compensate for potential drop outs given the length and intensity of the study. 
 
-For Studies 2 and 3, our target sample size is a sum of 4,000 daily diary measurements. With 100% completion rate that would be archived with 67 participants (60 daily diary responses each). Given that we expect some incomplete daily diary measurements, we aimed to recruit 80 participants. For both studies we again over-sampled slightly to account for expected drop outs within each target population.
+We then used several key relationships (relevant to the broader research team) to estimate sufficient power for a range of different analyses (i.e., using power simulations). Based on these power simulations, for Studies 2 and 3, our target sample size was a sum of 4,000 daily diary measurements. With 100% completion rate that would be archived with 67 participants (60 daily diary responses each). Given that we expect some incomplete daily diary measurements, we aimed to recruit 80 participants. For both studies we again over-sampled slightly to account for expected drop outs within each target population.
 
 ## Sample size rationale
 <!-- This could include a power analysis or an arbitrary constraint such as time, money, or personnel. This gives you an opportunity to specifically state how the sample size will be determined. A wide range of possible answers is acceptable; remember that transparency is more important than principled justifications. If you state any reason for a sample size upfront, it is better than stating no reason and leaving the reader to "fill in the blanks." Acceptable rationales include: a power analysis, an arbitrary number of subjects, or a number based on time or monetary constraints.
@@ -207,7 +186,7 @@ You may specify a stopping rule based on p-values only in the specific case of s
 
 Example: We will post participant sign-up slots by week on the preceding Friday night, with 20 spots posted per week. We will post 20 new slots each week if, on that Friday night, we are below 320 participants. -->
 
-Participants were recruited until the targeted participant number finish the pre-measurement. Invitations to complete additional daily diary measurements (in Study 3) were extended until participants chose to leave the study or at the most until two months (i.e., 64 days) after the initial entry survey (i.e., from the pre measurement survey).
+Participants were recruited until the targeted number of participant finished the pre-measurement. Invitations to complete additional daily diary measurements (in Study 3) were extended until participants chose to leave the study or at the most until two months (i.e., 64 days) after the initial entry survey (i.e., from the pre measurement survey).
 
 # Variables
 <!-- In this section you can describe all variables (both manipulated and measured variables) that will later be used in your confirmatory analysis plan. In your analysis plan, you will have the opportunity to describe how each variable will be used. If you have variables which you are measuring for exploratory analyses, you are not required to list them, though you are permitted to do so. -->
@@ -228,10 +207,10 @@ Observational studies and meta-analyses will include only measured variables. As
 
 Example: The single outcome variable will be the perceived tastiness of the single brownie each participant will eat. We will measure this by asking participants ‘How much did you enjoy eating the brownie’ (on a scale of 1-7, 1 being 'not at all', 7 being 'a great deal') and 'How good did the brownie taste' (on a scale of 1-7, 1 being 'very bad', 7 being 'very good'). -->
 
-Given the circumstance that we utilize three independent experience sampling studies for our analyses, the variables are at times slightly different between studies. Additionally, given that the analysis we aim to undertake (i.e., 3MPCA) uses a large number of variables for the multiple imputations, dimension reduction, and correlational analyses, we will not list all items individually. Instead, we provide full variable information is available in the following data sheets: 'VariableSelectionDaily.xlsx' and 'VariableSelectionPrePost.xlsx'. 
+Given the circumstance that we utilize three independent experience sampling studies for our analyses, the variables are at times slightly different between studies. Additionally, given that the analysis we aim to undertake (i.e., 3MPCA) uses a large number of variables for the multiple imputations, dimension reduction, and correlational analyses, we will not list all items individually. Instead, we provide full variable information in the following data sheets: 'VariableSelectionDaily.xlsx' and 'VariableSelectionPrePost.xlsx'. 
 
 **Key variables**  
-Most of the variables are identical across all studies, however some differ slightly in content or wording. However, for each study we aimed to collect the following types of variables. We collected substantially more motivational and affecive variables, as they have been understudied in the past.  
+Most of the variables are identical across all studies, however some differ slightly in content or wording. However, for each study we aimed to collect the following types of variables.   
 
 1. Motivational variables
     a. core motive fulfillment (i.e., "_During your interaction with -X- (/this morning) your goal (-TEXT-) was fulfilled._")
@@ -246,7 +225,9 @@ Most of the variables are identical across all studies, however some differ slig
 1. Cognitive measures
     a. outgroup attitude ("_After the interaction, how favorably do you feel towards … / At the moment, how favorably do you feel towards …  the Dutch._")
     a. Allport's contact condition perceptions (i.e., equal status, shared goal, cooperative, voluntary)
-    a. interaction quality ratings (e.g., "_Overall, the interaction was... Unpleasant to Pleasant_")
+    a. interaction quality ratings (e.g., "_Overall, the interaction was... Unpleasant to Pleasant_")  
+
+It should be noted, that we collected substantially more motivational and affecive variables, as they have been understudied in the past.
 
 **Interpretation correlation variables**  
 To interpret the components identified by the 3MPCA, we would like to correlate the component scores with a range of person- or time point specific variables. While the full list of variables is available in the accompanying data sheets (see 'VariableSelectionDaily.xlsx' and 'VariableSelectionPrePost.xlsx'), we provide a few examples of the targeted categories below.  
@@ -274,7 +255,7 @@ To interpret the components identified by the 3MPCA, we would like to correlate 
 
 
 **Auxiliary variables for multiple imputation**  
-For the missing data imputation we follow the procedure reported by @Monden2015, and include any pre-, post-, or daily dairy variables that are significantly ($p$ < .01) and meaningfully ($r$ > .3) correlated with (1) the key variables or (2) missingness on the key variables. For an overview of the variables that qualify as auxiliary variables see the enclosed data sheets (see 'VariableSelectionDaily.xlsx' and 'VariableSelectionPrePost.xlsx'). Additional information about the multiple imputation procedure is also available at [Statistical models] 2.  
+For the missing data imputation we follow the procedure reported by @Monden2015, and include any pre-, post-, or daily dairy variables that are significantly ($p$ < .01) and meaningfully ($r$ > .3) correlated with either the key variables or missingness on the key variables. For an overview of the variables that qualify as auxiliary variables see the enclosed data sheets (see 'VariableSelectionDaily.xlsx' and 'VariableSelectionPrePost.xlsx'). Additional information about the multiple imputation procedure is also available at [Statistical models] 2.  
 
 _We also provide an exemplary codebook (using Study 3 as an example; see 'Codebook_AOT-M_ItemsPerSection.xlsx'). The full survey files will be available as part of the main OSF repository connected to this preregistration._
 
@@ -333,10 +314,10 @@ This is perhaps the most important and most complicated question within the prer
 
 Example:  We will use a one-way between subjects ANOVA to analyze our results. The manipulated, categorical independent variable is 'sugar' whereas the dependent variable is our taste index. -->
 
-In our analysis, we follow the procedure outlined by @Monden2015
+For our analysis, we adapt the procedures outlined by @Monden2015:
 
-1. **Sample Selection.** Our sample selection consists of three main steps. We (1) aggregate the key variables over time to archive a reasonably interpretable number of time points and the remove a first proportion of missing data. We then address the selection of time point and participants. Given that multiple imputation procedures even work well with large proportions of missing data [assuming missingness at random; @Madley-Dowd2019], we decided on a general criterion of less than 45% missingness to balance sample size retention and bias in the multiple imputation model. Thus, we then (2) select the time points for which we have responses from 55% of the participants and (3) select participants who have responded to at least 55% of the surveys across the selected time range.
-    1. Time point aggregation: Given that little data is available on the meaningful time scales of the selected psychological variables, we chose to choose the appropriate time scales using variance decomposition [e.g., see @Ram2014]. This is to say that we create multi-level unconditional means models (without predictors) that include possible nested time scales as levels. For example, assess the explained variances for measurements nested in days, nested in weeks, nested in months. 
+1. **Sample Selection.** Our sample selection consists of three main steps. We (a) aggregate the key variables over time to archive a reasonably interpretable number of time points and the remove a first proportion of missing data. We then address the selection of time point and participants. Given that multiple imputation procedures even work well with large proportions of missing data [assuming missingness at random; @Madley-Dowd2019], we decided on a general criterion of less than 45% missingness to balance sample size retention and bias in the multiple imputation model. Thus, we then (b) select the time points for which we have responses from 55% of the participants and (c) select participants who have responded to at least 55% of the surveys across the selected time range.
+    a. **Time point aggregation:** Given that little data is available on the meaningful time scales of the selected psychological variables, we chose to determine the appropriate time scales using variance decomposition [e.g., see @Ram2014]. This is to say that we create multi-level unconditional means models (without predictors) that include possible nested time scales as levels. We, for example, assess the explained variances for measurements nested in days, nested in weeks, nested in months. 
     \fbox{
     \parbox{0.5\linewidth}{%
     Potentially nested measurements:\\
@@ -372,7 +353,7 @@ In our analysis, we follow the procedure outlined by @Monden2015
 \textbf{Question:}  What is the DV of the three-way ANOVA?
 }}
 \]
-4. **Data preprocessing.** For the three mode PCA, we center (across participants but within time point) and to normalize (within variable but across time points) all key variables. The between-person centering, ensures that all variations are around the mean trend (which is removed by the centering). The normalization within variable are important for ensuring equal variances across variables, which ensures equal weighting of the variables in the 3MPCA. For methodological detail see [Transformations].
+4. **Data preprocessing.** For the three mode PCA, we center (across participants but within time point) and normalize (within variable but across time points) all key variables. The between-person centering, ensures that all variations are around the mean trend (which is removed by the centering). The normalization within variable are important for ensuring equal variances across variables, which ensures equal weighting of the variables in the 3MPCA. For methodological detail see [Transformations].
 5. **Selection of 3MPCA model complexity** We then run the 3MPCA. We use a generalized scree plot to select the appropriate number of components for each of the three modes (i.e., person, variable, time). To test the stability of the solution results are compared across the 20 imputed datasets.
 \[
 \fbox{%
@@ -390,7 +371,7 @@ In our analysis, we follow the procedure outlined by @Monden2015
 7. **Generalized Procrustes rotation.** In order to combine the three individual component structure from the 20 data sets, we use a generalized Procrustes rotation --- calculating the average of each compontent and core array.
 <!-- The 3PCA model has been proposed by Tucker [114]. Given an array X of order I×J×K, 3PCA determines component matrices for each of the three modes (individuals, variables and occasions) and a three-way array called the core array, which holds the weights for the joint impact of any triple of components (one from each mode). -->
 8. **Explained variance.** As fit indices we then calculate (1) fit percentage of the estimated array for each imputed data set (i.e., explained variance around the removed general trend) as well as (2) an _overall_ fit percentage of the estimated array (i.e., explained variance including the general trend). Both these fit metrices should give an indication of how much of the original variance the reduced component structure was able to capture.
-9. **Component interpretation** To embed and interpret the resulting components (especially the person components), we calculate correlations of the component scores with key adaptation markers (including, well-being, anxiety, trust, or societal inclusion). If components remain unclear still we can additionally perform k-means clustering on the lower dimensional space to identify clearer groups which can be compared on the adaptation markers if necessary.
+9. **Component interpretation** To embed and interpret the resulting components (especially the person components), we calculate correlations of the component scores with key adaptation markers (including, well-being, anxiety, trust, or societal inclusion). If components remain unclear still we can additionally perform k-means clustering on the lower dimensional space to identify clearer groups, which can be compared on the adaptation markers if necessary.
 
 ## Transformations
 <!-- If you plan on transforming, centering, recoding the data, or will require a coding scheme for categorical variables, please describe that process. If any categorical predictors are included in a regression, indicate how those variables will be coded (e.g. dummy coding, summation coding, etc.) and what the reference category will be.
@@ -404,9 +385,9 @@ Example: The "Effect of sugar on brownie tastiness" does not require any additio
 \setlength{\abovedisplayshortskip}{0pt}
 \setlength{\belowdisplayshortskip}{0pt}
 
-For three mode PCA it is custom to center (across participants but within time point) and to normalize (within variable but across time points). This is done to create a meaningful zero value for each time point (to compare participants) and a variance of 1 across all time points of a variable (removing any overall trends).
+For three-mode PCA it is custom to center (across participants but within time point) and to normalize (within variable but across time points). This is done to create a meaningful zero value for each time point (to compare participants) and a variance of 1 across all time points of a variable (ensuring equal weightin of variables in the 3MPCA).
 
-We provide the main equations of the procedure below, where individual $i$ ($i = 1,\ ...,\ I$) reported variable $k$ ($k = 1,\ ...,\ K$) at time point $t$ ($t = 1,\ ...,\ T$), so that $I$=number of persons, $K$=number of items, $T$=number of time points are within the dataset. For further information as well as an example illustration see Supplemental Material 3 in @Monden2015.
+We provide the main equations of the procedure below, where individual $i$ ($i = 1,\ ...,\ I$) reported variable $k$ ($k = 1,\ ...,\ K$) at time point $t$ ($t = 1,\ ...,\ T$), so that $I$=number of persons, $K$=number of items, $T$=number of time points within the dataset. For further information as well as an example illustration see Supplemental Material 3 in @Monden2015.
 
 \begin{equation} \label{eq:Mean}
   \overline{x}_{kt} =  \sum_{i=1}^I x_{ikt}
@@ -428,8 +409,8 @@ p-values, confidence intervals, and effect sizes are standard means for making a
 
 Example: We will use the standard p<.05 criteria for determining if the ANOVA and the post hoc test suggest that the results are significantly different from those expected if the null hypothesis were correct. The post-hoc Tukey-Kramer test adjusts for multiple comparisons. -->
 
-Many of the proposed procedures are more descriptive rather then inferential. Importantly, we will use amounts of variances explained as our main fit indices. 
-If we perform inferential analyses, we will use the standard p<.05 criteria for determining whether the correlation and regression coefficients are statistically significant. We will place particular emphasis on effect sizes in our interpretations of the results.
+Many of the proposed procedures are descriptive rather then inferential. Importantly, we will use amounts of variances explained as our main fit indices. 
+If we perform inferential analyses, we will use the standard p<.05 criteria for determining whether the correlation and regression coefficients are statistically significant. We will place particular emphasis on effect sizes in our interpretations of the results wherever necessary.
 
 ## Data exclusion
 <!-- How will you determine what data or samples, if any, to exclude from your analyses? How will outliers be handled? Will you use any awareness check? Any rule for excluding a particular set of data is acceptable. One may describe rules for excluding a participant or for identifying outlier data.
