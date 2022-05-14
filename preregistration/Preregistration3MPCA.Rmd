@@ -228,78 +228,55 @@ Observational studies and meta-analyses will include only measured variables. As
 
 Example: The single outcome variable will be the perceived tastiness of the single brownie each participant will eat. We will measure this by asking participants ‘How much did you enjoy eating the brownie’ (on a scale of 1-7, 1 being 'not at all', 7 being 'a great deal') and 'How good did the brownie taste' (on a scale of 1-7, 1 being 'very bad', 7 being 'very good'). -->
 
-**Key variables:**
+Given the circumstance that we utilize three independent experience sampling studies for our analyses, the variables are at times slightly different between studies. Additionally, given that the analysis we aim to undertake (i.e., 3MPCA) uses a large number of variables for the multiple imputations, dimension reduction, and correlational analyses, we will not list all items individually. Instead, we provide full variable information is available in the following data sheets: 'VariableSelectionDaily.xlsx' and 'VariableSelectionPrePost.xlsx'. 
+
+**Key variables**  
+Most of the variables are identical across all studies, however some differ slightly in content or wording. However, for each study we aimed to collect the following types of variables. We collected substantially more motivational and affecive variables, as they have been understudied in the past.  
+
+1. Motivational variables
+    a. core motive fulfillment (i.e., "_During your interaction with -X- (/this morning) your goal (-TEXT-) was fulfilled._")
+    a. goal importance ratings of 10 individual goals (e.g., "_career goals_", "_health / fitness goals_")
+    a. self determination theory needs (i.e., autonomy, relatedness, competence)
+1. Affective states
+    a. experienced well-being (happiness, energy)
+    a. general emotional state scale (e.g., "_How do you feel right now? not angry at all to very angry_")
+1. Behavioral self-reports (Studies 2 and 3)
+    a. pro-social behavior (e.g., "_Made demeaning, rude or derogatory remarks about someone._")
+    a. anti-social behavior (e.g., "_I was there to listen to someone's problems._")
+1. Cognitive measures
+    a. outgroup attitude ("_After the interaction, how favorably do you feel towards … / At the moment, how favorably do you feel towards …  the Dutch._")
+    a. Allport's contact condition perceptions (i.e., equal status, shared goal, cooperative, voluntary)
+    a. interaction quality ratings (e.g., "_Overall, the interaction was... Unpleasant to Pleasant_")
+
+**Interpretation correlation variables**  
+To interpret the components identified by the 3MPCA, we would like to correlate the component scores with a range of person- or time point specific variables. While the full list of variables is available in the accompanying data sheets (see 'VariableSelectionDaily.xlsx' and 'VariableSelectionPrePost.xlsx'), we provide a few examples of the targeted categories below.  
+
+1. demographic variables
+    a. age
+    a. gender
+    a. ...
+1. societal participation
+    a. language comprehension and -use
+    a. work inclusion
+    a. ...
+1. adaptation indicators
+    a. social identification
+    a. intergroup anxiety
+    a. ...
+1. everyday life obstacles
+    a. discrimination experiences
+    a. negative life events
+    a. ...
+1. individual differences
+    a. big five personality scores
+    a. attachment style
+    a. ...
 
 
+**Auxiliary variables for multiple imputation**  
+For the missing data imputation we follow the procedure reported by @Monden2015, and include any pre-, post-, or daily dairy variables that are significantly ($p$ < .01) and meaningfully ($r$ > .3) correlated with (1) the key variables or (2) missingness on the key variables. For an overview of the variables that qualify as auxiliary variables see the enclosed data sheets (see 'VariableSelectionDaily.xlsx' and 'VariableSelectionPrePost.xlsx'). Additional information about the multiple imputation procedure is also available at [Statistical models] 2.  
 
-
-1. Whether an interaction happened during the past daytime period
-    a. Did you meet a Dutch person this [morning/afternoon]?
-    a. Did you meet a Non-Dutch person [morning/afternoon]?
-1. Number of interactions during the past daytime period
-    a. How many interactions with Dutch people did you have this [morning/afternoon]?
-    a. How many interactions with Non-Dutch people did you have this [morning/afternoon]?
-1. Key need assessment
-    a. What was your main goal during the interaction with [name interaction partner]?
-    a. During the interaction with [name interaction partner] your goal [free-text entry interaction key need] was fulfilled.
-1. Allport's Conditions (equal status, common goal, collaboration, and structural support)
-    a. The interaction with [name interaction partner] was on equal footing (same status)
-    a. [name interaction partner] shared your goal ([free-text entry interaction key need])
-    a. The interaction with [name interaction partner] was cooperative
-    a. The interaction with [name interaction partner] was voluntary
-1. Interaction Quality
-    a. Overall, the interaction with [name interaction partner] was: Unpleasant to Pleasant
-1. Outgroup Attitudes
-    a. After the interaction, how favorably do you feel towards the Dutch.
-
-
-**Control variables:**
-
-1. Self Determination Theory needs ("During the interaction with [name interaction partner]")
-    a. I was myself.
-    a. I felt competent.
-    a. I shared information about myself. 
-    a. [name interaction partner] shared information about themselves.
-1. General key need during daytime
-    a. What was your main goal during this [morning/afternoon]?
-    a. During this [morning/afternoon] your goal ([free-text entry daytime key need]) was fulfilled
-    a. How important was your goal ([free-text entry daytime key need]) to you:
-1. Student Goals ("Please rate the importance of each goal during the interaction with [name interaction partner]"):
-    a. Social support / social connection goals
-    a. Romantic or sexual relationship goals
-    a. Academic goals
-    a. Career goals
-    a. Financial goals
-    a. Health / fitness goals
-    a. Leisure / fun goals
-    a. Personal improvement / growth goals
-    a. Service / helping goals
-    a. Spiritual / religious goals
-
-
-**Additional Analyses:**
-
-1. Generalization from interaction partner to outgroup
-    a. After the interaction, how favorably do you feel towards [name interaction partner].
-    a. The interaction with [name interaction partner] was representative of the Dutch.
-1. Alternative interaction quality definition ("Overall, the interaction with [name interaction partner] was ...")
-    a. Unpleasant to Pleasant
-    a. Superficial to Meaningful
-    a. Ineffective to Effective
-    a. Unimportant to Important
-1. Potential moderation by the relationship with interaction partner
-    a. How close do you feel to [name interaction partner]?
-    a. How much do you trust [name interaction partner]?
-    a. What is your relationship with [name interaction partner]?
-1. Potential moderation by key need characteristics
-    a. [name interaction partner] helped fulfill your goal [free-text entry interaction key need].
-    a. How important was your goal ([free-text interaction key need]) to you?
-1. Potential moderation by the interaction characteristics
-    a. How long was the interaction? (in minutes)
-    a. What was the main language during the interaction?
-    a. The interaction was: With a single other / In a group
-    
-_Full variable information is available in the codebook ('Codebook_AOT-M_ItemsPerSection.xlsx')_
+_We also provide an exemplary codebook (using Study 3 as an example; see 'Codebook_AOT-M_ItemsPerSection.xlsx'). The full survey files will be available as part of the main OSF repository connected to this preregistration._
 
 ## Indices
 <!-- If any measurements are  going to be combined into an index (or even a mean), what measures will you use and how will they be combined? Include either a formula or a precise description of your method. If your are using a more complicated statistical method to combine measures (e.g. a factor analysis), you can note that here but describe the exact method in the analysis plan section.
@@ -321,6 +298,23 @@ Example: We will take the mean of the two questions above to create a single mea
     a. Superficial to Meaningful
     a. Ineffective to Effective
     a. Unimportant to Important
+1. Mood Subscales (MDMQ)
+    a. alertness
+    a. calmness
+    a. valence
+1. Mean anti-social behaviors
+    a. Put someone down
+    a. Show little attention in someones opinion
+    a. Demeaning remarks
+    a. Inappropriately addressing someone
+    a. Ignored or excluded someone
+    a. Doubt someones judgement
+    a. Unwanted attempts of personal matters
+1. Mean pro-social behaviors
+    a. Listen to someones problems
+    a. Cheer someone up
+    a. Help someone get things done
+    a. Help someone with responsibilities
 
 
 # Analysis Plan
