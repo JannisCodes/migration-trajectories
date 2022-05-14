@@ -296,6 +296,8 @@ Example: We will take the mean of the two questions above to create a single mea
     a. Cheer someone up
     a. Help someone get things done
     a. Help someone with responsibilities
+    
+Additionally, in the pre- and post-measurement surveys are several validated scales that we will combine into their sub-scales whenever possible and necessary of the correlation analyses in [Statistical models] 9. Indices will be created in line with the accompanying validation literature.  
 
 
 # Analysis Plan
