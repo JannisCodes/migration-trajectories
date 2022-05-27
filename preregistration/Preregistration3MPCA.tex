@@ -36,9 +36,9 @@ bookmarks=true,
 pdfauthor={},
 pdftitle={Migration Experience Trajectories: A Three Mode Principle Component Analysis},
 colorlinks=true,
-citecolor=blue,
-urlcolor=blue,
-linkcolor=magenta,
+citecolor=BlueViolet,
+urlcolor=BlueViolet,
+linkcolor=BlueViolet,
 pdfborder={0 0 0}}
 \urlstyle{same}  % don't use monospace font for urls
 \usepackage{natbib}
@@ -95,7 +95,7 @@ of Advanced Science and Engineering      }
   \def\affcity{{"", "", "", "", "", ""}}%
   \preauthor{\begin{changemargin}{-8pc}{0pc} \centering\large}
   \postauthor{\end{changemargin}}
-\date{21. May 2022}
+\date{27. May 2022}
 \predate{\begin{changemargin}{-8pc}{0pc} \centering\large\emph}
 \postdate{\end{changemargin}}
 \usepackage{fancyhdr}
@@ -180,55 +180,73 @@ the same time.
 In essence, the novel extensive longitudinal datasets come with new
 forms of heterogeneity, where we have to consider differences between
 people, over time, and across variables. Yet, past analytical advances
-have almost exclusively pushed for top-down inferential modeling
+have almost exclusively pushed for inferential modeling
 procedures\footnote{For example, stationary lagged regression models
   that assume stable means and variances over time (incl., vector
-  \change{autoregression}{autoregressive} models, dynamic structural
-  equation models, autoregressive integrated moving average models, and
-  cross-lagged panel analyses) or basic trajectory models (e.g., mixed
-  effects models, spline regression models, and latent growth curve
-  modeling).}. And while inferential model testing is certainly
-important, we still miss discussions of methods for the more fundamental
-task of describing, summarizing, and understanding the developmental
-data patterns.
+  autoregressive models, dynamic structural equation models,
+  autoregressive integrated moving average models, and cross-lagged
+  panel analyses) or basic trajectory models (e.g., mixed effects
+  models, spline regression models, and latent growth curve modeling).}.
+And while inferential model testing is certainly important, we still
+miss discussions of methods for the more fundamental task of describing,
+summarizing, and understanding the initial developmental data patterns.
 
-As an example, little data has thus far investigated the development of
-migration experiences and no research has assessed the co-development of
-multiple experience aspects. Yet, understanding how people differ in
-their migration trajectories, can be crucial in understanding adaptive
-and maladaptive patterns. \remove{We we need}\change{t}{T}o identify
-which variables are most important in the adaptation of migrants
-\add{over time}, we need methods to
-\change{identify clusters of similar individuals and developments}{break down the data heterogeneity into its core components (in terms of important variables and developments)}
-and we need \change{
-to assess whether such clusters differ in}{ways to identify how these core components relate to}
-key adaptation markers (including, well-being, intergroup anxiety,
-outgroup trust, or societal participation). There is, thus, a clear need
-to assess the utility of analysis procedures focused on the description
-and understanding of complex dynamical data.
+As an example, a recent review of migration experiences has pointed out
+that despite many complex and dynamic theories, investigations of
+migrant adaptation have undervalued developmental data --- especially
+when it comes to the more internal experiences of motivations and
+emotions \citep{Kreienkamp2022d}. Yet, understanding how people differ
+in their migration trajectories, can be crucial in understanding
+adaptive and maladaptive patterns. To identify which variables are most
+important in the adaptation of migrants over time, we need methods to
+break down the data heterogeneity into its core components (in terms of
+important variables and developments) and we need ways to identify how
+these core components relate to key adaptation markers (including,
+well-being, intergroup anxiety, outgroup trust, or societal
+participation). There is, thus, a clear need to assess the utility of
+analysis procedures focused on the description and understanding of
+complex dynamical data.
 
 In this manuscript, we aim to assess the utility of one such promising
-analysis for the use of social psychological experience sampling data.
-Recent studies have laid out the potential effectiveness of dimension
-reduction procedures, which can address the new forms of person-,
-variable-, and time point heterogeneity jointly \citep[i.e., three-mode
-principle component analyses, 3MPCA; e.g.,][]{Monden2015}.
+analysis technique --- \textit{three-mode principle component analysis}
+(3MPCA). We use 3MPCA specifically because recent studies have laid out
+the potential effectiveness of dimension reduction procedures, which can
+address the new forms of person-, variable-, and time point
+heterogeneity jointly \citep[e.g.,][]{Monden2015}. We are among the
+first to apply this analysis to experience sampling data and, to the
+best of our knowledge, we are the first to decompose social
+psychological experiences. This stands in stark contrast, to a renewed
+recognition that social psychological phenomena unfold over time, a
+rapid increase of extensive longitudinal data collections, and a growing
+interest in understanding the co-development of multiple experience
+aspects
+\citep[e.g.,][]{Kreienkamp2022d, MacInnis2015, McKeown2017, Pettigrew2011, Ward2019}.
 
-\change{We will, particularly,}{To this aim, we will} analyse the data
-from three experience sampling studies, which followed the migration
-experiences of recent migrants to the Netherlands.
-\add{All three studies focus on the psychological adaptation of migrants (i.e., psychological acculturation). However, given that past investigations of psychological acculturation have underexplored the crucial aspect of motivational experiences}
-\citep{Kreienkamp2022d}\add{, the three studies have places a particular emphasis on the needs, goals, and motives of young migrants.}
+To untangle the heterogeneity in real-life migrant adaptations, we will
+analyse data from three experience sampling studies, which followed the
+migration experiences of recent migrants to the Netherlands. All three
+studies focus on the psychological adaptation of migrants (i.e.,
+psychological acculturation). However, given that past investigations of
+psychological acculturation have underexplored the crucial aspect of
+motivational experiences \citep{Kreienkamp2022d}, the three studies have
+placed a particular emphasis on the needs, goals, and motives of young
+migrants. To make full use of all three data sets and to guide future
+use of dimension reduction procedures with extensive psychological data,
+we will analyze the data in a descriptive and step wise manner, where we
+first consider the data jointly and will then assess potential
+differences between datasets, variables, and time scales.
 
 \hypertarget{hypotheses}{%
 \subsection{Hypotheses}\label{hypotheses}}
 
 We do not have hypotheses in the traditional sense. Our analysis plan is
 based on the aim of describing, summarizing, and understanding a complex
-data set of extensive longitudinal data. We propose that the dimension
+set of extensive longitudinal data. We propose that the dimension
 reduction procedure we employ will identify meaningful patterns and
 developments within the data, which are useful to migration researchers
-and practitioners.
+and practitioners. An additional aim is to test the feasibility and
+utility of simultaneous dimension reduction procedures in experience
+sampling data.
 
 \hypertarget{design-plan}{%
 \section{Design Plan}\label{design-plan}}
@@ -239,7 +257,6 @@ and practitioners.
 \textbf{Observational Study}. Data is collected from study subjects that
 are not randomly assigned to a treatment. This includes surveys, natural
 experiments, and regression discontinuity designs.
-\note{Note: This is part of the OSF dropdown answer and we can't change the description.}
 
 \hypertarget{blinding}{%
 \subsection{Blinding}\label{blinding}}
@@ -249,13 +266,11 @@ No participant blinding is involved in this study.
 \hypertarget{study-design}{%
 \subsection{Study design}\label{study-design}}
 
-All three
-studies\note{Note: I now extended the introduction of the three studies in the end of the description section. So I hope this doesn't come out of the blue as much anymore.}
-used an extensive longitudinal design. Using a daily diary format, for
-at least 30 days participants received a short survey twice per day (at
-around 12pm and 7pm). We additionally included a longer pre- and post
-measurement survey the days before and after the extensive longitudinal
-data collection.
+All three studies used an extensive longitudinal design. Using a daily
+diary format, for at least 30 days participants received a short survey
+twice per day (at around 12pm and 7pm). We additionally included a
+longer pre- and post measurement survey the days before and after the
+extensive longitudinal data collection.
 
 \hypertarget{randomization}{%
 \subsection{Randomization}\label{randomization}}
@@ -284,15 +299,17 @@ accessed by the research team for an unrelated analysis
 \citep{Kreienkamp2022b}. Additionally, several of the variables were
 prepared for a graphical presentation of the dataset. Thus far, none of
 the proposed analyses have been conducted and none of the previous
-analyses have been related to dimension reductions
-\change{or longitudinal trajectories}{nor have any of the past analyses analysed the longitudinal nature of the data}.
+analyses have been related to dimension reductions or time-series
+modeling.
 
 \hypertarget{data-collection-procedures}{%
 \subsection{Data collection
 procedures}\label{data-collection-procedures}}
 
-\add{We collected three experience sampling studies, following the daily migration experiences of young migrants, who had recently arrived in the Netherlands. }For
-all three studies, the data was collected in a three-step procedure:
+We collected three experience sampling studies, following the daily
+migration experiences of young migrants, who had recently arrived in the
+Netherlands. For all three studies, the data was collected in a
+three-step procedure:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -329,19 +346,17 @@ For Study 1 (initial preliminary study) our target sample size is a sum
 of 1,000 daily diary measurements. As we expected a completion rate of
 around 80\% we aimed to recruite 20 participants (20 participants X 50
 measurements). We further over-sampled slightly to compensate for
-potential drop outs given the length and intensity of the study.
-\add{The total collected sample size was thus 23 participants.}
+potential drop outs given the length and intensity of the study. The
+total collected sample size of Study 1 was thus 1,225 survey responses
+from 23 participants.
 
-We then used several key relationships (relevant to the broader research
-team) to estimate sufficient power for a range of different analyses
-(i.e., using power simulations). Based on these power simulations, for
-Studies 2 and 3, our target sample size was a sum of 4,000 daily diary
-measurements. With 100\% completion rate that would be archived with 67
-participants (60 daily diary responses each). Given that we expect some
-incomplete daily diary measurements, we aimed to recruit 80
-participants. For \change{both studies}{Studies 2 and 3,} we again aimed
-to over-sampled slightly to account for expected drop outs.
-\add{We were ultimately able to recruited a total of 113 particpants for Study 2 and 71 participants for Study 3.}
+For Studies 2 and 3, our target sample size was a sum of 4,000 daily
+diary measurements each. With 100\% completion rate that would be
+archived with 67 participants (60 daily diary responses each). Given
+that we expect some incomplete daily diary measurements, we again
+over-sampled in both studies. In Study 2, we were ultimately able to
+collect 4,965 survey responses from 113 participants. In Study 3 we
+collected 4,107 survey responses from 71 participants.
 
 \hypertarget{sample-size-rationale}{%
 \subsection{Sample size rationale}\label{sample-size-rationale}}
@@ -356,11 +371,11 @@ daily diary measurements.
 Power considerations of mixed effects model such as with extensive
 longitudinal data are difficult to estimate because of the complex
 covariance structures. Simulation studies based on the first sample
-within this project indicated that with well-distributed scales, and
-small to medium effect sizes, 70-80 participants with at least seven
-daily diary measurements and a simple pre--post survey were sufficiently
-powerful (power = .8, alpha = .05) to answer most of the key research
-questions of the collaboration.
+indicated that with well-distributed scales, and small to medium effect
+sizes, 70-80 participants with at least seven daily diary measurements
+and a simple pre--post survey were sufficiently powerful (power = .8,
+alpha = .05) to answer most of the key research questions of the
+collaboration.
 
 The ultimate sampling procedure decision was made as a practical
 balancing of the number of participants and the number of measurements
@@ -396,9 +411,9 @@ variable information in the following data sheets:
 `VariableSelectionDaily.xlsx' and `VariableSelectionPrePost.xlsx'.
 
 \textbf{Key variables}\\
-\add{While} most of the variables are identical across all studies,
-\remove{however} some differ slightly in content or wording. However,
-for each study we aimed to collect the following types of variables.
+While most of the variables are identical across all studies, some
+differ slightly in content or wording. However, for each study we aimed
+to collect the following types of variables.
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -466,13 +481,16 @@ for each study we aimed to collect the following types of variables.
 It should be noted, that we collected substantially more motivational
 and affecive variables, as they have been understudied in the past.
 
+For the detailed variable selection of each analysis see
+`VariableSelectionAnalyses.xlsx'.
+
 \textbf{Interpretation correlation variables}\\
-To interpret the \add{person-mode} components identified by the 3MPCA,
-we would like to correlate the component scores with a range of person-
-or time point specific variables. While the full list of variables is
+To interpret the person-mode components identified by the 3MPCA, we
+would like to correlate the component scores with a range of person- or
+time point specific variables. While the full list of variables is
 available in the accompanying data sheets (see
-`VariableSelectionDaily.xlsx' and `VariableSelectionPrePost.xlsx'), we
-provide a few examples of the targeted categories below.
+`VariableSelectionAnalyses.xlsx'), we provide a few examples of the
+targeted categories below.
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -548,12 +566,11 @@ provide a few examples of the targeted categories below.
 For the missing data imputation we follow the procedure reported by
 \citet{Monden2015}, and include any pre-, post-, or daily dairy
 variables that are significantly (\(p\) \textless{} .01) and
-meaningfully (\(r\) \textgreater{} .3) correlated with either the key
+meaningfully correlated (\(r\) \textgreater{} .3) with either the key
 variables or missingness on the key variables. For an overview of the
 variables that qualify as auxiliary variables see the enclosed data
-sheets (see `VariableSelectionDaily.xlsx' and
-`VariableSelectionPrePost.xlsx'). Additional information about the
-multiple imputation procedure is also available at
+sheets (see `VariableSelectionAnalyses.xlsx'). Additional information
+about the multiple imputation procedure is also available at
 \protect\hyperlink{statistical-models}{Statistical models} 2.
 
 \emph{We also provide an exemplary codebook (using Study 3 as an
@@ -564,118 +581,45 @@ this preregistration.}
 \hypertarget{indices}{%
 \subsection{Indices}\label{indices}}
 
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  Mean Allport's conditions. We create a mean-averaged index of
-  Allport's conditions in response to past findings indicating that the
-  conditions are best conceptualized jointly and as functioning together
-  rather than as fully independent factors
-  \citep[p.~766]{Pettigrew2006}. Similar to past studies we thus hope to
-  build a global indicator \citep[e.g., see][]{Pettigrew2006}. As with
-  other indices we will ensure that the individual items indeed relate
-  to a common latent construct and are meaningfully combine\add{d} in an
-  index. If this is not possible we will create sub-indices and/or
-  assess the impact of the conditions separately.
-
-  \begin{enumerate}
-  \def\labelenumii{\alph{enumii}.}
-  \tightlist
-  \item
-    The interaction with {[}name interaction partner{]} was on equal
-    footing (same status)
-  \item
-    {[}name interaction partner{]} shared your goal ({[}free-text entry
-    interaction key need{]})
-  \item
-    The interaction with {[}name interaction partner{]} was cooperative
-  \item
-    The interaction with {[}name interaction partner{]} was voluntary
-  \end{enumerate}
-\item
-  Mean belongingness during intergroup contact
-
-  \begin{enumerate}
-  \def\labelenumii{\alph{enumii}.}
-  \tightlist
-  \item
-    I shared information about myself.
-  \item
-    {[}name interaction partner{]} shared information about themselves.
-  \end{enumerate}
-\item
-  Mean alternative interaction quality definition (``Overall, the
-  interaction with {[}name interaction partner{]} was \ldots{}'')
-
-  \begin{enumerate}
-  \def\labelenumii{\alph{enumii}.}
-  \tightlist
-  \item
-    Unpleasant to Pleasant
-  \item
-    Superficial to Meaningful
-  \item
-    Ineffective to Effective
-  \item
-    Unimportant to Important
-  \end{enumerate}
-\item
-  Mood Subscales (MDMQ)
-
-  \begin{enumerate}
-  \def\labelenumii{\alph{enumii}.}
-  \tightlist
-  \item
-    alertness
-  \item
-    calmness
-  \item
-    valence
-  \end{enumerate}
-\item
-  Mean anti-social behaviors
-
-  \begin{enumerate}
-  \def\labelenumii{\alph{enumii}.}
-  \tightlist
-  \item
-    Put someone down
-  \item
-    Show little attention in someones opinion
-  \item
-    Demeaning remarks
-  \item
-    Inappropriately addressing someone
-  \item
-    Ignored or excluded someone
-  \item
-    Doubt someones judgement
-  \item
-    Unwanted attempts of personal matters
-  \end{enumerate}
-\item
-  Mean pro-social behaviors
-
-  \begin{enumerate}
-  \def\labelenumii{\alph{enumii}.}
-  \tightlist
-  \item
-    Listen to someones problems
-  \item
-    Cheer someone up
-  \item
-    Help someone get things done
-  \item
-    Help someone with responsibilities
-  \end{enumerate}
-\end{enumerate}
+˜ 1. Mean Allport's conditions. We create a mean-averaged index of
+Allport's conditions in response to past findings indicating that the
+conditions are best conceptualized jointly and as functioning together
+rather than as fully independent factors \citep[p.~766]{Pettigrew2006}.
+Similar to past studies we thus hope to build a global indicator
+\citep[e.g., see][]{Pettigrew2006}. As with other indices we will ensure
+that the individual items indeed relate to a common latent construct and
+are meaningfully combined in an index. If this is not possible we will
+create sub-indices and/or assess the impact of the conditions
+separately. a. The interaction with {[}name interaction partner{]} was
+on equal footing (same status) a. {[}name interaction partner{]} shared
+your goal ({[}free-text entry interaction key need{]}) a. The
+interaction with {[}name interaction partner{]} was cooperative a. The
+interaction with {[}name interaction partner{]} was voluntary 1. Mean
+belongingness during intergroup contact a. I shared information about
+myself. a. {[}name interaction partner{]} shared information about
+themselves. 1. Mean alternative interaction quality definition
+(``Overall, the interaction with {[}name interaction partner{]} was
+\ldots{}'') a. Unpleasant to Pleasant a. Superficial to Meaningful a.
+Ineffective to Effective a. Unimportant to Important 1. Mood Subscales
+(MDMQ) a. alertness a. calmness a. valence 1. Mean anti-social behaviors
+a. Put someone down a. Show little attention in someones opinion a.
+Demeaning remarks a. Inappropriately addressing someone a. Ignored or
+excluded someone a. Doubt someones judgement a. Unwanted attempts of
+personal matters 1. Mean pro-social behaviors a. Listen to someones
+problems a. Cheer someone up a. Help someone get things done a. Help
+someone with responsibilities
 
 Additionally, in the pre- and post-measurement surveys are several
 validated scales that we will combine into their sub-scales. Indices
-will be created in line with the accompanying validation literature:
+will be created in line with their respective validation literature. For
+a full list of all variables and indices see
+`VariableSelectionAnalyses.xlsx'.
 
-\add{Added:}
+\color{red}
+
+\textbf{TO BE REMOVED ONCE 'VariableSelectionAnalyses.xlsx' IS DONE!}
+
+\color{black}
 
 \fbox{\parbox{\mylength}{
   \color{editPurple}
@@ -777,81 +721,37 @@ All Studies:
 For our analysis, we adapt the procedures outlined by
 \citet{Monden2015}:
 
-\fbox{\parbox{\mylength}{
-  \color{editPurple}
-  \textbf{Main Data Splits:}
-  \begin{enumerate}
-    \item \textbf{Three studies (S1, S2, S3)}
-      \begin{enumerate}
-        \item Combined for most power in correlations (including, correlation with study indicator)
-        \item Separate in follow up analysis to ensure that we do not have a simpson's paradox
-        \item Explore additional ideosyncratic variables in separated follow up
-      \end{enumerate}
-    \item \textbf{Two question types (interaction, no interaction)}:
-      \begin{enumerate}
-        \item Combined for most power in correlations (including, correlation with interaction indicator)
-        \item Separate in subgroup follow up analysis to ensure that we do not have a simpson's paradox
-      \end{enumerate}
-    \item \textbf{Three time scales (half-day, day, week)}
-      \begin{enumerate}
-        \item If all variables clearly show single most variance on the same time-scale, single analysis only
-        \item If multiple time-scales are possible within single analysis, single analysis only (see question box below)
-        \item If variance split across multiple time scales for substantial number of variables (> 1/4 of all variables), multiple analyses for the different time scales 
-      \end{enumerate}
-    \item \textbf{Multiple Imputation (20 imputations)}
-      \begin{enumerate}
-        \item Test stability
-        \item Split-half analysis
-        \item Combine after analysis
-      \end{enumerate}
-  \end{enumerate}
-  \color{black}
-}}
-
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  \textbf{Sample Selection.} \add{For} our sample selection
-  \remove{consists of three main steps. We (a) aggregate the key variables over time to archive a reasonably interpretable number of time points and the remove a first proportion of missing data. }we
-  address both the selection of time points and participants. Given that
-  multiple imputation procedures even work well with large proportions
-  of missing data {[}assuming missingness at random;
-  \citet{Madley-Dowd2019}{]}, we decided on a general criterion of less
-  than 45\% missingness to balance sample size retention and bias in the
-  multiple imputation model. Thus, we then \remove{(b)} select the time
-  points for which we have \textbackslash change\{responses from 55\% of
-  the participants\}\{less than 45\% missingness\} and \remove{(c)}
-  select participants who have \textbackslash change\{responded to at
-  least 55\% of the surveys\}\{less than 45\% missingness\} across the
-  selected time range.
-  \add{Because the studies are comparable but not identical in their sampling strategy, question selection, and question wording, we also have to consider, whether to combine the samples. }
+  \textbf{Sample Selection.} For our sample selection we address both
+  the selection of time points and participants. Given that multiple
+  imputation procedures even work well with large proportions of missing
+  data {[}assuming missingness at random; \citet{Madley-Dowd2019}{]}, we
+  decided on a general criterion of less than 45\% missingness to
+  balance sample size retention and bias in the multiple imputation
+  model. Thus, we then select the time points for which we have less
+  than 45\% missingness and select participants who have less than 45\%
+  missingness across the selected time range. Because the studies are
+  comparable but not identical in their sampling strategy, question
+  selection, and question wording, we also have to consider, whether to
+  combine the samples.
 \item
-  \textbf{Time point aggregation:}
-  \add{We then aggregate the key variables over time to archive a reasonably interpretable number of time points and remove a first proportion of missing data.}
-  Given that little data is available on the meaningful time scales of
-  the selected psychological variables, we chose to determine the
-  appropriate time scales using variance decomposition \citep[e.g.,
-  see][]{Ram2014}. This is to say that we create multi-level
-  unconditional means models (without predictors) that include possible
-  nested time scales as levels.
-  \change{We, for example, assess the explained variances for measurements nested in days, nested in weeks, nested in months.}{We chose to select time scales that align with common human cycles. We thus compare the variances of bi-daily, daily, and weekly aggregations. Additional aggregations of two weeks or the full four weeks might be possible but would most likely reduce the variance too much for any meaningul further reduction during the 3MPCA.}
-  We then chose the ideal time scale for each of the key variables.
-\end{enumerate}
-
-\fbox{\parbox{\mylength}{
-  \color{editPurple}
-  \textbf{Note:} I talked about the individual time scales with Rei. And one issue that came up was that although the time points do not have to be equidistal between measurement ocasions, each variable needs to have data at each measured time point and the time scales should be equal across variables. This would mean that we will need to have the same time scale (e.g., daily) for all variables. Given that we have now only three time scales (i.e., bi-daily, daily, weekly) we could run the 3MPCA for all three time scales and assess differences (in a multi-verse style analysis).\\
-  \textbf{Question:} I am not entirely sure I fully understand yet why it is not possible to aggregate items across different time windows as long as data is available for all time points. For example, if energy levels are kept at bi-daily measurements but for well-being we calculate a daily average, we could then replace both daily time points of well-being with the daily average. I understand that this sounds a bit silly because we give up the morning/afternoon variance but it might still be useful in terms of missingess reduction. Here my confused thoughts: Does this mean that 3MPCA cannot deal with variables that change at different speeds? Is this because the time components are estimated across all variables and might be mis-specified if we have different time scales? This seems counter my current understanding of the core array (i.e., interactions between the components) where time components could interact with variable components.\\
-  Long story short: Maybe we can discuss this issue again, I feel like I might have misunderstood something somewhere :-D\\
-  Sorry...
-  \color{black}
-}}
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{2}
-\tightlist
+  \textbf{Time point aggregation.} We then aggregate the key variables
+  over time to archive a reasonably interpretable number of time points
+  and remove a first proportion of missing data. Given that little data
+  is available on the meaningful time scales of the selected
+  psychological variables, we chose to determine the appropriate time
+  scales using variance decomposition \citep[e.g., see][]{Ram2014}. This
+  is to say that we create multi-level unconditional means models
+  (without predictors) that include possible nested time scales as
+  levels. We chose to select time scales that align with common human
+  cycles. We thus compare the variances of bi-daily, daily, and weekly
+  aggregations. Additional aggregations of two weeks or the full four
+  weeks might be possible but would most likely reduce the variance too
+  much for any meaningul further reduction during the 3MPCA. We then
+  chose the ideal time scale for each of the key variables.
 \item
   \textbf{Multiple Imputation.} We then create 20 imputed datasets to
   perform the analyses on. As outlined by \citet{Monden2015}, we will
@@ -861,7 +761,7 @@ For our analysis, we adapt the procedures outlined by
   and meaningfully (\(r\) \textgreater{} .3) correlated with (1) the key
   variables or (2) missingness on the key variables.
 \item
-  \textbf{Three-way ANOVA.} We assess the percentages of explained
+  \textbf{Three-way ANOVA*.} We assess the percentages of explained
   variance for the person-, variable-, and time aspects --- which offers
   an indication of whether a 3MPCA is useful for the dataset. Based on
   the grand mean centered variables we conduct a fixed-effects three-way
@@ -871,37 +771,35 @@ For our analysis, we adapt the procedures outlined by
   amount of variance in this effect would speak towards the
   interdependence of the three modes.
 \item
-  \textbf{Data preprocessing.} For the \change{three mode }{3M}PCA, we
-  center (across participants but within time point) and normalize
-  (within variable but across time points) all key variables. The
-  between-person centering, ensures that all variations are around the
-  mean trend (which is removed by the centering). The normalization
-  within variable are important for ensuring equal variances across
-  variables, which ensures equal weighting of the variables in the
-  3MPCA. For methodological detail see
-  \protect\hyperlink{transformations}{Transformations}.
+  \textbf{Data preprocessing*.} For the 3MPCA, we center (across
+  participants but within time point) and normalize (within variable but
+  across time points) all key variables. The between-person centering,
+  ensures that all variations are around the mean trend (which is
+  removed by the centering). The normalization within variable are
+  important for ensuring equal variances across variables, which ensures
+  equal weighting of the variables in the 3MPCA. For methodological
+  detail see \protect\hyperlink{transformations}{Transformations}.
 \item
-  \textbf{Selection of 3MPCA model complexity} We then run the 3MPCA. We
-  use a generalized scree plot to select the appropriate number of
+  \textbf{Selection of 3MPCA model complexity*.} We then run the 3MPCA.
+  We use a generalized scree plot to select the appropriate number of
   components for each of the three modes (i.e., person, variable, time).
   To test the stability of the solution results are compared across the
-  20 imputed datasets \add{and split-half stability is assessed}.
+  20 imputed datasets and split-half stability is assessed.
 \item
-  \textbf{3MPCA model fitting.} For the selected complexities we then
+  \textbf{3MPCA model fitting*.} For the selected complexities we then
   extract simple component structures (i.e., for each mode individually)
-  as well as the \change{array core}{core array} (the full 3MPCA array,
-  which
-  \change{holds the weights of all combinations of the three modes}{specifies all combinations of the three mode components}).
-  A Joint Orthomax orthogonal rotation and standard weights
-  \remove{(when necessary)} are used to extract human interpretable
-  component scores. This procedure is done on all 20 imputed data sets.
+  as well as the core array (the full 3MPCA array, which specifies all
+  combinations of the three mode components). A Joint Orthomax
+  orthogonal rotation and standard weights are used to extract human
+  interpretable component scores. This procedure is done on all 20
+  imputed data sets.
 \item
-  \textbf{Generalized Procrustes rotation.} In order to combine the
+  \textbf{Generalized Procrustes rotation*.} In order to combine the
   three individual component structure from the 20 data sets, we use a
   generalized Procrustes rotation --- calculating the average of each
   compontent and core array.
 \item
-  \textbf{Explained variance.} As fit indices we then calculate (1) fit
+  \textbf{Explained variance*.} As fit indices we then calculate (1) fit
   percentage of the estimated array for each imputed data set (i.e.,
   explained variance around the removed general trend) as well as (2) an
   \emph{overall} fit percentage of the estimated array (i.e., explained
@@ -909,13 +807,35 @@ For our analysis, we adapt the procedures outlined by
   give an indication of how much of the original variance the reduced
   component structure was able to capture.
 \item
-  \textbf{Component interpretation} To embed and interpret the resulting
-  components (especially the person components), we calculate
+  \textbf{Component interpretation*.} To embed and interpret the
+  resulting components (especially the person components), we calculate
   correlations of the component scores with key adaptation markers
   (including, well-being, anxiety, trust, or societal inclusion). If
   components remain unclear still we can additionally perform k-means
   clustering on the lower dimensional space to identify clearer groups,
   which can be compared on the adaptation markers if necessary.
+\end{enumerate}
+
+\textbf{*Step-wise Follow-up Analyses:}
+
+\begin{enumerate}
+  \item \textbf{Three studies (S1, S2, S3)}
+    \begin{enumerate}
+      \item Main Analysis: Combined for most power in correlations (including, correlation with study indicator)
+      \item Separate in follow up analysis to ensure that we do not have a Simpson's paradox
+      \item Explore additional idiosyncratic variables in separated follow up
+    \end{enumerate}
+  \item \textbf{Two question types (interaction, no interaction)}:
+    \begin{enumerate}
+      \item Main Analysis: Combined for most power in correlations (including, correlation with interaction indicator)
+      \item Separate in subgroup follow up analysis to ensure that we do not have a Simpson's paradox
+    \end{enumerate}
+  \item \textbf{Three time scales (half-day, day, week)}
+    \begin{enumerate}
+      \item Main Analysis: If all variables clearly show single most variance on the same time-scale, single analysis only
+      \item If multiple time-scales are possible within single analysis, single analysis only (see question box below)
+      \item If variance split across multiple time scales for substantial number of variables (> 1/4 of all variables), multiple analyses for the different time scales 
+    \end{enumerate}
 \end{enumerate}
 
 \hypertarget{transformations}{%
@@ -934,8 +854,8 @@ points of a variable (ensuring equal weightin of variables in the
 3MPCA).
 
 We provide the main equations of the procedure below, where individual
-\(i\) (\(i = 1,\ ...,\ I\)) reported
-variable\change{ $k$ ($k = 1,\ ...,\ K$)}{ $x$ and its naturalized form $z$ (where $[k = 1,\ ...,\ K]$ indexes all available variables)}
+\(i\) (\(i = 1,\ ...,\ I\)) reported variable \(x\) and its naturalized
+form \(z\) (where \([k = 1,\ ...,\ K]\) indexes all available variables)
 at time point \(t\) (\(t = 1,\ ...,\ T\)), so that \(I\)=number of
 persons, \(K\)=number of items, \(T\)=number of time points within the
 dataset. For further information as well as an example illustration see
@@ -960,11 +880,10 @@ Many of the proposed procedures are descriptive rather then inferential.
 Importantly, we will use amounts of variances explained as our main fit
 indices. If we perform inferential analyses, we will use the standard
 p\textless.05 criteria for determining whether the correlation and
-regression coefficients are statistically significant.
-\add{We will use appropriate multiple-comparison corrections whenever multiple tests are performed.}
-We will place particular emphasis on effect sizes
-\add{(e.g., correlations) }in our interpretations of the results
-wherever \change{necessary}{possible}.
+regression coefficients are statistically significant. We will use
+appropriate multiple-comparison corrections whenever multiple tests are
+performed. We will place particular emphasis on effect sizes (e.g.,
+correlations) in our interpretations of the results wherever possible.
 
 \hypertarget{data-exclusion}{%
 \subsection{Data exclusion}\label{data-exclusion}}

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.5.20)  21 MAY 2022 01:32
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.5.27)  27 MAY 2022 17:18
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -560,47 +560,45 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 {/Users/jannis/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2]
 
 Package hyperref Warning: The anchor of a bookmark and its parent's must not
-(hyperref)                be the same. Added a new anchor on input line 237.
+(hyperref)                be the same. Added a new anchor on input line 255.
 
-
-Package hyperref Warning: The anchor of a bookmark and its parent's must not
-(hyperref)                be the same. Added a new anchor on input line 269.
-
-[3] [4] [5]
+[3]
 
 Package hyperref Warning: The anchor of a bookmark and its parent's must not
-(hyperref)                be the same. Added a new anchor on input line 382.
+(hyperref)                be the same. Added a new anchor on input line 284.
+
+[4] [5]
+
+Package hyperref Warning: The anchor of a bookmark and its parent's must not
+(hyperref)                be the same. Added a new anchor on input line 397.
 
 [6] [7] [8] [9] [10]
 
 Package hyperref Warning: The anchor of a bookmark and its parent's must not
-(hyperref)                be the same. Added a new anchor on input line 775.
+(hyperref)                be the same. Added a new anchor on input line 719.
 
-[11] [12] [13] [14] [15] [16]
+[11] [12] [13] [14]
 
 Package hyperref Warning: The anchor of a bookmark and its parent's must not
-(hyperref)                be the same. Added a new anchor on input line 999.
+(hyperref)                be the same. Added a new anchor on input line 918.
 
-(./Preregistration3MPCA.bbl [17]) [18] (./Preregistration3MPCA.aux)
+(./Preregistration3MPCA.bbl [15]) [16] (./Preregistration3MPCA.aux)
 Package rerunfilecheck Info: File `Preregistration3MPCA.out' has not changed.
-(rerunfilecheck)             Checksum: FEF1053B7DE07E8ABCFAAD62A356DDED;3903.
+(rerunfilecheck)             Checksum: AB0ACAAD44C6EDF4AE994F05CEE6B9FB;3710.
  ) 
 Here is how much of TeX's memory you used:
- 12496 strings out of 480235
- 193488 string characters out of 5892499
- 527726 words of memory out of 5000000
- 29953 multiletter control sequences out of 15000+600000
- 533416 words of font info for 72 fonts, out of 8000000 for 9000
+ 12378 strings out of 480235
+ 192045 string characters out of 5892499
+ 489507 words of memory out of 5000000
+ 29946 multiletter control sequences out of 15000+600000
+ 529152 words of font info for 71 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 72i,12n,77p,982b,558s stack positions out of 10000i,1000n,20000p,200000b,200000s
-
-pdfTeX warning (dest): name{Hfootnote.2} has been referenced but does not exist, replaced by a fixed one
-
-{/Users/jannis/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/Users/jannis/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/Users/jannis/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/Users/jannis/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}{/Users/jannis/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}</Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmcsc10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmex10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi8.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr6.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri12.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri8.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb>
-Output written on Preregistration3MPCA.pdf (18 pages, 395598 bytes).
+ 72i,12n,77p,665b,505s stack positions out of 10000i,1000n,20000p,200000b,200000s
+{/Users/jannis/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/Users/jannis/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/Users/jannis/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}{/Users/jannis/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/Users/jannis/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}</Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmcsc10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmex10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr6.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri12.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb>
+Output written on Preregistration3MPCA.pdf (16 pages, 339034 bytes).
 PDF statistics:
- 648 PDF objects out of 1000 (max. 8388607)
- 585 compressed objects within 6 object streams
- 258 named destinations out of 1000 (max. 500000)
+ 470 PDF objects out of 1000 (max. 8388607)
+ 415 compressed objects within 5 object streams
+ 148 named destinations out of 1000 (max. 500000)
  241 words of extra memory for PDF output out of 10000 (max. 10000000)
 
