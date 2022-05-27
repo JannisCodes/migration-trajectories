@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.5.27)  27 MAY 2022 17:18
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.5.27)  28 MAY 2022 00:07
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -369,6 +369,9 @@ Package: fancyhdr 2022/05/18 v4.0.3 Extensive control of page headers and footer
 ) (/Users/jannis/Library/TinyTeX/texmf-dist/tex/latex/ncctools/nccmath.sty
 Package: nccmath 2006/01/20 v1.3 Additional Math Commands (NCC)
 \NCC@fracrulewidth=\dimen181
+) (/Users/jannis/Library/TinyTeX/texmf-dist/tex/latex/tools/enumerate.sty
+Package: enumerate 2015/07/23 v3.00 enumerate extensions (DPC)
+\@enLab=\toks29
 ) (./LatexPackage/trackchanges.sty
 
 LaTeX Warning: You have requested package `LatexPackage/trackchanges',
@@ -399,11 +402,11 @@ LaTeX Info: Redefining \addtolength on input line 81.
 \calc@Cskip=\skip75
 ) (/Users/jannis/Library/TinyTeX/texmf-dist/tex/generic/soul/soul.sty
 Package: soul 2003/11/17 v2.4 letterspacing/underlining (mf)
-\SOUL@word=\toks29
-\SOUL@lasttoken=\toks30
-\SOUL@cmds=\toks31
-\SOUL@buffer=\toks32
-\SOUL@token=\toks33
+\SOUL@word=\toks30
+\SOUL@lasttoken=\toks31
+\SOUL@cmds=\toks32
+\SOUL@buffer=\toks33
+\SOUL@token=\toks34
 \SOUL@spaceskip=\skip76
 \SOUL@ttwidth=\dimen184
 \SOUL@uldp=\dimen185
@@ -446,7 +449,7 @@ Package: titlesec 2021/07/05 v2.14 Sectioning titles
 \aftertitleunit=\skip78
 \ttl@plus=\dimen187
 \ttl@minus=\dimen188
-\ttl@toksa=\toks34
+\ttl@toksa=\toks35
 \titlewidth=\dimen189
 \titlewidthlast=\dimen190
 \titlewidthfirst=\dimen191
@@ -457,24 +460,24 @@ File: l3backend-pdftex.def 2022-04-20 L3 backend support: PDF output (pdfTeX)
 ) (./Preregistration3MPCA.aux)
 \openout1 = `Preregistration3MPCA.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 135.
-LaTeX Font Info:    ... okay on input line 135.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 135.
-LaTeX Font Info:    ... okay on input line 135.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 135.
-LaTeX Font Info:    ... okay on input line 135.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 135.
-LaTeX Font Info:    ... okay on input line 135.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 135.
-LaTeX Font Info:    ... okay on input line 135.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 135.
-LaTeX Font Info:    ... okay on input line 135.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 135.
-LaTeX Font Info:    ... okay on input line 135.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 135.
-LaTeX Font Info:    ... okay on input line 135.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 135.
-LaTeX Font Info:    ... okay on input line 135.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 136.
+LaTeX Font Info:    ... okay on input line 136.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 136.
+LaTeX Font Info:    ... okay on input line 136.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 136.
+LaTeX Font Info:    ... okay on input line 136.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 136.
+LaTeX Font Info:    ... okay on input line 136.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 136.
+LaTeX Font Info:    ... okay on input line 136.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 136.
+LaTeX Font Info:    ... okay on input line 136.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 136.
+LaTeX Font Info:    ... okay on input line 136.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 136.
+LaTeX Font Info:    ... okay on input line 136.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 136.
+LaTeX Font Info:    ... okay on input line 136.
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
 *geometry* verbose mode - [ preamble ] result:
@@ -509,96 +512,101 @@ LaTeX Font Info:    ... okay on input line 135.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-Package hyperref Info: Link coloring ON on input line 135.
+Package hyperref Info: Link coloring ON on input line 136.
 (./Preregistration3MPCA.out) (./Preregistration3MPCA.out)
 \@outlinefile=\write3
 \openout3 = `Preregistration3MPCA.out'.
 
-LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 136.
+LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 137.
 (/Users/jannis/Library/TinyTeX/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OML+lmm on input line 136.
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 137.
 (/Users/jannis/Library/TinyTeX/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 136.
+LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 137.
 (/Users/jannis/Library/TinyTeX/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 136.
+LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 137.
 (/Users/jannis/Library/TinyTeX/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 136.
+(Font)              <12> on input line 137.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 136.
+(Font)              <8> on input line 137.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 136.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 136.
+(Font)              <6> on input line 137.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 137.
 (/Users/jannis/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 136.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 137.
 (/Users/jannis/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 \mylength=\skip79
 
 Package hyperref Warning: The anchor of a bookmark and its parent's must not
-(hyperref)                be the same. Added a new anchor on input line 161.
+(hyperref)                be the same. Added a new anchor on input line 162.
 
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 184.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 184.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 184.
 [1
 
-{/Users/jannis/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2]
+{/Users/jannis/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10> on input line 223.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7> on input line 223.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5> on input line 223.
+[2] [3]
 
 Package hyperref Warning: The anchor of a bookmark and its parent's must not
-(hyperref)                be the same. Added a new anchor on input line 255.
+(hyperref)                be the same. Added a new anchor on input line 294.
 
-[3]
-
-Package hyperref Warning: The anchor of a bookmark and its parent's must not
-(hyperref)                be the same. Added a new anchor on input line 284.
-
-[4] [5]
+[4]
 
 Package hyperref Warning: The anchor of a bookmark and its parent's must not
-(hyperref)                be the same. Added a new anchor on input line 397.
+(hyperref)                be the same. Added a new anchor on input line 323.
 
-[6] [7] [8] [9] [10]
-
-Package hyperref Warning: The anchor of a bookmark and its parent's must not
-(hyperref)                be the same. Added a new anchor on input line 719.
-
-[11] [12] [13] [14]
+[5] [6]
 
 Package hyperref Warning: The anchor of a bookmark and its parent's must not
-(hyperref)                be the same. Added a new anchor on input line 918.
+(hyperref)                be the same. Added a new anchor on input line 436.
+
+[7] [8] [9] [10]
+
+Package hyperref Warning: The anchor of a bookmark and its parent's must not
+(hyperref)                be the same. Added a new anchor on input line 740.
+
+[11] [12]
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 842.
+(/Users/jannis/Library/TinyTeX/texmf-dist/tex/latex/lm/ts1lmr.fd
+File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+) [13] [14]
+
+Package hyperref Warning: The anchor of a bookmark and its parent's must not
+(hyperref)                be the same. Added a new anchor on input line 935.
 
 (./Preregistration3MPCA.bbl [15]) [16] (./Preregistration3MPCA.aux)
 Package rerunfilecheck Info: File `Preregistration3MPCA.out' has not changed.
-(rerunfilecheck)             Checksum: AB0ACAAD44C6EDF4AE994F05CEE6B9FB;3710.
+(rerunfilecheck)             Checksum: 67007491180E26A314CF9EA26916EAE2;3710.
  ) 
 Here is how much of TeX's memory you used:
- 12378 strings out of 480235
- 192045 string characters out of 5892499
- 489507 words of memory out of 5000000
- 29946 multiletter control sequences out of 15000+600000
- 529152 words of font info for 71 fonts, out of 8000000 for 9000
+ 12446 strings out of 480235
+ 193713 string characters out of 5892499
+ 489883 words of memory out of 5000000
+ 30007 multiletter control sequences out of 15000+600000
+ 529517 words of font info for 72 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 72i,12n,77p,665b,505s stack positions out of 10000i,1000n,20000p,200000b,200000s
-{/Users/jannis/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/Users/jannis/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/Users/jannis/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}{/Users/jannis/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/Users/jannis/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}</Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmcsc10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmex10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr6.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri12.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb>
-Output written on Preregistration3MPCA.pdf (16 pages, 339034 bytes).
+ 72i,13n,77p,455b,517s stack positions out of 10000i,1000n,20000p,200000b,200000s
+{/Users/jannis/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/Users/jannis/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/Users/jannis/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}{/Users/jannis/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/Users/jannis/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}{/Users/jannis/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}</Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmcsc10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmex10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr6.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri12.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb>
+Output written on Preregistration3MPCA.pdf (16 pages, 342120 bytes).
 PDF statistics:
- 470 PDF objects out of 1000 (max. 8388607)
- 415 compressed objects within 5 object streams
- 148 named destinations out of 1000 (max. 500000)
+ 493 PDF objects out of 1000 (max. 8388607)
+ 437 compressed objects within 5 object streams
+ 149 named destinations out of 1000 (max. 500000)
  241 words of extra memory for PDF output out of 10000 (max. 10000000)
 

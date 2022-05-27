@@ -35,6 +35,7 @@ editor_options:
 header-includes:
    - \usepackage{amsmath}
    - \usepackage{nccmath}
+   - \usepackage{enumerate}
    - \usepackage{LatexPackage/trackchanges}
    # - \usepackage[finalnew]{LatexPackage/trackchanges}
    # - \usepackage[finalold]{LatexPackage/trackchanges}
@@ -91,6 +92,16 @@ Example: Effect of sugar on brownie tastiness. -->
 <!-- Please give a brief description of your study, including some background, the purpose of the of the study, or broad research questions. The description should be no longer than the length of an abstract. It can give some context for the proposed study, but great detail is not needed here for your preregistration.
 
 Example: Though there is strong evidence to suggest that sugar affects taste preferences, the effect has never been demonstrated in brownies. Therefore, we will measure taste preference for four different levels of sugar concentration in a standard brownie recipe to determine if the effect exists in this pastry. -->
+
+\textbf{Shortened Description:}
+
+Recent reviews have called for more comprehensive assessment of human experiences and for more longitudinal real-life data, within the psychological sciences more broadly and in migration research in particular [e.g., @Kreienkamp2022d; @MacInnis2015; @McKeown2017; @Pettigrew2011; @Ward2019]. However, while generally speaking analytical methods for such, more complex, data have become more readily available [e.g., @ODonnell2021], it remains unclear how we should identify key developmental patterns --- especially across multiple variables at the same time.
+
+In this manuscript, we aim to assess the utility of a promising analysis technique for describing, summarizing, and understanding the initial developmental data patterns --- \textit{three-mode principle component analysis} (3MPCA). We use 3MPCA specifically because recent studies have laid out the potential effectiveness of dimension reduction procedures, which can address the new forms of person-, variable-, and time point heterogeneity jointly [e.g., @Monden2015]. We analyse data from three experience sampling studies, which followed the migration experiences of recent migrants to the Netherlands. All three studies focus on the psychological adaptation of migrants (i.e., psychological acculturation). However, given that past investigations of psychological acculturation have underexplored the crucial aspect of motivational experiences [@Kreienkamp2022d], the three studies have placed a particular emphasis on the needs, goals, and motives of young migrants. To make full use of all three data sets and to guide future use of dimension reduction procedures with extensive psychological data, we will analyze the data in a descriptive and step wise manner, where we first consider the data jointly and will then assess potential differences between datasets, variables, and time scales. 
+
+---
+
+\textbf{Full Description:}
 
 Recent reviews have called for more comprehensive assessment of human experiences and for more longitudinal real-life data, within the psychological sciences more broadly and in migration research in particular [e.g., @Kreienkamp2022d; @MacInnis2015; @McKeown2017; @Pettigrew2011; @Ward2019]. However, while generally speaking analytical methods for such, more complex, data have become more readily available [e.g., @ODonnell2021], it remains unclear how we should identify key developmental patterns --- especially across multiple variables at the same time.
 
@@ -227,7 +238,7 @@ Observational studies and meta-analyses will include only measured variables. As
 
 Example: The single outcome variable will be the perceived tastiness of the single brownie each participant will eat. We will measure this by asking participants ‘How much did you enjoy eating the brownie’ (on a scale of 1-7, 1 being 'not at all', 7 being 'a great deal') and 'How good did the brownie taste' (on a scale of 1-7, 1 being 'very bad', 7 being 'very good'). -->
 
-Given the circumstance that we utilize three independent experience sampling studies for our analyses, the variables are at times slightly different between studies. Additionally, given that the analysis we aim to undertake (i.e., 3MPCA) uses a large number of variables for the multiple imputations, dimension reduction, and correlational analyses, we will not list all items individually. Instead, we provide full variable information in the following data sheets: 'VariableSelectionDaily.xlsx' and 'VariableSelectionPrePost.xlsx'. 
+Given the circumstance that we utilize three independent experience sampling studies for our analyses, the variables are at times slightly different between studies. Additionally, given that the analysis we aim to undertake (i.e., 3MPCA) uses a large number of variables for the multiple imputations, dimension reduction, and correlational analyses, we will not list all items individually. Instead, we provide full variable information in the following data sheets in `VariableSelectionAnalyses.xlsx'. 
 
 **Key variables**  
 While most of the variables are identical across all studies, some differ slightly in content or wording. However, for each study we aimed to collect the following types of variables.   
@@ -249,10 +260,10 @@ While most of the variables are identical across all studies, some differ slight
 
 It should be noted, that we collected substantially more motivational and affecive variables, as they have been understudied in the past.
 
-For the detailed variable selection of each analysis see 'VariableSelectionAnalyses.xlsx'. 
+For the detailed variable selection of each analysis see `VariableSelectionAnalyses.xlsx'. 
 
 **Interpretation correlation variables**  
-To interpret the person-mode components identified by the 3MPCA, we would like to correlate the component scores with a range of person- or time point specific variables. While the full list of variables is available in the accompanying data sheets (see 'VariableSelectionAnalyses.xlsx'), we provide a few examples of the targeted categories below.  
+To interpret the person-mode components identified by the 3MPCA, we would like to correlate the component scores with a range of person- or time point specific variables. While the full list of variables is available in the accompanying data sheets (see `VariableSelectionAnalyses.xlsx'), we provide a few examples of the targeted categories below.  
 
 1. demographic variables
     a. age
@@ -277,7 +288,7 @@ To interpret the person-mode components identified by the 3MPCA, we would like t
 
 
 **Auxiliary variables for multiple imputation**  
-For the missing data imputation we follow the procedure reported by @Monden2015, and include any pre-, post-, or daily dairy variables that are significantly ($p$ < .01) and meaningfully correlated ($r$ > .3) with either the key variables or missingness on the key variables. For an overview of the variables that qualify as auxiliary variables see the enclosed data sheets (see 'VariableSelectionAnalyses.xlsx'). Additional information about the multiple imputation procedure is also available at [Statistical models] 2.  
+For the missing data imputation we follow the procedure reported by @Monden2015, and include any pre-, post-, or daily dairy variables that are significantly ($p$ < .01) and meaningfully correlated ($r$ > .3) with either the key variables or missingness on the key variables. For an overview of the variables that qualify as auxiliary variables see the enclosed data sheets (see `VariableSelectionAnalyses.xlsx'). Additional information about the multiple imputation procedure is also available at [Statistical models] 2.  
 
 _We also provide an exemplary codebook (using Study 3 as an example; see 'Codebook_AOT-M_ItemsPerSection.xlsx'). The full survey files will be available as part of the main OSF repository connected to this preregistration._
 
@@ -287,7 +298,7 @@ _We also provide an exemplary codebook (using Study 3 as an example; see 'Codebo
 If you are using multiple pieces of data to construct a single variable, how will this occur? Both the data that are included and the formula or weights for each measure must be specified. Standard summary statistics, such as "means" do not require a formula, though more complicated indices require either the exact formula or, if it is an established index in the field, the index must be unambiguously defined. For example, "biodiversity index" is too broad, whereas "Shannon’s biodiversity index" is appropriate.
 
 Example: We will take the mean of the two questions above to create a single measure of 'brownie enjoyment.'  -->
-˜
+
 1. Mean Allport's conditions. We create a mean-averaged index of Allport's conditions in response to past findings indicating that the conditions are best conceptualized jointly and as functioning together rather than as fully independent factors [@Pettigrew2006, p. 766]. Similar to past studies we thus hope to build a global indicator [e.g., see @Pettigrew2006]. As with other indices we will ensure that the individual items indeed relate to a common latent construct and are  meaningfully combined in an index. If this is not possible we will create sub-indices and/or assess the impact of the conditions separately.
     a. The interaction with [name interaction partner] was on equal footing (same status)
     a. [name interaction partner] shared your goal ([free-text entry interaction key need])
@@ -319,61 +330,7 @@ Example: We will take the mean of the two questions above to create a single mea
     a. Help someone get things done
     a. Help someone with responsibilities
     
-Additionally, in the pre- and post-measurement surveys are several validated scales that we will combine into their sub-scales. Indices will be created in line with their respective validation literature. For a full list of all variables and indices see 'VariableSelectionAnalyses.xlsx'.  
-
-\color{red}
-
-\textbf{TO BE REMOVED ONCE 'VariableSelectionAnalyses.xlsx' IS DONE!}
-
-\color{black}
-
-\fbox{\parbox{\mylength}{
-  \color{editPurple}
-  \textbf{Note.}\\
-  We have a group of six variables that are consistent across all three studies. Additionally, we have a number of variables that are either only relevant to a single study or a subset of the studies. If we agree on the study consolidation procedure as it is described below, I would suggest that we focus on the variables we have in all studies, and will include the other variables in the follow-up analyses and report only significant correlations (after alpha correction). I would also suggest that we add the list below to one of the variable selection files (Excel) instead of listing them all here (to avoid unnecessary confusion).
-  \color{black}
-}}
-
-\color{editPurple}
-
-Study 1 only:
-
-1. Acculturation, Habits, and Interests Multicultural Scale for Adolescents (AHIMSA; S1)
-1. Vancouver Index of Acculturation (VIA; S1)
-1. Situational Self Awareness Scale (SAS; S1)
-
-Study 3 only:
-
-1. Outgroup Trust
-1. Work Group Inclusion
-1. Meaningful Life Scale
-1. Big Five Personality Questionnaire
-1. Attachment Styles Scale
-1. Paranoia Scale
-
-Studies 1 and 2:
-
-1. Self Determination Theory Scale (SDT; S1, S2)
-1. Interpersonal Support Evaluation List (ISEL; S1, S2)
-1. Perceived Stress Scale (PSS; S1, S2)
-1. Negative Life Events Scale (NLES; S1, S2)
-
-Studies 2 and 3:
-
-1. Social Identification Scale (S2, S3)
-1. Multidimensional Mood State Questionnaire (MDMQ; S2, S3)
-1. Homesickness Scale (S2, S3)
-
-All Studies:
-
-1. Intergroup Anxiety Scale (IAS)
-1. The Satisfaction with Life Scale (SWL)
-1. Rosenberg Self-Esteem Scale (SES)
-1. Everyday Discrimination Scale
-1. Language Proficiency
-1. Association Participation
-
-\color{black}
+Additionally, in the pre- and post-measurement surveys are several validated scales that we will combine into their sub-scales. Indices will be created in line with their respective validation literature. For a full list of all variables and indices see `VariableSelectionAnalyses.xlsx'.  
 
 # Analysis Plan
 <!-- You may describe one or more confirmatory analysis in this preregistration. Please remember that all analyses specified below must be reported in the final article, and any additional analyses must be noted as exploratory or hypothesis generating.
@@ -393,9 +350,9 @@ Example:  We will use a one-way between subjects ANOVA to analyze our results. T
 
 For our analysis, we adapt the procedures outlined by @Monden2015:
 
-1. **Sample Selection.** For our sample selection we address both the selection of time points and participants. Given that multiple imputation procedures even work well with large proportions of missing data [assuming missingness at random; @Madley-Dowd2019], we decided on a general criterion of less than 45% missingness to balance sample size retention and bias in the multiple imputation model. Thus, we then select the time points for which we have less than 45% missingness and select participants who have less than 45% missingness across the selected time range. Because the studies are comparable but not identical in their sampling strategy, question selection, and question wording, we also have to consider, whether to combine the samples. 
-2. **Time point aggregation.** We then aggregate the key variables over time to archive a reasonably interpretable number of time points and remove a first proportion of missing data. Given that little data is available on the meaningful time scales of the selected psychological variables, we chose to determine the appropriate time scales using variance decomposition [e.g., see @Ram2014]. This is to say that we create multi-level unconditional means models (without predictors) that include possible nested time scales as levels. We chose to select time scales that align with common human cycles. We thus compare the variances of bi-daily, daily, and weekly aggregations. Additional aggregations of two weeks or the full four weeks might be possible but would most likely reduce the variance too much for any meaningul further reduction during the 3MPCA.
-We then chose the ideal time scale for each of the key variables.
+1. **Sample Selection.** For our sample selection we address both the selection of time points and participants. Given that multiple imputation procedures even work well with large proportions of missing data [assuming missingness at random; @Madley-Dowd2019], we decided on a general criterion of less than 45% missingness to balance sample size retention and bias in the multiple imputation model. Thus, we then select the time points for which we have less than 45% missingness and select participants who have less than 45% missingness across the selected time range.
+2. **Time point aggregation.** We aggregate the key variables over time to archive a reasonably interpretable number of time points and remove a first proportion of missing data. Given that little data is available on the meaningful time scales of the selected psychological variables, we chose to determine the appropriate time scales using variance decomposition [e.g., see @Ram2014]. This is to say that we create multi-level unconditional means models (without predictors) that include possible nested time scales as levels. We chose to select time scales that align with common human cycles. We thus compare the variances of bi-daily, daily, and weekly aggregations. Additional aggregations of two weeks or the full four weeks might be possible but would most likely reduce the variance too much for any meaningul further reduction during the 3MPCA.
+We then chose the time scales that have the most variance.
 3. **Multiple Imputation.** We then create 20 imputed datasets to perform the analyses on. As outlined by @Monden2015, we will use the key variables themself as well as auxiliary variables to impute missing values. Auxiliary variables are any pre-, post-, or daily dairy variables that are significantly ($p$ < .01) and meaningfully ($r$ > .3) correlated with (1) the key variables or (2) missingness on the key variables.
 4. **Three-way ANOVA\*.** We assess the percentages of explained variance for the person-, variable-, and time aspects --- which offers an indication of whether a 3MPCA is useful for the dataset. Based on the grand mean centered variables we conduct a fixed-effects three-way ANOVA of the person-, variable-, and time modes as well as their various interactions. We are particularly interested in the highest order interaction term Person * Variable * Time + error, as a large amount of variance in this effect would speak towards the interdependence of the three modes.
 5. **Data preprocessing\*.** For the 3MPCA, we center (across participants but within time point) and normalize (within variable but across time points) all key variables. The between-person centering, ensures that all variations are around the mean trend (which is removed by the centering). The normalization within variable are important for ensuring equal variances across variables, which ensures equal weighting of the variables in the 3MPCA. For methodological detail see [Transformations].
@@ -406,25 +363,24 @@ We then chose the ideal time scale for each of the key variables.
 10. **Component interpretation\*.** To embed and interpret the resulting components (especially the person components), we calculate correlations of the component scores with key adaptation markers (including, well-being, anxiety, trust, or societal inclusion). If components remain unclear still we can additionally perform k-means clustering on the lower dimensional space to identify clearer groups, which can be compared on the adaptation markers if necessary.
 
 
-\textbf{*Step-wise Follow-up Analyses:}
-\begin{enumerate}
-  \item \textbf{Three studies (S1, S2, S3)}
-    \begin{enumerate}
-      \item Main Analysis: Combined for most power in correlations (including, correlation with study indicator)
-      \item Separate in follow up analysis to ensure that we do not have a Simpson's paradox
-      \item Explore additional idiosyncratic variables in separated follow up
-    \end{enumerate}
-  \item \textbf{Two question types (interaction, no interaction)}:
-    \begin{enumerate}
-      \item Main Analysis: Combined for most power in correlations (including, correlation with interaction indicator)
-      \item Separate in subgroup follow up analysis to ensure that we do not have a Simpson's paradox
-    \end{enumerate}
-  \item \textbf{Three time scales (half-day, day, week)}
-    \begin{enumerate}
-      \item Main Analysis: If all variables clearly show single most variance on the same time-scale, single analysis only
-      \item If multiple time-scales are possible within single analysis, single analysis only (see question box below)
-      \item If variance split across multiple time scales for substantial number of variables (> 1/4 of all variables), multiple analyses for the different time scales 
-    \end{enumerate}
+\textbf{*Step-wise Analysis Approach:}
+\begin{enumerate}[I.]
+  \item \textbf{Studies (Study 1, Study 2, Study 3)}
+    \begin{itemize}
+      \item \textbf{Main Analysis:} All studies combined to have the most power.
+      \item \textbf{Follow-up Analysis \#01:} To make sure there is no Simpson's paradox, we also separate the three data sets in separate follow-up analyses.
+      \item \textbf{Follow-up Analysis\#02:} We add idiosyncratic variables (i.e., variables only available in a subset of studies) within the separated follow-up analyses. With these additional variables we explore whether our main analysis is robust to other psychological experiences or whether the additional variables might provide a qualitatively different understanding of migration processes.
+    \end{itemize}
+  \item \textbf{Response types (interaction, no interaction)}\footnote{Some questions were only available or had a slightly different focus depending on whether participants had an interaction or not.}
+    \begin{itemize}
+      \item \textbf{Main Analysis:} All available questions combined to have the most power.
+      \item \textbf{Follow-up Analysis\#03:} To make sure there is no Simpson's paradox, we separate the data into two subgroup follow-up analyses (i.e., responses following an interaction and responses without interactions). This analysis will again test the robustness of the main analysis and will explore whether the core dimensions are substantially different for interaction specific phenomena.
+    \end{itemize}
+  \item \textbf{Time scales (half-day, day, week)}
+    \begin{itemize}
+      \item \textbf{Main Analysis:} For the main analysis, we will use the time scale that shows the most variance across the included items (e.g., daily; see \textit{Time point aggregation} above).
+      \item \textbf{Follow-up Analysis\#04:} To explore the impact of time scales in (social) psychological data, we will also run the 3MPCA on the other time scale options (e.g., bi-daily, weekly). 
+    \end{itemize}
 \end{enumerate}
 
 
