@@ -34,7 +34,7 @@
 \hypersetup{breaklinks=true,
 bookmarks=true,
 pdfauthor={},
-pdftitle={Migration Experience Trajectories: A Three Mode Principle Component Analysis},
+pdftitle={Migration Experience Trajectories: A Three-Mode Principal Component Analysis},
 colorlinks=true,
 citecolor=BlueViolet,
 urlcolor=BlueViolet,
@@ -74,7 +74,7 @@ pdfborder={0 0 0}}
 }
 
 \setlength{\droptitle}{-2em}
-\title{Migration Experience Trajectories: A Three Mode Principle
+\title{Migration Experience Trajectories: A Three-Mode Principal
 Component Analysis}
 \pretitle{\begin{changemargin}{-8pc}{0pc} \centering\large Preregistration\\ \Huge}
 \posttitle{\end{changemargin}}
@@ -95,7 +95,7 @@ of Advanced Science and Engineering      }
   \def\affcity{{"", "", "", "", "", ""}}%
   \preauthor{\begin{changemargin}{-8pc}{0pc} \centering\large}
   \postauthor{\end{changemargin}}
-\date{28. May 2022}
+\date{01. June 2022}
 \predate{\begin{changemargin}{-8pc}{0pc} \centering\large\emph}
 \postdate{\end{changemargin}}
 \usepackage{fancyhdr}
@@ -161,7 +161,7 @@ Experience Trajectories}}}
 \hypertarget{title}{%
 \subsection{Title}\label{title}}
 
-Migration Experience Trajectories: A Three Mode Principle Component
+Migration Experience Trajectories: A Three-Mode Principal Component
 Analysis
 
 \hypertarget{description}{%
@@ -183,7 +183,7 @@ the same time.
 In this manuscript, we aim to assess the utility of a promising analysis
 technique for describing, summarizing, and understanding the initial
 developmental data patterns ---
-\textit{three-mode principle component analysis} (3MPCA). We use 3MPCA
+\textit{three-mode principal component analysis} (3MPCA). We use 3MPCA
 specifically because recent studies have laid out the potential
 effectiveness of dimension reduction procedures, which can address the
 new forms of person-, variable-, and time point heterogeneity jointly
@@ -247,7 +247,7 @@ analysis procedures focused on the description and understanding of
 complex dynamical data.
 
 In this manuscript, we aim to assess the utility of one such promising
-analysis technique --- \textit{three-mode principle component analysis}
+analysis technique --- \textit{three-mode principal component analysis}
 (3MPCA). We use 3MPCA specifically because recent studies have laid out
 the potential effectiveness of dimension reduction procedures, which can
 address the new forms of person-, variable-, and time point
@@ -347,8 +347,8 @@ procedures}\label{data-collection-procedures}}
 
 We collected three experience sampling studies, following the daily
 migration experiences of young migrants, who had recently arrived in the
-Netherlands. For all three studies, the data was collected in a
-three-step procedure:
+Netherlands (median time in the Netherlands = 3 Months). For all three
+studies, the data was collected in a three-step procedure:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -604,13 +604,15 @@ targeted categories below.
 \textbf{Auxiliary variables for multiple imputation}\\
 For the missing data imputation we follow the procedure reported by
 \citet{Monden2015}, and include any pre-, post-, or daily dairy
-variables that are significantly (\(p\) \textless{} .01) and
-meaningfully correlated (\(r\) \textgreater{} .3) with either the key
-variables or missingness on the key variables. For an overview of the
-variables that qualify as auxiliary variables see the enclosed data
-sheets (see `VariableSelectionAnalyses.xlsx'). Additional information
-about the multiple imputation procedure is also available at
-\protect\hyperlink{statistical-models}{Statistical models} 2.
+variables that are significantly correlated with either the key
+variables or missingness on the key variables (at \(p\) \textless{}
+.01). In case we encounter a convergence problem during the multiple
+imputation, we only include variable with a correlation larger than .3.
+For an overview of the variables that qualify as auxiliary variables see
+the enclosed data sheets (see `VariableSelectionAnalyses.xlsx').
+Additional information about the multiple imputation procedure is also
+available at \protect\hyperlink{statistical-models}{Statistical models}
+2.
 
 \emph{We also provide an exemplary codebook (using Study 3 as an
 example; see `Codebook\_AOT-M\_ItemsPerSection.xlsx'). The full survey
@@ -786,7 +788,7 @@ For our analysis, we adapt the procedures outlined by
   ANOVA of the person-, variable-, and time modes as well as their
   various interactions. We are particularly interested in the highest
   order interaction term Person * Variable * Time + error, as a large
-  amount of variance in this effect would speak towards the
+  amount of variance in this effect would speak towards the possible
   interdependence of the three modes.
 \item
   \textbf{Data preprocessing*.} For the 3MPCA, we center (across
@@ -893,14 +895,15 @@ Supplemental Material 3 in \citet{Monden2015}.
 \hypertarget{inference-criteria}{%
 \subsection{Inference criteria}\label{inference-criteria}}
 
-Many of the proposed procedures are descriptive rather then inferential.
+Many of the proposed procedures are descriptive rather than inferential.
 Importantly, we will use amounts of variances explained as our main fit
 indices. If we perform inferential analyses, we will use the standard
 p\textless.05 criteria for determining whether the correlation and
 regression coefficients are statistically significant. We will use
 appropriate multiple-comparison corrections whenever multiple tests are
-performed. We will place particular emphasis on effect sizes (e.g.,
-correlations) in our interpretations of the results wherever possible.
+performed (such as Bonferroni correction). We will place particular
+emphasis on effect sizes (e.g., correlations) in our interpretations of
+the results wherever possible.
 
 \hypertarget{data-exclusion}{%
 \subsection{Data exclusion}\label{data-exclusion}}
@@ -908,7 +911,7 @@ correlations) in our interpretations of the results wherever possible.
 No checks will be performed to determine eligibility for inclusion
 besides verification that each subject answered each of the variables of
 interest for a given analysis. Outliers will generally be included in
-analyses, however we will use sensitivity analyses to assess the
+analyses. However, we will use sensitivity analyses to assess the
 robustness of the results to outliers.
 
 \hypertarget{missing-data}{%
