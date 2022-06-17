@@ -337,13 +337,14 @@ rm(dat.mo, dat.af, daily.dat)
 # reduced data set for pre measurement
 dat.pre.red <- dtS1$raw.pre %>%
   select(-starts_with("t_"))
+names(dat.pre.red) <- paste(names(dat.pre.red), "pre", sep = ".")
 
 # merge with daily data [+ clean up]
 df.pre <- merge(
   x = dtS1$daily,
   y = dat.pre.red,
   by.x = "last_outside_referrer",
-  by.y = "platformId",
+  by.y = "platformId.pre",
   all = T
 )
 
@@ -354,13 +355,14 @@ names(df.pre) <- gsub("[[:punct:]]y", ".pre", names(df.pre))
 # reduced data set for post-measurement
 dat.post.red <- dtS1$raw.post %>%
   select(-starts_with("t_"))
+names(dat.post.red) <- paste(names(dat.post.red), "post", sep = ".")
 
 # merge post measurement with pre- and daily data
 df <- merge(
   x = df.pre,
   y = dat.post.red,
   by.x = "last_outside_referrer",
-  by.y = "last_outside_referrer",
+  by.y = "last_outside_referrer.post",
   all = T
 )
 
@@ -376,7 +378,7 @@ rm(df, df.pre, dat.post.red, dat.pre.red)
 df <- dtS1$combined %>%
   filter(
     Finished.pre == 1,
-    Finished.daily == 1,
+    Finished == 1,
     !is.na(last_outside_referrer)
   )
 
@@ -412,8 +414,8 @@ df <- df %>%
     ResponseId = as.numeric(factor(day_time)),
     # day and time identifier as numeric id
     SubTime = chron::times(time.0),
-    time.daily = as.character(time.daily),
-    PPDate = as.Date(df$dateQualtrics.daily),
+    time.daily = as.character(time),
+    PPDate = as.Date(df$dateQualtrics),
     number = replace_na(ContactNum, 0),
     NonDutchNum = replace_na(NonDutchNum, 0)
   )
@@ -450,6 +452,7 @@ df.pre <- dtS2$raw.pre %>%
   filter(!email %in% .$email[duplicated(.$email)]) %>% # remove all who did the pre questionnaire multiple times (b/c inconsistent ratings scales)
   filter(!ResponseId %in% ownIDs) %>% # remove our own test
   mutate(ResponseId = as.character(ResponseId)) # turn factor into character strings (probably just precaution)
+names(df.pre) <- paste(names(df.pre), "pre", sep = ".")
 
 df.post <- dtS2$raw.post %>%
   mutate_all(na_if, "") %>%
@@ -460,6 +463,7 @@ df.post <- dtS2$raw.post %>%
   filter(!is.na(ended)) %>% # remove all who never finished
   filter(!ResponseId %in% .$ResponseId[duplicated(.$ResponseId)]) %>% # remove all duplicate ResponseIds
   mutate(ResponseId = as.character(ResponseId)) # turn factor into character strings (probably just precaution)
+names(df.post) <- paste(names(df.post), "post", sep = ".")
 
 df.daily <- dtS2$raw.daily %>%
   mutate_all(na_if, "") %>%
@@ -473,18 +477,20 @@ df.daily <- dtS2$raw.daily %>%
 dfPreDaily <- merge(
   x = df.daily,
   y = df.pre,
-  by = "ResponseId",
+  by.x = "ResponseId",
+  by.y = "ResponseId.pre", 
   suffixes = c(".daily", ".pre"),
-  all = F
+  all = FALSE
 )
 
 # merge daily with post
 dfCombined <- merge(
   x = dfPreDaily,
   y = df.post,
-  by = "ResponseId",
+  by.x = "ResponseId",
+  by.y = "ResponseId.post", 
   suffixes = c(".pre", ".post"),
-  all = F
+  all = FALSE
 )
 
 # add to list
@@ -517,6 +523,7 @@ df.pre <- dtS3$raw.pre %>%
   filter(!is.na(ended)) %>% # remove all who did not finish
   filter(!ResponseId %in% ownIDs) %>% # remove our own test
   mutate(ResponseId = as.character(ResponseId)) # turn factor into character strings (probably just precaution)
+names(df.pre) <- paste(names(df.pre), "pre", sep = ".")
 
 df.post <- dtS3$raw.post %>%
   mutate_all(na_if, "") %>%
@@ -527,6 +534,7 @@ df.post <- dtS3$raw.post %>%
   #filter(!is.na(ended)) %>% # remove all who never finished [disabled because only relevant if data is missing]
   filter(!ResponseId %in% .$ResponseId[duplicated(.$ResponseId)]) %>% # remove all duplicate ResponseIds
   mutate(ResponseId = as.character(ResponseId)) # turn factor into character strings (probably just precaution)
+names(df.post) <- paste(names(df.post), "post", sep = ".")
 
 df.daily <- dtS3$raw.daily %>%
   mutate_all(na_if, "") %>%
@@ -540,7 +548,8 @@ df.daily <- dtS3$raw.daily %>%
 dfPreDaily <- merge(
   x = df.daily,
   y = df.pre,
-  by = "ResponseId",
+  by.x = "ResponseId",
+  by.y = "ResponseId.pre", 
   suffixes = c(".daily", ".pre"),
   all = F
 )
@@ -549,7 +558,8 @@ dfPreDaily <- merge(
 dfCombined <- merge(
   x = dfPreDaily,
   y = df.post,
-  by = "ResponseId",
+  by.x = "ResponseId",
+  by.y = "ResponseId.post", 
   suffixes = c(".pre", ".post"),
   all = F
 )
@@ -607,8 +617,8 @@ df <- df %>%
 
 # Need scales
 df$keyMotiveFulfilled <- rowSums(df[, c("KeyNeedFulfillment", "DaytimeNeedFulfillment")], na.rm = T)
-df$autonomy.daily.all <- rowSums(df[, c("autonomy", "autonomy_NoInt_1")], na.rm = T)
-df$competence.daily.all <- rowSums(df[, c("competence", "competence_NoInt_1")], na.rm = T)
+df$autonomy.daily.all <- rowSums(df[, c("autonomy_Int", "autonomy_NoInt")], na.rm = T)
+df$competence.daily.all <- rowSums(df[, c("competence_Int", "competence_NoInt")], na.rm = T)
 # cor(df$relatednessOther, df$relatedness_self_1,use="complete.obs")
 df$relatedness.daily.all <- rowMeans(df[, c(
   "relatednessOther",
@@ -625,9 +635,9 @@ pairs.panels.new(
 )
 df$relatedness <- rowMeans(df[, c("relatednessOther", "relatednessSelf")], na.rm = T)
 
-df$Autonomy <- df$autonomy.daily.all
-df$Competence <- df$competence.daily.all
-df$Relatedness <- df$relatedness.daily.all
+df$autonomy <- df$autonomy.daily.all
+df$competence <- df$competence.daily.all
+df$relatedness <- df$relatedness.daily.all
 
 # summarize by participant (check that everything is within pp might not be the case for )
 between <- df %>%
@@ -640,9 +650,9 @@ between <- df %>%
     AvKeyNeed = mean(keyMotiveFulfilled, na.rm = T),
     AvKeyNeedInt = mean(KeyNeedFulfillment, na.rm = T),
     AvKeyNeedNoInt = mean(DaytimeNeedFulfillment, na.rm = T),
-    AvAutonomy = mean(autonomy.daily.all, na.rm = T),
-    AvCompetence = mean(competence.daily.all, na.rm = T),
-    AvRelatedness = mean(relatedness.daily.all, na.rm = T),
+    AvAutonomy = mean(autonomy, na.rm = T),
+    AvCompetence = mean(competence, na.rm = T),
+    AvRelatedness = mean(relatedness, na.rm = T),
     AvThermo = mean(AttitudesDutch, na.rm = T),
     AvWB = mean(exWB, na.rm = T)
   ) %>%
@@ -679,9 +689,9 @@ workerWithinBetween <-
     selection =
       c(
         "keyMotiveFulfilled",
-        "competence.daily.all",
-        "autonomy.daily.all",
-        "relatedness.daily.all",
+        "competence",
+        "autonomy",
+        "relatedness",
         "AttitudesDutch",
         "KeyNeedFulfillment",
         "competence",
@@ -786,11 +796,11 @@ pairs.panels.new(
     "X shared information about themselves."
   )
 )
-df$RelatednessInteraction <- rowMeans(df[c("relatednessSelf", "relatednessOther")], na.rm = TRUE)
-df$RelatednessInteraction[df$RelatednessInteraction == "NaN"] <- NA
+df$relatednessInteraction <- rowMeans(df[c("relatednessSelf", "relatednessOther")], na.rm = TRUE)
+df$relatednessInteraction[df$relatednessInteraction == "NaN"] <- NA
 # Relatedness Overall (JANNIS NOT SURE THESE ARE CORRECT, CHANGE ROWS?; J: Changed "NaN" in df$RelatednessInteraction to NA() should work now)
-df$Relatedness <-
-  rowMeans(df[, c("RelatednessInteraction", "relatednessNoInteraction")],
+df$relatedness <-
+  rowMeans(df[, c("relatednessInteraction", "relatednessNoInteraction")],
            na.rm = TRUE) %>%
   ifelse(is.nan(.), NA, .)
 
@@ -966,7 +976,7 @@ studentWithinBetween <-
         "KeyNeedFulfillment",
         "competence",
         "autonomy",
-        "Relatedness",
+        "relatedness",
         "AttitudesDutch",
         "qualityOverall",
         "OutgroupInteraction",
@@ -982,7 +992,7 @@ studentOutWithinBetween <-
         "KeyNeedFulfillment",
         "competence",
         "autonomy",
-        "Relatedness",
+        "relatedness",
         "AttitudesDutch",
         "qualityOverall"
       )
@@ -1055,12 +1065,12 @@ pairs.panels.new(
     "X shared information about themselves."
   )
 )
-df$RelatednessInteraction <-
+df$relatednessInteraction <-
   rowMeans(df[c("relatednessSelf", "relatednessOther")], na.rm = TRUE)
-df$RelatednessInteraction[df$RelatednessInteraction == "NaN"] <- NA
+df$relatednessInteraction[df$relatednessInteraction == "NaN"] <- NA
 # Relatedness Overall (JANNIS NOT SURE THESE ARE CORRECT, CHANGE ROWS?; J: Changed "NaN" in df$RelatednessInteraction to NA() should work now)
-df$Relatedness <-
-  rowMeans(df[, c("RelatednessInteraction", "relatednessNoInteraction")],
+df$relatedness <-
+  rowMeans(df[, c("relatednessInteraction", "relatednessNoInteraction")],
            na.rm = TRUE) %>%
   ifelse(is.nan(.), NA, .)
 
@@ -1260,7 +1270,7 @@ medicalOutWithinBetween <-
         "KeyNeedFulfillment",
         "competence",
         "autonomy",
-        "Relatedness",
+        "relatedness",
         "AllportsCondition",
         "AttitudesDutch",
         "qualityOverall"
@@ -1276,7 +1286,7 @@ medicalWithinBetween <-
         "KeyNeedFulfillment",
         "competence",
         "autonomy",
-        "Relatedness",
+        "relatedness",
         "AllportsCondition",
         "AttitudesDutch",
         "qualityOverall",
@@ -1294,7 +1304,7 @@ df <- # keep only for compatibility of old framgents
         "KeyNeedFulfillment",
         "competence",
         "autonomy",
-        "Relatedness",
+        "relatedness",
         "AllportsCondition",
         "AttitudesDutch",
         "qualityOverall"
@@ -1353,20 +1363,6 @@ As one of our main analyses is a three-mode principal component analysis (3MPCA)
 ### Study 1
 
 ```{r workerDataAvailability}
-dtS1Missing <- dtS1$full %>%
-  select(
-    PID,
-    TIDnum,
-    Finished.daily,
-    PPDate,
-    daytime,
-    TID
-  ) %>%
-  mutate(
-    date_period = paste(PPDate, daytime, sep = " "),
-    available = 1
-  )
-
 dtS1Availability <- dtS1$full %>%
   select(
     PID,
@@ -1375,7 +1371,8 @@ dtS1Availability <- dtS1$full %>%
   arrange(PID, TIDnum) %>%
   mutate(data = 1)
 dtS1Availability <- reshape::cast(dtS1Availability, PID ~ TIDnum) %>%
-  select(-PID)
+  select(-PID) %>%
+  mutate_all(function(x) ifelse(x>1,1,x))
 # sum(colMeans(dtS1Availability)*100 >= 66)
 # sum(rowMeans(dtS1Availability)*100 >= 66)
 # sum(colMeans(dtS1Availability[-5,])*100 >= 66)
@@ -1406,14 +1403,13 @@ kbl(
   scroll_box(width = "100%", height = "500px")
 
 write.csv(dtS1Availability, "data/S1_Workers/processed/workerAvailability.csv")
-rm(dtS1Missing)
 ```
 
 
 
 ```{r testOptimizer, include=FALSE}
 set.seed(42)
-df <- as.data.table(matrix(rbinom(10*5,1,.66), ncol=10, nrow=5))
+df <- as.data.table(matrix(rbinom(5*10,1,.66), nrow=5, ncol=10))
 df
 
 best.list.row.df = list()
@@ -1441,19 +1437,6 @@ rm(df, best.list.row.df, best.list.col.df)
 ### Study 2
 
 ```{r studentDataAvailability}
-dtS2Missing <- dtS2$full %>%
-  select(
-    PID,
-    date.daily,
-    periodMA,
-    date_period,
-    TID
-  ) %>%
-  mutate(
-    TID = as.numeric(TID),
-    available = 1
-  )
-
 dtS2Availability <- dtS2$full %>%
   select(
     PID,
@@ -1468,7 +1451,6 @@ rownames(dtS2Availability) <- paste("PP", 1:nrow(dtS2Availability), sep = "_")
 colnames(dtS2Availability) <- paste("t", 1:ncol(dtS2Availability), sep = "_")
 
 write.csv(dtS2Availability, "data/S2_Students/processed/studentAvailability.csv")
-rm(dtS2Missing)
 
 dtS2Availability[1:ncol(dtS2Availability)] <- lapply(dtS2Availability[1:ncol(dtS2Availability)], function(x) {
     cell_spec(x,
@@ -1496,19 +1478,6 @@ kbl(
 ### Study 3
 
 ```{r medicalDataAvailability}
-dtS3Missing <- dtS3$full %>%
-  select(
-    PID,
-    date.daily,
-    periodMA,
-    date_period,
-    TID
-  ) %>%
-  mutate(
-    TID = as.numeric(TID),
-    available = 1
-  )
-
 dtS3Availability <- dtS3$full %>%
   select(
     PID,
@@ -1523,7 +1492,6 @@ rownames(dtS3Availability) <- paste("PP", 1:nrow(dtS3Availability), sep = "_")
 colnames(dtS3Availability) <- paste("t", 1:ncol(dtS3Availability), sep = "_")
 
 write.csv(dtS3Availability, "data/S3_Medical/processed/medicalAvailability.csv")
-rm(dtS3Missing)
 
 dtS3Availability[1:ncol(dtS3Availability)] <- lapply(dtS3Availability[1:ncol(dtS3Availability)], function(x) {
     cell_spec(x,
@@ -1552,7 +1520,133 @@ kbl(
 ## Time Scales and Timepoint Aggregation
 
 
+```{r checkVarAvailability}
+varNamesPre <- varNames %>%
+  filter(
+    surveyS1 == "pre",
+    surveyS2 == "pre",
+    str_detect(surveyS3, "^pre")
+  ) %>%
+  select(varNam)
+varNamesPreFull <-
+  data.frame(varNam = Reduce(intersect, list(
+    names(dtS1$full), names(dtS3$full), names(dtS3$full)
+  ))) %>%
+  filter(str_detect(varNam, ".pre$"))
 
+varNamesDaily <- varNames %>%
+  filter(
+    surveyS1 == "daily",
+    surveyS2 == "daily",
+    surveyS3 == "daily"
+  ) %>%
+  select(varNam)
+varNamesDailyFull <-
+  data.frame(varNam = Reduce(intersect, list(
+    names(dtS1$full), names(dtS3$full), names(dtS3$full)
+  ))) %>%
+  filter(!str_detect(varNam, ".pre$|.post$"))
+
+varNamesPost <- varNames %>%
+  filter(
+    surveyS1 == "post",
+    surveyS2 == "post",
+    surveyS3 == "post"
+  ) %>%
+  select(varNam)
+varNamesPostFull <-
+  data.frame(varNam = Reduce(intersect, list(
+    names(dtS1$full), names(dtS3$full), names(dtS3$full)
+  ))) %>%
+  filter(str_detect(varNam, ".post$"))
+```
+
+```{r analysisDFs}
+# Main Analysis: 3MPCA (common variables across studies)
+dropVarPcaMain <- c(
+  # Meta Data
+  "last_outside_referrer",
+  "created",
+  "ended",
+  "ip_address",
+  "date",
+  "ResponseId",
+  "server_language",
+  "Meta_Browser",
+  # Interaction Dummies (non-continuous)
+  "IntergroupContact",
+  "IngroupContact",
+  "InteractionDum",
+  # Interaction Counts (non-continuous)
+  "ContactNum",
+  "NonDutchNum",
+  # Interaction Descriptives (non-continuous)
+  "duration",
+  "dyadGroup",
+  "groupSize",
+  # Keyneed Freetexts (non-continuous)
+  "KeyNeed",
+  "DaytimeNeed",
+  # Relatedness individual items
+  "relatednessSelf",
+  "relatednessOther",
+  "relatednessNoInteraction"
+)
+
+
+varNam3mpcaMain <- varNamesDailyFull %>%
+  filter(!varNam %in% dropVarPcaMain) %>%
+  pull
+
+dtMain3mpca <- rbind(
+  dtS1$full %>% select(any_of(varNam3mpcaMain)) %>% mutate(study = "S1"),
+  dtS3$full %>% select(any_of(varNam3mpcaMain)) %>% mutate(study = "S2"),
+  dtS3$full %>% select(any_of(varNam3mpcaMain)) %>% mutate(study = "S3")
+  ) %>%
+  group_by(study, PID) %>%
+  mutate(ID = cur_group_id()) %>%
+  ungroup %>%
+  mutate(
+    date = as.Date(gsub(" .*", "", TID)),
+    week = strftime(date, format = "%Y-W%V")
+    ) %>%
+  select(
+    ID,
+    PID,
+    TID,
+    date,
+    week,
+    TIDnum,
+    study,
+    everything()
+  ) %>%
+  arrange(ID, TIDnum)
+
+dtMain3mpcaDaily <- dtMain3mpca %>%
+  group_by(ID, date, study) %>%
+  summarise_if(is.numeric, mean, na.rm = TRUE) %>%
+  ungroup %>%
+  group_by(study) %>%
+  mutate(TIDnum = as.numeric(factor(date))) %>%
+  ungroup %>%
+  select(ID, date, TIDnum, everything()) %>%
+  mutate_all(~ifelse(is.nan(.), NA, .))
+
+dtMain3mpcaWeekly <- dtMain3mpca %>%
+  group_by(ID, week, study) %>%
+  summarise_if(is.numeric, mean, na.rm = TRUE) %>%
+  ungroup %>%
+  group_by(study) %>%
+  mutate(TIDnum = as.numeric(factor(week))) %>%
+  ungroup %>%
+  select(ID, week, TIDnum, everything()) %>%
+  mutate_all(~ifelse(is.nan(.), NA, .))
+
+dtMain3mpcaWeekly
+
+stats::reshape(dtMain3mpca, idvar = "ID", timevar = "TIDnum", direction = "wide")
+
+```
 
 
 </br>
@@ -1584,9 +1678,9 @@ varListWorker <-
     "InteractionDum",
     "DaytimeNeedFullfillment",
     "InteractionNeedFullfillment",
-    "Autonomy",
-    "Competence",
-    "Relatedness",
+    "autonomy",
+    "competence",
+    "relatedness",
     "AttitudesDutch",
     "AttitudesPartner",
     "ExWB",
@@ -1627,9 +1721,9 @@ varNameListWorker <-
     "InteractionDum" = "Any Interaction",
     "DaytimeNeedFullfillment" = "Daytime Core Motive Fulfillment",
     "InteractionNeedFullfillment" = "Interaction Core Motive Fulfillment",
-    "Autonomy" = "Autonomy",
-    "Competence" = "Competence",
-    "Relatedness" = "Relatedness",
+    "autonomy" = "Autonomy",
+    "competence" = "Competence",
+    "relatedness" = "Relatedness",
     "AttitudesDutch" = "Outgroup Attitude",
     "AttitudesPartner" = "Attitude Interaction Partner",
     "ExWB" = "Sadness Happiness",
@@ -1697,9 +1791,9 @@ dtS1$viz$SDT <- dtS1$vizall %>%
     PID,
     TID,
     TIDnum,
-    Autonomy,
-    Relatedness, 
-    Competence
+    autonomy,
+    relatedness, 
+    competence
   )
 
 dtS1$viz$Attitudes <- dtS1$vizall %>%
@@ -1910,11 +2004,11 @@ varListStudent <-
     "StudentGoal08",
     "StudentGoal09",
     "StudentGoal10",
-    "Autonomy",
-    "Competence",
+    "autonomy",
+    "competence",
     # Break relatedness up into interaction vs. no interaction(?)
     # vars are already calculated
-    "Relatedness",
+    "relatedness",
     "AttitudesDutch",
     "AttitudesPartner",
     "ExWB",
@@ -1956,11 +2050,11 @@ varNameListStudent <-
     "StudentGoal08" = "Personal improvement and growth",
     "StudentGoal09" = "Service and help",
     "StudentGoal10" = "Spiritual or religious",
-    "Autonomy" = "Autonomy",
-    "Competence" = "Competence",
+    "autonomy" = "Autonomy",
+    "competence" = "Competence",
     # Break relatedness up into interaction vs. no interaction(?)
     # vars are already calculated
-    "Relatedness" = "Relatedness",
+    "relatedness" = "Relatedness",
     "AttitudesDutch" = "Outgroup Attitude",
     "AttitudesPartner" = "Attitude Interaction Partner",
     "ExWB" = "Sadness Happiness",
@@ -2095,9 +2189,9 @@ dtS2$viz$SDT <- dtS2$vizall %>%
     PID,
     TID,
     TIDnum,
-    Autonomy,
-    Relatedness, 
-    Competence
+    autonomy,
+    relatedness, 
+    competence
   )
 
 dtS2$viz$Attitudes <- dtS2$vizall %>%
@@ -2201,7 +2295,7 @@ varListMedical <-
     "Competence",
     # Break relatedness up into interaction vs. no interaction(?)
     # vars are already calculated
-    "Relatedness",
+    "relatedness",
     "AttitudesDutch",
     "AttitudesPartner",
     "exWB",
@@ -2247,7 +2341,7 @@ varNameListMedical <-
     "Competence" = "Competence",
     # Break relatedness up into interaction vs. no interaction(?)
     # vars are already calculated
-    "Relatedness" = "Relatedness",
+    "relatedness" = "Relatedness",
     "AttitudesDutch" = "Outgroup Attitude",
     "AttitudesPartner" = "Attitude Interaction Partner",
     "exWB" = "Sadness Happiness",
@@ -2391,9 +2485,9 @@ dtS3$viz$SDT <- dtS3$vizall %>%
     PID,
     TID,
     TIDnum,
-    Autonomy,
-    Relatedness, 
-    Competence
+    autonomy,
+    relatedness, 
+    competence
   )
 
 dtS3$viz$Attitudes <- dtS3$vizall %>%
