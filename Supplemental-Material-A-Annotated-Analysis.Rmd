@@ -1897,7 +1897,21 @@ anova(test2)
 ## Multiple Imputation
 
 
-```{}
+```{r MiMain3mpca}
+library(Amelia)
+
+dtMain3mpcaMI<- dtMain3mpca %>%
+  select(
+    -date,
+    -TID,
+    -week
+  ) %>%
+  as.data.frame
+
+a.out <- amelia(dtMain3mpcaMI, m = 20, ts = "TIDnum", idvars = c("ID", "PID", "study"))
+
+```
+
 
 ## Center and Normalize
 
