@@ -245,6 +245,42 @@ MlTraitState <-
     data
   }
 
+PCAnorm <-
+  function(data,
+           pid,
+           tid,
+           selection) {
+    
+    # for testing
+    # data <- dtMain3mpca
+    # pid <- "PID"
+    # tid <- "TIDnum"
+    # selection <- varNam3mpcaMainAnalysis
+    
+    data02 <- data %>%
+      mutate_at(selection, as.numeric) %>%
+      group_by(!!rlang::sym(tid)) %>%
+      mutate_at(selection, list(cwt = ~ . - mean(., na.rm = TRUE))) %>%
+      ungroup %>%
+      filter_at(selection, all_vars(!is.na(.))) %>%
+      mutate_at(selection, list(gmc = ~ . - mean(., na.rm = TRUE))) %>%
+      mutate_at(selection, list(sigma = ~ sqrt(sum(. ^ 2)/(length(unique(!!rlang::sym(pid)))*length(unique(!!rlang::sym(tid)))))))
+    
+    cat("@Jannis: Don't forget to fix the filter once sample section is finalized.")
+    
+    data03 <- map_dfc(selection,
+                      ~ data02 %>%
+                        transmute(
+                          !!str_c(.x, '_z') :=
+                            !!rlang::sym(str_c(.x, "_cwt"))/!!rlang::sym(str_c(.x, "_sigma"))
+                        )) %>% 
+      bind_cols(data02, .)
+    
+    out <- data03
+    
+    out
+  }
+
 
 var_reduction = function(m0, m1) {
   library(tidyverse)

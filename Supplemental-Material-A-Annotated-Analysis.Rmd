@@ -1380,7 +1380,9 @@ dtS1Availability <- reshape::cast(dtS1Availability, PID ~ TIDnum) %>%
 
 rownames(dtS1Availability) <- paste("PP", 1:nrow(dtS1Availability), sep = "_")
 colnames(dtS1Availability) <- paste("t", 1:ncol(dtS1Availability), sep = "_")
-dtS1Availability[1:ncol(dtS1Availability)] <- lapply(dtS1Availability[1:ncol(dtS1Availability)], function(x) {
+dtS1AvailabilityKbl <- dtS1Availability
+
+dtS1AvailabilityKbl[1:ncol(dtS1AvailabilityKbl)] <- lapply(dtS1AvailabilityKbl[1:ncol(dtS1AvailabilityKbl)], function(x) {
     cell_spec(x,
               bold = FALSE,
               color = "white",
@@ -1388,7 +1390,7 @@ dtS1Availability[1:ncol(dtS1Availability)] <- lapply(dtS1Availability[1:ncol(dtS
               )
 })
 kbl(
-  dtS1Availability,
+  dtS1AvailabilityKbl,
   format = "html",
   escape = FALSE,
   align = "c",
@@ -1406,33 +1408,173 @@ write.csv(dtS1Availability, "data/S1_Workers/processed/workerAvailability.csv")
 ```
 
 
-
 ```{r testOptimizer, include=FALSE}
-set.seed(42)
-df <- as.data.table(matrix(rbinom(5*10,1,.66), nrow=5, ncol=10))
-df
-
-best.list.row.df = list()
-for (i in 1:nrow(df)) {
-  # get best subset for rows based on how many columns have more than 66% data
-  rowlist = combn(nrow(df), i)
-  numobs = apply(rowlist, 2, function(x) sum(colMeans(df[x,])*100 >= 66))
-  cat("For subsets of", i, "rows, the highest number of observations is", max(numobs), "out of the", ncol(df), "maximum. Product =", i*max(numobs),"\n")
-  best = which(numobs == max(numobs))[1]
-  best.list.row.df = c(best.list.row.df, list(rowlist[, best]))
-}
-
-best.list.col.df = list()
-for (i in 1:ncol(df)) {
-  # get best subset for columns based on how many rows have more than 66% data
-  collist = combn(ncol(df), i)
-  numobs = apply(collist, 2, function(x) sum(rowMeans(df[, ..x])*100 >= 66))
-  cat("For subsets of", i, "columns, the highest number of participants is", max(numobs), "out of the", nrow(df), "maximum. Product =", i*max(numobs),"\n")
-  best = which(numobs == max(numobs))[1]
-  best.list.col.df = c(best.list.col.df, list(collist[, best]))
-}
-rm(df, best.list.row.df, best.list.col.df)
+# set.seed(42)
+# nr <- 5
+# nc <- 10
+# df <- as.data.table(matrix(rbinom(nr*nc,1,.66), nrow=nr, ncol=nc))
+# df
+# 
+# best.list.row.df = list()
+# for (i in 1:nrow(df)) {
+#   # get best subset for rows based on how many columns have more than 66% data
+#   rowlist = combn(nrow(df), i)
+#   numobs = apply(rowlist, 2, function(x) sum(colMeans(df[x,])*100 >= 66))
+#   cat("For subsets of", i, "rows, the highest number of observations is", max(numobs), "out of the", ncol(df), "maximum. Product =", i*max(numobs),"\n")
+#   best = which(numobs == max(numobs))[1]
+#   best.list.row.df = c(best.list.row.df, list(rowlist[, best]))
+# }
+# 
+# best.list.col.df = list()
+# for (i in 1:ncol(df)) {
+#   # get best subset for columns based on how many rows have more than 66% data
+#   collist = combn(ncol(df), i)
+#   numobs = apply(collist, 2, function(x) sum(rowMeans(df[, ..x])*100 >= 66))
+#   cat("For subsets of", i, "columns, the highest number of participants is", max(numobs), "out of the", nrow(df), "maximum. Product =", i*max(numobs),"\n")
+#   best = which(numobs == max(numobs))[1]
+#   best.list.col.df = c(best.list.col.df, list(collist[, best]))
+# }
+# rm(df, best.list.row.df, best.list.col.df)
 ```
+
+
+```{r testOptimizer03, include=FALSE}
+# library(dplyr)
+# library(ROI)
+# library(ROI.plugin.glpk)
+# library(ompr)
+# library(ompr.roi)
+# 
+# set.seed(42)
+# tf <- matrix(sample(c(TRUE, FALSE), 1488, replace=TRUE), 31)
+# M3 <- t(replicate(31, 1969:2016, simplify=TRUE))
+# M3[tf] <- NA
+# 
+# m <- +!is.na(M3) # gets logical matrix; 0 if NA else 1    
+# #m <- as.data.frame(dtS1AvailabilityTest)
+# nr <- nrow(m)
+# nc <- ncol(m)
+# n_years <- 15 
+# 
+# 
+# model <- MIPModel() %>% 
+#   # keep[i,j] is 1 if matrix cell [i,j] is to be kept else 0
+#   add_variable(keep[i,j], i = 1:nr, j = 1:nc, typ = "binary") %>% 
+#   # rm_row[i] is 1 if row i is selected for removal else 0
+#   add_variable(rm_row[i], i = 1:nr, type = "binary") %>% 
+#   # rm_col[j] is 1 if column j is selected for removal else 0
+#   add_variable(rm_col[j], j = 1:nc, type = "binary") %>% 
+#   # maximize good cells kept
+#   set_objective(sum_expr(keep[i,j], i = 1:nr, j = 1:nc), "max") %>% 
+#   # cell can be kept only when row is not selected for removal
+#   add_constraint(sum_expr(keep[i,j], j = 1:nc) <= 1 - rm_row[i], i = 1:nr) %>%
+#   # cell can be kept only when column is not selected for removal
+#   add_constraint(sum_expr(keep[i,j], i = 1:nr) <= 1 - rm_col[j], j = 1:nc) %>%
+#   # keep at most n_years columns i.e. remove at least (nc - n_years) columns
+#   # only non-NA values can be kept
+#   add_constraint(m[i,j] + rm_row[i] + rm_col[j] >= 1, i = 1:nr, j = 1:nc) %>% 
+#   #add_constraint(sum_expr(m[,j], j = 1:nc)/nc*100 >= 66) %>% 
+#   #add_constraint(sum_expr(m[i,], i = 1:nr)/nr*100 >= 66) %>% 
+#   # keep cols with more 
+#   #add_constraint(colMeans(m[i,j], i = 1:nr, j = 1:nc) >= 0.66) %>%
+#   # I used >= instead of == to avoid infeasiblity
+#   #add_constraint(sum_expr(rm_col[j], j = 1:nc) >= nc - n_years) %>% 
+#   # solve using free glpk solver
+#   solve_model(with_ROI(solver = "glpk", verbose = TRUE))
+# 
+# solver_status(model)
+# rm_rows <- model %>% 
+#   get_solution(rm_row[i]) %>% 
+#   filter(value > 0) %>% 
+#   pull(i)
+# 
+# rm_cols <- model %>% 
+#   get_solution(rm_col[j]) %>% 
+#   filter(value > 0) %>% 
+#   pull(j) 
+# 
+# result <- m[-rm_rows, -rm_cols, drop = F]
+# result
+```
+
+
+
+```{r testOptimizer05}
+cleanM <- function(M, c = 66) {
+  check <- list()
+  rowNamesOut <- c()
+  colNamesOut <- c()
+  for (i in 1:length(c(row.names(M), names(M)))) {
+    rowMeans <- rowMeans(M) * 100
+    colMeans <- colMeans(M) * 100
+    rcMeans <- c(rowMeans, colMeans)
+    rm <- which.min(rcMeans) %>% names
+    rc <- ifelse(startsWith(rm, "PP_"), "row", "col")
+    
+    check[[i]] <- rcMeans
+    
+    if (!all(rcMeans >= c) && rc == "row") {
+      M <- M[!(row.names(M) %in% rm), ]
+      rowNamesOut <- append(rowNamesOut, rm)
+      cat(i, ": Row ", rm, " had a completion rate of ", format(round(min(rcMeans), 2), nsmall = 2), "% and was removed.\n", sep = "")
+    } else if (!all(rcMeans >= c) && rc == "col") {
+      M <- M[, !(names(M) %in% rm)]
+      colNamesOut <- append(colNamesOut, rm)
+      cat(i, ": Column ", rm, " had a completion rate of ", format(round(min(rcMeans), 2), nsmall = 2), "% and was removed.\n", sep = "")
+    } else {
+      cat(i, ": All row- and column means are over ", c, "%. The final matrix has ", nrow(M), " rows and ", ncol(M), " columns.", sep = "")
+      return(
+        list(
+          reducedMatrix = M,
+          rowNamesIn = row.names(M),
+          colNamesIn = names(M),
+          rowNamesOut = rowNamesOut,
+          colNamesOut = colNamesOut,
+          rowMeans = rowMeans,
+          colMeans = colMeans
+        )
+      )
+    }
+  }
+}
+
+dtS1RedInfo <- cleanM(M = as.data.frame(dtS1Availability), c = 66)
+
+PIDout <- gsub("PP_", "", dtS1RedInfo$rowNamesOut) %>% as.numeric
+TIDout <- gsub("t_", "", dtS1RedInfo$colNamesOut) %>% as.numeric
+
+dtS1Red <- dtS1$full %>%
+  filter(
+    !PID %in% PIDout,
+    !TIDnum %in% TIDout
+  ) %>%
+  mutate(TIDnum = as.numeric(factor(TIDnum)))
+rm(PIDout, TIDout)
+
+dtS1AvailabilityRedKbl <- dtS1RedInfo$reducedMatrix
+dtS1AvailabilityRedKbl[1:ncol(dtS1AvailabilityRedKbl)] <- lapply(dtS1AvailabilityRedKbl[1:ncol(dtS1AvailabilityRedKbl)], function(x) {
+    cell_spec(x,
+              bold = FALSE,
+              color = "white",
+              background = ifelse(x == 1, "green", "red")
+              )
+})
+kbl(
+  dtS1AvailabilityRedKbl,
+  format = "html",
+  escape = FALSE,
+  align = "c",
+  booktabs = TRUE,
+  caption = "Study 1: FinalData Availability" # complete caption for main document
+) %>%
+  kable_classic(
+    full_width = FALSE,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  ) %>%
+  scroll_box(width = "100%", height = "500px")
+```
+
 
 ### Study 2
 
@@ -1452,7 +1594,8 @@ colnames(dtS2Availability) <- paste("t", 1:ncol(dtS2Availability), sep = "_")
 
 write.csv(dtS2Availability, "data/S2_Students/processed/studentAvailability.csv")
 
-dtS2Availability[1:ncol(dtS2Availability)] <- lapply(dtS2Availability[1:ncol(dtS2Availability)], function(x) {
+dtS2AvailabilityKbl <- dtS2Availability
+dtS2AvailabilityKbl[1:ncol(dtS2AvailabilityKbl)] <- lapply(dtS2AvailabilityKbl[1:ncol(dtS2AvailabilityKbl)], function(x) {
     cell_spec(x,
               bold = FALSE,
               color = "white",
@@ -1460,12 +1603,50 @@ dtS2Availability[1:ncol(dtS2Availability)] <- lapply(dtS2Availability[1:ncol(dtS
               )
 })
 kbl(
-  dtS2Availability,
+  dtS2AvailabilityKbl,
   format = "html",
   escape = FALSE,
   align = "c",
   booktabs = TRUE,
   caption = "Study 2: Data Availability" # complete caption for main document
+) %>%
+  kable_classic(
+    full_width = FALSE,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  ) %>%
+  scroll_box(width = "100%", height = "500px")
+```
+
+```{r s2SampleReduction}
+dtS2RedInfo <- cleanM(M = as.data.frame(dtS2Availability), c = 66)
+
+PIDout <- gsub("PP_", "", dtS2RedInfo$rowNamesOut) %>% as.numeric
+TIDout <- gsub("t_", "", dtS2RedInfo$colNamesOut) %>% as.numeric
+
+dtS2Red <- dtS2$full %>%
+  filter(
+    !PID %in% PIDout,
+    !TIDnum %in% TIDout
+  ) %>%
+  mutate(TIDnum = as.numeric(factor(TIDnum)))
+rm(PIDout, TIDout)
+
+dtS2AvailabilityRedKbl <- dtS2RedInfo$reducedMatrix
+dtS2AvailabilityRedKbl[1:ncol(dtS2AvailabilityRedKbl)] <- lapply(dtS2AvailabilityRedKbl[1:ncol(dtS2AvailabilityRedKbl)], function(x) {
+    cell_spec(x,
+              bold = FALSE,
+              color = "white",
+              background = ifelse(x == 1, "green", "red")
+              )
+})
+kbl(
+  dtS2AvailabilityRedKbl,
+  format = "html",
+  escape = FALSE,
+  align = "c",
+  booktabs = TRUE,
+  caption = "Study 2: Final Data Availability" # complete caption for main document
 ) %>%
   kable_classic(
     full_width = FALSE,
@@ -1493,7 +1674,8 @@ colnames(dtS3Availability) <- paste("t", 1:ncol(dtS3Availability), sep = "_")
 
 write.csv(dtS3Availability, "data/S3_Medical/processed/medicalAvailability.csv")
 
-dtS3Availability[1:ncol(dtS3Availability)] <- lapply(dtS3Availability[1:ncol(dtS3Availability)], function(x) {
+dtS3AvailabilityKbl <- dtS3Availability
+dtS3AvailabilityKbl[1:ncol(dtS3AvailabilityKbl)] <- lapply(dtS3AvailabilityKbl[1:ncol(dtS3AvailabilityKbl)], function(x) {
     cell_spec(x,
               bold = FALSE,
               color = "white",
@@ -1501,12 +1683,52 @@ dtS3Availability[1:ncol(dtS3Availability)] <- lapply(dtS3Availability[1:ncol(dtS
               )
 })
 kbl(
-  dtS3Availability,
+  dtS3AvailabilityKbl,
   format = "html",
   escape = FALSE,
   align = "c",
   booktabs = TRUE,
   caption = "Study 2: Data Availability" # complete caption for main document
+) %>%
+  kable_classic(
+    full_width = FALSE,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  ) %>%
+  scroll_box(width = "100%", height = "500px")
+rm(dtS3AvailabilityKbl)
+```
+
+
+```{r s3SampleReduction}
+dtS3RedInfo <- cleanM(M = as.data.frame(dtS3Availability), c = 66)
+
+PIDout <- gsub("PP_", "", dtS3RedInfo$rowNamesOut) %>% as.numeric
+TIDout <- gsub("t_", "", dtS3RedInfo$colNamesOut) %>% as.numeric
+
+dtS3Red <- dtS3$full %>%
+  filter(
+    !PID %in% PIDout,
+    !TIDnum %in% TIDout
+  ) %>%
+  mutate(TIDnum = as.numeric(factor(TIDnum)))
+rm(PIDout, TIDout)
+
+dtS3AvailabilityRedKbl <- dtS3RedInfo$reducedMatrix
+dtS3AvailabilityRedKbl[1:ncol(dtS3AvailabilityRedKbl)] <- lapply(dtS3AvailabilityRedKbl[1:ncol(dtS3AvailabilityRedKbl)], function(x) {
+    cell_spec(x,
+              bold = FALSE,
+              color = "white",
+              background = ifelse(x == 1, "green", "red")
+              )
+})
+kbl(
+  dtS3AvailabilityRedKbl,
+  format = "html",
+  escape = FALSE,
+  align = "c",
+  booktabs = TRUE,
+  caption = "Study 3: Final Data Availability" # complete caption for main document
 ) %>%
   kable_classic(
     full_width = FALSE,
@@ -1543,7 +1765,7 @@ varNamesDaily <- varNames %>%
   select(varNam)
 varNamesDailyFull <-
   data.frame(varNam = Reduce(intersect, list(
-    names(dtS1$full), names(dtS3$full), names(dtS3$full)
+    names(dtS1Red), names(dtS3Red), names(dtS3Red)
   ))) %>%
   filter(!str_detect(varNam, ".pre$|.post$"))
 
@@ -1556,7 +1778,7 @@ varNamesPost <- varNames %>%
   select(varNam)
 varNamesPostFull <-
   data.frame(varNam = Reduce(intersect, list(
-    names(dtS1$full), names(dtS3$full), names(dtS3$full)
+    names(dtS1Red), names(dtS3Red), names(dtS3Red)
   ))) %>%
   filter(str_detect(varNam, ".post$"))
 ```
@@ -1599,9 +1821,9 @@ varNam3mpcaMain <- varNamesDailyFull %>%
   pull
 
 dtMain3mpca <- rbind(
-  dtS1$full %>% select(any_of(varNam3mpcaMain)) %>% mutate(study = "S1"),
-  dtS3$full %>% select(any_of(varNam3mpcaMain)) %>% mutate(study = "S2"),
-  dtS3$full %>% select(any_of(varNam3mpcaMain)) %>% mutate(study = "S3")
+  dtS1Red %>% select(any_of(varNam3mpcaMain)) %>% mutate(study = "S1"),
+  dtS3Red %>% select(any_of(varNam3mpcaMain)) %>% mutate(study = "S2"),
+  dtS3Red %>% select(any_of(varNam3mpcaMain)) %>% mutate(study = "S3")
   ) %>%
   group_by(study, PID) %>%
   mutate(ID = cur_group_id()) %>%
@@ -1641,12 +1863,91 @@ dtMain3mpcaWeekly <- dtMain3mpca %>%
   ungroup %>%
   select(ID, week, TIDnum, everything()) %>%
   mutate_all(~ifelse(is.nan(.), NA, .))
+```
 
-dtMain3mpcaWeekly
 
-stats::reshape(dtMain3mpca, idvar = "ID", timevar = "TIDnum", direction = "wide")
+### Timescale ML test
+
+```{r }
+dtMain3mpca <- dtMain3mpca %>%
+  mutate(
+    TIDdate = as.numeric(factor(date)),
+    TIDweek = as.numeric(factor(week))
+  )
+
+test <-
+  lme4::lmer(KeyNeedFulfillment ~ 1 + (1 + TIDnum + TIDdate + TIDweek | PID),
+    data = dtMain3mpca
+  ) # use optim if it does not converge
+
+test2 <-
+  lme(
+    KeyNeedFulfillment ~ 1,
+    random = ~ 1 + TIDnum + TIDdate + TIDweek | PID,
+    data = dtMain3mpca %>% filter(!is.na(KeyNeedFulfillment)),
+    control = list(opt = "nlmimb")
+  ) # use optim if it does not converge
+
+summary(test2)
+#summ(test, digits = 3, center = FALSE)
+anova(test2)
 
 ```
+
+## Multiple Imputation
+
+
+```{}
+
+## Center and Normalize
+
+```{r mainCentered}
+varNam3mpcaMainAnalysis <- varNamesDailyFull %>%
+  filter(!varNam %in% c(dropVarPcaMain, "PID", "TID", "TIDnum")) %>%
+  pull
+
+dtMain3mpcaNorm <-
+  PCAnorm(data = dtMain3mpca,
+          pid = "ID",
+          tid = "TIDnum",
+          selection = varNam3mpcaMainAnalysis)
+```
+
+## Long to Wide
+
+```{r longToWide}
+
+dtMain3mpcaWideGmc <- dtMain3mpcaNorm %>% 
+  select(
+    ID,
+    TIDnum,
+    ends_with("_gmc")
+  ) %>%
+  reshape2::melt(.,
+              id.vars = c("ID", "TIDnum")) %>%
+  mutate(variable = paste(variable, TIDnum, sep = "_")) %>%
+  select(-TIDnum) %>% 
+  arrange(variable, ID) %>%
+  reshape(., idvar = "ID", timevar = "variable", direction = "wide")
+  #pivot_wider(names_from = variable, values_from = value)
+
+```
+
+
+## Three-Way ANOVA
+
+```{r threeWayAnova}
+library(ThreeWay)
+# threewayanova(
+#   Y = dtMain3mpcaWideGmc,
+#   n = nrow(dtMain3mpcaWideGmc), # Nr. ppt.s
+#   m = length(unique(dtMain3mpcaNorm$TIDnum)), # Nr. time points
+#   p = length(varNam3mpcaMainAnalysis) # Nr. variables
+# )
+```
+
+## Plot (x = var, y = z, group/line = t)
+
 
 
 </br>
