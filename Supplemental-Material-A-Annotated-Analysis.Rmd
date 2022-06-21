@@ -1542,14 +1542,17 @@ dtS1RedInfo <- cleanM(M = as.data.frame(dtS1Availability), c = 66)
 
 PIDout <- gsub("PP_", "", dtS1RedInfo$rowNamesOut) %>% as.numeric
 TIDout <- gsub("t_", "", dtS1RedInfo$colNamesOut) %>% as.numeric
+TIDInRed <- gsub("t_", "", dtS1RedInfo$colNamesIn) %>% as.numeric
+TIDIn <- seq(min(TIDInRed), max(TIDInRed), 1)
 
 dtS1Red <- dtS1$full %>%
   filter(
     !PID %in% PIDout,
-    !TIDnum %in% TIDout
-  ) %>%
-  mutate(TIDnum = as.numeric(factor(TIDnum)))
-rm(PIDout, TIDout)
+    TIDnum %in% TIDIn
+  ) %>% 
+  select(TIDnum) %>%
+  mutate(TIDnum = TIDnum - min(TIDnum))
+rm(PIDout, TIDout, TIDInRed, TIDIn)
 
 dtS1AvailabilityRedKbl <- dtS1RedInfo$reducedMatrix
 dtS1AvailabilityRedKbl[1:ncol(dtS1AvailabilityRedKbl)] <- lapply(dtS1AvailabilityRedKbl[1:ncol(dtS1AvailabilityRedKbl)], function(x) {
@@ -1565,7 +1568,7 @@ kbl(
   escape = FALSE,
   align = "c",
   booktabs = TRUE,
-  caption = "Study 1: FinalData Availability" # complete caption for main document
+  caption = "Study 1: Final Data Availability" # complete caption for main document
 ) %>%
   kable_classic(
     full_width = FALSE,
@@ -1623,14 +1626,17 @@ dtS2RedInfo <- cleanM(M = as.data.frame(dtS2Availability), c = 66)
 
 PIDout <- gsub("PP_", "", dtS2RedInfo$rowNamesOut) %>% as.numeric
 TIDout <- gsub("t_", "", dtS2RedInfo$colNamesOut) %>% as.numeric
+TIDInRed <- gsub("t_", "", dtS2RedInfo$colNamesIn) %>% as.numeric
+TIDIn <- seq(min(TIDInRed), max(TIDInRed), 1)
 
 dtS2Red <- dtS2$full %>%
   filter(
     !PID %in% PIDout,
-    !TIDnum %in% TIDout
-  ) %>%
-  mutate(TIDnum = as.numeric(factor(TIDnum)))
-rm(PIDout, TIDout)
+    TIDnum %in% TIDIn
+  ) %>% 
+  select(TIDnum) %>%
+  mutate(TIDnum = TIDnum - min(TIDnum))
+rm(PIDout, TIDout, TIDInRed, TIDIn)
 
 dtS2AvailabilityRedKbl <- dtS2RedInfo$reducedMatrix
 dtS2AvailabilityRedKbl[1:ncol(dtS2AvailabilityRedKbl)] <- lapply(dtS2AvailabilityRedKbl[1:ncol(dtS2AvailabilityRedKbl)], function(x) {
