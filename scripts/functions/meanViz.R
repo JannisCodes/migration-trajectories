@@ -186,3 +186,131 @@ statVarPlot <- function(dataIn, name, namList, stat = "mean", ...){
   list(pTid, pDate)
   pTid
 }
+
+plotStat <- function(dt, varNams, id, timescale, clNum, idVars, stat, title) {
+  # dt = dtS3Red
+  # varNams = varNamPcaS3
+  # id = "PID"
+  # timescale = "bi-daily"
+  # clNum = 2
+  # idVars = idVars
+  # stat = "sd"
+  # title = "Study 3 Means over time [bi-daily]"
+  
+  varCl <- dt %>%
+    select(any_of(varNams)) %>%
+    mutate(
+      date = as.Date(gsub(" .*", "", TID)),
+      week = strftime(date, format = "%Y-W%V")
+    ) %>%
+    select(
+      any_of(id),
+      TID,
+      date,
+      week,
+      TIDnum,
+      everything()
+    ) %>%
+    arrange(get(id), TIDnum) %>%
+    PCAnorm(data = .,
+            pid = id,
+            tid = "TIDnum",
+            selection = names(.)[!names(.) %in% idVars]) %>%
+    select(
+      ends_with("_gmc")
+    ) %>%
+    data.frame %>%
+    summarise_all(
+      sd, na.rm = TRUE
+    ) %>%
+    t %>% 
+    as.data.frame %>%
+    kmeans(., centers = clNum)
+  
+  if (timescale == "bi-daily") {
+    dtTimescale <- dt %>%
+      select(any_of(varNams)) %>%
+      mutate(date = as.Date(gsub(" .*", "", TID)),
+             week = strftime(date, format = "%Y-W%V")) %>%
+      select(any_of(id),
+             TID,
+             date,
+             week,
+             TIDnum,
+             everything()) %>%
+      arrange(get(id), TIDnum) %>%
+      mutate_all( ~ ifelse(is.nan(.), NA, .))
+  } else if (timescale == "daily") {
+    dtTimescale <- dt %>%
+      select(any_of(varNams)) %>%
+      mutate(date = as.Date(gsub(" .*", "", TID)),
+             week = strftime(date, format = "%Y-W%V")) %>%
+      group_by(get(id), date) %>%
+      summarise_if(is.numeric, mean, na.rm = TRUE) %>%
+      ungroup %>%
+      mutate(TIDnum = as.numeric(factor(date))) %>%
+      select(any_of(id), date, TIDnum, everything()) %>%
+      arrange(get(id), TIDnum) %>%
+      mutate_all( ~ ifelse(is.nan(.), NA, .))
+  } else if (timescale == "weekly") {
+    dtTimescale <- dt %>%
+      select(any_of(varNams)) %>%
+      mutate(date = as.Date(gsub(" .*", "", TID)),
+             week = strftime(date, format = "%Y-W%V")) %>%
+      group_by(get(id), week) %>%
+      summarise_if(is.numeric, mean, na.rm = TRUE) %>%
+      ungroup %>%
+      mutate(TIDnum = as.numeric(factor(week))) %>%
+      select(any_of(id), week, TIDnum, everything()) %>%
+      arrange(get(id), TIDnum) %>%
+      mutate_all( ~ ifelse(is.nan(.), NA, .))
+  } else {
+    stop("Unknown timescale value.")
+  }
+  
+  if (stat == "mean") {
+    yLab <- "Grand Mean Centered Average"
+  } else if (stat == "sd") {
+    yLab <- "Standard Deviation"
+  } else {
+    stop("Unknown stat value.")
+  }
+  
+  dtTimescale %>%
+    PCAnorm(data = .,
+            pid = id,
+            tid = "TIDnum",
+            selection = names(.)[!names(.) %in% idVars]) %>%
+    select(
+      any_of(id),
+      TIDnum,
+      ends_with("_gmc")
+    ) %>%
+    data.frame %>%
+    melt(
+      .,
+      id=c(id,"TIDnum")
+    ) %>%
+    merge(., tibble::enframe(varCl$cluster, name = "variable", value = "cluster"), by = "variable") %>%
+    mutate(
+      variable = gsub("_gmc", "", variable)
+    ) %>% 
+    ggplot(., aes(x = variable, y = value, group = TIDnum, color = TIDnum)) +
+    #geom_jitter() +
+    stat_summary(fun=stat, geom="line", na.rm = TRUE) +
+    facet_wrap(. ~ cluster, scales="free", ncol = 1) +
+    labs(
+      title = title,
+      y = yLab,
+      x = "Variable",
+      color = "Timepoint",
+      group = "Timepoint"
+    ) +
+    #coord_flip() +
+    theme_Publication() +
+    theme(
+      axis.text.x = element_text(angle = 45, hjust=1),
+      legend.key.size = unit(1, 'cm'),
+      legend.key.height = unit(0.4, 'cm'),
+    )
+}
