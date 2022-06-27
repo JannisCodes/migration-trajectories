@@ -100,7 +100,8 @@ lib <- c(
   "metafor",
   "dygraphs",
   "readxl", 
-  "reshape"
+  "reshape",
+  "factoextra"
 )
 invisible(lapply(lib, library, character.only = TRUE))
 rm(lib)
@@ -241,7 +242,6 @@ dtS3 <- list(
     reNam(data = ., names = varNames, study = "S3", survey = "daily")
 )
 
-
 # # FROM INITIAL VAR NAME EXPORT [LEGACY]
 # # export var names
 # S1Nam <- rbind(
@@ -312,7 +312,7 @@ dtS3 <- list(
 
 ## Data Cleaning & Data Exclusions  
 
-### Worker
+### Study 1
 
 For the sojourner sample data was collected in four separate surveys: (1) the pre-measurement, (2) the daily morning survey, (3) the daily afternoon survey, as well as (4) a post-measurement. We combine the four individual surveys into one cohesive dataframe and drop superfluous variables that are not relevant to the analyses relevant here. We then format the time and date variables and add person- and measurement indices (for easy and meaningful addressing of the data). We also exclude our own test data.  
 <i class="fas fa-info-circle"></i> _Note:_ All data preparation steps are saved in the '_dtS1_' list. 
@@ -385,41 +385,6 @@ df <- dtS1$combined %>%
 # add running number as measurement ID within participants
 df$measureID <- data.table::rowidv(df, cols = c("last_outside_referrer"))
 
-df <- df %>%
-  mutate(
-    PID = as.numeric(factor(last_outside_referrer)),
-    # participant ID
-    TID = measureID - 1,
-    # time ID with t0 = 0 for meaningfull intercept interpretations
-    date = substr(created, 1, 10),
-    # awkward way of extracting date (best converted to )
-    time = substr(created, 12, 19),
-    # awkward way of extracting time
-    daynum = as.numeric(factor(dateQualtrics)),
-    # all days as numeric for ordering
-    daycor = ifelse(
-      daytime == "morning" &
-        period_to_seconds(hms(time)) < period_to_seconds(hms("12:00:00")) |
-        daytime == "afternoon" &
-          period_to_seconds(hms(time)) < period_to_seconds(hms("19:00:00")),
-      daynum - 1,
-      daynum
-    ),
-    # correctly identify which date the questionnaire is about
-    daycor.lead = sprintf("%02d", daycor),
-    daytime.lt = ifelse(daytime == "morning", "a", "b"),
-    # morning / afternoon to a / b
-    day_time = paste(daycor.lead, daytime.lt, sep = "_"),
-    # combine day id with morning / afternoon
-    ResponseId = as.numeric(factor(day_time)),
-    # day and time identifier as numeric id
-    SubTime = chron::times(time.0),
-    time.daily = as.character(time),
-    PPDate = as.Date(df$dateQualtrics),
-    number = replace_na(ContactNum, 0),
-    NonDutchNum = replace_na(NonDutchNum, 0)
-  )
-
 dtS1$clean <- df
 
 # clean up
@@ -430,7 +395,7 @@ rm(df)
 # save(dtS1$clean, file = "data/processed/MT_clean-merged_07-05-2018.RData")
 ```
 
-### Student
+### Study 2
 
 For the student sample data was, similarly, collected in three separate surveys: (1) the pre-measurement, (2) the daily survey sent out at lunch and dinner time, and (3) a post-measurement. We combine the three individual surveys into one large dataframe and drop superfluous variables that are not relevant to the analyses relevant here. We exclude our own test data as well as one participant who entered the study twice (but gave different responses during the pre-measurement). We also reformat missing values and format core ID variables.  
 <i class="fas fa-info-circle"></i> _Note:_ All data preparation steps are saved in the '_dtS2_' list. 
@@ -501,7 +466,7 @@ rm(df.pre, df.daily, df.post, dfPreDaily, dfCombined, ownIDs)
 ```
 
 
-### Medical
+### Study 3
 
 For the medical professionals sample data was, again, collected in three separate surveys: (1) the pre-measurement, (2) the daily survey sent out at lunch and dinner time, and (3) a post-measurement. We combine the three individual surveys into one large dataframe. We exclude our own test data. We also reformat missing values and format core ID variables.  
 <i class="fas fa-info-circle"></i> _Note:_ All data preparation steps are saved in the '_dtS3_' list. 
@@ -574,7 +539,7 @@ rm(df.pre, df.daily, df.post, dfPreDaily, dfCombined, ownIDs)
 
 ## Calculate needed transformations  
 
-### Worker
+### Study 1
 
 For the worker sample, the data transformation stage had three main aims: 
 
@@ -585,7 +550,63 @@ For the worker sample, the data transformation stage had three main aims:
 ```{r newVarsWorkers}
 df <- dtS1$clean
 
+# Correct date_period ()
+df <- df %>%
+  mutate(
+    startDate = as.Date(created),
+    startTime = format(as.POSIXct(created), format = "%H:%M:%S")
+  )
+  
+# order time
+# df$TID <- factor(df$date_period, levels = unique(dtS3$raw.daily$date_period))
+# df$TIDnum <- as.numeric(df$TID) # get numeric TID
+df <- df %>%
+  mutate(
+    PID = as.numeric(factor(last_outside_referrer))
+  )
+
 # Time and Date Variables
+df <- df %>%
+  mutate(
+    TID = measureID - 1,
+    # time ID with t0 = 0 for meaningfull intercept interpretations
+    date = substr(created, 1, 10),
+    # awkward way of extracting date (best converted to )
+    time = substr(created, 12, 19),
+    # awkward way of extracting time
+    daynum = as.numeric(factor(dateQualtrics)),
+    # all days as numeric for ordering
+    daycor = ifelse(
+      daytime == "morning" &
+        period_to_seconds(hms(time)) < period_to_seconds(hms("12:00:00")) |
+        daytime == "afternoon" &
+          period_to_seconds(hms(time)) < period_to_seconds(hms("19:00:00")),
+      daynum - 1,
+      daynum
+    ),
+    daycorTest = ifelse(
+      daytime == "morning" &
+        period_to_seconds(hms(time)) < period_to_seconds(hms("12:00:00")) |
+        daytime == "afternoon" &
+          period_to_seconds(hms(time)) < period_to_seconds(hms("19:00:00")),
+      1,
+      0
+    ),
+    # correctly identify which date the questionnaire is about
+    daycor.lead = sprintf("%02d", daycor),
+    daytime.lt = ifelse(daytime == "morning", "a", "b"),
+    # morning / afternoon to a / b
+    day_time = paste(daycor.lead, daytime.lt, sep = "_"),
+    # combine day id with morning / afternoon
+    ResponseId = as.numeric(factor(day_time)),
+    # day and time identifier as numeric id
+    SubTime = chron::times(time.0),
+    time.daily = as.character(time),
+    PPDate = as.Date(df$dateQualtrics),
+    number = replace_na(ContactNum, 0),
+    NonDutchNum = replace_na(NonDutchNum, 0)
+  )
+
 # remove seconds from afternoon time
 df$SubTime[df$daytime == "afternoon"] <- paste0(substring(as.character(df$time.0[df$daytime == "afternoon"]), 4, 8), ":00")
 df$time.daily[df$daytime == "afternoon" &
@@ -639,118 +660,28 @@ df$autonomy <- df$autonomy.daily.all
 df$competence <- df$competence.daily.all
 df$relatedness <- df$relatedness.daily.all
 
-# summarize by participant (check that everything is within pp might not be the case for )
-between <- df %>%
-  group_by(last_outside_referrer) %>%
+#
+df <- df %>%
   mutate(
-    CtContactNL = sum(IntergroupContact),
-    CtContactNonNl = sum(IngroupContact),
-    CtContactNLAll = sum(ContactNum),
-    CtContactNonNlAll = sum(NonDutchNum),
-    AvKeyNeed = mean(keyMotiveFulfilled, na.rm = T),
-    AvKeyNeedInt = mean(KeyNeedFulfillment, na.rm = T),
-    AvKeyNeedNoInt = mean(DaytimeNeedFulfillment, na.rm = T),
-    AvAutonomy = mean(autonomy, na.rm = T),
-    AvCompetence = mean(competence, na.rm = T),
-    AvRelatedness = mean(relatedness, na.rm = T),
-    AvThermo = mean(AttitudesDutch, na.rm = T),
-    AvWB = mean(exWB, na.rm = T)
-  ) %>%
-  ungroup() %>%
-  mutate(
-    CtContactNL_c = scale(CtContactNL, scale = FALSE),
-    AvKeyNeedInt_c = scale(AvKeyNeedInt, scale = FALSE),
-    AvKeyNeed_c = scale(AvKeyNeed, scale = FALSE),
-    CtContactNL_z = scale(CtContactNL, scale = TRUE),
-    AvKeyNeedInt_z = scale(AvKeyNeedInt, scale = TRUE),
-    AvKeyNeed_z = scale(AvKeyNeed, scale = TRUE)
+    exWB = scales::rescale(exWB, from = range(exWB, na.rm = TRUE), to = c(-100, 100)),
+    relatedness = relatedness + 50,
+    autonomy = autonomy + 50,
+    competence = competence + 50,
+    KeyNeedFulfillment = KeyNeedFulfillment + 50,
+    KeyNeedDueToPartner = KeyNeedDueToPartner + 50,
+    InteractionContextAccidental = InteractionContextAccidental + 50,
+    InteractionContextvoluntary = InteractionContextvoluntary + 50,
+    InteractionContextCooperative = InteractionContextCooperative + 50,
+    InteractionContextRepresentativeNL = InteractionContextRepresentativeNL + 50,
+    qualityOverall = qualityOverall + 50,
+    qualityMeaning = qualityMeaning + 50,
+    DaytimeNeedFulfillment = DaytimeNeedFulfillment + 50
   )
-
-warning(
-  "some variable transformations (esp. _c and _z) might be across all participants (i.e., not within PP). See next step."
-)
-
-dtS1$full <- between
-rm(df, between)
-
-# dataframe where interaction types are recoded
-workerInteractionType <- dtS1$full %>%
-  mutate(
-    OutgroupInteraction = as_factor(IntergroupContact),
-    NonOutgroupInteraction = as_factor(IngroupContact)
-  )
-
-# Create variables centered and standardized within Participant
-# i.e., divide into trait and state
-workerWithinBetween <-
-  MlTraitState(
-    data = workerInteractionType,
-    id = "PID",
-    selection =
-      c(
-        "keyMotiveFulfilled",
-        "competence",
-        "autonomy",
-        "relatedness",
-        "AttitudesDutch",
-        "KeyNeedFulfillment",
-        "competence",
-        "autonomy",
-        "relatednessNoInteraction", 
-        "qualityOverall", 
-        "OutgroupInteraction",
-        "NonOutgroupInteraction"
-      )
-  )
-
-workerOutWithinBetween <-
-  MlTraitState(
-    data = workerInteractionType %>% filter(OutgroupInteraction == "Yes"),
-    id = "PID",
-    selection =
-      c(
-        "keyMotiveFulfilled",
-        "AttitudesDutch",
-        "KeyNeedFulfillment",
-        "competence",
-        "autonomy",
-        "relatedness", 
-        "qualityOverall"
-      )
-  )
-
-
-# Between participants contact frequency
-workerContactFreq <- dtS1$full %>%
-  group_by(PID) %>%
-  summarise(
-    n = n(),
-    SumContactNL = sum(IntergroupContact),
-    PercContactNL = SumContactNL / n * 100,
-    SumContactNLAll = sum(number),
-    AvAttitude = mean(AttitudesDutch, na.rm = T)
-  ) %>%
-  mutate(
-    WinSumContactNL = DescTools::Winsorize(SumContactNL),
-    WinSumContactNLAll = DescTools::Winsorize(SumContactNLAll)
-  )
-
-# save cleaned data
-# save(df.btw, file = "data/processed/df.btw.RData")
-# write_sav(df.btw, "data/processed/MT_clean-merged_pre-post.sav")
-
-# export data to Mplus
-# df.mplus = remove_all_labels(select(df,
-#                                     PID, ResponseId,
-#                                     thermometerDutch_1, inNonDutch, Contact_dum,
-#                                     keyMotiveFulfilled, autonomy.daily.all, competence.daily.all, relatedness.daily.all))
-# names(df.mplus)= c("PID", "ResponseId", "att", "intin", "intout", "keymot", "aut", "comp", "rel")
-# mplus = df.mplus[order(df.mplus$PID, df.mplus$ResponseId),]
-# mplus.intcont = mplus[mplus$intout==1,]
-# prepareMplusData(mplus.intcont, "data/processed/dynamic-subset-intonly.dat")
+dtS1$full <- df
+rm(df)
 ```
 
-### Student
+### Study 2
 
 For the student sample, the data transformation stage had five main aims: 
 
@@ -766,14 +697,45 @@ df <- dtS2$clean
 # Add ID variables
 df$PID <- as.numeric(factor(df$ResponseId)) # participant ID
 
+# Correct date_period ()
+df <- df %>%
+  mutate(
+    startDate = as.Date(created),
+    startTime = format(as.POSIXct(created), format = "%H:%M:%S"),
+    date_period_old = date_period,
+    date_period = ifelse(
+      startTime >= c("12:00") & startTime <= c("18:59"),
+      paste(format(as.POSIXct(created), format = "%Y-%m-%d"), "Morning"),
+      ifelse(
+        startTime >= c("19:00") & startTime <= c("23:59"),
+        paste(format(as.POSIXct(created), format = "%Y-%m-%d"), "Afternoon"),
+        ifelse(
+          startTime >= c("00:00") & startTime <= c("11:59"),
+          paste(as.Date(created) - 1, "Afternoon"),
+          NA
+        )
+      )
+    )
+  )
+  
 # order time
-df$TID <- factor(df$date_period, levels = unique(dtS2$raw.daily$date_period))
-df$TIDnum <- as.numeric(df$TID) # get numeric TID
+# df$TID <- factor(df$date_period, levels = unique(dtS3$raw.daily$date_period))
+# df$TIDnum <- as.numeric(df$TID) # get numeric TID
+df <- df %>%
+  mutate(
+    dateOrder = stri_replace_all_regex(
+      date_period,
+      pattern = c(' Morning', ' Afternoon'),
+      replacement = c('_A', '_B'),
+      vectorize = FALSE
+    ),
+    TID = factor(date_period),
+    TIDnum = as.numeric(factor(dateOrder))
+  )
 
 # check whether time ordering worked
 df <- df %>%
-  arrange(PID, TID) # %>%
-# View()
+  arrange(PID, TID) 
 
 # Interaction as Factor
 df$interaction.f <-
@@ -813,13 +775,13 @@ df$InteractionNeedFullfillment[df$InteractionDum == 1 & !is.na(df$KeyNeedFulfill
   df$KeyNeedFulfillment[df$InteractionDum == 1 & !is.na(df$KeyNeedFulfillment)]
 
 
-# Pro-Sociality
-df$ProSo <-
-  rowMeans(df[, c("ProSo1", "ProSo2", "ProSo3", "ProSo4")], na.rm = T)
-# Anti-Sociality
-df$AntiSo <-
-  rowMeans(df[, c("AntiSo1", "AntiSo2", "AntiSo3", "AntiSo4")], na.rm = T)
-
+# Randomly selected variables
+df <- df %>%
+  rowwise() %>%
+  mutate(
+    ProSo = mean(c(ProSo1, ProSo2, ProSo3, ProSo4), na.rm = TRUE),
+    AntiSo = mean(c(AntiSo1, AntiSo2, AntiSo3, AntiSo4, AntiSo5, AntiSo6, AntiSo7), na.rm = TRUE)
+  )
 
 # -------------------------------------------------------------------------------------------------------------
 #                                 Add Variables related to interaction partner
@@ -888,119 +850,11 @@ colnames(remergePP) <-
 df <- cbind(df, remergePP)
 rm(remergePP, PP)
 
-# -------------------------------------------------------------------------------------------------------------
-#                                 Center Relevant Variables
-# -------------------------------------------------------------------------------------------------------------
-
-df <- df %>%
-  group_by(PID) %>%
-  mutate(
-    KeyNeedFulfillment.cm = mean(KeyNeedFulfillment, na.rm = TRUE),
-    # cluster mean (mean of PP)
-    KeyNeedFulfillment.cwc = KeyNeedFulfillment - KeyNeedFulfillment.cm,
-    # cluster mean centered (within PP centered)
-    closeness.cm = mean(closeness_Calc, na.rm = TRUE),
-    closeness.cwc = closeness_Calc - closeness.cm
-  ) %>%
-  ungroup()
-
-# store
 dtS2$full <- df
 rm(df)
-
-# Between participants contact frequency
-studentContactFreq <- dtS2$full %>%
-  group_by(PID) %>%
-  summarise(
-    n = n(),
-    SumContactNL = sum(InteractionDumDutch),
-    PercContactNL = SumContactNL / n * 100,
-    SumContactNLAll = sum(ContactNum[InteractionDumDutch == 1], na.rm = TRUE),
-    AvAttitude = mean(AttitudesDutch, na.rm = TRUE),
-    AvQuality = mean(qualityOverall, na.rm = TRUE)
-  ) %>%
-  mutate(
-    WinSumContactNL = DescTools::Winsorize(SumContactNL),
-    WinSumContactNLAll = DescTools::Winsorize(SumContactNLAll)
-  )
-
-# dataframe where interaction types are recoded
-studentInteractionType <- dtS2$full %>%
-  mutate(
-    NonDutchContact = tidyr::replace_na(NonDutchContact, 2), # make second non-Dutch countable
-    NonDutchContact = NonDutchContact*-1+2 # recode (yes = 1 -> 1, no = 2 -> 0)
-  ) %>%
-  mutate(
-    NonDutchNum = ifelse(NonDutchContact == 0, 0, NonDutchNum), # measurement error --- only measured when NonDutchContact==1
-    OutgroupInteraction = factor(
-      InteractionDumDutch,
-      levels = c(0, 1),
-      labels = c("No", "Yes")
-    ),
-    NonOutgroupInteraction = factor(
-      rowSums(select(., c(InteractionDumNonDutch, NonDutchContact))), # combine the two non-Dutch Q.,
-      levels = c(0, 1),
-      labels = c("No", "Yes")
-    )
-  )
-
-# select a subset of IDs to display in plots
-studentPltIDs <-
-  studentInteractionType %>%
-  group_by(PID) %>%
-  summarise(n = n()) %>%
-  slice_max(n, n = 20) %>% # chose the 20 with the most number of measurements
-  select(PID) %>%
-  as.matrix %>%
-  as.vector
-
-# select a subset of IDs to display in plots (only outgroup interactions)
-studentOutPltIDs <-
-  studentInteractionType %>%
-  filter(OutgroupInteraction == "Yes") %>%
-  group_by(PID) %>%
-  summarise(n = n()) %>%
-  slice_max(n, n = 20) %>% # chose the 20 with the most number of measurements
-  select(PID) %>%
-  as.matrix %>%
-  as.vector
-
-# Center within and between
-# divide into trait and state
-studentWithinBetween <-
-  MlTraitState(
-    data = studentInteractionType,
-    id = "PID",
-    selection =
-      c(
-        "KeyNeedFulfillment",
-        "competence",
-        "autonomy",
-        "relatedness",
-        "AttitudesDutch",
-        "qualityOverall",
-        "OutgroupInteraction",
-        "NonOutgroupInteraction"
-      )
-  )
-studentOutWithinBetween <-
-  MlTraitState(
-    data = studentInteractionType %>% filter(OutgroupInteraction == "Yes"),
-    id = "PID",
-    selection =
-      c(
-        "KeyNeedFulfillment",
-        "competence",
-        "autonomy",
-        "relatedness",
-        "AttitudesDutch",
-        "qualityOverall"
-      )
-  )
-
 ```
 
-### Medical
+### Study 3
 
 For the medical professional sample, the data transformation stage had five main aims: 
 
@@ -1015,15 +869,45 @@ df <- dtS3$clean
 # Add ID variables
 df$PID <- as.numeric(factor(df$ResponseId)) # participant ID
 
+# Correct date_period ()
+df <- df %>%
+  mutate(
+    startDate = as.Date(created),
+    startTime = format(as.POSIXct(created), format = "%H:%M:%S"),
+    date_period_old = date_period,
+    date_period = ifelse(
+      startTime >= c("12:00") & startTime <= c("18:59"),
+      paste(format(as.POSIXct(created), format = "%Y-%m-%d"), "Morning"),
+      ifelse(
+        startTime >= c("19:00") & startTime <= c("23:59"),
+        paste(format(as.POSIXct(created), format = "%Y-%m-%d"), "Afternoon"),
+        ifelse(
+          startTime >= c("00:00") & startTime <= c("11:59"),
+          paste(as.Date(created) - 1, "Afternoon"),
+          NA
+        )
+      )
+    )
+  )
+  
 # order time
-df$TID <-
-  factor(df$date_period, levels = unique(dtS3$raw.daily$date_period))
-df$TIDnum <- as.numeric(df$TID) # get numeric TID
+# df$TID <- factor(df$date_period, levels = unique(dtS3$raw.daily$date_period))
+# df$TIDnum <- as.numeric(df$TID) # get numeric TID
+df <- df %>%
+  mutate(
+    dateOrder = stri_replace_all_regex(
+      date_period,
+      pattern = c(' Morning', ' Afternoon'),
+      replacement = c('_A', '_B'),
+      vectorize = FALSE
+    ),
+    TID = factor(date_period),
+    TIDnum = as.numeric(factor(dateOrder))
+  )
 
 # check whether time ordering worked
 df <- df %>%
-  arrange(PID, TID) # %>%
-# View()
+  arrange(PID, TID)
 
 # Interaction as Factor
 df$interaction.f <-
@@ -1087,12 +971,24 @@ df$InteractionNeedImportance[df$InteractionDum == 1 & !is.na(df$KeyNeedImp)] <-
   df$KeyNeedImp[df$InteractionDum == 1 & !is.na(df$KeyNeedImp)]
 
 
-# Pro-Sociality
-df$ProSo <-
-  rowMeans(df[, c("ProSo1", "ProSo2", "ProSo3", "ProSo4")], na.rm = TRUE)
-# Anti-Sociality
-df$AntiSo <-
-  rowMeans(df[, c("AntiSo1", "AntiSo2", "AntiSo3", "AntiSo4")], na.rm = TRUE)
+# Randomly selected variables
+df <- df %>%
+  rowwise() %>%
+  mutate(
+    ProSo = mean(c(ProSo1, ProSo2, ProSo3, ProSo4), na.rm = TRUE),
+    AntiSo = mean(c(AntiSo1, AntiSo2, AntiSo3, AntiSo4, AntiSo5, AntiSo6, AntiSo7), na.rm = TRUE),
+    agency = mean(c(agency1, agency2, agency3), na.rm = TRUE),
+    autoFrust = mean(c(autoFrust1, autoFrust2, autoFrust3, autoFrust4), na.rm = TRUE),
+    autoSat = mean(c(autoSat1, autoSat2, autoSat3, autoSat4), na.rm = TRUE),
+    relatFrust = mean(c(relatFrust1, relatFrust2, relatFrust3, relatFrust4), na.rm = TRUE),
+    relatSat = mean(c(relatSat1, relatSat2, relatSat3, relatSat4), na.rm = TRUE),
+    compFrust = mean(c(compFrust1, compFrust2, compFrust3, compFrust4), na.rm = TRUE),
+    compSat = mean(c(compSat1, compSat2, compSat3, compSat4), na.rm = TRUE),
+    lonely = mean(c(lonely4, lonely4, lonely4, lonely4), na.rm = TRUE),
+    emotRegPos = mean(c(emotRegPos01, emotRegPos02), na.rm = TRUE),
+    emotRegNeg = mean(c(emotRegNeg01, emotRegNeg02), na.rm = TRUE)
+  )
+
 
 # Allport's Conditions
 df %>%
@@ -1151,7 +1047,7 @@ data <-
     InteractionContextvoluntary
   ) %>%
   drop_na %>%
-  melt(
+  reshape2::melt(
     ., 
     id.vars = c("PID", "TIDnum")
   )
@@ -1257,102 +1153,7 @@ colnames(remergePP) <-
 df <- cbind(df, remergePP)
 rm(remergePP, PP)
 
-# -------------------------------------------------------------------------------------------------------------
-#                                 Center Relevant Variables
-# -------------------------------------------------------------------------------------------------------------
-# divide into trait and state
-medicalOutWithinBetween <-
-  MlTraitState(
-    data = df %>% filter(OutgroupInteraction == "Yes"),
-    id = "PID",
-    selection =
-      c(
-        "KeyNeedFulfillment",
-        "competence",
-        "autonomy",
-        "relatedness",
-        "AllportsCondition",
-        "AttitudesDutch",
-        "qualityOverall"
-      )
-  )
-
-medicalWithinBetween <-
-  MlTraitState(
-    data = df,
-    id = "PID",
-    selection =
-      c(
-        "KeyNeedFulfillment",
-        "competence",
-        "autonomy",
-        "relatedness",
-        "AllportsCondition",
-        "AttitudesDutch",
-        "qualityOverall",
-        "OutgroupInteraction",
-        "NonOutgroupInteraction"
-      )
-  )
-
-df <- # keep only for compatibility of old framgents
-  MlTraitState(
-    data = df,
-    id = "PID",
-    selection =
-      c(
-        "KeyNeedFulfillment",
-        "competence",
-        "autonomy",
-        "relatedness",
-        "AllportsCondition",
-        "AttitudesDutch",
-        "qualityOverall"
-      )
-  )
-
-# store
 dtS3$full <- df
-rm(df)
-
-
-# Between participants contact frequency
-medicalContactFreq <- 
-  dtS3$full %>%
-  group_by(PID) %>%
-  summarise(
-    n = n(),
-    SumContactNL = sum(InteractionDumDutch, na.rm = TRUE),
-    PercContactNL = SumContactNL / n * 100,
-    SumContactNLAll = sum(ContactNum[InteractionDumDutch == 1], na.rm = TRUE),
-    AvAttitude = mean(AttitudesDutch, na.rm = TRUE),
-    AvQuality = mean(qualityOverall, na.rm = TRUE)
-  ) %>%
-  mutate(
-    WinSumContactNL = DescTools::Winsorize(SumContactNL),
-    WinSumContactNLAll = DescTools::Winsorize(SumContactNLAll)
-  )
-
-# select a subset of IDs to display in plots
-medicalPltIDs <-
-  dtS3$full %>%
-  group_by(PID) %>%
-  summarise(n = n()) %>%
-  slice_max(n, n = 20) %>% # chose the 20 with the most number of measurements
-  select(PID) %>%
-  as.matrix %>%
-  as.vector
-
-# select a subset of IDs to display in plots (only outgroup interactions)
-medicalOutPltIDs <-
-  dtS3$full %>%
-  filter(OutgroupInteraction == "Yes") %>%
-  group_by(PID) %>%
-  summarise(n = n()) %>%
-  slice_max(n, n = 20) %>% # chose the 20 with the most number of measurements
-  select(PID) %>%
-  as.matrix %>%
-  as.vector
 ```
 
 
@@ -1550,9 +1351,12 @@ dtS1Red <- dtS1$full %>%
     !PID %in% PIDout,
     TIDnum %in% TIDIn
   ) %>% 
-  select(TIDnum) %>%
   mutate(TIDnum = TIDnum - min(TIDnum))
 rm(PIDout, TIDout, TIDInRed, TIDIn)
+
+# change glitch where survey was sent too early
+dtS1Red$TIDnum[dtS1Red$PID == 7 & as.character(dtS1Red$created) == "2018-05-18 11:46:40"] <- 10
+dtS1Red$TID[dtS1Red$PID == 7 & as.character(dtS1Red$created) == "2018-05-18 11:46:40"] <- "2018-05-18 Morning"
 
 dtS1AvailabilityRedKbl <- dtS1RedInfo$reducedMatrix
 dtS1AvailabilityRedKbl[1:ncol(dtS1AvailabilityRedKbl)] <- lapply(dtS1AvailabilityRedKbl[1:ncol(dtS1AvailabilityRedKbl)], function(x) {
@@ -1587,6 +1391,7 @@ dtS2Availability <- dtS2$full %>%
     PID,
     TIDnum
   ) %>%
+  #na.omit %>%
   arrange(PID, TIDnum) %>%
   mutate(data = 1)
 dtS2Availability <- reshape::cast(dtS2Availability, PID ~ TIDnum) %>%
@@ -1634,9 +1439,11 @@ dtS2Red <- dtS2$full %>%
     !PID %in% PIDout,
     TIDnum %in% TIDIn
   ) %>% 
-  select(TIDnum) %>%
   mutate(TIDnum = TIDnum - min(TIDnum))
 rm(PIDout, TIDout, TIDInRed, TIDIn)
+
+# remove glitch entry 
+dtS2Red <- dtS2Red[!(dtS2Red$PID == 46 & dtS2Red$TIDnum == 57 & dtS2Red$ended == "2018-12-20 21:58:31"),]
 
 dtS2AvailabilityRedKbl <- dtS2RedInfo$reducedMatrix
 dtS2AvailabilityRedKbl[1:ncol(dtS2AvailabilityRedKbl)] <- lapply(dtS2AvailabilityRedKbl[1:ncol(dtS2AvailabilityRedKbl)], function(x) {
@@ -1672,7 +1479,7 @@ dtS3Availability <- dtS3$full %>%
   ) %>%
   arrange(PID, TIDnum) %>%
   mutate(data = 1)
-dtS3Availability <- reshape::cast(dtS3Availability, PID ~ TIDnum) %>%
+dtS3Availability <- reshape::cast(dtS3Availability, PID ~ TIDnum, fill = 0) %>%
   select(-PID)
 
 rownames(dtS3Availability) <- paste("PP", 1:nrow(dtS3Availability), sep = "_")
@@ -1711,14 +1518,16 @@ dtS3RedInfo <- cleanM(M = as.data.frame(dtS3Availability), c = 66)
 
 PIDout <- gsub("PP_", "", dtS3RedInfo$rowNamesOut) %>% as.numeric
 TIDout <- gsub("t_", "", dtS3RedInfo$colNamesOut) %>% as.numeric
+TIDInRed <- gsub("t_", "", dtS3RedInfo$colNamesIn) %>% as.numeric
+TIDIn <- seq(min(TIDInRed), max(TIDInRed), 1)
 
 dtS3Red <- dtS3$full %>%
   filter(
     !PID %in% PIDout,
-    !TIDnum %in% TIDout
-  ) %>%
-  mutate(TIDnum = as.numeric(factor(TIDnum)))
-rm(PIDout, TIDout)
+    TIDnum %in% TIDIn
+  ) %>% 
+  mutate(TIDnum = TIDnum - min(TIDnum))
+rm(PIDout, TIDout, TIDInRed, TIDIn)
 
 dtS3AvailabilityRedKbl <- dtS3RedInfo$reducedMatrix
 dtS3AvailabilityRedKbl[1:ncol(dtS3AvailabilityRedKbl)] <- lapply(dtS3AvailabilityRedKbl[1:ncol(dtS3AvailabilityRedKbl)], function(x) {
@@ -1771,7 +1580,7 @@ varNamesDaily <- varNames %>%
   select(varNam)
 varNamesDailyFull <-
   data.frame(varNam = Reduce(intersect, list(
-    names(dtS1Red), names(dtS3Red), names(dtS3Red)
+    names(dtS1Red), names(dtS2Red), names(dtS3Red)
   ))) %>%
   filter(!str_detect(varNam, ".pre$|.post$"))
 
@@ -1808,6 +1617,7 @@ dropVarPcaMain <- c(
   # Interaction Counts (non-continuous)
   "ContactNum",
   "NonDutchNum",
+  "groupDutch",
   # Interaction Descriptives (non-continuous)
   "duration",
   "dyadGroup",
@@ -1820,7 +1630,6 @@ dropVarPcaMain <- c(
   "relatednessOther",
   "relatednessNoInteraction"
 )
-
 
 varNam3mpcaMain <- varNamesDailyFull %>%
   filter(!varNam %in% dropVarPcaMain) %>%
@@ -1902,21 +1711,151 @@ anova(test2)
 
 ## Multiple Imputation
 
+### Studies 1-3
 
 ```{r MiMain3mpca}
 library(Amelia)
 
-dtMain3mpcaMI<- dtMain3mpca %>%
-  select(
-    -date,
-    -TID,
-    -week
+varNamInMiMain <- varNames %>%
+  filter(
+    aux == 1,
+    studyS1 == "S1",
+    studyS2 == "S2",
+    studyS3 == "S3"
   ) %>%
-  as.data.frame
+  select(varNam) %>%
+  pull
 
-a.out <- amelia(dtMain3mpcaMI, m = 20, ts = "TIDnum", idvars = c("ID", "PID", "study"))
+varNamInMiMainPsbl <- c(
+  paste(varNamInMiMain, rep(".pre", length(varNamInMiMain)), sep = ""),
+  varNamInMiMain,
+  paste(varNamInMiMain, rep(".post", length(varNamInMiMain)), sep = "")
+)
 
+varNamInMiMainRed <- Reduce(
+  intersect,
+  list(
+    dtS1Red %>% select(PID, TID, TIDnum, any_of(varNamInMiMainPsbl)) %>% names,
+    dtS2Red %>% select(PID, TID, TIDnum, any_of(varNamInMiMainPsbl)) %>% names,
+    dtS3Red %>% select(PID, TID, TIDnum, any_of(varNamInMiMainPsbl)) %>% names
+  )
+)
+
+varNamMiMainNoms <- varNames %>%
+  filter(
+    aux == 1,
+    format == "nominal",
+    studyS1 == "S1",
+    studyS2 == "S2",
+    studyS3 == "S3"
+  ) %>%
+  select(varNam) %>%
+  pull
+
+dtMiMain <- rbind(
+  dtS1Red %>% select(any_of(varNamInMiMainRed)) %>% mutate(study = "S1") %>% mutate(across(!TID &
+                                                                                             !study, as.numeric)),
+  dtS2Red %>% select(any_of(varNamInMiMainRed)) %>% mutate(study = "S2"),
+  dtS3Red %>% select(any_of(varNamInMiMainRed)) %>% mutate(study = "S3")
+) %>%
+  group_by(study, PID) %>%
+  mutate(ID = cur_group_id()) %>%
+  ungroup %>%
+  mutate(date = as.Date(gsub(" .*", "", TID)),
+         week = strftime(date, format = "%Y-W%V")) %>%
+  select(ID,
+         study,
+         date,
+         week,
+         everything(),
+         -PID,
+         -starts_with("ResponseId")) %>%
+  as.data.frame %>%
+  select_if( ~ sum(!is.na(.)) > 1) # only include variables that have any data (i.e., not all NA)
+
+MiMain <-
+  amelia(
+    dtMiMain,
+    m = 1, # 20
+    ts = "TIDnum",
+    cs = "ID",
+    idvars = c("TID", "date", "week", "study"), #"PID", 
+    noms = names(dtMiMain)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMain))],
+    parallel = "multicore",
+    ncpus = parallel::detectCores(),
+    p2s = 1
+  )
+save(MiMain, file = "data/imputed/MainImputed.RData")
 ```
+
+### Study 1
+
+```{r MiS1}
+varNamInMiS1 <- varNames %>%
+  filter(
+    aux == 1,
+    studyS1 == "S1"
+  ) %>%
+  select(varNam) %>%
+  pull
+
+varNamInMiS1Psbl <- c(
+  paste(varNamInMiS1, rep(".pre", length(varNamInMiS1)), sep = ""),
+  varNamInMiS1,
+  paste(varNamInMiS1, rep(".post", length(varNamInMiS1)), sep = "")
+)
+
+varNamdtS1Noms <- varNames %>%
+  filter(
+    aux == 1,
+    format == "nominal",
+    studyS1 == "S1"
+  ) %>%
+  select(varNam) %>%
+  pull
+
+dtMiS1 <- dtS1Red %>%
+  select(
+    PID,
+    TID,
+    TIDnum,
+    date,
+    week,
+    any_of(varNamInMiS1Psbl),
+    -time,
+    -starts_with("ResponseId")
+  ) %>%
+  mutate(
+    date = as.Date(gsub(" .*", "", TID)),
+    week = strftime(date, format = "%Y-W%V")
+    ) %>%
+  as.data.frame %>%
+  select_if(~sum(!is.na(.)) > 1) #%>% # only include variables that have any data (i.e., not all NA)
+  
+  which(!is.numeric(dtMiS1) | sapply(dtMiS1, sd, na.rm=TRUE)>0)
+  
+  select_if(~sd(., na.rm = TRUE) > 0) # only include variables that vary (i.e., sd != 0)
+
+#dtS1MiCs <- names(dtMiS1)[endsWith(names(dtMiS1), c(".pre", ".post"))] # cross sectional vars
+
+MiS1 <-
+  amelia(
+    dtMiS1,
+    m = 2,
+    ts = "TIDnum",
+    cs = "PID",
+    idvars =  c("TID", "date", "week"),
+    noms = names(dtMiS1)[grepl(paste(varNamdtS1Noms, collapse = "|^"), names(dtMiS1))],
+    parallel = "multicore",
+    ncpus = parallel::detectCores(),
+    p2s = 1
+  )
+write.amelia(MiS1, file.stem = "data/imputed/S1Imputed.Amelia")
+```
+
+### Study 2
+
+### Study 3
 
 
 ## Center and Normalize
@@ -1935,21 +1874,196 @@ dtMain3mpcaNorm <-
 
 ## Long to Wide
 
-```{r longToWide}
+```{r varNames}
+# varNames
+varNamInS123 <- varNames %>%
+  filter(
+    pca != 0,
+    surveyS1 == "daily",
+    surveyS2 == "daily",
+    surveyS3 == "daily"
+  ) %>%
+  select(varNam) %>%
+  pull
+varNamInS1 <- varNames %>%
+  filter(
+    pca != 0,
+    surveyS1 == "daily"
+  ) %>%
+  select(varNam) %>%
+  pull
+varNamInS2 <- varNames %>%
+  filter(
+    pca != 0,
+    surveyS2 == "daily"
+  ) %>%
+  select(varNam) %>%
+  pull
+varNamInS3 <- varNames %>%
+  filter(
+    pca != 0,
+    surveyS3 == "daily"
+  ) %>%
+  select(varNam) %>%
+  pull
+varNamAdd <- c(
+  "PID",
+  "TID",
+  "TIDnum",
+  "relatedness",
+  "autonomy",
+  "competence"
+)
+varNamOut <- c(
+  "ResponseId",
+  "relatednessNoInteraction",
+  "relatednessSelf",
+  "relatednessOther",
+  "autonomy_Int",
+  "autonomy_NoInt",
+  "competence_Int",
+  "competence_NoInt",
+  varNamInS1[grepl('^MDMQ', varNamInS1)],
+  varNamInS2[grepl('^ProSo|^AntiSo', varNamInS2)],
+  varNamInS3[grepl(
+    '^ProSo|^AntiSo|^agency|^autoFrust|^autoSat|^relatFrust|^relatSat|^compFrust|^compSat|^lonely[0-9]|^emotRegPos|^emotRegNeg',
+    varNamInS3
+  )]
+)
+varNamNewS1 <- c(
+  "alertness", 
+  "calmness", 
+  "valence"
+)
+varNamNewS2 <- c(
+  "ProSo", 
+  "AntiSo"
+)
+varNamNewS3 <- c(
+  "ProSo", 
+  "AntiSo",
+  "agency",
+  "autoFrust",
+  "autoSat",
+  "relatFrust",
+  "relatSat",
+  "compFrust",
+  "compSat",
+  "lonely",
+  "emotRegPos",
+  "emotRegNeg"
+)
+varNamIntDep <- c(
+  varNamInS123[grepl('^InteractionContext|AttitudesPartner|KeyNeedDueToPartner|^quality', varNamInS123)]
+)
 
-dtMain3mpcaWideGmc <- dtMain3mpcaNorm %>% 
+varNamPcaS123 <- c(varNamAdd, varNamInS123[!varNamInS123 %in% varNamOut])
+varNamPcaS123Indep <- varNamPcaS123[!varNamPcaS123 %in% varNamIntDep]
+varNamPcaS1 <- c(varNamAdd, varNamNewS1, varNamInS1[!varNamInS1 %in% varNamOut])
+varNamPcaS2 <- c(varNamAdd, varNamNewS2, varNamInS2[!varNamInS2 %in% varNamOut])
+varNamPcaS3 <- c(varNamAdd, varNamNewS3, varNamInS3[!varNamInS3 %in% varNamOut])
+
+idVars <- c("ID", "PID", "TID", "TIDnum", "date", "week", "study")
+```
+
+```{r longToWide}
+dtPcaS123 <- rbind(
+  dtS1Red %>% select(any_of(varNamPcaS123)) %>% mutate(study = "S1"),
+  dtS2Red %>% select(any_of(varNamPcaS123)) %>% mutate(study = "S2"),
+  dtS3Red %>% select(any_of(varNamPcaS123)) %>% mutate(study = "S3")
+  ) %>%
+  group_by(study, PID) %>%
+  mutate(ID = cur_group_id()) %>%
+  ungroup %>%
+  mutate(
+    date = as.Date(gsub(" .*", "", TID)),
+    week = strftime(date, format = "%Y-W%V")
+    ) %>%
   select(
     ID,
+    PID,
+    TID,
+    date,
+    week,
     TIDnum,
+    study,
+    everything()
+  ) %>%
+  arrange(ID, TIDnum) %>% 
+  filter(TIDnum <= min(max(dtS1Red$TIDnum), max(dtS2Red$TIDnum), max(dtS3Red$TIDnum)))
+
+# test <- PCAnorm(data = dtPcaS123,
+#           pid = "ID",
+#           tid = "TIDnum",
+#           selection = names(dtPcaS123)[!names(dtPcaS123) %in% idVars]) %>% 
+#   select(
+#     ID,
+#     PID,
+#     TIDnum,
+#     study,
+#     ends_with("_gmc")
+#   ) %>%
+#   data.frame %>%
+#   melt(
+#     .,
+#     id=c("ID", "PID", "TIDnum", "study")
+#   ) %>%
+#   mutate(
+#     variable = paste(gsub("_gmc", "", variable), TIDnum, sep = "_")
+#   ) %>%
+#   #select(-TIDnum) %>% 
+#   arrange(variable, ID) %>%
+#   mutate(
+#     idVar = paste(ID, variable, sep = "_")
+#   ) 
+# plyr::join(test, data.frame(table(idVar = test$idVar))) 
+
+test <- PCAnorm(data = dtPcaS123,
+          pid = "ID",
+          tid = "TIDnum",
+          selection = names(dtPcaS123)[!names(dtPcaS123) %in% idVars]) %>%
+  select(
+    ID,
+    PID,
+    TIDnum,
+    study,
     ends_with("_gmc")
   ) %>%
-  reshape2::melt(.,
-              id.vars = c("ID", "TIDnum")) %>%
-  mutate(variable = paste(variable, TIDnum, sep = "_")) %>%
-  select(-TIDnum) %>% 
+  data.frame %>% 
+  melt(
+    .,
+    id=c("ID", "PID", "TIDnum", "study")
+  ) %>%
+  mutate(
+    variable = paste(gsub("_gmc", "", variable), stringr::str_pad(TIDnum, width = 2, pad = 0), sep = "_")
+  ) %>%
+  select(-TIDnum) %>%
   arrange(variable, ID) %>%
-  reshape(., idvar = "ID", timevar = "variable", direction = "wide")
+  pivot_wider(names_from = variable, values_from = value) %>%
+  replace(is.na(.), 0) %>%
+  select(-ID, -PID, -study)
+  #reshape(., idvar = "ID", timevar = "variable", direction = "wide") %>% View
   #pivot_wider(names_from = variable, values_from = value)
+
+test2 <- dtPcaS123 %>%
+  select(
+    -TID,
+    -date,
+    -week
+  ) %>%
+  data.frame %>% 
+  melt(
+    .,
+    id=c("ID", "PID", "TIDnum", "study")
+  ) %>%
+  mutate(
+    variable = paste(variable, stringr::str_pad(TIDnum, width = 2, pad = 0), sep = "_")
+  ) %>%
+  select(-TIDnum) %>%
+  arrange(variable, ID) %>%
+  pivot_wider(names_from = variable, values_from = value) %>%
+  replace(is.na(.), 0) %>%
+  select(-ID, -PID, -study)
 
 ```
 
@@ -1958,926 +2072,546 @@ dtMain3mpcaWideGmc <- dtMain3mpcaNorm %>%
 
 ```{r threeWayAnova}
 library(ThreeWay)
-# threewayanova(
-#   Y = dtMain3mpcaWideGmc,
-#   n = nrow(dtMain3mpcaWideGmc), # Nr. ppt.s
-#   m = length(unique(dtMain3mpcaNorm$TIDnum)), # Nr. time points
-#   p = length(varNam3mpcaMainAnalysis) # Nr. variables
-# )
+threeWayAno <- threewayanova(
+  Y = test2,
+  n = nrow(test2), # Nr. ppt.s (A)
+  m = length(unique(dtPcaS123$TIDnum)), # Nr. time points (B)
+  p = sum(!varNamPcaS123 %in% idVars) # Nr. variables (C)
+)
+
+
 ```
 
-## Plot (x = var, y = z, group/line = t)
+# **Plots per Item** {.tabset}
 
+The three-mode PCA ultimately aims to explain the most variance with the fewest components (by maximizing the variance of data mapped in a lower dimensional space --- often by maximally separating groups of cases with similar variable patterns). Importantly, this procedure depends on variances and covariances to be present within the data. As one of our three modes is time and variance over time is not always given (e.g., because a variable is stable over the measured time span, such as personality over a month), it becomes important to assess whether a dimension reduction is possible for the variables measured during the measured time period. We, thus, start by visually inspecting the average changes and variance developments of all potentially relevant variables. We hope so see changes within the means and standard deviations over the measurement periods. 
 
+## Means
 
-</br>
+### Studies 1-3 (Means)
 
---------------------------------------------------------------------
-
-</br> 
-
-
-# **Plots per Item**
-
-The three-mode PCA ultimately aims to explain the most variance with the fewest components (by maximizing the variance of data mapped in a lower dimensional space --- often by maximally separating groups of cases with similar variable patterns). Importantly, this procedure depends on variances and covariances to be present within the data. As one of our three modes is time and variance over time is not always given (e.g., because a variable is stable over the measured time span, such as personality over a month), it becomes important to assess whether a dimension reduction is possible for the variables measured during the measured time period. We, thus, start by visually inspecting the average changes and variance developments of all potentially relevant variables. We hope so see changes within the means and standard deviations over the measurement period. 
-
-## Study 1 (Worker)
-
-The first study, utilized not only the smallest sample but also a slightly different set of measured variables compared to the later two studies. Several variables are consistent across all three studies (e.g., types of social interactions, interaction needs, self-determiantion theory needs, outgroup attitudes, and experienced well-being). Study 1 additionally included several emotion and mood measurements but fewer cognitive and behavioral measures than studies two and three.  
-
-We first select all potentially relevant variables and their labels, and then group the variables in small groups of one to three variables for plotting. 
-
-```{r timeInNL}
-#median(rbind(rbind(dtS1$raw.pre$timeNL_1, dtS2$raw.pre$timeNL), dtS3$raw.pre$timeNL), na.rm=TRUE)
-```
-
-
-```{r workerDataSelection, eval=FALSE}
-varListWorker <- 
-  c(
-    "IntergroupContact",
-    "InteractionDum",
-    "DaytimeNeedFullfillment",
-    "InteractionNeedFullfillment",
-    "autonomy",
-    "competence",
-    "relatedness",
-    "AttitudesDutch",
-    "AttitudesPartner",
-    "ExWB",
-    "alertness",
-    "calmness",
-    "valence",
-    "MDMQ.v1_1",
-    "MDMQ.v1_2",
-    "MDMQ.v1_3",
-    "MDMQ.v1_4",
-    "MDMQ.v1_5",
-    "MDMQ.v1_6",
-    "MDMQ.v1_7",
-    "MDMQ.v1_8",
-    "MDMQ.v1_9",
-    "MDMQ.v1_10",
-    "MDMQ.v1_11",
-    "MDMQ.v1_12",
-    "MDMQ.v1_13",
-    "MDMQ.v2_1",
-    "MDMQ.v2_2",
-    "MDMQ.v2_3",
-    "MDMQ.v2_4",
-    "MDMQ.v2_5",
-    "MDMQ.v2_6",
-    "MDMQ.v2_7",
-    "MDMQ.v2_8",
-    "MDMQ.v2_9",
-    "MDMQ.v2_10",
-    "MDMQ.v2_11",
-    "MDMQ.v2_12",
-    "MDMQ.v2_13"
-  )
-
-varNameListWorker <- 
-  c(
-    "IntergroupContact" = "Dutch Interaction",
-    "InteractionDum" = "Any Interaction",
-    "DaytimeNeedFullfillment" = "Daytime Core Motive Fulfillment",
-    "InteractionNeedFullfillment" = "Interaction Core Motive Fulfillment",
-    "autonomy" = "Autonomy",
-    "competence" = "Competence",
-    "relatedness" = "Relatedness",
-    "AttitudesDutch" = "Outgroup Attitude",
-    "AttitudesPartner" = "Attitude Interaction Partner",
-    "ExWB" = "Sadness Happiness",
-    "alertness" = "Alertness",
-    "calmness" = "Calmness",
-    "valence" = "Emotional Valence",
-    "MDMQ.v1_1" = "content",
-    "MDMQ.v1_2" = "rested",
-    "MDMQ.v1_3" = "restless",
-    "MDMQ.v1_4" = "bad",
-    "MDMQ.v1_5" = "worn-out",
-    "MDMQ.v1_6" = "composed",
-    "MDMQ.v1_7" = "tired",
-    "MDMQ.v1_8" = "great",
-    "MDMQ.v1_9" = "uneasy",
-    "MDMQ.v1_10" = "energetic",
-    "MDMQ.v1_11" = "uncomfortable",
-    "MDMQ.v1_12" = "relaxed",
-    "MDMQ.v1_13" = "alive and vital",
-    "MDMQ.v2_1" = "sleepy",
-    "MDMQ.v2_2" = "good",
-    "MDMQ.v2_3" = "at ease",
-    "MDMQ.v2_4" = "unhappy",
-    "MDMQ.v2_5" = "alert",
-    "MDMQ.v2_6" = "discontent",
-    "MDMQ.v2_7" = "tense",
-    "MDMQ.v2_8" = "fresh",
-    "MDMQ.v2_9" = "happy",
-    "MDMQ.v2_10" = "nervous",
-    "MDMQ.v2_11" = "exhausted",
-    "MDMQ.v2_12" = "calm",
-    "MDMQ.v2_13" = "alive and vital"
-  )
-
-dtS1$viz <- list()
-
-dtS1$vizall <- dtS1$full %>%
+```{r plotAllMean}
+varClS123 <- dtPcaS123 %>%
+  PCAnorm(data = .,
+          pid = "PID",
+          tid = "TIDnum",
+          selection = names(.)[!names(.) %in% idVars]) %>%
   select(
-    PID,
-    TID,
+    ends_with("_gmc")
+  ) %>%
+  data.frame %>%
+  summarise_all(
+    sd, na.rm = TRUE
+  ) %>%
+  t %>% 
+  as.data.frame %>%
+  kmeans(., centers = 2)
+
+PCAnorm(data = dtPcaS123,
+          pid = "ID",
+          tid = "TIDnum",
+          selection = names(dtPcaS123)[!names(dtPcaS123) %in% idVars]) %>% 
+  select(
+    ID,
     TIDnum,
-    all_of(varListWorker)
+    ends_with("_gmc")
+  ) %>%
+  data.frame %>%
+  melt(
+    .,
+    id=c("ID","TIDnum")
+  ) %>%
+  mutate(
+    variable = gsub("_gmc", "", variable)
+  ) %>%
+  ggplot(., aes(x = variable, y = value, group = TIDnum, color = TIDnum)) +
+  #geom_jitter() +
+  stat_summary(fun=mean, geom="line") +
+  labs(
+    title = "Studies 1-3 Means over time [bi-daily]",
+    y = "Grand Mean Centered Average",
+    x = "Variable",
+    color = "Timepoint",
+    group = "Timepoint"
+  ) +
+  #coord_flip() +
+  theme_Publication() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust=1),
+    legend.key.size = unit(1, 'cm'),
+    legend.key.height = unit(0.4, 'cm'),
   )
 
-dtS1$viz$Interaction <- dtS1$vizall %>%
+dtPcaS123 %>%
+  group_by(ID, date, study) %>%
+  summarise_if(is.numeric, mean, na.rm = TRUE) %>%
+  ungroup %>%
+  group_by(study) %>%
+  mutate(TIDnum = as.numeric(factor(date))) %>%
+  ungroup %>%
+  select(ID, date, TIDnum, everything()) %>%
+  mutate_all(~ifelse(is.nan(.), NA, .)) %>%
+  PCAnorm(data = .,
+          pid = "ID",
+          tid = "TIDnum",
+          selection = names(.)[!names(.) %in% idVars]) %>% 
   select(
-    PID,
-    TID,
+    ID,
     TIDnum,
-    IntergroupContact,
-    InteractionDum
+    ends_with("_gmc")
+  ) %>%
+  data.frame %>%
+  melt(
+    .,
+    id=c("ID","TIDnum")
+  ) %>%
+  mutate(
+    variable = gsub("_gmc", "", variable)
+  ) %>%
+  ggplot(., aes(x = variable, y = value, group = TIDnum, color = TIDnum)) +
+  #geom_jitter() +
+  stat_summary(fun=mean, geom="line") +
+  labs(
+    title = "Studies 1-3 Means over time [daily]",
+    y = "Grand Mean Centered Average",
+    x = "Variable",
+    color = "Timepoint",
+    group = "Timepoint"
+  ) +
+  #coord_flip() +
+  theme_Publication() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust=1),
+    legend.key.size = unit(1, 'cm'),
+    legend.key.height = unit(0.4, 'cm'),
   )
 
-dtS1$viz$KeyNeed <- dtS1$vizall %>%
+dtPcaS123 %>%
+  group_by(ID, week, study) %>%
+  summarise_if(is.numeric, mean, na.rm = TRUE) %>%
+  ungroup %>%
+  group_by(study) %>%
+  mutate(TIDnum = as.numeric(factor(week))) %>%
+  ungroup %>%
+  select(ID, week, TIDnum, everything()) %>%
+  mutate_all(~ifelse(is.nan(.), NA, .)) %>%
+  PCAnorm(data = .,
+          pid = "ID",
+          tid = "TIDnum",
+          selection = names(.)[!names(.) %in% idVars]) %>% 
   select(
-    PID,
-    TID,
+    ID,
     TIDnum,
-    DaytimeNeedFullfillment,
-    InteractionNeedFullfillment
-  )
-
-dtS1$viz$SDT <- dtS1$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    autonomy,
-    relatedness, 
-    competence
-  )
-
-dtS1$viz$Attitudes <- dtS1$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    starts_with("Attitudes")
-  )
-
-dtS1$viz$WB <- dtS1$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    ExWB
-  )
-
-dtS1$viz$MoodOverall <- dtS1$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    alertness,
-    calmness,
-    valence
-  )
-
-dtS1$viz$MoodV01Pt01 <- dtS1$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    MDMQ.v1_1,
-    MDMQ.v1_2
-  )
-
-dtS1$viz$MoodV01Pt02 <- dtS1$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    MDMQ.v1_3,
-    MDMQ.v1_4
-  )
-
-dtS1$viz$MoodV01Pt03 <- dtS1$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    MDMQ.v1_5,
-    MDMQ.v1_6
-  )
-
-dtS1$viz$MoodV01Pt04 <- dtS1$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    MDMQ.v1_7,
-    MDMQ.v1_8
-  )
-
-dtS1$viz$MoodV01Pt05 <- dtS1$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    MDMQ.v1_9,
-    MDMQ.v1_10
-  )
-
-dtS1$viz$MoodV01Pt06 <- dtS1$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    MDMQ.v1_11,
-    MDMQ.v1_12,
-    MDMQ.v1_13
-  )
-
-dtS1$viz$MoodV02Pt01 <- dtS1$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    MDMQ.v2_1,
-    MDMQ.v2_2
-  )
-
-dtS1$viz$MoodV02Pt02 <- dtS1$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    MDMQ.v2_3,
-    MDMQ.v2_4
-  )
-
-dtS1$viz$MoodV02Pt03 <- dtS1$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    MDMQ.v2_5,
-    MDMQ.v2_6
-  )
-
-dtS1$viz$MoodV02Pt04 <- dtS1$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    MDMQ.v2_7,
-    MDMQ.v2_8
-  )
-
-dtS1$viz$MoodV02Pt05 <- dtS1$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    MDMQ.v2_9,
-    MDMQ.v2_10
-  )
-
-dtS1$viz$MoodV02Pt06 <- dtS1$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    MDMQ.v2_11,
-    MDMQ.v2_12,
-    MDMQ.v2_13
+    ends_with("_gmc")
+  ) %>%
+  data.frame %>%
+  melt(
+    .,
+    id=c("ID","TIDnum")
+  ) %>%
+  mutate(
+    variable = gsub("_gmc", "", variable)
+  ) %>%
+  ggplot(., aes(x = variable, y = value, group = TIDnum, color = TIDnum)) +
+  #geom_jitter() +
+  stat_summary(fun=mean, geom="line") +
+  labs(
+    title = "Studies 1-3 Means over time [weekly]",
+    y = "Grand Mean Centered Average",
+    x = "Variable",
+    color = "Timepoint",
+    group = "Timepoint"
+  ) +
+  #coord_flip() +
+  theme_Publication() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust=1),
+    legend.key.size = unit(1, 'cm'),
+    legend.key.height = unit(0.4, 'cm'),
   )
 ```
 
-### Mean Plots  
+### Study 1 (Means)
 
-We begin by plotting the item means of all variables. We always only display one to three variables jointly to improve visual inspection. We plot the means of the individual variables for each measurement occasion, summarizing the responses of all participants at any given time point. We additionally plot the data availability of each variable as a marginal plot above the main plot. The displayed time axis is the measurement index rather than the actual date to ensure comparability of the changes between each measurement. Plots with the raw date-time axis are saved and can be displayed if necessary.  
+The first study, utilized not only the smallest sample but also a slightly different set of measured variables compared to the later two studies. Several variables are consistent across all three studies (e.g., types of social interactions, interaction needs, self-determiantion theory needs, outgroup attitudes, and experienced well-being). Study 1 additionally included several emotion and mood measurements but fewer cognitive and behavioral measures than studies two and three. 
 
-```{r workerMeanViz, echo=FALSE, results='hide',fig.keep='all', eval=FALSE} 
-dtS1$vizPlotsMean <-
-  lapply(seq_along(dtS1$viz),
-         function(i)
-           statVarPlot(dataIn = dtS1$viz[[i]], 
-                       name = names(dtS1$viz)[[i]], 
-                       namList = varNameListWorker,
-                       stat = "mean")
-         )
-dtS1$vizPlotsMean
+We begin by plotting the item means of all variables. We plot the means of the individual variables for each measurement occasion, summarizing the responses of all participants at any given time point. The displayed time axis is the measurement index rather than the actual date to ensure comparability of the changes between each measurement. We plot the means for bi-daily, daily, and weekly timescales. 
+
+```{r plotS1Mean, fig.height=16}
+plotStat(
+  dt = dtS1Red,
+  varNams = varNamPcaS1,
+  id = "PID",
+  timescale = "bi-daily",
+  clNum = 2,
+  idVars = idVars,
+  stat = "mean",
+  title = "Study 1 Means over time [bi-daily]"
+)
+
+plotStat(
+  dt = dtS1Red,
+  varNams = varNamPcaS1,
+  id = "PID",
+  timescale = "daily",
+  clNum = 2,
+  idVars = idVars,
+  stat = "mean",
+  title = "Study 1 Means over time [daily]"
+)
+
+plotStat(
+  dt = dtS1Red,
+  varNams = varNamPcaS1,
+  id = "PID",
+  timescale = "weekly",
+  clNum = 2,
+  idVars = idVars,
+  stat = "mean",
+  title = "Study 1 Means over time [weekly]"
+)
 ```
 
-### SD Plots
-
-To illustrate the developments of variance around the previously displayed means, we then plot the item standard deviations of all variables. We, thus, plot the average variation from the mean for each individual variable, again summarizing the responses of all participants at any given time point. We retain the same variable grouping, the data availability line plot, and the measurement index as the x axis.  
-
-```{r WorkerSdViz, echo=FALSE, results='hide',fig.keep='all', eval=FALSE} 
-dtS1$vizPlotsSd <-
-  lapply(seq_along(dtS1$viz),
-         function(i)
-           statVarPlot(dataIn = dtS1$viz[[i]], 
-                       name = names(dtS1$viz)[[i]], 
-                       namList = varNameListWorker,
-                       stat = "sd")
-         )
-dtS1$vizPlotsSd
-```
-
-
-## Study 2 (Student)
+### Study 2 (Means)
 
 During the second study we collected the largest sample and additionally collected a range of motivations as well as pro-social and anti-social behaviors. 
 
-We, again, select all potentially relevant variables and their labels, and then group the variables in small groups of one to three variables for plotting. 
-
-```{r studentDataSelection, eval=FALSE}
-varListStudent <- 
-  c(
-    "IntergroupContact",
-    "InteractionDum",
-    # "KeyNeedFullfillment",
-    # "KeyNeedImp",
-    "DaytimeNeedFullfillment",
-    #"DaytimeNeedImportance",
-    "InteractionNeedFullfillment",
-    #"InteractionNeedImportance",
-    "AntiSo1",
-    "AntiSo2",
-    "AntiSo3",
-    "AntiSo4",
-    "AntiSo5",
-    "AntiSo6",
-    "AntiSo7",
-    "ProSo1",
-    "ProSo2",
-    "ProSo3",
-    "ProSo4",
-    "StudentGoal01",
-    "StudentGoal02",
-    "StudentGoal03",
-    "StudentGoal04",
-    "StudentGoal05",
-    "StudentGoal06",
-    "StudentGoal07",
-    "StudentGoal08",
-    "StudentGoal09",
-    "StudentGoal10",
-    "autonomy",
-    "competence",
-    # Break relatedness up into interaction vs. no interaction(?)
-    # vars are already calculated
-    "relatedness",
-    "AttitudesDutch",
-    "AttitudesPartner",
-    "ExWB",
-    #"angry",
-    #"afraid",
-    #"energy",
-    #"lonelyAlways",
-    "Event"
-  )
-
-varNameListStudent <- 
-  c(
-    "IntergroupContact" = "Dutch Interaction",
-    "InteractionDum" = "Any Interaction",
-    # "KeyNeedFulfillment" = "Key Need Fulfillment",
-    # "KeyNeedImp" = "Key Need Importance",
-    "DaytimeNeedFullfillment" = "Daytime Core Motive Fulfillment",
-    #"DaytimeNeedImportance" = "Daytime Core Motive Importance",
-    "InteractionNeedFullfillment" = "Interaction Core Motive Fulfillment",
-    #"InteractionNeedImportance" = "Interaction Core Motive Importance",
-    "AntiSo1" = "Put someone down",
-    "AntiSo2" = "Show little attention in someones opinion",
-    "AntiSo3" = "Demeaning remarks",
-    "AntiSo4" = "Inpropperly addressing someone",
-    "AntiSo5" = "Ignored or excluded someone",
-    "AntiSo6" = "Doubt someones judgement",
-    "AntiSo7" = "Unwanted attempts of personal matters",
-    "ProSo1" = "Listen to someones problems",
-    "ProSo2" = "Cheer someone up",
-    "ProSo3" = "Help someone get things done",
-    "ProSo4" = "Help someone with responsibilities",
-    "StudentGoal01" = "Social support and connectedness",
-    "StudentGoal02" = "Romantic or sexual relationship",
-    "StudentGoal03" = "Academic",
-    "StudentGoal04" = "Career",
-    "StudentGoal05" = "Financial",
-    "StudentGoal06" = "Health and fitness",
-    "StudentGoal07" = "Leasure and fun",
-    "StudentGoal08" = "Personal improvement and growth",
-    "StudentGoal09" = "Service and help",
-    "StudentGoal10" = "Spiritual or religious",
-    "autonomy" = "Autonomy",
-    "competence" = "Competence",
-    # Break relatedness up into interaction vs. no interaction(?)
-    # vars are already calculated
-    "relatedness" = "Relatedness",
-    "AttitudesDutch" = "Outgroup Attitude",
-    "AttitudesPartner" = "Attitude Interaction Partner",
-    "ExWB" = "Sadness Happiness",
-    #"angry" = "Anger",
-    #"afraid" = "Anxiety",
-    #"energy" = "Energy",
-    #"lonelyAlways" = "Loneliness",
-    "Event" = "Positive or negative event present"
-  )
-
-dtS2$viz <- list()
-
-dtS2$vizall <- dtS2$full %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    all_of(varListStudent)
-  )
-
-dtS2$viz$Interaction <- dtS2$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    IntergroupContact,
-    InteractionDum
-  )
-
-dtS2$viz$KeyNeed <- dtS2$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    DaytimeNeedFullfillment,
-    InteractionNeedFullfillment
-  )
-
-dtS2$viz$AntiSocialBehaviorPt1 <- dtS2$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    AntiSo1,
-    AntiSo2,
-    AntiSo3
-  )
-
-dtS2$viz$AntiSocialBehaviorPt2 <- dtS2$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    AntiSo4,
-    AntiSo5
-  )
-
-dtS2$viz$AntiSocialBehaviorPt3 <- dtS2$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    AntiSo6,
-    AntiSo7
-  )
-
-dtS2$viz$ProSocialBehaviorPt1 <- dtS2$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    ProSo1,
-    ProSo2
-  )
-
-dtS2$viz$ProSocialBehaviorPt2 <- dtS2$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    ProSo3,
-    ProSo4
-  )
-
-dtS2$viz$GoalsPt1 <- dtS2$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    StudentGoal01,
-    StudentGoal02
-  )
-
-dtS2$viz$GoalsPt2 <- dtS2$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    StudentGoal03,
-    StudentGoal04
-  )
-
-dtS2$viz$GoalsPt3 <- dtS2$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    StudentGoal05,
-    StudentGoal06
-  )
-
-dtS2$viz$GoalsPt4 <- dtS2$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    StudentGoal07,
-    StudentGoal08
-  )
-
-dtS2$viz$GoalsPt5 <- dtS2$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    StudentGoal09,
-    StudentGoal10
-  )
-
-dtS2$viz$SDT <- dtS2$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    autonomy,
-    relatedness, 
-    competence
-  )
-
-dtS2$viz$Attitudes <- dtS2$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    starts_with("Attitudes")
-  )
-
-dtS2$viz$WB <- dtS2$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    ExWB
-  )
-
-dtS2$viz$Event <- dtS2$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    Event
-  )
-
-```
-
-### Mean Plots
+We, again, select all potentially relevant variables and their labels, and then plot their developments on a bi-daily, daily, and weekly level. 
 
 We again begin by plotting the item means of all variables. The plotting method is identical to that of Study 1. 
 
-```{r studentMeanViz, echo=FALSE, results='hide',fig.keep='all', eval=FALSE} 
-dtS2$vizPlotsMean <-
-  lapply(seq_along(dtS2$viz),
-         function(i)
-           statVarPlot(dataIn = dtS2$viz[[i]], 
-                       name = names(dtS2$viz)[[i]], 
-                       namList = varNameListStudent,
-                       stat = "mean")
-         )
-dtS2$vizPlotsMean
+```{r plotS2Mean, fig.height=16}
+plotStat(
+  dt = dtS2Red,
+  varNams = varNamPcaS2,
+  id = "PID",
+  timescale = "bi-daily",
+  clNum = 2,
+  idVars = idVars,
+  stat = "mean",
+  title = "Study 2 Means over time [bi-daily]"
+)
+
+plotStat(
+  dt = dtS2Red,
+  varNams = varNamPcaS2,
+  id = "PID",
+  timescale = "daily",
+  clNum = 2,
+  idVars = idVars,
+  stat = "mean",
+  title = "Study 2 Means over time [daily]"
+)
+
+plotStat(
+  dt = dtS2Red,
+  varNams = varNamPcaS2,
+  id = "PID",
+  timescale = "weekly",
+  clNum = 2,
+  idVars = idVars,
+  stat = "mean",
+  title = "Study 2 Means over time [weekly]"
+)
 ```
 
-### SD Plots
 
-We then also plot the average variation around the mean for each time point and variable. The plotting method is identical to that of Study 1. 
-
-```{r studentSdViz, echo=FALSE, results='hide',fig.keep='all', eval=FALSE} 
-dtS2$vizPlotsSd <-
-  lapply(seq_along(dtS2$viz),
-         function(i)
-           statVarPlot(dataIn = dtS2$viz[[i]], 
-                       name = names(dtS2$viz)[[i]], 
-                       namList = varNameListStudent,
-                       stat = "sd")
-         )
-dtS2$vizPlotsSd
-```
-
-
-## Study 3 (Medical)
+### Study 3 (Means)
 
 The third study uses a similar set up as Study 2 but targets a more vulnerable sample (of young medical professionals). While most key variables are identical to Study 2, in this last study we additionally collected several cognitive evaluations (e.g., importance ratings) and emotional status measures (e.g., anger, nervousness, energy, and loneliness).
 
-We, again, select all potentially relevant variables and their labels, and then group the variables in small groups of one to three variables for plotting. 
-
-```{r medicalDataSelection, eval=FALSE}
-varListMedical <- 
-  c(
-    "IntergroupContact",
-    "InteractionDum",
-    # "KeyNeedFulfillment",
-    # "KeyNeedImp",
-    "DaytimeNeedFullfillment",
-    "DaytimeNeedImportance",
-    "InteractionNeedFullfillment",
-    "InteractionNeedImportance",
-    "AntiSo1",
-    "AntiSo2",
-    "AntiSo3",
-    "AntiSo4",
-    "AntiSo5",
-    "AntiSo6",
-    "AntiSo7",
-    "ProSo1",
-    "ProSo2",
-    "ProSo3",
-    "ProSo4",
-    "StudentGoal01",
-    "StudentGoal02",
-    "StudentGoal03",
-    "StudentGoal04",
-    "StudentGoal05",
-    "StudentGoal06",
-    "StudentGoal07",
-    "StudentGoal08",
-    "StudentGoal09",
-    "StudentGoal10",
-    "Autonomy",
-    "Competence",
-    # Break relatedness up into interaction vs. no interaction(?)
-    # vars are already calculated
-    "relatedness",
-    "AttitudesDutch",
-    "AttitudesPartner",
-    "exWB",
-    "angry",
-    "afraid",
-    "energy",
-    "lonelyAlways",
-    "Event"
-  )
-
-varNameListMedical <- 
-  c(
-    "IntergroupContact" = "Dutch Interaction",
-    "InteractionDum" = "Any Interaction",
-    # "KeyNeedFulfillment" = "Key Need Fulfillment",
-    # "KeyNeedImp" = "Key Need Importance",
-    "DaytimeNeedFullfillment" = "Daytime Core Motive Fulfillment",
-    "DaytimeNeedImportance" = "Daytime Core Motive Importance",
-    "InteractionNeedFullfillment" = "Interaction Core Motive Fulfillment",
-    "InteractionNeedImportance" = "Interaction Core Motive Importance",
-    "AntiSo1" = "Put someone down",
-    "AntiSo2" = "Show little attention in someones opinion",
-    "AntiSo3" = "Demeaning remarks",
-    "AntiSo4" = "Inpropperly addressing someone",
-    "AntiSo5" = "Ignored or excluded someone",
-    "AntiSo6" = "Doubt someones judgement",
-    "AntiSo7" = "Unwanted attempts of personal matters",
-    "ProSo1" = "Listen to someones problems",
-    "ProSo2" = "Cheer someone up",
-    "ProSo3" = "Help someone get things done",
-    "ProSo4" = "Help someone with responsibilities",
-    "StudentGoal01" = "Social support and connectedness",
-    "StudentGoal02" = "Romantic or sexual relationship",
-    "StudentGoal03" = "Academic",
-    "StudentGoal04" = "Career",
-    "StudentGoal05" = "Financial",
-    "StudentGoal06" = "Health and fitness",
-    "StudentGoal07" = "Leasure and fun",
-    "StudentGoal08" = "Personal improvement and growth",
-    "StudentGoal09" = "Service and help",
-    "StudentGoal10" = "Spiritual or religious",
-    "Autonomy" = "Autonomy",
-    "Competence" = "Competence",
-    # Break relatedness up into interaction vs. no interaction(?)
-    # vars are already calculated
-    "relatedness" = "Relatedness",
-    "AttitudesDutch" = "Outgroup Attitude",
-    "AttitudesPartner" = "Attitude Interaction Partner",
-    "exWB" = "Sadness Happiness",
-    "angry" = "Anger",
-    "afraid" = "Anxiety",
-    "energy" = "Energy",
-    "lonelyAlways" = "Loneliness",
-    "Event" = "Positive or negative event present"
-  )
-
-dtS3$viz <- list()
-
-dtS3$vizall <- dtS3$full %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    all_of(varListMedical)
-  )
-
-dtS3$viz$Interaction <- dtS3$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    IntergroupContact,
-    InteractionDum
-  )
-
-dtS3$viz$KeyNeedFulfillment <- dtS3$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    DaytimeNeedFullfillment,
-    InteractionNeedFullfillment
-  )
-
-dtS3$viz$KeyNeedImportance <- dtS3$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    DaytimeNeedImportance,
-    InteractionNeedImportance
-  )
-
-dtS3$viz$AntiSocialBehaviorPt1 <- dtS3$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    AntiSo1,
-    AntiSo2,
-    AntiSo3
-  )
-
-dtS3$viz$AntiSocialBehaviorPt2 <- dtS3$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    AntiSo4,
-    AntiSo5
-  )
-
-dtS3$viz$AntiSocialBehaviorPt3 <- dtS3$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    AntiSo6,
-    AntiSo7
-  )
-
-dtS3$viz$ProSocialBehaviorPt1 <- dtS3$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    ProSo1,
-    ProSo2
-  )
-
-dtS3$viz$ProSocialBehaviorPt2 <- dtS3$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    ProSo3,
-    ProSo4
-  )
-
-dtS3$viz$GoalsPt1 <- dtS3$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    StudentGoal01,
-    StudentGoal02
-  )
-
-dtS3$viz$GoalsPt2 <- dtS3$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    StudentGoal03,
-    StudentGoal04
-  )
-
-dtS3$viz$GoalsPt3 <- dtS3$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    StudentGoal05,
-    StudentGoal06
-  )
-
-dtS3$viz$GoalsPt4 <- dtS3$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    StudentGoal07,
-    StudentGoal08
-  )
-
-dtS3$viz$GoalsPt5 <- dtS3$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    StudentGoal09,
-    StudentGoal10
-  )
-
-dtS3$viz$SDT <- dtS3$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    autonomy,
-    relatedness, 
-    competence
-  )
-
-dtS3$viz$Attitudes <- dtS3$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    starts_with("Attitudes")
-  )
-
-dtS3$viz$WB <- dtS3$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    exWB
-  )
-
-dtS3$viz$Emotion <- dtS3$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    angry,
-    afraid,
-    energy,
-    lonelyAlways
-  )
-
-dtS3$viz$Event <- dtS3$vizall %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    Event
-  )
-
-```
-
-### Mean Plots
+We, again, select all potentially relevant variables and their labels, and then plot their developments on a bi-daily, daily, and weekly level. 
 
 As with the previous studies, we begin by plotting the item means of all variables. The plotting method is identical to that of Studies 1 and 2.  
 
-```{r medicalMeanViz, echo=FALSE, results='hide',fig.keep='all', eval=FALSE} 
-dtS3$vizPlotsMean <-
-  lapply(seq_along(dtS3$viz),
-         function(i)
-           statVarPlot(dataIn = dtS3$viz[[i]], 
-                       name = names(dtS3$viz)[[i]], 
-                       namList = varNameListMedical,
-                       stat = "mean")
-         )
-dtS3$vizPlotsMean
+```{r plotS3Mean, fig.height=16}
+plotStat(
+  dt = dtS3Red,
+  varNams = varNamPcaS3,
+  id = "PID",
+  timescale = "bi-daily",
+  clNum = 2,
+  idVars = idVars,
+  stat = "mean",
+  title = "Study 3 Means over time [bi-daily]"
+)
+
+plotStat(
+  dt = dtS3Red,
+  varNams = varNamPcaS3,
+  id = "PID",
+  timescale = "daily",
+  clNum = 2,
+  idVars = idVars,
+  stat = "mean",
+  title = "Study 3 Means over time [daily]"
+)
+
+plotStat(
+  dt = dtS3Red,
+  varNams = varNamPcaS3,
+  id = "PID",
+  timescale = "weekly",
+  clNum = 2,
+  idVars = idVars,
+  stat = "mean",
+  title = "Study 3 Means over time [weekly]"
+)
 ```
 
-### SD Plots
+## SD
 
-Lastly, also again plot the item standard deviations of all variables at each time point. The plotting procedures are again identical to Studies 1 and 2.  
+<font size="1"> This is my text number 1</font> 
 
-```{r medicalSdViz, echo=FALSE, results='hide',fig.keep='all', eval=FALSE} 
-dtS3$vizPlotsSd <-
-  lapply(seq_along(dtS3$viz),
-         function(i)
-           statVarPlot(dataIn = dtS3$viz[[i]], 
-                       name = names(dtS3$viz)[[i]], 
-                       namList = varNameListMedical,
-                       stat = "sd")
-         )
-dtS3$vizPlotsSd
+<font size="2"> This is my text number 2</font>
+
+<font size="3"> This is my text number 3</font> 
+
+<font size="4"> This is my text number 4</font> 
+
+<font size="5"> This is my text number 5</font> 
+
+<font size="6"> This is my text number 6</font>
+
+To illustrate the developments of variance around the means, we also plot the item standard deviations of all variables. We, thus, plot the average variation from the mean for each individual variable, again summarizing the responses of all participants at any given time point. We retain the same measurement indices as the x axis.  
+
+### Studies 1-3 (SDs)
+
+```{r plotAllSd}
+PCAnorm(data = dtPcaS123,
+          pid = "ID",
+          tid = "TIDnum",
+          selection = names(dtPcaS123)[!names(dtPcaS123) %in% idVars]) %>% 
+  select(
+    ID,
+    TIDnum,
+    ends_with("_gmc")
+  ) %>%
+  data.frame %>%
+  melt(
+    .,
+    id=c("ID","TIDnum")
+  ) %>%
+  mutate(
+    variable = gsub("_gmc", "", variable)
+  ) %>%
+  ggplot(., aes(x = variable, y = value, group = TIDnum, color = TIDnum)) +
+  #geom_jitter() +
+  stat_summary(fun=sd, geom="line") +
+  labs(
+    title = "Studies 1-3 SDs over time [bi-daily]",
+    y = "Standard Deviation",
+    x = "Variable",
+    color = "Timepoint",
+    group = "Timepoint"
+  ) +
+  #coord_flip() +
+  theme_Publication() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust=1),
+    legend.key.size = unit(1, 'cm'),
+    legend.key.height = unit(0.4, 'cm'),
+  )
+
+dtPcaS123 %>%
+  group_by(ID, date, study) %>%
+  summarise_if(is.numeric, mean, na.rm = TRUE) %>%
+  ungroup %>%
+  group_by(study) %>%
+  mutate(TIDnum = as.numeric(factor(date))) %>%
+  ungroup %>%
+  select(ID, date, TIDnum, everything()) %>%
+  mutate_all(~ifelse(is.nan(.), NA, .)) %>%
+  PCAnorm(data = .,
+          pid = "ID",
+          tid = "TIDnum",
+          selection = names(.)[!names(.) %in% idVars]) %>% 
+  select(
+    ID,
+    TIDnum,
+    ends_with("_gmc")
+  ) %>%
+  data.frame %>%
+  melt(
+    .,
+    id=c("ID","TIDnum")
+  ) %>%
+  mutate(
+    variable = gsub("_gmc", "", variable)
+  ) %>%
+  ggplot(., aes(x = variable, y = value, group = TIDnum, color = TIDnum)) +
+  #geom_jitter() +
+  stat_summary(fun=sd, geom="line") +
+  labs(
+    title = "Studies 1-3 SDs over time [daily]",
+    y = "Standard Deviation",
+    x = "Variable",
+    color = "Timepoint",
+    group = "Timepoint"
+  ) +
+  #coord_flip() +
+  theme_Publication() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust=1),
+    legend.key.size = unit(1, 'cm'),
+    legend.key.height = unit(0.4, 'cm'),
+  )
+
+dtPcaS123 %>%
+  group_by(ID, week, study) %>%
+  summarise_if(is.numeric, mean, na.rm = TRUE) %>%
+  ungroup %>%
+  group_by(study) %>%
+  mutate(TIDnum = as.numeric(factor(week))) %>%
+  ungroup %>%
+  select(ID, week, TIDnum, everything()) %>%
+  mutate_all(~ifelse(is.nan(.), NA, .)) %>%
+  PCAnorm(data = .,
+          pid = "ID",
+          tid = "TIDnum",
+          selection = names(.)[!names(.) %in% idVars]) %>% 
+  select(
+    ID,
+    TIDnum,
+    ends_with("_gmc")
+  ) %>%
+  data.frame %>%
+  melt(
+    .,
+    id=c("ID","TIDnum")
+  ) %>%
+  mutate(
+    variable = gsub("_gmc", "", variable)
+  ) %>%
+  ggplot(., aes(x = variable, y = value, group = TIDnum, color = TIDnum)) +
+  #geom_jitter() +
+  stat_summary(fun=sd, geom="line") +
+  labs(
+    title = "Studies 1-3 SDs over time [weekly]",
+    y = "Standard Deviation",
+    x = "Variable",
+    color = "Timepoint",
+    group = "Timepoint"
+  ) +
+  #coord_flip() +
+  theme_Publication() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust=1),
+    legend.key.size = unit(1, 'cm'),
+    legend.key.height = unit(0.4, 'cm'),
+  )
+```
+
+### Study 1 (SDs)
+
+```{r plotS1Sd, fig.height=16}
+plotStat(
+  dt = dtS1Red,
+  varNams = varNamPcaS1,
+  id = "PID",
+  timescale = "bi-daily",
+  clNum = 2,
+  idVars = idVars,
+  stat = "sd",
+  title = "Study 1 SDs over time [bi-daily]"
+)
+
+plotStat(
+  dt = dtS1Red,
+  varNams = varNamPcaS1,
+  id = "PID",
+  timescale = "daily",
+  clNum = 2,
+  idVars = idVars,
+  stat = "sd",
+  title = "Study 1 SDs over time [daily]"
+)
+
+plotStat(
+  dt = dtS1Red,
+  varNams = varNamPcaS1,
+  id = "PID",
+  timescale = "weekly",
+  clNum = 2,
+  idVars = idVars,
+  stat = "sd",
+  title = "Study 1 SDs over time [weekly]"
+)
+```
+
+### Study 2 (SDs)
+
+```{r plotS2Sd, fig.height=16}
+plotStat(
+  dt = dtS2Red,
+  varNams = varNamPcaS2,
+  id = "PID",
+  timescale = "bi-daily",
+  clNum = 2,
+  idVars = idVars,
+  stat = "sd",
+  title = "Study 2 SDs over time [bi-daily]"
+)
+
+plotStat(
+  dt = dtS2Red,
+  varNams = varNamPcaS2,
+  id = "PID",
+  timescale = "daily",
+  clNum = 2,
+  idVars = idVars,
+  stat = "sd",
+  title = "Study 2 SDs over time [daily]"
+)
+
+plotStat(
+  dt = dtS2Red,
+  varNams = varNamPcaS2,
+  id = "PID",
+  timescale = "weekly",
+  clNum = 2,
+  idVars = idVars,
+  stat = "sd",
+  title = "Study 2 SDs over time [weekly]"
+)
+```
+
+
+### Study 3 (SDs)
+
+```{r plotS3Sd, fig.height=16}
+plotStat(
+  dt = dtS3Red,
+  varNams = varNamPcaS3,
+  id = "PID",
+  timescale = "bi-daily",
+  clNum = 2,
+  idVars = idVars,
+  stat = "sd",
+  title = "Study 3 SDs over time [bi-daily]"
+)
+
+plotStat(
+  dt = dtS3Red,
+  varNams = varNamPcaS3,
+  id = "PID",
+  timescale = "daily",
+  clNum = 2,
+  idVars = idVars,
+  stat = "sd",
+  title = "Study 3 SDs over time [daily]"
+)
+
+plotStat(
+  dt = dtS3Red,
+  varNams = varNamPcaS3,
+  id = "PID",
+  timescale = "weekly",
+  clNum = 2,
+  idVars = idVars,
+  stat = "sd",
+  title = "Study 3 SDs over time [weekly]"
+)
 ```
 
 </br>
