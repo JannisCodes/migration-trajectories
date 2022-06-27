@@ -262,11 +262,12 @@ PCAnorm <-
       group_by(!!rlang::sym(tid)) %>%
       mutate_at(selection, list(cwt = ~ . - mean(., na.rm = TRUE))) %>%
       ungroup %>%
-      filter_at(selection, all_vars(!is.na(.))) %>%
+      #filter_at(selection, all_vars(!is.na(.))) %>%
       mutate_at(selection, list(gmc = ~ . - mean(., na.rm = TRUE))) %>%
       mutate_at(selection, list(sigma = ~ sqrt(sum(. ^ 2)/(length(unique(!!rlang::sym(pid)))*length(unique(!!rlang::sym(tid)))))))
     
-    cat("@Jannis: Don't forget to fix the filter once sample section is finalized.")
+    #cat("@Jannis: Don't forget to fix the filter once sample section is finalized.")
+    warning("@Jannis: Don't forget to fix the filter once sample section is finalized.")
     
     data03 <- map_dfc(selection,
                       ~ data02 %>%
