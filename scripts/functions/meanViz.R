@@ -1,3 +1,15 @@
+calc_mode <- function(x){
+  
+  # List the distinct / unique values
+  distinct_values <- unique(x)
+  
+  # Count the occurrence of each distinct value
+  distinct_tabulate <- tabulate(match(x, distinct_values))
+  
+  # Return the value with the highest occurrence
+  distinct_values[which.max(distinct_tabulate)]
+}
+
 lWideToLong <- function(data, ...){
   reshape2::melt(
     data, 
