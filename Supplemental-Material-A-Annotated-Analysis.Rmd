@@ -1835,9 +1835,8 @@ We begin by preparing the data for the main analysis. Here, we:
 3. Impute the data and save the imputed datasets for later recall.
 
 
-```{r MiMain3mpca}
+```{r MiMain}
 library(Amelia)
-
 varNamInMiMain <- varNames %>%
   filter(
     aux == 1,
@@ -1912,6 +1911,88 @@ dtMiMain <- rbind(
   mutate(across(ends_with(c(".pre", ".post")), ~ ifelse(is.nan(.), NA, .))) %>%
   as.data.frame 
 
+dtMiMainDaily <- rbind(
+  dtS1Red %>% select(any_of(varNamInMiMainRed)) %>% mutate(study = "S1") %>% 
+    mutate(across(!TID & !study, as.numeric)),
+  dtS2Red %>% select(any_of(varNamInMiMainRed)) %>% mutate(study = "S2"),
+  dtS3Red %>% select(any_of(varNamInMiMainRed)) %>% mutate(study = "S3")
+) %>%
+  group_by(study, PID) %>%
+  mutate(ID = cur_group_id()) %>%
+  ungroup %>%
+  mutate(
+    date = as.Date(gsub(" .*", "", TID)),
+    week = strftime(date, format = "%Y-W%V"),
+    roomate.pre = as.numeric(roomate.pre),
+    Reason.pre = as.numeric(Reason.pre),
+    association.pre = as.numeric(association.pre)
+  ) %>%
+  group_by(ID, date, study) %>%
+  summarise_if(is.numeric, mean, na.rm = TRUE) %>%
+  ungroup %>%
+  group_by(study) %>%
+  mutate(TIDnum = as.numeric(factor(date))) %>%
+  ungroup %>%
+  select(ID,
+         study,
+         date,
+         everything(),
+         -PID,
+         -starts_with("ResponseId")) %>%
+  as.data.frame %>%
+  select_if(~ sum(!is.na(.)) > 1) %>% # only include variables that have any data (i.e., not all NA)
+  complete(., ID, TIDnum) %>% # add na if id and TID combination is missing
+  group_by(ID) %>%
+  mutate(across(ends_with(c(".pre", ".post")),  ~ replace_na(.x, mean(.x, na.rm = TRUE)))) %>%
+  mutate(study = replace_na(study, calc_mode(study))) %>%
+  ungroup %>%
+  group_by(study, TIDnum) %>%
+  mutate(across(c("date"),  ~ replace_na(.x, calc_mode(.x)))) %>%
+  ungroup %>% 
+  mutate_if(is.numeric, ~ ifelse(is.nan(.), NA, .)) %>%
+  as.data.frame 
+
+dtMiMainWeeekly <- rbind(
+  dtS1Red %>% select(any_of(varNamInMiMainRed)) %>% mutate(study = "S1") %>% 
+    mutate(across(!TID & !study, as.numeric)),
+  dtS2Red %>% select(any_of(varNamInMiMainRed)) %>% mutate(study = "S2"),
+  dtS3Red %>% select(any_of(varNamInMiMainRed)) %>% mutate(study = "S3")
+) %>%
+  group_by(study, PID) %>%
+  mutate(ID = cur_group_id()) %>%
+  ungroup %>%
+  mutate(
+    date = as.Date(gsub(" .*", "", TID)),
+    week = strftime(date, format = "%Y-W%V"),
+    roomate.pre = as.numeric(roomate.pre),
+    Reason.pre = as.numeric(Reason.pre),
+    association.pre = as.numeric(association.pre)
+  ) %>%
+  group_by(ID, week, study) %>%
+  summarise_if(is.numeric, mean, na.rm = TRUE) %>%
+  ungroup %>%
+  group_by(study) %>%
+  mutate(TIDnum = as.numeric(factor(week))) %>%
+  ungroup %>%
+  select(ID,
+         study,
+         week,
+         everything(),
+         -PID,
+         -starts_with("ResponseId")) %>%
+  as.data.frame %>%
+  select_if(~ sum(!is.na(.)) > 1) %>% # only include variables that have any data (i.e., not all NA)
+  complete(., ID, TIDnum) %>% # add na if id and TID combination is missing
+  group_by(ID) %>%
+  mutate(across(ends_with(c(".pre", ".post")),  ~ replace_na(.x, mean(.x, na.rm = TRUE)))) %>%
+  mutate(study = replace_na(study, calc_mode(study))) %>%
+  ungroup %>%
+  group_by(study, TIDnum) %>%
+  mutate(across(c("week"),  ~ replace_na(.x, calc_mode(.x)))) %>%
+  ungroup %>% 
+  mutate_if(is.numeric, ~ ifelse(is.nan(.), NA, .)) %>%
+  as.data.frame 
+
 # MiMain <-
 #   amelia(
 #     dtMiMain,
@@ -1928,6 +2009,40 @@ dtMiMain <- rbind(
 #   )
 # save(MiMain, file = "data/imputed/MainImputed.RData")
 load("data/imputed/MainImputed.RData")
+
+# MiMainDaily <-
+#   amelia(
+#     dtMiMainDaily,
+#     m = 1, # 20
+#     ts = "TIDnum",
+#     cs = "ID",
+#     idvars = c("date", "study"), #"PID",
+#     #lags = names(dtMiMainDaily)[!names(dtMiMainDaily) %in% idVars],
+#     #lags = names(dtMiMainDaily)[names(dtMiMainDaily) %in%varNamInMiMainRed],
+#     #noms = names(dtMiMainDaily)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMainDaily))],
+#     parallel = "multicore",
+#     ncpus = parallel::detectCores(),
+#     p2s = 1
+#   )
+# save(MiMainDaily, file = "data/imputed/MainDailyImputed.RData")
+load("data/imputed/MainDailyImputed.RData")
+
+# MiMainWeekly <-
+#   amelia(
+#     dtMiMainWeeekly,
+#     m = 1, # 20
+#     ts = "TIDnum",
+#     cs = "ID",
+#     idvars = c("week", "study"), #"PID",
+#     #lags = names(dtMiMainWeeekly)[!names(dtMiMainWeeekly) %in% idVars],
+#     #lags = names(dtMiMainWeeekly)[names(dtMiMainWeeekly) %in%varNamInMiMainRed],
+#     #noms = names(dtMiMainWeeekly)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMainWeeekly))],
+#     parallel = "multicore",
+#     ncpus = parallel::detectCores(),
+#     p2s = 1
+#   )
+# save(MiMainWeekly, file = "data/imputed/MainWeeklyImputed.RData")
+load("data/imputed/MainWeeklyImputed.RData")
 ```
 
 ### Study 1
@@ -2075,6 +2190,18 @@ dtPcaS123Imp <- MiMain$imputations[[1]] %>%
   select(ID, date, week, study, any_of(varNamPcaS123)) %>%
   arrange(ID, TIDnum) %>%
   filter(TIDnum <= min(max(dtS1Red$TIDnum), max(dtS2Red$TIDnum), max(dtS3Red$TIDnum)))
+dtPcaS123DailyImp <- MiMainDaily$imputations[[1]] %>%
+  select(ID, date, study, any_of(varNamPcaS123)) %>%
+  arrange(ID, TIDnum) %>%
+  filter(
+    TIDnum <= dtMiMainDaily %>% group_by(study) %>% summarise(TIDmax = max(TIDnum)) %>% select(TIDmax) %>% min
+  )
+dtPcaS123WeeklyImp <- MiMainWeekly$imputations[[1]] %>%
+  select(ID, week, study, any_of(varNamPcaS123)) %>%
+  arrange(ID, TIDnum) %>%
+  filter(
+    TIDnum <= dtMiMainWeeekly %>% group_by(study) %>% summarise(TIDmax = max(TIDnum)) %>% select(TIDmax) %>% min
+  )
 
 dtMainWideC <- PCAnorm(data = dtPcaS123,
           pid = "ID",
@@ -2142,6 +2269,39 @@ dtMainImpWide <- dtPcaS123Imp %>%
   #replace(is.na(.), 0) %>%
   select(-ID)
 
+dtMainDailyImpWide <- dtPcaS123DailyImp %>%
+  select(
+    -date
+  ) %>% 
+  melt(
+    .,
+    id=c("ID", "TIDnum", "study")
+  ) %>%
+  mutate(
+    variable = paste(variable, stringr::str_pad(TIDnum, width = 2, pad = 0), sep = "_")
+  ) %>%
+  select(-TIDnum, -study) %>%
+  arrange(variable, ID) %>%
+  pivot_wider(names_from = variable, values_from = value) %>%
+  #replace(is.na(.), 0) %>%
+  select(-ID)
+
+dtMainWeeklyImpWide <- dtPcaS123WeeklyImp %>%
+  select(
+    -week
+  ) %>% 
+  melt(
+    .,
+    id=c("ID", "TIDnum", "study")
+  ) %>%
+  mutate(
+    variable = paste(variable, stringr::str_pad(TIDnum, width = 2, pad = 0), sep = "_")
+  ) %>%
+  select(-TIDnum, -study) %>%
+  arrange(variable, ID) %>%
+  pivot_wider(names_from = variable, values_from = value) %>%
+  #replace(is.na(.), 0) %>%
+  select(-ID)
 ```
 
 
@@ -2150,18 +2310,10 @@ dtMainImpWide <- dtPcaS123Imp %>%
 We assess the percentages of explained variance for the person-, variable-, and time aspects --- which offers an indication of whether a 3MPCA is useful for the dataset. Based on the grand mean centered variables we conduct a fixed-effects three-way ANOVA of the person-, variable-, and time modes as well as their various interactions. We are particularly interested in the highest order interaction term Person * Variable * Time + error, as a large amount of variance in this effect would speak towards the possible interdependence of the three modes.
 
 
-```{r threeWayAnova, message=FALSE, warning=FALSE}
+```{r threeWayAnovaMainBiDaily, message=FALSE, warning=FALSE}
 library(ThreeWay)
-# threeWayAno <- threewayanova(
-#   Y = dtMainWide,
-#   n = nrow(dtMainWide), # Nr. ppt.s (A)
-#   m = length(unique(dtPcaS123$TIDnum)), # Nr. time points (B)
-#   #p = sum(!varNamPcaS123 %in% idVars) # Nr. variables (C)
-#   p = length(names(dtPcaS123)[!names(dtPcaS123) %in% idVars]) # Nr. variables (C)
-# )
-
 capture.output(
-  threeWayAnoImp <- threewayanova(
+  threeWayAnoBiDailyImp <- threewayanova(
     Y = dtMainImpWide,
     n = nrow(dtMainImpWide), # Nr. ppt.s (A)
     m = length(unique(dtPcaS123Imp$TIDnum)), # Nr. time points (B)
@@ -2170,7 +2322,7 @@ capture.output(
 file='NUL')
 
 options(knitr.kable.NA = '')
-data.frame(SS = sapply(threeWayAnoImp, c)) %>%
+data.frame(SS = sapply(threeWayAnoBiDailyImp, c)) %>%
   rownames_to_column(., var = "EffectNam") %>%
   mutate(RSqrd = SS / sum(SS) * 100) %>%
   add_row(
@@ -2201,22 +2353,126 @@ data.frame(SS = sapply(threeWayAnoImp, c)) %>%
         "Sum of Squares",
         "$R^2$"
       ),
-      caption = "Three-way ANOVA Main Analysis Single Imputation") %>%
+      caption = "Three-way ANOVA Main Analysis Bi-daily (Single Imputation)") %>%
   kable_classic(
     full_width = F,
     lightable_options = "hover",
     html_font = "Cambria"
   )
-
 ```
 
-We find that the $Person*Time*Variable+error$ sums of squares are indeed the largest and speak towards the utility of a Three-Mode PCA. Interestingly, time itself has a relatively small percentage of explained variance and only becomes important in compination with person- or person- and variable-specific differences.  
+<br>
 
+We find that for the bi-daily time scale the $Person*Time*Variable+error$ sums of squares are indeed the largest and speak towards the utility of a Three-Mode PCA. Interestingly, time itself has a relatively small percentage of explained variance and only becomes important in compination with person- or person- and variable-specific differences.  
 
-```{r panel-setup, include = FALSE}
-xaringanExtra::use_panelset()
-xaringanExtra::style_panelset_tabs(font_family = "inherit")
+```{r threeWayAnovaMainDaily, message=FALSE, warning=FALSE}
+capture.output(
+  threeWayAnoDailyImp <- threewayanova(
+    Y = dtMainDailyImpWide,
+    n = nrow(dtMainDailyImpWide), # Nr. ppt.s (A)
+    m = length(unique(dtPcaS123DailyImp$TIDnum)), # Nr. time points (B)
+    p = length(names(dtPcaS123DailyImp)[!names(dtPcaS123DailyImp) %in% idVars]) # Nr. variables (C)
+  ), 
+file='NUL')
+
+options(knitr.kable.NA = '')
+data.frame(SS = sapply(threeWayAnoDailyImp, c)) %>%
+  rownames_to_column(., var = "EffectNam") %>%
+  mutate(RSqrd = SS / sum(SS) * 100) %>%
+  add_row(
+    EffectNam = "Total", 
+    SS = sum(.$SS),
+    RSqrd = NA
+  ) %>%
+  mutate(
+    Effect = c(
+      "Person",
+      "Time",
+      "Variable",
+      "Person*Time",
+      "Person*Variable",
+      "Time*Variable",
+      "Person*Time*Variable+error",
+      "Total"
+    )
+  ) %>%
+  select(Effect, everything(), -EffectNam) %>%
+  kbl(.,
+      escape = FALSE,
+      booktabs = T,
+      align = c("l", "r", "c"),
+      digits=2,
+      col.names = c(
+        "Effect",
+        "Sum of Squares",
+        "$R^2$"
+      ),
+      caption = "Three-way ANOVA Main Analysis Daily (Single Imputation)") %>%
+  kable_classic(
+    full_width = F,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  )
 ```
+
+<br>
+
+We additionally see that for the daily time scale aggregation, the $Person*Time*Variable+error$ sums of squares are reduced but remain the largest sums of squares and are still substantial. 
+
+```{r threeWayAnovaMainWweekly, message=FALSE, warning=FALSE}
+capture.output(
+  threeWayAnoWeeklyImp <- threewayanova(
+    Y = dtMainWeeklyImpWide,
+    n = nrow(dtMainWeeklyImpWide), # Nr. ppt.s (A)
+    m = length(unique(dtPcaS123WeeklyImp$TIDnum)), # Nr. time points (B)
+    p = length(names(dtPcaS123WeeklyImp)[!names(dtPcaS123WeeklyImp) %in% idVars]) # Nr. variables (C)
+  ), 
+file='NUL')
+
+options(knitr.kable.NA = '')
+data.frame(SS = sapply(threeWayAnoWeeklyImp, c)) %>%
+  rownames_to_column(., var = "EffectNam") %>%
+  mutate(RSqrd = SS / sum(SS) * 100) %>%
+  add_row(
+    EffectNam = "Total", 
+    SS = sum(.$SS),
+    RSqrd = NA
+  ) %>%
+  mutate(
+    Effect = c(
+      "Person",
+      "Time",
+      "Variable",
+      "Person*Time",
+      "Person*Variable",
+      "Time*Variable",
+      "Person*Time*Variable+error",
+      "Total"
+    )
+  ) %>%
+  select(Effect, everything(), -EffectNam) %>%
+  kbl(.,
+      escape = FALSE,
+      booktabs = T,
+      align = c("l", "r", "c"),
+      digits=2,
+      col.names = c(
+        "Effect",
+        "Sum of Squares",
+        "$R^2$"
+      ),
+      caption = "Three-way ANOVA Main Analysis Weekly (Single Imputation)") %>%
+  kable_classic(
+    full_width = F,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  )
+```
+
+<br>
+
+However, with the aggregation to `r length(unique(dtPcaS123WeeklyImp$TIDnum))` weekly measurements, the $Person*Time*Variable+error$ sums of squares become less prominent and the variable differences explain substantially more variance. 
+
 
 # **Plots per Item** {.tabset .tabset-fade}
 
