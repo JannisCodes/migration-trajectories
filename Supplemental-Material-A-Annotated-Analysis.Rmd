@@ -2304,8 +2304,7 @@ dtMainWeeklyImpWide <- dtPcaS123WeeklyImp %>%
   select(-ID)
 ```
 
-
-## Three-Way ANOVA
+# **Three-Way ANOVA**
 
 We assess the percentages of explained variance for the person-, variable-, and time aspects --- which offers an indication of whether a 3MPCA is useful for the dataset. Based on the grand mean centered variables we conduct a fixed-effects three-way ANOVA of the person-, variable-, and time modes as well as their various interactions. We are particularly interested in the highest order interaction term Person * Variable * Time + error, as a large amount of variance in this effect would speak towards the possible interdependence of the three modes.
 
@@ -3079,5 +3078,7 @@ kbl(
 </br>  
 
 # **References**
+
+
 
 <div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>
