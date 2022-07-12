@@ -200,14 +200,14 @@ statVarPlot <- function(dataIn, name, namList, stat = "mean", ...){
 }
 
 plotStat <- function(dt, varNams, id, timescale, clNum, idVars, stat, title) {
-  # dt = dtS3Red
-  # varNams = varNamPcaS3
+  # dt = dtS2Red
+  # varNams = varNamS2PCA
   # id = "PID"
   # timescale = "bi-daily"
   # clNum = 2
   # idVars = idVars
   # stat = "sd"
-  # title = "Study 3 Means over time [bi-daily]"
+  # title = "Study 2 Means over time [bi-daily]"
   
   varCl <- dt %>%
     select(any_of(varNams)) %>%
@@ -231,13 +231,13 @@ plotStat <- function(dt, varNams, id, timescale, clNum, idVars, stat, title) {
     select(
       ends_with("_gmc")
     ) %>%
-    data.frame %>%
+    data.frame %>% 
     summarise_all(
       sd, na.rm = TRUE
     ) %>%
     t %>% 
-    as.data.frame %>%
-    kmeans(., centers = clNum)
+    as.data.frame %>% 
+    stats::kmeans(., centers = clNum)
   
   if (timescale == "bi-daily") {
     dtTimescale <- dt %>%
