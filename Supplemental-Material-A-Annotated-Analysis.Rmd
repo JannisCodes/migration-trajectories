@@ -38,6 +38,7 @@ header-includes:
    - \usepackage{amsmath, nccmath}
 ---
 
+```{=html}
 <style type="text/css">
 .main-container {
   max-width: 1300px;
@@ -49,8 +50,7 @@ header-includes:
   margin-right:auto;
 }
 </style>
-
-
+```
 ```{r setup, include=FALSE}
 # R Studio Clean-Up
 cat("\014") # clear console
@@ -101,7 +101,9 @@ lib <- c(
   "dygraphs",
   "readxl", 
   "reshape",
-  "factoextra"
+  "factoextra",
+  "Amelia", 
+  "ThreeWay"
 )
 invisible(lapply(lib, library, character.only = TRUE))
 rm(lib)
@@ -162,26 +164,25 @@ knitr::opts_chunk$set(
 
 </br>
 
---------------------------------------------------------------------
-
-</br> 
-
-<i class="fas fa-exclamation-circle"></i> Note. Boxplots display the interquartile range (IQR, center box), and the whiskers extend 1.5*IQR from the lower and upper hinge. The white point indicates the mean and the white center line indicates the median.   
+------------------------------------------------------------------------
 
 </br>
 
---------------------------------------------------------------------
+<i class="fas fa-exclamation-circle"></i> Note. Boxplots display the interquartile range (IQR, center box), and the whiskers extend 1.5\*IQR from the lower and upper hinge. The white point indicates the mean and the white center line indicates the median.
 
-</br> 
+</br>
 
+------------------------------------------------------------------------
 
-# **Data Preparation**  
+</br>
 
-In an initial preparatory step, we import the data into the R project environment and prepare the variables for further processing and later analyses.   
+# **Data Preparation**
 
-## Data Import  
+In an initial preparatory step, we import the data into the R project environment and prepare the variables for further processing and later analyses.
 
-The data were collected using two different survey tools. For the study with sojourners (Study 1: worker) we used the survey platform Qualtrics XM, whereas the studies with international students (Study 2: student), and the international medical professionals (Study 3: medical) were conducted using the survey framework FormR. This means that the datasets had inconsistent file formats and naming conventions. For the Qualtrics study we pre-processed some variables to ease the import process (for the syntax files see the SPS files in '_data/S1_Workers/processed/cleaned_' and for the raw data files see '_data/S1_Workers/raw_'). For the two other studies, we import the raw csv files from their respective folders.  
+## Data Import
+
+The data were collected using two different survey tools. For the study with sojourners (Study 1: worker) we used the survey platform Qualtrics XM, whereas the studies with international students (Study 2: student), and the international medical professionals (Study 3: medical) were conducted using the survey framework FormR. This means that the datasets had inconsistent file formats and naming conventions. For the Qualtrics study we pre-processed some variables to ease the import process (for the syntax files see the SPS files in '*data/S1_Workers/processed/cleaned*' and for the raw data files see '*data/S1_Workers/raw*'). For the two other studies, we import the raw csv files from their respective folders.
 
 ```{r formrImport}
 # Load variable name lookup table
@@ -310,12 +311,12 @@ dtS3 <- list(
 # )
 ```
 
-## Data Cleaning & Data Exclusions  
+## Data Cleaning & Data Exclusions
 
 ### Study 1
 
-For the sojourner sample data was collected in four separate surveys: (1) the pre-measurement, (2) the daily morning survey, (3) the daily afternoon survey, as well as (4) a post-measurement. We combine the four individual surveys into one cohesive dataframe and drop superfluous variables that are not relevant to the analyses relevant here. We then format the time and date variables and add person- and measurement indices (for easy and meaningful addressing of the data). We also exclude our own test data.  
-<i class="fas fa-info-circle"></i> _Note:_ All data preparation steps are saved in the '_dtS1_' list. 
+For the sojourner sample data was collected in four separate surveys: (1) the pre-measurement, (2) the daily morning survey, (3) the daily afternoon survey, as well as (4) a post-measurement. We combine the four individual surveys into one cohesive dataframe and drop superfluous variables that are not relevant to the analyses relevant here. We then format the time and date variables and add person- and measurement indices (for easy and meaningful addressing of the data). We also exclude our own test data.\
+<i class="fas fa-info-circle"></i> *Note:* All data preparation steps are saved in the '*dtS1*' list.
 
 ```{r cleanWorker}
 # Create reduced data sets for morning and afternoon
@@ -397,8 +398,8 @@ rm(df)
 
 ### Study 2
 
-For the student sample data was, similarly, collected in three separate surveys: (1) the pre-measurement, (2) the daily survey sent out at lunch and dinner time, and (3) a post-measurement. We combine the three individual surveys into one large dataframe and drop superfluous variables that are not relevant to the analyses relevant here. We exclude our own test data as well as one participant who entered the study twice (but gave different responses during the pre-measurement). We also reformat missing values and format core ID variables.  
-<i class="fas fa-info-circle"></i> _Note:_ All data preparation steps are saved in the '_dtS2_' list. 
+For the student sample data was, similarly, collected in three separate surveys: (1) the pre-measurement, (2) the daily survey sent out at lunch and dinner time, and (3) a post-measurement. We combine the three individual surveys into one large dataframe and drop superfluous variables that are not relevant to the analyses relevant here. We exclude our own test data as well as one participant who entered the study twice (but gave different responses during the pre-measurement). We also reformat missing values and format core ID variables.\
+<i class="fas fa-info-circle"></i> *Note:* All data preparation steps are saved in the '*dtS2*' list.
 
 ```{r cleanStudents}
 # our own test IDs
@@ -465,11 +466,10 @@ dtS2$clean <- dfCombined
 rm(df.pre, df.daily, df.post, dfPreDaily, dfCombined, ownIDs)
 ```
 
-
 ### Study 3
 
-For the medical professionals sample data was, again, collected in three separate surveys: (1) the pre-measurement, (2) the daily survey sent out at lunch and dinner time, and (3) a post-measurement. We combine the three individual surveys into one large dataframe. We exclude our own test data. We also reformat missing values and format core ID variables.  
-<i class="fas fa-info-circle"></i> _Note:_ All data preparation steps are saved in the '_dtS3_' list. 
+For the medical professionals sample data was, again, collected in three separate surveys: (1) the pre-measurement, (2) the daily survey sent out at lunch and dinner time, and (3) a post-measurement. We combine the three individual surveys into one large dataframe. We exclude our own test data. We also reformat missing values and format core ID variables.\
+<i class="fas fa-info-circle"></i> *Note:* All data preparation steps are saved in the '*dtS3*' list.
 
 ```{r cleanMedical}
 # our own test IDs
@@ -536,16 +536,15 @@ dtS3$clean <- dfCombined
 rm(df.pre, df.daily, df.post, dfPreDaily, dfCombined, ownIDs)
 ```
 
-
-## Calculate needed transformations  
+## Calculate needed transformations
 
 ### Study 1
 
-For the worker sample, the data transformation stage had three main aims: 
+For the worker sample, the data transformation stage had three main aims:
 
-1. We first corrected time indicators within the surveys. In some cases participants completed their daily diary surveys for the afternoon after midnight. In these cases the measurement still is in reference to the previous day and is indicated in the corrected variable.   
-2. We then created indices of scales. Some indices were multi-item scales while some indices combine equivalent measurement for different situational circumstances (e.g., competence perceptions after interactions and at measurement occasions without interactions).   
-3. Finally, we calculated several basic participant summaries (averages across all measurement occasions).   
+1.  We first corrected time indicators within the surveys. In some cases participants completed their daily diary surveys for the afternoon after midnight. In these cases the measurement still is in reference to the previous day and is indicated in the corrected variable.\
+2.  We then created indices of scales. Some indices were multi-item scales while some indices combine equivalent measurement for different situational circumstances (e.g., competence perceptions after interactions and at measurement occasions without interactions).\
+3.  Finally, we calculated several basic participant summaries (averages across all measurement occasions).
 
 ```{r newVarsWorkers}
 df <- dtS1$clean
@@ -660,6 +659,287 @@ df$autonomy <- df$autonomy.daily.all
 df$competence <- df$competence.daily.all
 df$relatedness <- df$relatedness.daily.all
 
+varNamIndicesS1 <- c(
+  "autonomy",
+  "competence",
+  "relatedness",
+  "education_level.pre",
+  "associationMerged.pre",
+  "assimilation.pre",
+  "separation.pre",
+  "integration.pre",
+  "marginalization.pre",
+  "VIA_heritage.pre",
+  "VIA_Dutch.pre",
+  "SSAS_surrounding.pre",
+  "SSAS_privat.pre",
+  "SSAS_public.pre",
+  "assimilation.post",
+  "separation.post",
+  "integration.post",
+  "marginalization.post",
+  "VIA_heritage.post",
+  "VIA_Dutch.post",
+  "rosenberg.post",
+  "social_support.post",
+  "stress.post",
+  "discrimination.post",
+  "discrimination_month.post",
+  "NLE_1month.post",
+  "NLE_6month.post",
+  "NLE_12month.post"
+  )
+
+df$roommate.pre_calc <- df %>%
+  select(
+    starts_with("roommate")
+  ) %>% 
+  mutate_all(as_factor) %>%
+  unite(., "Comb", sep = ", ", remove = TRUE, na.rm = TRUE) %>%
+  pull
+
+df$Reason.pre_calc <- df %>%
+  select(
+    starts_with("Reason"),
+    -Reason_nodesire, 
+    -ReasonOther.pre 
+  ) %>% 
+  mutate_all(as_factor) %>% 
+  unite(., "Comb", sep = ", ", remove = TRUE, na.rm = TRUE) %>%
+  pull
+
+df$occupation.pre_calc <- df %>%
+  select(
+    starts_with("occupation"),
+    -occupation_8_TEXT.pre
+  ) %>%
+  mutate_all(as_factor) %>% 
+  unite(., "Comb", sep = ", ", remove = TRUE, na.rm = TRUE) %>% 
+  pull 
+  
+df$CurrentEducation.pre_calc <-
+  df %>%
+  select(starts_with("CurrentEducation"),
+         -CurrentEducation_6_TEXT.pre) %>%
+  mutate_all(as_factor) %>%
+  unite(.,
+        "Comb",
+        sep = ", ",
+        remove = TRUE,
+        na.rm = TRUE) %>%
+  pull
+
+df$groupType.pre_calc <-
+  df %>%
+  select(starts_with("gr_type"),
+          -ends_with("TEXT")) %>%
+  mutate_all(as_factor) %>% 
+  unite(.,
+        "Comb",
+        sep = ", ",
+        remove = TRUE,
+        na.rm = TRUE) %>%
+  pull
+
+df$groupContext.pre_calc <-
+  df %>%
+  select(starts_with("gr_context"),
+          -ends_with("TEXT")) %>%
+  mutate_all(as_factor) %>% 
+  unite(.,
+        "Comb",
+        sep = ", ",
+        remove = TRUE,
+        na.rm = TRUE) %>%
+  pull
+
+df$dyadType.pre_calc <-
+  df %>%
+  select(starts_with("dyad_type"),
+          -ends_with("TEXT")) %>%
+  mutate_all(as_factor) %>% 
+  unite(.,
+        "Comb",
+        sep = ", ",
+        remove = TRUE,
+        na.rm = TRUE) %>%
+  pull
+
+df$context.pre_calc <-
+  df %>%
+  select(starts_with("Context"),
+          -ends_with("TEXT")) %>% 
+  mutate_all(as_factor) %>% 
+  unite(.,
+        "Comb",
+        sep = ", ",
+        remove = TRUE,
+        na.rm = TRUE) %>%
+  pull
+
+df$desireType.pre_calc <-
+  df %>%
+  select(starts_with("desire_type"),
+          -ends_with("TEXT")) %>% 
+  mutate_all(as_factor) %>% 
+  unite(.,
+        "Comb",
+        sep = ", ",
+        remove = TRUE,
+        na.rm = TRUE) %>%
+  pull
+
+df$desireType.pre_calc <-
+  df %>%
+  select(starts_with("desire_context"),
+          -ends_with("TEXT")) %>% 
+  mutate_all(as_factor) %>% 
+  unite(.,
+        "Comb",
+        sep = ", ",
+        remove = TRUE,
+        na.rm = TRUE) %>%
+  pull
+
+df$nonDutchType.pre_calc <-
+  df %>%
+  select(starts_with("NonDutchType"),
+          -ends_with("TEXT")) %>% 
+  mutate_all(as_factor) %>% 
+  unite(.,
+        "Comb",
+        sep = ", ",
+        remove = TRUE,
+        na.rm = TRUE) %>%
+  pull
+
+df$autonomySat.pre_calc <-
+  psych::scoreItems(
+    keys = c(1, 1, 1, 1),
+    items = df %>% select(matches("^SDT0[1-4].pre")),
+    min = 1,
+    max = 7
+  )$scores %>% 
+  as.numeric
+df$autonomyFrust.pre_calc <-
+  psych::scoreItems(
+    keys = c(1, 1, 1, 1),
+    items = df %>% select(matches("^SDT0[5-8].pre")),
+    min = 1,
+    max = 7
+  )$scores %>% 
+  as.numeric
+
+df$relatednessSat.pre_calc <-
+  psych::scoreItems(
+    keys = c(1, 1, 1, 1),
+    items = df %>% select(matches("^SDT(09|1[0-2]).pre")),
+    min = 1,
+    max = 7
+  )$scores %>% 
+  as.numeric
+df$relatednessFrust.pre_calc <-
+  psych::scoreItems(
+    keys = c(1, 1, 1, 1),
+    items = df %>% select(matches("^SDT1[3-6].pre")),
+    min = 1,
+    max = 7
+  )$scores %>% 
+  as.numeric
+
+df$competenceSat.pre_calc <-
+  psych::scoreItems(
+    keys = c(1, 1, 1, 1),
+    items = df %>% select(matches("^SDT(1[7-9]|20).pre")),
+    min = 1,
+    max = 7
+  )$scores %>% 
+  as.numeric
+df$competenceFrust.pre_calc <-
+  psych::scoreItems(
+    keys = c(1, 1, 1, 1),
+    items = df %>% select(matches("^SDT2[1-4].pre")),
+    min = 1,
+    max = 7
+  )$scores %>% 
+  as.numeric
+
+df$IntGrAnx.pre_calc <-
+  psych::scoreItems(
+    keys = c(rep(1,6),rep(-1,6)),
+    items = df %>% select(matches("^IntGrAnx[0-9]{2}.?\\.pre")),
+    min = 1,
+    max = 10
+  )$scores %>% 
+  as.numeric
+
+df$swl.pre_calc <-
+  psych::scoreItems(
+    keys = rep(1,5),
+    items = df %>% select(matches("^SWL[0-9]{2}\\.pre")),
+    min = 1,
+    max = 7,
+    missing = TRUE,
+    impute = "none",
+  )$scores %>% 
+  as.numeric
+
+df$mdmq.alertness.pre_calc <- 
+  psych::scoreItems(
+    keys = c(1, -1, -1, 1),
+    items = df %>% select(MDMQ02.pre, MDMQ05.pre, MDMQ07.pre, MDMQ10.pre),
+    min = 1,
+    max = 6,
+    missing = TRUE,
+    impute = "none",
+  )$scores %>% 
+  as.numeric
+df$mdmq.calmness.pre_calc <- 
+  psych::scoreItems(
+    keys = c(-1, 1, -1, 1),
+    items = df %>% select(MDMQ03.pre, MDMQ06.pre, MDMQ09.pre, MDMQ12.pre),
+    min = 1,
+    max = 6,
+    missing = TRUE,
+    impute = "none",
+  )$scores %>% 
+  as.numeric
+df$mdmq.valence.pre_calc <- 
+  psych::scoreItems(
+    keys = c(1, -1, 1, -1),
+    items = df %>% select(MDMQ01.pre, MDMQ04.pre, MDMQ08.pre, MDMQ11.pre),
+    min = 1,
+    max = 6,
+    missing = TRUE,
+    impute = "none",
+  )$scores %>% 
+  as.numeric
+
+df$IntGrAnx.post_calc <-
+  psych::scoreItems(
+    keys = c(rep(1,6),rep(-1,6)),
+    items = df %>% select(matches("^IntGrAnx[0-9]{2}.?\\.post")),
+    min = 1,
+    max = 10
+  )$scores %>% 
+  as.numeric
+
+df$swl.post_calc <-
+  psych::scoreItems(
+    keys = rep(1,5),
+    items = df %>% select(matches("^SWL[0-9]{2}\\.post")),
+    min = 1,
+    max = 7,
+    missing = TRUE,
+    impute = "none",
+  )$scores %>% 
+  as.numeric
+
+varNamIndicesS1 <-
+  append(varNamIndicesS1,
+         df %>% select(ends_with("_calc")) %>% names)
+
+
 #
 df <- df %>%
   mutate(
@@ -683,13 +963,13 @@ rm(df)
 
 ### Study 2
 
-For the student sample, the data transformation stage had five main aims: 
+For the student sample, the data transformation stage had five main aims:
 
-1. We first create person, survey type, and measurement ID variables.   
-2. We then created indices of scales. Some indices were multi-item scales while some indices combine equivalent measurement for different situational circumstances (e.g., competence perceptions after interactions and at measurement occasions without interactions).   
-3. We add information about the interaction partner to the beep during which a person was selected as an interaction partner.   
-4. We cluster mean-center key variables within participants.   
-5. Finally, we calculated several basic participant summaries (averages across all measurement occasions).   
+1.  We first create person, survey type, and measurement ID variables.\
+2.  We then created indices of scales. Some indices were multi-item scales while some indices combine equivalent measurement for different situational circumstances (e.g., competence perceptions after interactions and at measurement occasions without interactions).\
+3.  We add information about the interaction partner to the beep during which a person was selected as an interaction partner.\
+4.  We cluster mean-center key variables within participants.\
+5.  Finally, we calculated several basic participant summaries (averages across all measurement occasions).
 
 ```{r newVarsStudents}
 df <- dtS2$clean
@@ -760,7 +1040,7 @@ pairs.panels.new(
 )
 df$relatednessInteraction <- rowMeans(df[c("relatednessSelf", "relatednessOther")], na.rm = TRUE)
 df$relatednessInteraction[df$relatednessInteraction == "NaN"] <- NA
-# Relatedness Overall (JANNIS NOT SURE THESE ARE CORRECT, CHANGE ROWS?; J: Changed "NaN" in df$RelatednessInteraction to NA() should work now)
+# Relatedness Overall (JANNIS NOT SURE THESE ARE CORRECT, CHANGE ROWS?; JK: Changed "NaN" in df$RelatednessInteraction to NA() should work now)
 df$relatedness <-
   rowMeans(df[, c("relatednessInteraction", "relatednessNoInteraction")],
            na.rm = TRUE) %>%
@@ -856,12 +1136,12 @@ rm(df)
 
 ### Study 3
 
-For the medical professional sample, the data transformation stage had five main aims: 
+For the medical professional sample, the data transformation stage had five main aims:
 
-1. We first create person, survey type, and measurement ID variables.   
-2. We then created indices of scales. Some indices were multi-item scales while some indices combine equivalent measurement for different situational circumstances (e.g., competence perceptions after interactions and at measurement occasions without interactions).   
-3. We cluster mean-center key variables within participants.   
-4. Finally, we calculated several basic participant summaries (averages across all measurement occasions).   
+1.  We first create person, survey type, and measurement ID variables.\
+2.  We then created indices of scales. Some indices were multi-item scales while some indices combine equivalent measurement for different situational circumstances (e.g., competence perceptions after interactions and at measurement occasions without interactions).\
+3.  We cluster mean-center key variables within participants.\
+4.  Finally, we calculated several basic participant summaries (averages across all measurement occasions).
 
 ```{r newVarsMedical}
 df <- dtS3$clean
@@ -1157,21 +1437,17 @@ rm(remergePP, PP)
 dtS3$full <- df
 ```
 
-
 ## Data Availability and Sample Selection {.tabset .tabset-fade}
 
-As one of our main analyses is a three-mode principal component analysis (3MPCA) we begin by assessing the amount of missing data in each of the ESM studies. To assess the missingness in detail, we prepare a data availability table of whether data is available or missing for each possible measurement point (data + morning/afternoon) for all individual participants. We then export the data availability tables as comma separated value files (.csv) to be assessed in detail using a spreadsheet program (such as MS Excel). 
+As one of our main analyses is a three-mode principal component analysis (3MPCA) we begin by assessing the amount of missing data in each of the ESM studies. To assess the missingness in detail, we prepare a data availability table of whether data is available or missing for each possible measurement point (data + morning/afternoon) for all individual participants. We then export the data availability tables as comma separated value files (.csv) to be assessed in detail using a spreadsheet program (such as MS Excel).
 
 For our sample selection we address both the selection of time points and participants. Given that multiple imputation procedures even work well with large proportions of missing data [assuming missingness at random; @Madley-Dowd2019], we decided on a general criterion of less than 45% missingness to balance sample size retention and bias in the multiple imputation model. Thus, we then select the time points for which we have less than 45% missingness and select participants who have less than 45% missingness across the selected time range.
 
 To approximate an ideal sample selection that maximized the number of participants and timepoints that fit the 55% data availability criterion. We select sequentially remove the rows or columns with the lowest data availability rate untill all rows and columns have more than 55% data available (i.e., less than 45% missingness).
 
-<div class="alert alert-info alert-dismissible fade in" role="alert">
-  <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
-  <i class="fas fa-info-circle"></i> <b>Note: </b><br/>
-  This needs to be adjusted current missingness criterion set to more conservative 33%.
-</div>
-
+::: {.alert .alert-info .alert-dismissible .fade .in role="alert"}
+<a class="close" data-dismiss="alert" aria-label="close">×</a> <i class="fas fa-info-circle"></i> <b>Note: </b><br/> This needs to be adjusted current missingness criterion set to more conservative 33%.
+:::
 
 ### Study 1
 
@@ -1220,7 +1496,6 @@ kbl(
 write.csv(dtS1Availability, "data/S1_Workers/processed/workerAvailability.csv")
 ```
 
-
 ```{r testOptimizer, include=FALSE}
 # set.seed(42)
 # nr <- 5
@@ -1249,7 +1524,6 @@ write.csv(dtS1Availability, "data/S1_Workers/processed/workerAvailability.csv")
 # }
 # rm(df, best.list.row.df, best.list.col.df)
 ```
-
 
 ```{r testOptimizer03, include=FALSE}
 # library(dplyr)
@@ -1311,7 +1585,7 @@ write.csv(dtS1Availability, "data/S1_Workers/processed/workerAvailability.csv")
 ```
 
 ```{r testOptimizer05}
-cleanM <- function(M, c = 66) {
+cleanM <- function(M, c = 55) {
   check <- list()
   rowNamesOut <- c()
   colNamesOut <- c()
@@ -1349,7 +1623,7 @@ cleanM <- function(M, c = 66) {
   }
 }
 
-dtS1RedInfo <- cleanM(M = as.data.frame(dtS1Availability), c = 66)
+dtS1RedInfo <- cleanM(M = as.data.frame(dtS1Availability), c = 55)
 
 PIDout <- gsub("PP_", "", dtS1RedInfo$rowNamesOut) %>% as.numeric
 TIDout <- gsub("t_", "", dtS1RedInfo$colNamesOut) %>% as.numeric
@@ -1391,7 +1665,6 @@ kbl(
   ) %>%
   scroll_box(width = "100%", height = "500px")
 ```
-
 
 ### Study 2
 
@@ -1437,7 +1710,7 @@ kbl(
 ```
 
 ```{r s2SampleReduction}
-dtS2RedInfo <- cleanM(M = as.data.frame(dtS2Availability), c = 66)
+dtS2RedInfo <- cleanM(M = as.data.frame(dtS2Availability), c = 55)
 
 PIDout <- gsub("PP_", "", dtS2RedInfo$rowNamesOut) %>% as.numeric
 TIDout <- gsub("t_", "", dtS2RedInfo$colNamesOut) %>% as.numeric
@@ -1452,8 +1725,9 @@ dtS2Red <- dtS2$full %>%
   mutate(TIDnum = TIDnum - min(TIDnum))
 rm(PIDout, TIDout, TIDInRed, TIDIn)
 
-# remove glitch entry 
+# remove glitch entries 
 dtS2Red <- dtS2Red[!(dtS2Red$PID == 46 & dtS2Red$TIDnum == 57 & dtS2Red$ended == "2018-12-20 21:58:31"),]
+dtS2Red <- dtS2Red[!(dtS2Red$PID == 46 & dtS2Red$TIDnum == 59 & dtS2Red$ended == "2018-12-20 21:58:31"),]
 
 dtS2AvailabilityRedKbl <- dtS2RedInfo$reducedMatrix
 dtS2AvailabilityRedKbl[1:ncol(dtS2AvailabilityRedKbl)] <- lapply(dtS2AvailabilityRedKbl[1:ncol(dtS2AvailabilityRedKbl)], function(x) {
@@ -1522,9 +1796,8 @@ kbl(
 rm(dtS3AvailabilityKbl)
 ```
 
-
 ```{r s3SampleReduction}
-dtS3RedInfo <- cleanM(M = as.data.frame(dtS3Availability), c = 66)
+dtS3RedInfo <- cleanM(M = as.data.frame(dtS3Availability), c = 55)
 
 PIDout <- gsub("PP_", "", dtS3RedInfo$rowNamesOut) %>% as.numeric
 TIDout <- gsub("t_", "", dtS3RedInfo$colNamesOut) %>% as.numeric
@@ -1563,9 +1836,7 @@ kbl(
   scroll_box(width = "100%", height = "500px")
 ```
 
-
 ## Time Scales and Timepoint Aggregation
-
 
 ```{r checkVarAvailability}
 varNamesPre <- varNames %>%
@@ -1690,9 +1961,7 @@ dtMain3mpcaWeekly <- dtMain3mpca %>%
   mutate_all(~ifelse(is.nan(.), NA, .))
 ```
 
-
-We aggregate the key variables over time to archive a reasonably interpretable number of time points and remove a first proportion of missing data. Given that little data is available on the meaningful time scales of the selected psychological variables, we chose to determine the appropriate time scales using variance decomposition [e.g., see @Ram2014]. This is to say that we create multi-level unconditional means models (without predictors) that include possible nested time scales as levels. We chose to select time scales that align with common human cycles. We thus compare the variances of bi-daily, daily, and weekly aggregations. Additional aggregations of two weeks or the full four weeks might be possible but would most likely reduce the variance too much for any meaningul further reduction during the 3MPCA.
-We then chose the time scales that have the most variance.
+We aggregate the key variables over time to archive a reasonably interpretable number of time points and remove a first proportion of missing data. Given that little data is available on the meaningful time scales of the selected psychological variables, we chose to determine the appropriate time scales using variance decomposition [e.g., see @Ram2014]. This is to say that we create multi-level unconditional means models (without predictors) that include possible nested time scales as levels. We chose to select time scales that align with common human cycles. We thus compare the variances of bi-daily, daily, and weekly aggregations. Additional aggregations of two weeks or the full four weeks might be possible but would most likely reduce the variance too much for any meaningul further reduction during the 3MPCA. We then chose the time scales that have the most variance.
 
 ```{r keyNeedTest}
 
@@ -1729,51 +1998,73 @@ keyNeedMlTest02 <-
 
 ## Multiple Imputation
 
-We ultimately aim to create 20 imputed datasets to perform the analyses on. As outlined by @Monden2015, we will use the key variables themself as well as auxiliary variables to impute missing values. Auxiliary variables are any pre-, post-, or daily dairy variables other than the main variables. If there are any modeling issues we will limit the auxiliary variables to all variables that that are significantly ($p$ < .01) and meaningfully ($r$ > .3) correlated with (1) the key variables or (2) missingness on the key variables.
+We ultimately aim to create 20 imputed data sets to perform the analyses on. As outlined by @Monden2015, we will use the key variables themselves as well as auxiliary variables to impute missing values. Auxiliary variables are any pre-, post-, or daily dairy variables other than the main variables. If there are any modeling issues we will limit the auxiliary variables to all variables that that are significantly ($p$ \< .01) and meaningfully ($r$ \> .3) correlated with (1) the key variables or (2) missingness on the key variables.
 
-We create the imputed data set for each of the analyses. This includes the main analyses with across all three studies, using the set of common variables, as well as follow-up analyses for study-specific, interaction-specific and time scale specific datasets.
-
+We create the imputed data set for each of the analyses. This includes the main analyses with across all three studies, using the set of common variables, as well as follow-up analyses for study-specific, interaction-specific and time scale specific data sets.
 
 ```{r varNames}
-# varNames
-varNamInS123 <- varNames %>%
+varNamS123Aux <- varNames %>%
   filter(
-    pca != 0,
-    surveyS1 == "daily",
-    surveyS2 == "daily",
-    surveyS3 == "daily"
+    aux != 0,
+    studyS1 == "S1",
+    studyS2 == "S2",
+    studyS3 == "S3"
   ) %>%
   select(varNam) %>%
   pull
-varNamInS1 <- varNames %>%
+varNamS1Aux <- varNames %>%
   filter(
-    pca != 0,
-    surveyS1 == "daily"
+    aux != 0,
+    studyS1 == "S1"
   ) %>%
   select(varNam) %>%
   pull
-varNamInS2 <- varNames %>%
+varNamS2Aux <- varNames %>%
   filter(
-    pca != 0,
-    surveyS2 == "daily"
+    aux != 0,
+    studyS2 == "S2"
   ) %>%
   select(varNam) %>%
   pull
-varNamInS3 <- varNames %>%
+varNamS3Aux <- varNames %>%
   filter(
-    pca != 0,
-    surveyS3 == "daily"
+    aux != 0,
+    studyS3 == "S3"
   ) %>%
   select(varNam) %>%
   pull
-varNamAdd <- c(
-  "PID",
-  "TID",
-  "TIDnum",
-  "relatedness",
-  "autonomy",
-  "competence"
-)
+
+varNamS123PCA <- varNames %>%
+  filter(
+    pca != 0,
+    studyS1 == "S1",
+    studyS2 == "S2",
+    studyS3 == "S3"
+  ) %>%
+  select(varNam) %>%
+  pull
+varNamS1PCA <- varNames %>%
+  filter(
+    pca != 0,
+    studyS1 == "S1"
+  ) %>%
+  select(varNam) %>%
+  pull
+varNamS2PCA <- varNames %>%
+  filter(
+    pca != 0,
+    studyS2 == "S2"
+  ) %>%
+  select(varNam) %>% 
+  pull
+varNamS3PCA <- varNames %>%
+  filter(
+    pca != 0,
+    studyS3 == "S3"
+  ) %>%
+  select(varNam) %>%
+  pull
+
 varNamOut <- c(
   "ResponseId",
   "relatednessNoInteraction",
@@ -1783,23 +2074,37 @@ varNamOut <- c(
   "autonomy_NoInt",
   "competence_Int",
   "competence_NoInt",
-  varNamInS1[grepl('^MDMQ', varNamInS1)],
-  varNamInS2[grepl('^ProSo|^AntiSo', varNamInS2)],
-  varNamInS3[grepl(
+  varNamS1PCA[grepl('^MDMQ', varNamS1PCA)],
+  varNamS2PCA[grepl('^ProSo|^AntiSo', varNamS2PCA)],
+  varNamS3PCA[grepl(
     '^ProSo|^AntiSo|^agency|^autoFrust|^autoSat|^relatFrust|^relatSat|^compFrust|^compSat|^lonely[0-9]|^emotRegPos|^emotRegNeg',
-    varNamInS3
+    varNamS3PCA
   )]
 )
+varNamCore <- c(
+  "PID",
+  "TID",
+  "TIDnum"
+)
 varNamNewS1 <- c(
+  "relatedness",
+  "autonomy",
+  "competence",
   "alertness", 
   "calmness", 
   "valence"
 )
 varNamNewS2 <- c(
+  "relatedness",
+  "autonomy",
+  "competence",
   "ProSo", 
   "AntiSo"
 )
 varNamNewS3 <- c(
+  "relatedness",
+  "autonomy",
+  "competence",
   "ProSo", 
   "AntiSo",
   "agency",
@@ -1813,54 +2118,63 @@ varNamNewS3 <- c(
   "emotRegPos",
   "emotRegNeg"
 )
-varNamIntDep <- c(
-  varNamInS123[grepl('^InteractionContext|AttitudesPartner|KeyNeedDueToPartner|^quality', varNamInS123)]
+
+varNamNewCat <- c(
+  "closeness_Calc",
+  "gender_Calc",
+  "ethnicity_Calc",
+  "relationship_Calc"
 )
 
-varNamPcaS123 <- c(varNamAdd, varNamInS123[!varNamInS123 %in% varNamOut])
-varNamPcaS123Indep <- varNamPcaS123[!varNamPcaS123 %in% varNamIntDep]
-varNamPcaS1 <- c(varNamAdd, varNamNewS1, varNamInS1[!varNamInS1 %in% varNamOut])
-varNamPcaS2 <- c(varNamAdd, varNamNewS2, varNamInS2[!varNamInS2 %in% varNamOut])
-varNamPcaS3 <- c(varNamAdd, varNamNewS3, varNamInS3[!varNamInS3 %in% varNamOut])
+varNamIntDep <- c(
+  varNamS123PCA[grepl('^InteractionContext|AttitudesPartner|KeyNeedDueToPartner|^quality', varNamS123PCA)]
+)
+
+varNamIndiceItemsS1 <- varNames %>%
+  filter(
+    aux == -1,
+    studyS1 == "S1"
+  ) %>%
+  select(varNam) %>%
+  pull %>%
+  append(., gsub(".pre|.post|_calc", "", varNamIndicesS1)) %>%
+  unique
+
+varNamS123MI <- c(varNamCore, varNamS123Aux)
+varNamS1MI <- c(varNamCore, varNamIndicesS1, varNamS1Aux[!varNamS1Aux %in% varNamIndiceItemsS1]) #
+varNamS2MI <- c(varNamCore, varNamNewS2, varNamS2Aux)
+varNamS3MI <- c(varNamCore, varNamNewS3, varNamS3Aux)
+
+varNamS123PCA <- c(varNamCore, varNamS123PCA[!varNamS123PCA %in% varNamOut])
+varNamS1PCA <- c(varNamCore, varNamNewS1, varNamS1PCA[!varNamS1PCA %in% varNamOut])
+varNamS2PCA <- c(varNamCore, varNamNewS2, varNamS2PCA[!varNamS2PCA %in% varNamOut])
+varNamS3PCA <- c(varNamCore, varNamNewS3, varNamS3PCA[!varNamS3PCA %in% varNamOut])
 
 idVars <- c("ID", "PID", "TID", "TIDnum", "date", "week", "study")
 ```
 
 ### Studies 1-3
 
-We begin by preparing the data for the main analysis. Here, we: 
+We begin by preparing the data for the main analysis. Here, we:
 
-1. Select the variables for all relevant analysis (i.e., imputation, 3MPCA, and validation) across all three studies.
-2. Create the combined dataset in the correct format (long format with all missed time points as NAs).
-3. Impute the data and save the imputed datasets for later recall.
-
+1.  Select the variables for all relevant analysis (i.e., imputation, 3MPCA, and validation) across all three studies.
+2.  Create the combined dataset in the correct format (long format with all missed time points as NAs).
+3.  Impute the data and save the imputed datasets for later recall.
 
 ```{r MiMain}
-library(Amelia)
-varNamInMiMain <- varNames %>%
-  filter(
-    aux == 1,
-    studyS1 == "S1",
-    studyS2 == "S2",
-    studyS3 == "S3"
-  ) %>%
-  select(varNam) %>%
-  pull
 
-varNamMiMain <- c(varNamAdd, varNamInMiMain[!varNamInMiMain %in% varNamOut])
-
-varNamInMiMainPsbl <- c(
-  paste(varNamMiMain, rep(".pre", length(varNamInMiMain)), sep = ""),
-  varNamMiMain,
-  paste(varNamMiMain, rep(".post", length(varNamInMiMain)), sep = "")
+varNamS123MIPsbl <- c(
+  paste(varNamS123MI, rep(".pre", length(varNamS123MI)), sep = ""),
+  varNamS123MI,
+  paste(varNamS123MI, rep(".post", length(varNamS123MI)), sep = "")
 )
 
-varNamInMiMainRed <- Reduce(
+varNamS123MiRed <- Reduce(
   intersect,
   list(
-    dtS1Red %>% select(PID, TID, TIDnum, any_of(varNamInMiMainPsbl)) %>% names,
-    dtS2Red %>% select(PID, TID, TIDnum, any_of(varNamInMiMainPsbl)) %>% names,
-    dtS3Red %>% select(PID, TID, TIDnum, any_of(varNamInMiMainPsbl)) %>% names
+    dtS1Red %>% select(PID, TID, TIDnum, any_of(varNamS123MIPsbl)) %>% names,
+    dtS2Red %>% select(PID, TID, TIDnum, any_of(varNamS123MIPsbl)) %>% names,
+    dtS3Red %>% select(PID, TID, TIDnum, any_of(varNamS123MIPsbl)) %>% names
   )
 )
 
@@ -1875,21 +2189,107 @@ varNamMiMainNoms <- varNames %>%
   select(varNam) %>%
   pull
 
+# ##################################
+# EXPORT FOR STM ML
+# ##################################
+#
+# varNamPosAdd <- c("relatedness", "autonomy", "competence")
+# 
+# dtAllStm <- rbind(
+#   dtS1$full %>% select(KeyNeed, DaytimeNeed, any_of(varNamS123MiRed), any_of(varNamPosAdd)) %>% mutate(study = "S1") %>% 
+#     mutate(across(!TID & !study & !KeyNeed & !DaytimeNeed, as.numeric)),
+#   dtS2$full %>% select(KeyNeed, DaytimeNeed, any_of(varNamS123MiRed), any_of(varNamPosAdd)) %>% mutate(study = "S2"),
+#   dtS3$full %>% select(KeyNeed, DaytimeNeed, any_of(varNamS123MiRed), any_of(varNamPosAdd)) %>% mutate(study = "S3")
+# ) %>%
+#   group_by(study, PID) %>%
+#   mutate(ID = cur_group_id()) %>%
+#   ungroup %>%
+#   mutate(
+#     date = as.Date(gsub(" .*", "", TID)),
+#     week = strftime(date, format = "%Y-W%V")
+#   ) %>%
+#   select(ID,
+#          PID,
+#          study,
+#          TID,
+#          TIDnum,
+#          date,
+#          week,
+#          IntergroupContact,
+#          IngroupContact,
+#          everything(),
+#          -starts_with("ResponseId")) %>%
+#   as.data.frame 
+# 
+# dtAllStm2 <- dtAllStm
+# 
+# dtAllStm2$IntGrAnx.pre_calc <-
+#   psych::scoreItems(
+#     keys = c(rep(1,6),rep(-1,6)),
+#     items = dtAllStm2 %>% select(matches("^IntGrAnx[0-9]{2}.?\\.pre")),
+#     min = 1,
+#     max = 10
+#   )$scores %>% 
+#   as.numeric
+# 
+# dtAllStm2$IntGrAnx.post_calc <-
+#   psych::scoreItems(
+#     keys = c(rep(1,6),rep(-1,6)),
+#     items = dtAllStm2 %>% select(matches("^IntGrAnx[0-9]{2}.?\\.post")),
+#     min = 1,
+#     max = 10
+#   )$scores %>% 
+#   as.numeric
+# 
+# dtAllStm2$swl.pre_calc <-
+#   psych::scoreItems(
+#     keys = rep(1,5),
+#     items = dtAllStm2 %>% select(matches("^SWL[0-9]{2}\\.pre")),
+#     min = 1,
+#     max = 7,
+#     missing = TRUE,
+#     impute = "none",
+#   )$scores %>% 
+#   as.numeric
+# 
+# dtAllStm2$discrimination.post_calc <-
+#   psych::scoreItems(
+#     keys = rep(1,9),
+#     items = dtAllStm2 %>% select(matches("^EvDayDiscr[0-9]{2}\\.post")),
+#     min = 1,
+#     max = 6,
+#     missing = TRUE,
+#     impute = "none",
+#   )$scores %>% 
+#   as.numeric
+# 
+# dtAllStm3 <- dtAllStm2 %>%
+#   select(
+#     -matches("^IntGrAnx[0-9]{2}.?\\.pre"),
+#     -matches("^IntGrAnx[0-9]{2}.?\\.post"),
+#     -matches("^SWL[0-9]{2}\\.pre"),
+#     -matches("^EvDayDiscr[0-9]{2}\\.post"),
+#     -relatednessSelf,
+#     -relatednessOther,
+#     -relatednessNoInteraction
+#   )
+# 
+# write.csv2(dtAllStm3, 
+#            file = "data/keyMotivesSTM.csv")
+# #######################################
+
 dtMiMain <- rbind(
-  dtS1Red %>% select(any_of(varNamInMiMainRed)) %>% mutate(study = "S1") %>% mutate(across(!TID &
-                                                                                             !study, as.numeric)),
-  dtS2Red %>% select(any_of(varNamInMiMainRed)) %>% mutate(study = "S2"),
-  dtS3Red %>% select(any_of(varNamInMiMainRed)) %>% mutate(study = "S3")
+  dtS1Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S1") %>% 
+    mutate(across(!TID & !study, as.numeric)),
+  dtS2Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S2"),
+  dtS3Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S3")
 ) %>%
   group_by(study, PID) %>%
   mutate(ID = cur_group_id()) %>%
   ungroup %>%
   mutate(
     date = as.Date(gsub(" .*", "", TID)),
-    week = strftime(date, format = "%Y-W%V"),
-    roomate.pre = as.numeric(roomate.pre),
-    Reason.pre = as.numeric(Reason.pre),
-    association.pre = as.numeric(association.pre)
+    week = strftime(date, format = "%Y-W%V")
   ) %>%
   select(ID,
          study,
@@ -1897,7 +2297,9 @@ dtMiMain <- rbind(
          week,
          everything(),
          -PID,
-         -starts_with("ResponseId")) %>%
+         -starts_with("ResponseId"), 
+         -starts_with("roommate"),
+         -starts_with("Reason")) %>%
   as.data.frame %>%
   select_if(~ sum(!is.na(.)) > 1) %>% # only include variables that have any data (i.e., not all NA)
   complete(., ID, TIDnum) %>% # add na if id and TID combination is missing
@@ -1912,20 +2314,17 @@ dtMiMain <- rbind(
   as.data.frame 
 
 dtMiMainDaily <- rbind(
-  dtS1Red %>% select(any_of(varNamInMiMainRed)) %>% mutate(study = "S1") %>% 
+  dtS1Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S1") %>% 
     mutate(across(!TID & !study, as.numeric)),
-  dtS2Red %>% select(any_of(varNamInMiMainRed)) %>% mutate(study = "S2"),
-  dtS3Red %>% select(any_of(varNamInMiMainRed)) %>% mutate(study = "S3")
+  dtS2Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S2"),
+  dtS3Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S3")
 ) %>%
   group_by(study, PID) %>%
   mutate(ID = cur_group_id()) %>%
   ungroup %>%
   mutate(
     date = as.Date(gsub(" .*", "", TID)),
-    week = strftime(date, format = "%Y-W%V"),
-    roomate.pre = as.numeric(roomate.pre),
-    Reason.pre = as.numeric(Reason.pre),
-    association.pre = as.numeric(association.pre)
+    week = strftime(date, format = "%Y-W%V")
   ) %>%
   group_by(ID, date, study) %>%
   summarise_if(is.numeric, mean, na.rm = TRUE) %>%
@@ -1953,20 +2352,17 @@ dtMiMainDaily <- rbind(
   as.data.frame 
 
 dtMiMainWeeekly <- rbind(
-  dtS1Red %>% select(any_of(varNamInMiMainRed)) %>% mutate(study = "S1") %>% 
+  dtS1Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S1") %>% 
     mutate(across(!TID & !study, as.numeric)),
-  dtS2Red %>% select(any_of(varNamInMiMainRed)) %>% mutate(study = "S2"),
-  dtS3Red %>% select(any_of(varNamInMiMainRed)) %>% mutate(study = "S3")
+  dtS2Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S2"),
+  dtS3Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S3")
 ) %>%
   group_by(study, PID) %>%
   mutate(ID = cur_group_id()) %>%
   ungroup %>%
   mutate(
     date = as.Date(gsub(" .*", "", TID)),
-    week = strftime(date, format = "%Y-W%V"),
-    roomate.pre = as.numeric(roomate.pre),
-    Reason.pre = as.numeric(Reason.pre),
-    association.pre = as.numeric(association.pre)
+    week = strftime(date, format = "%Y-W%V")
   ) %>%
   group_by(ID, week, study) %>%
   summarise_if(is.numeric, mean, na.rm = TRUE) %>%
@@ -1993,55 +2389,55 @@ dtMiMainWeeekly <- rbind(
   mutate_if(is.numeric, ~ ifelse(is.nan(.), NA, .)) %>%
   as.data.frame 
 
-# MiMain <-
-#   amelia(
-#     dtMiMain,
-#     m = 1, # 20
-#     ts = "TIDnum",
-#     cs = "ID",
-#     idvars = c("TID", "date", "week", "study"), #"PID",
-#     #lags = names(dtMiMain)[!names(dtMiMain) %in% idVars],
-#     #lags = names(dtMiMain)[names(dtMiMain) %in%varNamInMiMainRed],
-#     #noms = names(dtMiMain)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMain))],
-#     parallel = "multicore",
-#     ncpus = parallel::detectCores(),
-#     p2s = 1
-#   )
-# save(MiMain, file = "data/imputed/MainImputed.RData")
+MiMain <-
+  amelia(
+    dtMiMain,
+    m = 1, # 20
+    ts = "TIDnum",
+    cs = "ID",
+    idvars = c("TID", "date", "week", "study"), #"PID",
+    #lags = names(dtMiMain)[!names(dtMiMain) %in% idVars],
+    #lags = names(dtMiMain)[names(dtMiMain) %in%varNamInMiMainRed],
+    #noms = names(dtMiMain)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMain))],
+    parallel = "multicore",
+    ncpus = parallel::detectCores(),
+    p2s = 1
+  )
+save(MiMain, file = "data/imputed/MainImputed.RData")
 load("data/imputed/MainImputed.RData")
 
-# MiMainDaily <-
-#   amelia(
-#     dtMiMainDaily,
-#     m = 1, # 20
-#     ts = "TIDnum",
-#     cs = "ID",
-#     idvars = c("date", "study"), #"PID",
-#     #lags = names(dtMiMainDaily)[!names(dtMiMainDaily) %in% idVars],
-#     #lags = names(dtMiMainDaily)[names(dtMiMainDaily) %in%varNamInMiMainRed],
-#     #noms = names(dtMiMainDaily)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMainDaily))],
-#     parallel = "multicore",
-#     ncpus = parallel::detectCores(),
-#     p2s = 1
-#   )
-# save(MiMainDaily, file = "data/imputed/MainDailyImputed.RData")
+MiMainDaily <-
+  amelia(
+    dtMiMainDaily,
+    m = 1, # 20
+    ts = "TIDnum",
+    cs = "ID",
+    idvars = c("date", "study"), #"PID",
+    #lags = names(dtMiMainDaily)[!names(dtMiMainDaily) %in% idVars],
+    #lags = names(dtMiMainDaily)[names(dtMiMainDaily) %in%varNamInMiMainRed],
+    #noms = names(dtMiMainDaily)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMainDaily))],
+    parallel = "multicore",
+    ncpus = parallel::detectCores(),
+    p2s = 1
+  )
+save(MiMainDaily, file = "data/imputed/MainDailyImputed.RData")
 load("data/imputed/MainDailyImputed.RData")
 
-# MiMainWeekly <-
-#   amelia(
-#     dtMiMainWeeekly,
-#     m = 1, # 20
-#     ts = "TIDnum",
-#     cs = "ID",
-#     idvars = c("week", "study"), #"PID",
-#     #lags = names(dtMiMainWeeekly)[!names(dtMiMainWeeekly) %in% idVars],
-#     #lags = names(dtMiMainWeeekly)[names(dtMiMainWeeekly) %in%varNamInMiMainRed],
-#     #noms = names(dtMiMainWeeekly)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMainWeeekly))],
-#     parallel = "multicore",
-#     ncpus = parallel::detectCores(),
-#     p2s = 1
-#   )
-# save(MiMainWeekly, file = "data/imputed/MainWeeklyImputed.RData")
+MiMainWeekly <-
+  amelia(
+    dtMiMainWeeekly,
+    m = 1, # 20
+    ts = "TIDnum",
+    cs = "ID",
+    idvars = c("week", "study"), #"PID",
+    #lags = names(dtMiMainWeeekly)[!names(dtMiMainWeeekly) %in% idVars],
+    #lags = names(dtMiMainWeeekly)[names(dtMiMainWeeekly) %in%varNamInMiMainRed],
+    #noms = names(dtMiMainWeeekly)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMainWeeekly))],
+    parallel = "multicore",
+    ncpus = parallel::detectCores(),
+    p2s = 1
+  )
+save(MiMainWeekly, file = "data/imputed/MainWeeklyImputed.RData")
 load("data/imputed/MainWeeklyImputed.RData")
 ```
 
@@ -2049,21 +2445,11 @@ load("data/imputed/MainWeeklyImputed.RData")
 
 To be done once initial tests approved.
 
-```{r MiS1}
-varNamInMiS1 <- varNames %>%
-  filter(
-    aux == 1,
-    studyS1 == "S1"
-  ) %>%
-  select(varNam) %>%
-  pull
-
-varNamMiS1 <- c(varNamAdd, varNamInMiS1[!varNamInMiS1 %in% varNamOut])
-
-varNamInMiS1Psbl <- c(
-  paste(varNamMiS1, rep(".pre", length(varNamMiS1)), sep = ""),
-  varNamMiS1,
-  paste(varNamMiS1, rep(".post", length(varNamMiS1)), sep = "")
+```{r MiS1Prep}
+varNamS1MiPsbl <- c(
+  paste(varNamS1MI, rep(".pre", length(varNamS1MI)), sep = ""),
+  varNamS1MI,
+  paste(varNamS1MI, rep(".post", length(varNamS1MI)), sep = "")
 )
 
 varNamdtS1Noms <- varNames %>%
@@ -2075,25 +2461,28 @@ varNamdtS1Noms <- varNames %>%
   select(varNam) %>%
   pull
 
-# TO BE ADAPTED:
-dtMiS1 <- dtS1Red %>%
+dtMiS1 <- dtS1Red %>% 
+  select(TID, any_of(varNamS1MiPsbl)) %>% 
+  mutate(across(!TID, as.numeric)) %>%
   mutate(
     date = as.Date(gsub(" .*", "", TID)),
     week = strftime(date, format = "%Y-W%V")
-    ) %>%
-  select(
-    PID,
-    TID,
-    TIDnum,
-    date,
-    week,
-    any_of(varNamInMiS1Psbl),
-    -time,
-    -starts_with("ResponseId")
   ) %>%
-  as.data.frame %>%
-  mutate_at(vars(-c("TID", "date", "week")), as.numeric) %>%
-  select_if(~sum(!is.na(.)) > 1) %>% # only include variables that have any data (i.e., not all NA)
+  select(PID,
+         date,
+         week,
+         everything(),
+         -starts_with("ResponseId")) %>%
+  as.data.frame %>% 
+  select_if(~ sum(!is.na(.)) > 1) %>% # only include variables that have any data (i.e., not all NA)
+  complete(., PID, TIDnum) %>% # add na if id and TID combination is missing
+  group_by(PID) %>%
+  mutate(across(ends_with(c(".pre", ".post")),  ~ replace_na(.x, mean(.x, na.rm = TRUE)))) %>%
+  ungroup %>% 
+  group_by(TIDnum) %>%
+  mutate(across(c("date", "week", "TID"),  ~ replace_na(.x, calc_mode(.x)))) %>%
+  ungroup %>% 
+  mutate(across(ends_with(c(".pre", ".post")), ~ ifelse(is.nan(.), NA, .))) %>% 
   select(PID,
          TID,
          TIDnum,
@@ -2102,23 +2491,204 @@ dtMiS1 <- dtS1Red %>%
          which(sapply(., sd, na.rm = TRUE) > 0)) %>% # only include variables that vary (i.e., sd != 0)
   as.data.frame 
 
+dtMiS1Daily <- dtS1Red %>% 
+  select(TID, any_of(varNamS1MiPsbl)) %>% 
+  mutate(across(!TID, as.numeric)) %>%
+  mutate(date = as.Date(gsub(" .*", "", TID))) %>%
+  group_by(PID, date) %>%
+  summarise_if(is.numeric, mean, na.rm = TRUE) %>%
+  ungroup %>% 
+  mutate(TIDnum = as.numeric(factor(date)),
+         week = strftime(date, format = "%Y-W%V")) %>% 
+  select(PID,
+         date,
+         week,
+         everything(),
+         -starts_with("ResponseId")) %>%
+  as.data.frame %>% 
+  select_if(~ sum(!is.na(.)) > 1) %>% # only include variables that have any data (i.e., not all NA)
+  complete(., PID, TIDnum) %>% # add na if id and TID combination is missing
+  group_by(PID) %>%
+  mutate(across(ends_with(c(".pre", ".post")),  ~ replace_na(.x, mean(.x, na.rm = TRUE)))) %>%
+  ungroup %>% 
+  group_by(TIDnum) %>%
+  mutate(across(c("date", "week"),  ~ replace_na(.x, calc_mode(.x)))) %>%
+  ungroup %>% 
+  mutate(across(ends_with(c(".pre", ".post")), ~ ifelse(is.nan(.), NA, .))) %>% 
+  select(PID,
+         TIDnum,
+         date,
+         week,
+         which(sapply(., sd, na.rm = TRUE) > 0)) %>% # only include variables that vary (i.e., sd != 0)
+  as.data.frame 
 
-#dtS1MiCs <- names(dtMiS1)[endsWith(names(dtMiS1), c(".pre", ".post"))] # cross sectional vars
+
+dtMiS1Weekly <- dtS1Red %>% 
+  select(TID, any_of(varNamS1MiPsbl)) %>% 
+  mutate(across(!TID, as.numeric)) %>%
+  mutate(date = as.Date(gsub(" .*", "", TID)),
+         week = strftime(date, format = "%Y-W%V")) %>%
+  group_by(PID, week) %>%
+  summarise_if(is.numeric, mean, na.rm = TRUE) %>%
+  ungroup %>% 
+  mutate(TIDnum = as.numeric(factor(week))) %>% 
+  select(PID,
+         week,
+         everything(),
+         -starts_with("ResponseId")) %>% 
+  as.data.frame %>% 
+  select_if(~ sum(!is.na(.)) > 1) %>% # only include variables that have any data (i.e., not all NA)
+  complete(., PID, TIDnum) %>% # add na if id and TID combination is missing
+  group_by(PID) %>%
+  mutate(across(ends_with(c(".pre", ".post")),  ~ replace_na(.x, mean(.x, na.rm = TRUE)))) %>%
+  ungroup %>% 
+  group_by(TIDnum) %>%
+  mutate(across(c("week"),  ~ replace_na(.x, calc_mode(.x)))) %>%
+  ungroup %>% 
+  mutate(across(ends_with(c(".pre", ".post")), ~ ifelse(is.nan(.), NA, .))) %>% 
+  select(PID,
+         TIDnum,
+         week,
+         which(sapply(., sd, na.rm = TRUE) > 0)) %>% # only include variables that vary (i.e., sd != 0)
+  as.data.frame 
+```
+
+```{r MiS1}
+allDuplicated <- function(vec){
+  front <- duplicated(vec)
+  back <- duplicated(vec, fromLast = TRUE)
+  all_dup <- front + back > 0
+  return(all_dup)
+}
+
+varNamDifS1 <- names(dtMiS1)[gsub(".pre|.post|_calc", "", names(dtMiS1)) %>% allDuplicated]
+
+dtMiS1 <- dtMiS1 %>%
+  mutate(
+    assimilation.dif = assimilation.post - assimilation.pre,
+    integration.dif = integration.post - integration.pre,
+    marginalization.dif = marginalization.post - marginalization.pre,
+    separation.dif = separation.post - separation.pre,
+    VIA_Dutch.dif = VIA_Dutch.post - VIA_Dutch.post,
+    VIA_heritage.dif = VIA_heritage.post - VIA_heritage.pre,
+    IntGrAnx.dif = IntGrAnx.post_calc - IntGrAnx.pre_calc,
+    swl.dif = swl.post_calc - swl.pre_calc
+  ) %>% 
+  select(
+    -any_of(varNamDifS1)
+  ) %>%
+  select(PID,
+         TID,
+         TIDnum,
+         date,
+         week,
+         which(sapply(., sd, na.rm = TRUE) > 0)) %>%
+  as.data.frame
+
+dtMiS1Daily <- dtMiS1Daily %>%
+  mutate(
+    assimilation.dif = assimilation.post - assimilation.pre,
+    integration.dif = integration.post - integration.pre,
+    marginalization.dif = marginalization.post - marginalization.pre,
+    separation.dif = separation.post - separation.pre,
+    VIA_Dutch.dif = VIA_Dutch.post - VIA_Dutch.post,
+    VIA_heritage.dif = VIA_heritage.post - VIA_heritage.pre,
+    IntGrAnx.dif = IntGrAnx.post_calc - IntGrAnx.pre_calc,
+    swl.dif = swl.post_calc - swl.pre_calc
+  ) %>% 
+  select(
+    -any_of(varNamDifS1)
+  ) %>%
+  select(PID,
+         TIDnum,
+         date,
+         week,
+         which(sapply(., sd, na.rm = TRUE) > 0)) %>%
+  as.data.frame
+
+dtMiS1Weekly <- dtMiS1Weekly %>%
+  mutate(
+    assimilation.dif = assimilation.post - assimilation.pre,
+    integration.dif = integration.post - integration.pre,
+    marginalization.dif = marginalization.post - marginalization.pre,
+    separation.dif = separation.post - separation.pre,
+    VIA_Dutch.dif = VIA_Dutch.post - VIA_Dutch.post,
+    VIA_heritage.dif = VIA_heritage.post - VIA_heritage.pre,
+    IntGrAnx.dif = IntGrAnx.post_calc - IntGrAnx.pre_calc,
+    swl.dif = swl.post_calc - swl.pre_calc
+  ) %>% 
+  select(
+    -any_of(varNamDifS1)
+  ) %>%
+  select(PID,
+         TIDnum,
+         week,
+         which(sapply(., sd, na.rm = TRUE) > 0)) %>%
+  as.data.frame
+
+lares::corr_cross(
+  dtMiS1 %>% select_if(is.numeric), # name of dataset
+  max_pvalue = 0.05, # display only significant correlations (at 5% level)
+  top = 20 # display top 20 couples of variables (by correlation coefficient)
+)
+
+##----------------------------------------------------------------
+##                    IMPUTATIONS
+##----------------------------------------------------------------
 
 # MiS1 <-
 #   amelia(
 #     dtMiS1,
-#     m = 1,
+#     m = 1, # 20
 #     ts = "TIDnum",
 #     cs = "PID",
-#     idvars =  c("TID", "date", "week"),
-#     #noms = names(dtMiS1)[grepl(paste(varNamdtS1Noms, collapse = "|^"), names(dtMiS1))],
-#     #parallel = "multicore",
-#     #ncpus = parallel::detectCores(),
+#     idvars = c("TID", "date", "week"),
+#     # lags = names(dtMiS1)[!names(dtMiS1) %in% idVars],
+#     # lags = names(dtMiS1)[names(dtMiS1) %in% varNamS1MiPsbl], # alternative?
+#     # leads = ...,
+#     # noms = names(dtMiS1)[grepl(paste(varNamdtS1Noms, collapse = "|^"), names(dtMiS1))],
+#     # parallel = "multicore",
+#     # ncpus = parallel::detectCores(),
 #     p2s = 2
 #   )
 # save(MiS1, file = "data/imputed/S1Imputed.RData")
 # load("data/imputed/S1Imputed.RData")
+# 
+# MiS1Daily <-
+#   amelia(
+#     dtMiS1Daily,
+#     m = 1, # 20
+#     ts = "TIDnum",
+#     cs = "PID",
+#     idvars = c("date", "week"),
+#     # lags = names(dtMiS1)[!names(dtMiS1) %in% idVars],
+#     # lags = names(dtMiS1)[names(dtMiS1) %in% varNamS1MiPsbl], # alternative?
+#     # leads = ...,
+#     # noms = names(dtMiS1)[grepl(paste(varNamdtS1Noms, collapse = "|^"), names(dtMiS1))],
+#     # parallel = "multicore",
+#     # ncpus = parallel::detectCores(),
+#     p2s = 2
+#   )
+# save(MiS1Daily, file = "data/imputed/S1DailyImputed.RData")
+# load("data/imputed/S1DailyImputed.RData")
+# 
+# MiS1Weekly <-
+#   amelia(
+#     dtMiS1Weekly,
+#     m = 1, # 20
+#     ts = "TIDnum",
+#     cs = "PID",
+#     idvars = c("week"),
+#     # lags = names(dtMiS1)[!names(dtMiS1) %in% idVars],
+#     # lags = names(dtMiS1)[names(dtMiS1) %in% varNamS1MiPsbl], # alternative?
+#     # leads = ...,
+#     # noms = names(dtMiS1)[grepl(paste(varNamdtS1Noms, collapse = "|^"), names(dtMiS1))],
+#     # parallel = "multicore",
+#     # ncpus = parallel::detectCores(),
+#     p2s = 1
+#   )
+# save(MiS1Weekly, file = "data/imputed/S1WeeklyImputed.RData")
+# load("data/imputed/S1WeeklyImputed.RData")
 ```
 
 ### Study 2
@@ -2137,11 +2707,9 @@ To be done once initial tests approved.
 # BASED ON MiS1
 ```
 
-
 ## Center and Normalize
 
 For the 3MPCA, we center (across participants but within time point) and normalize (within variable but across time points) all key variables. The between-person centering, ensures that all variations are around the mean trend (which is removed by the centering). The normalization within variable are important for ensuring equal variances across variables, which ensures equal weighting of the variables in the 3MPCA.
-
 
 ```{r mainCentered}
 varNam3mpcaMainAnalysis <- varNamesDailyFull %>%
@@ -2157,14 +2725,13 @@ dtMain3mpcaNorm <-
 
 ## Long to Wide
 
-For the Three-way ANOVA and the Three-mode PCA, the datasets need to be in a $n * mp$ matrix format, where $n$ is are the participants, $m$ are the time points, and $p$ are the variables. We do this by taking the prepared datasets, melting them into a id-variable-value table and casting the table into a wide format of variables_timepoint columns. 
-
+For the Three-way ANOVA and the Three-mode PCA, the datasets need to be in a $n * mp$ matrix format, where $n$ is are the participants, $m$ are the time points, and $p$ are the variables. We do this by taking the prepared datasets, melting them into a id-variable-value table and casting the table into a wide format of variables_timepoint columns.
 
 ```{r longToWide}
 dtPcaS123 <- rbind(
-  dtS1Red %>% select(any_of(varNamPcaS123)) %>% mutate(study = "S1"),
-  dtS2Red %>% select(any_of(varNamPcaS123)) %>% mutate(study = "S2"),
-  dtS3Red %>% select(any_of(varNamPcaS123)) %>% mutate(study = "S3")
+  dtS1Red %>% select(any_of(varNamS123PCA)) %>% mutate(study = "S1"),
+  dtS2Red %>% select(any_of(varNamS123PCA)) %>% mutate(study = "S2"),
+  dtS3Red %>% select(any_of(varNamS123PCA)) %>% mutate(study = "S3")
   ) %>%
   group_by(study, PID) %>%
   mutate(ID = cur_group_id()) %>%
@@ -2187,17 +2754,17 @@ dtPcaS123 <- rbind(
   filter(TIDnum <= min(max(dtS1Red$TIDnum), max(dtS2Red$TIDnum), max(dtS3Red$TIDnum)))
 
 dtPcaS123Imp <- MiMain$imputations[[1]] %>% 
-  select(ID, date, week, study, any_of(varNamPcaS123)) %>%
+  select(ID, date, week, study, any_of(varNamS123PCA)) %>%
   arrange(ID, TIDnum) %>%
   filter(TIDnum <= min(max(dtS1Red$TIDnum), max(dtS2Red$TIDnum), max(dtS3Red$TIDnum)))
 dtPcaS123DailyImp <- MiMainDaily$imputations[[1]] %>%
-  select(ID, date, study, any_of(varNamPcaS123)) %>%
+  select(ID, date, study, any_of(varNamS123PCA)) %>%
   arrange(ID, TIDnum) %>%
   filter(
     TIDnum <= dtMiMainDaily %>% group_by(study) %>% summarise(TIDmax = max(TIDnum)) %>% select(TIDmax) %>% min
   )
 dtPcaS123WeeklyImp <- MiMainWeekly$imputations[[1]] %>%
-  select(ID, week, study, any_of(varNamPcaS123)) %>%
+  select(ID, week, study, any_of(varNamS123PCA)) %>%
   arrange(ID, TIDnum) %>%
   filter(
     TIDnum <= dtMiMainWeeekly %>% group_by(study) %>% summarise(TIDmax = max(TIDnum)) %>% select(TIDmax) %>% min
@@ -2222,13 +2789,23 @@ dtMainWideC <- PCAnorm(data = dtPcaS123,
   mutate(
     variable = paste(gsub("_gmc", "", variable), stringr::str_pad(TIDnum, width = 2, pad = 0), sep = "_")
   ) %>%
-  select(-TIDnum) %>%
   arrange(variable, ID) %>%
+  #arrange(ID, variable, TIDnum) %>%
+  select(-TIDnum) %>%
   pivot_wider(names_from = variable, values_from = value) %>%
   replace(is.na(.), 0) %>%
   select(-ID, -PID, -study)
   #reshape(., idvar = "ID", timevar = "variable", direction = "wide") %>% View
   #pivot_wider(names_from = variable, values_from = value)
+
+# dtMainWideC %>%
+#   filter(
+#     ID == 54
+#   ) %>% 
+#   t
+# 
+# dtMainWideC$AttitudesDutch_59[dtMainWideC$ID == 54]
+
 
 dtMainWide <- dtPcaS123 %>%
   select(
@@ -2306,11 +2883,9 @@ dtMainWeeklyImpWide <- dtPcaS123WeeklyImp %>%
 
 # **Three-Way ANOVA**
 
-We assess the percentages of explained variance for the person-, variable-, and time aspects --- which offers an indication of whether a 3MPCA is useful for the dataset. Based on the grand mean centered variables we conduct a fixed-effects three-way ANOVA of the person-, variable-, and time modes as well as their various interactions. We are particularly interested in the highest order interaction term Person * Variable * Time + error, as a large amount of variance in this effect would speak towards the possible interdependence of the three modes.
-
+We assess the percentages of explained variance for the person-, variable-, and time aspects --- which offers an indication of whether a 3MPCA is useful for the dataset. Based on the grand mean centered variables we conduct a fixed-effects three-way ANOVA of the person-, variable-, and time modes as well as their various interactions. We are particularly interested in the highest order interaction term Person \* Variable \* Time + error, as a large amount of variance in this effect would speak towards the possible interdependence of the three modes.
 
 ```{r threeWayAnovaMainBiDaily, message=FALSE, warning=FALSE}
-library(ThreeWay)
 capture.output(
   threeWayAnoBiDailyImp <- threewayanova(
     Y = dtMainImpWide,
@@ -2362,7 +2937,7 @@ data.frame(SS = sapply(threeWayAnoBiDailyImp, c)) %>%
 
 <br>
 
-We find that for the bi-daily time scale the $Person*Time*Variable+error$ sums of squares are indeed the largest and speak towards the utility of a Three-Mode PCA. Interestingly, time itself has a relatively small percentage of explained variance and only becomes important in compination with person- or person- and variable-specific differences.  
+We find that for the bi-daily time scale the $Person*Time*Variable+error$ sums of squares are indeed the largest and speak towards the utility of a Three-Mode PCA. Interestingly, time itself has a relatively small percentage of explained variance and only becomes important in compination with person- or person- and variable-specific differences.
 
 ```{r threeWayAnovaMainDaily, message=FALSE, warning=FALSE}
 capture.output(
@@ -2416,7 +2991,7 @@ data.frame(SS = sapply(threeWayAnoDailyImp, c)) %>%
 
 <br>
 
-We additionally see that for the daily time scale aggregation, the $Person*Time*Variable+error$ sums of squares are reduced but remain the largest sums of squares and are still substantial. 
+We additionally see that for the daily time scale aggregation, the $Person*Time*Variable+error$ sums of squares are reduced but remain the largest sums of squares and are still substantial.
 
 ```{r threeWayAnovaMainWweekly, message=FALSE, warning=FALSE}
 capture.output(
@@ -2470,18 +3045,17 @@ data.frame(SS = sapply(threeWayAnoWeeklyImp, c)) %>%
 
 <br>
 
-However, with the aggregation to `r length(unique(dtPcaS123WeeklyImp$TIDnum))` weekly measurements, the $Person*Time*Variable+error$ sums of squares become less prominent and the variable differences explain substantially more variance. 
-
+However, with the aggregation to `r length(unique(dtPcaS123WeeklyImp$TIDnum))` weekly measurements, the $Person*Time*Variable+error$ sums of squares become less prominent and the variable differences explain substantially more variance.
 
 # **Plots per Item** {.tabset .tabset-fade}
 
-The three-mode PCA ultimately aims to explain the most variance with the fewest components (by maximizing the variance of data mapped in a lower dimensional space --- often by maximally separating groups of cases with similar variable patterns). Importantly, this procedure depends on variances and covariances to be present within the data. As one of our three modes is time and variance over time is not always given (e.g., because a variable is stable over the measured time span, such as personality over a month), it becomes important to assess whether a dimension reduction is possible for the variables measured during the measured time period. We, thus, start by visually inspecting the average changes and variance developments of all potentially relevant variables. We hope so see changes within the means and standard deviations over the measurement periods. 
+The three-mode PCA ultimately aims to explain the most variance with the fewest components (by maximizing the variance of data mapped in a lower dimensional space --- often by maximally separating groups of cases with similar variable patterns). Importantly, this procedure depends on variances and covariances to be present within the data. As one of our three modes is time and variance over time is not always given (e.g., because a variable is stable over the measured time span, such as personality over a month), it becomes important to assess whether a dimension reduction is possible for the variables measured during the measured time period. We, thus, start by visually inspecting the average changes and variance developments of all potentially relevant variables. We hope so see changes within the means and standard deviations over the measurement periods.
 
-Please note that the items might be measured on different ranges. To avoid misinterpretation of variances and changes over time, we cluster variables with similar ranges in different plots where necessary. 
+Please note that the items might be measured on different ranges. To avoid misinterpretation of variances and changes over time, we cluster variables with similar ranges in different plots where necessary.
 
 ## Means
 
-To illustrate the developments of the means,we plot the item means of all variables. We plot the means of the individual variables for each measurement occasion, summarizing the responses of all participants at any given time point. The displayed time grouping is based on the measurement index rather than the actual date to ensure comparability of the changes between each measurement as well as studies. We plot the means for bi-daily, daily, and weekly timescales. 
+To illustrate the developments of the means,we plot the item means of all variables. We plot the means of the individual variables for each measurement occasion, summarizing the responses of all participants at any given time point. The displayed time grouping is based on the measurement index rather than the actual date to ensure comparability of the changes between each measurement as well as studies. We plot the means for bi-daily, daily, and weekly timescales.
 
 ### Studies 1-3 (Means) {.unlisted .unnumbered}
 
@@ -2630,12 +3204,12 @@ dtPcaS123 %>%
 
 ### Study 1 (Means) {.unlisted .unnumbered}
 
-The first study, utilized not only the smallest sample but also a slightly different set of measured variables compared to the later two studies. Several variables are consistent across all three studies (e.g., types of social interactions, interaction needs, self-determiantion theory needs, outgroup attitudes, and experienced well-being). Study 1 additionally included several emotion and mood measurements but fewer cognitive and behavioral measures than studies two and three. 
+The first study, utilized not only the smallest sample but also a slightly different set of measured variables compared to the later two studies. Several variables are consistent across all three studies (e.g., types of social interactions, interaction needs, self-determiantion theory needs, outgroup attitudes, and experienced well-being). Study 1 additionally included several emotion and mood measurements but fewer cognitive and behavioral measures than studies two and three.
 
 ```{r plotS1Mean, fig.height=16}
 plotStat(
   dt = dtS1Red,
-  varNams = varNamPcaS1,
+  varNams = varNamS1PCA,
   id = "PID",
   timescale = "bi-daily",
   clNum = 2,
@@ -2646,7 +3220,7 @@ plotStat(
 
 plotStat(
   dt = dtS1Red,
-  varNams = varNamPcaS1,
+  varNams = varNamS1PCA,
   id = "PID",
   timescale = "daily",
   clNum = 2,
@@ -2657,7 +3231,7 @@ plotStat(
 
 plotStat(
   dt = dtS1Red,
-  varNams = varNamPcaS1,
+  varNams = varNamS1PCA,
   id = "PID",
   timescale = "weekly",
   clNum = 2,
@@ -2669,16 +3243,16 @@ plotStat(
 
 ### Study 2 (Means) {.unlisted .unnumbered}
 
-During the second study we collected the largest sample and additionally collected a range of motivations as well as pro-social and anti-social behaviors. 
+During the second study we collected the largest sample and additionally collected a range of motivations as well as pro-social and anti-social behaviors.
 
-We, again, select all potentially relevant variables and their labels, and then plot their developments on a bi-daily, daily, and weekly level. 
+We, again, select all potentially relevant variables and their labels, and then plot their developments on a bi-daily, daily, and weekly level.
 
-We again begin by plotting the item means of all variables. The plotting method is identical to that of Study 1. 
+We again begin by plotting the item means of all variables. The plotting method is identical to that of Study 1.
 
 ```{r plotS2Mean, fig.height=16}
 plotStat(
   dt = dtS2Red,
-  varNams = varNamPcaS2,
+  varNams = varNamS2PCA,
   id = "PID",
   timescale = "bi-daily",
   clNum = 2,
@@ -2687,9 +3261,11 @@ plotStat(
   title = "Study 2 Means over time [bi-daily]"
 )
 
+sum(apply(dtS2Red, 2, is.finite))
+
 plotStat(
   dt = dtS2Red,
-  varNams = varNamPcaS2,
+  varNams = varNamS2PCA,
   id = "PID",
   timescale = "daily",
   clNum = 2,
@@ -2700,7 +3276,7 @@ plotStat(
 
 plotStat(
   dt = dtS2Red,
-  varNams = varNamPcaS2,
+  varNams = varNamS2PCA,
   id = "PID",
   timescale = "weekly",
   clNum = 2,
@@ -2710,19 +3286,18 @@ plotStat(
 )
 ```
 
-
 ### Study 3 (Means) {.unlisted .unnumbered}
 
 The third study uses a similar set up as Study 2 but targets a more vulnerable sample (of young medical professionals). While most key variables are identical to Study 2, in this last study we additionally collected several cognitive evaluations (e.g., importance ratings) and emotional status measures (e.g., anger, nervousness, energy, and loneliness).
 
-We, again, select all potentially relevant variables and their labels, and then plot their developments on a bi-daily, daily, and weekly level. 
+We, again, select all potentially relevant variables and their labels, and then plot their developments on a bi-daily, daily, and weekly level.
 
-As with the previous studies, we begin by plotting the item means of all variables. The plotting method is identical to that of Studies 1 and 2.  
+As with the previous studies, we begin by plotting the item means of all variables. The plotting method is identical to that of Studies 1 and 2.
 
 ```{r plotS3Mean, fig.height=16}
 plotStat(
   dt = dtS3Red,
-  varNams = varNamPcaS3,
+  varNams = varNamS3PCA,
   id = "PID",
   timescale = "bi-daily",
   clNum = 2,
@@ -2733,7 +3308,7 @@ plotStat(
 
 plotStat(
   dt = dtS3Red,
-  varNams = varNamPcaS3,
+  varNams = varNamS3PCA,
   id = "PID",
   timescale = "daily",
   clNum = 2,
@@ -2744,7 +3319,7 @@ plotStat(
 
 plotStat(
   dt = dtS3Red,
-  varNams = varNamPcaS3,
+  varNams = varNamS3PCA,
   id = "PID",
   timescale = "weekly",
   clNum = 2,
@@ -2754,13 +3329,12 @@ plotStat(
 )
 ```
 
-
-
 ## SD
 
-To illustrate the developments of variance around the means, we also plot the item standard deviations of all variables. We, thus, plot the average variation from the mean for each individual variable, again summarizing the responses of all participants at any given time point. We retain the same measurement indices as the x axis.  
+To illustrate the developments of variance around the means, we also plot the item standard deviations of all variables. We, thus, plot the average variation from the mean for each individual variable, again summarizing the responses of all participants at any given time point. We retain the same measurement indices as the x axis.
 
 ### Studies 1-3 (SDs) {.unlisted .unnumbered}
+
 <!-- <font size="5">Studies 1-3 (SDs)</font>  -->
 
 ```{r plotAllSd}
@@ -2893,7 +3467,7 @@ dtPcaS123 %>%
 ```{r plotS1Sd, fig.height=16}
 plotStat(
   dt = dtS1Red,
-  varNams = varNamPcaS1,
+  varNams = varNamS1PCA,
   id = "PID",
   timescale = "bi-daily",
   clNum = 2,
@@ -2904,7 +3478,7 @@ plotStat(
 
 plotStat(
   dt = dtS1Red,
-  varNams = varNamPcaS1,
+  varNams = varNamS1PCA,
   id = "PID",
   timescale = "daily",
   clNum = 2,
@@ -2915,7 +3489,7 @@ plotStat(
 
 plotStat(
   dt = dtS1Red,
-  varNams = varNamPcaS1,
+  varNams = varNamS1PCA,
   id = "PID",
   timescale = "weekly",
   clNum = 2,
@@ -2930,7 +3504,7 @@ plotStat(
 ```{r plotS2Sd, fig.height=16}
 plotStat(
   dt = dtS2Red,
-  varNams = varNamPcaS2,
+  varNams = varNamS2PCA,
   id = "PID",
   timescale = "bi-daily",
   clNum = 2,
@@ -2941,7 +3515,7 @@ plotStat(
 
 plotStat(
   dt = dtS2Red,
-  varNams = varNamPcaS2,
+  varNams = varNamS2PCA,
   id = "PID",
   timescale = "daily",
   clNum = 2,
@@ -2952,7 +3526,7 @@ plotStat(
 
 plotStat(
   dt = dtS2Red,
-  varNams = varNamPcaS2,
+  varNams = varNamS2PCA,
   id = "PID",
   timescale = "weekly",
   clNum = 2,
@@ -2962,13 +3536,12 @@ plotStat(
 )
 ```
 
-
 ### Study 3 (SDs) {.unlisted .unnumbered}
 
 ```{r plotS3Sd, fig.height=16}
 plotStat(
   dt = dtS3Red,
-  varNams = varNamPcaS3,
+  varNams = varNamS3PCA,
   id = "PID",
   timescale = "bi-daily",
   clNum = 2,
@@ -2979,7 +3552,7 @@ plotStat(
 
 plotStat(
   dt = dtS3Red,
-  varNams = varNamPcaS3,
+  varNams = varNamS3PCA,
   id = "PID",
   timescale = "daily",
   clNum = 2,
@@ -2990,7 +3563,7 @@ plotStat(
 
 plotStat(
   dt = dtS3Red,
-  varNams = varNamPcaS3,
+  varNams = varNamS3PCA,
   id = "PID",
   timescale = "weekly",
   clNum = 2,
@@ -3000,21 +3573,28 @@ plotStat(
 )
 ```
 
+</br>
+
+------------------------------------------------------------------------
 
 </br>
 
---------------------------------------------------------------------
+# **Software Information**
 
-</br> 
-
-
-# **Software Information**  
-The full ResponseId information with all relevant system information and all loaded and installed packages is available in the collapsible section below.  
+The full ResponseId information with all relevant system information and all loaded and installed packages is available in the collapsible section below.
 
 <details>
-  <summary>System Info</summary>
-  
-  \renewcommand{\arraystretch}{0.8} <!-- decrease line spacing for the table -->
+
+<summary>
+
+System Info
+
+</summary>
+
+\renewcommand{\arraystretch}{0.8}
+
+<!-- decrease line spacing for the table -->
+
 ```{r Reproducibility-sessionInfo-R-environment, echo=FALSE, message=FALSE, warning=FALSE, fig.align="center", out.width='100%', results='asis'}
 df_session_platform <- devtools::session_info()$platform %>%
   unlist(.) %>%
@@ -3035,13 +3615,27 @@ kbl(
     html_font = "Cambria"
   )
 ```
-  \renewcommand{\arraystretch}{1} <!-- reset row height/line spacing -->
- </details>
- <br>
- <details>
-  <summary>Package Info</summary>
 
-\renewcommand{\arraystretch}{0.6} <!-- decrease line spacing for the table -->
+\renewcommand{\arraystretch}{1}
+
+<!-- reset row height/line spacing -->
+
+</details>
+
+<br>
+
+<details>
+
+<summary>
+
+Package Info
+
+</summary>
+
+\renewcommand{\arraystretch}{0.6}
+
+<!-- decrease line spacing for the table -->
+
 ```{r Reproducibility-sessionInfo-R-packages, echo=FALSE, message=FALSE, warning=FALSE, fig.align="center", out.width='100%', results='asis'}
 df_session_packages <- devtools::session_info()$packages %>%
   as.data.frame(.) %>%
@@ -3063,22 +3657,34 @@ kbl(
     html_font = "Cambria"
   )
 ```
-\renewcommand{\arraystretch}{1} <!-- reset row height/line spacing -->
+
+\renewcommand{\arraystretch}{1}
+
+<!-- reset row height/line spacing -->
+
 </details>
+
 <br>
+
 <details>
-  <summary>Full Session Info (including loaded but unattached packages --- for troubleshooting only)</summary>
-    `r pander(sessionInfo(), compact = FALSE)`
+
+<summary>
+
+Full Session Info (including loaded but unattached packages --- for troubleshooting only)
+
+</summary>
+
+`r pander(sessionInfo(), compact = FALSE)`
+
 </details>
 
 </br>
 
---------------------------------------------------------------------
+------------------------------------------------------------------------
 
-</br>  
+</br>
 
 # **References**
 
-
-
-<div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>
+::: {.tocify-extend-page data-unique="tocify-extend-page" style="height: 0;"}
+:::
