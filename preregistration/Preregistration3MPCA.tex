@@ -1,21 +1,22 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+
 \documentclass[]{article}
-    \usepackage{lmodern}
-    \usepackage{amssymb,amsmath}
-\usepackage{ifxetex,ifluatex}
-\usepackage{fixltx2e} % provides \textsubscript
-\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
-  \else % if luatex or xelatex
-\ifxetex
-\usepackage{mathspec}
-\usepackage{xltxtra,xunicode}
-\else
-  \usepackage{fontspec}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
 \fi
-\defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
-\newcommand{\euro}{€}
-        \fi
+
 % use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 % use microtype if available
@@ -41,8 +42,9 @@ urlcolor=BlueViolet,
 linkcolor=BlueViolet,
 pdfborder={0 0 0}}
 \urlstyle{same}  % don't use monospace font for urls
-\usepackage{natbib}
+\usepackage[]{natbib}
 \bibliographystyle{apalike}
+
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{6pt plus 2pt minus 1pt}
 \setlength{\emergencystretch}{3em}  % prevent overfull lines
@@ -66,13 +68,6 @@ pdfborder={0 0 0}}
 \def\changemargin#1#2{\list{}{\rightmargin#2\leftmargin#1}\item[]}
 \let\endchangemargin=\endlist
 
-% Create subtitle command for use in maketitle
-\newcommand{\subtitle}[1]{
-\posttitle{
-\begin{center}\large#1\end{center}
-}
-}
-
 \setlength{\droptitle}{-2em}
 \title{Migration Experience Trajectories: A Three-Mode Principal
 Component Analysis}
@@ -95,7 +90,7 @@ of Advanced Science and Engineering      }
   \def\affcity{{"", "", "", "", "", ""}}%
   \preauthor{\begin{changemargin}{-8pc}{0pc} \centering\large}
   \postauthor{\end{changemargin}}
-\date{01. June 2022}
+\date{04. July 2022}
 \predate{\begin{changemargin}{-8pc}{0pc} \centering\large\emph}
 \postdate{\end{changemargin}}
 \usepackage{fancyhdr}
@@ -138,11 +133,22 @@ Experience Trajectories}}}
 \vspace{2pc}
 
 
-\newcommand\Question[2]{%
+\ifPDFTeX
+  \newcommand\Question[2]{%
    \leavevmode\par
    \stepcounter{question}
    \noindent
    \textbf{\thequestion. #1}. #2\par}
+\else % if luatex or xetex
+  \NewCommandCopy{\oldQuestion}{\Question}
+  \renewcommand\Question[2]{%
+   \leavevmode\par
+   \stepcounter{question}
+   \noindent
+   \textbf{\thequestion. #1}. #2\par}
+\fi
+
+
 
 \newcommand\Answer[1]{%
     \noindent
