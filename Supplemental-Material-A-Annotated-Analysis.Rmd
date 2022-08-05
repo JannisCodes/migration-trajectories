@@ -2389,55 +2389,55 @@ dtMiMainWeeekly <- rbind(
   mutate_if(is.numeric, ~ ifelse(is.nan(.), NA, .)) %>%
   as.data.frame 
 
-MiMain <-
-  amelia(
-    dtMiMain,
-    m = 1, # 20
-    ts = "TIDnum",
-    cs = "ID",
-    idvars = c("TID", "date", "week", "study"), #"PID",
-    #lags = names(dtMiMain)[!names(dtMiMain) %in% idVars],
-    #lags = names(dtMiMain)[names(dtMiMain) %in%varNamInMiMainRed],
-    #noms = names(dtMiMain)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMain))],
-    parallel = "multicore",
-    ncpus = parallel::detectCores(),
-    p2s = 1
-  )
-save(MiMain, file = "data/imputed/MainImputed.RData")
+# MiMain <-
+#   amelia(
+#     dtMiMain,
+#     m = 1, # 20
+#     ts = "TIDnum",
+#     cs = "ID",
+#     idvars = c("TID", "date", "week", "study"), #"PID",
+#     #lags = names(dtMiMain)[!names(dtMiMain) %in% idVars],
+#     #lags = names(dtMiMain)[names(dtMiMain) %in%varNamInMiMainRed],
+#     #noms = names(dtMiMain)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMain))],
+#     parallel = "multicore",
+#     ncpus = parallel::detectCores(),
+#     p2s = 1
+#   )
+# save(MiMain, file = "data/imputed/MainImputed.RData")
 load("data/imputed/MainImputed.RData")
 
-MiMainDaily <-
-  amelia(
-    dtMiMainDaily,
-    m = 1, # 20
-    ts = "TIDnum",
-    cs = "ID",
-    idvars = c("date", "study"), #"PID",
-    #lags = names(dtMiMainDaily)[!names(dtMiMainDaily) %in% idVars],
-    #lags = names(dtMiMainDaily)[names(dtMiMainDaily) %in%varNamInMiMainRed],
-    #noms = names(dtMiMainDaily)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMainDaily))],
-    parallel = "multicore",
-    ncpus = parallel::detectCores(),
-    p2s = 1
-  )
-save(MiMainDaily, file = "data/imputed/MainDailyImputed.RData")
+# MiMainDaily <-
+#   amelia(
+#     dtMiMainDaily,
+#     m = 1, # 20
+#     ts = "TIDnum",
+#     cs = "ID",
+#     idvars = c("date", "study"), #"PID",
+#     #lags = names(dtMiMainDaily)[!names(dtMiMainDaily) %in% idVars],
+#     #lags = names(dtMiMainDaily)[names(dtMiMainDaily) %in%varNamInMiMainRed],
+#     #noms = names(dtMiMainDaily)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMainDaily))],
+#     parallel = "multicore",
+#     ncpus = parallel::detectCores(),
+#     p2s = 1
+#   )
+# save(MiMainDaily, file = "data/imputed/MainDailyImputed.RData")
 load("data/imputed/MainDailyImputed.RData")
 
-MiMainWeekly <-
-  amelia(
-    dtMiMainWeeekly,
-    m = 1, # 20
-    ts = "TIDnum",
-    cs = "ID",
-    idvars = c("week", "study"), #"PID",
-    #lags = names(dtMiMainWeeekly)[!names(dtMiMainWeeekly) %in% idVars],
-    #lags = names(dtMiMainWeeekly)[names(dtMiMainWeeekly) %in%varNamInMiMainRed],
-    #noms = names(dtMiMainWeeekly)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMainWeeekly))],
-    parallel = "multicore",
-    ncpus = parallel::detectCores(),
-    p2s = 1
-  )
-save(MiMainWeekly, file = "data/imputed/MainWeeklyImputed.RData")
+# MiMainWeekly <-
+#   amelia(
+#     dtMiMainWeeekly,
+#     m = 1, # 20
+#     ts = "TIDnum",
+#     cs = "ID",
+#     idvars = c("week", "study"), #"PID",
+#     #lags = names(dtMiMainWeeekly)[!names(dtMiMainWeeekly) %in% idVars],
+#     #lags = names(dtMiMainWeeekly)[names(dtMiMainWeeekly) %in%varNamInMiMainRed],
+#     #noms = names(dtMiMainWeeekly)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMainWeeekly))],
+#     parallel = "multicore",
+#     ncpus = parallel::detectCores(),
+#     p2s = 1
+#   )
+# save(MiMainWeekly, file = "data/imputed/MainWeeklyImputed.RData")
 load("data/imputed/MainWeeklyImputed.RData")
 ```
 
@@ -2563,19 +2563,41 @@ allDuplicated <- function(vec){
 
 varNamDifS1 <- names(dtMiS1)[gsub(".pre|.post|_calc", "", names(dtMiS1)) %>% allDuplicated]
 
-dtMiS1 <- dtMiS1 %>%
-  mutate(
-    assimilation.dif = assimilation.post - assimilation.pre,
-    integration.dif = integration.post - integration.pre,
-    marginalization.dif = marginalization.post - marginalization.pre,
-    separation.dif = separation.post - separation.pre,
-    VIA_Dutch.dif = VIA_Dutch.post - VIA_Dutch.post,
-    VIA_heritage.dif = VIA_heritage.post - VIA_heritage.pre,
-    IntGrAnx.dif = IntGrAnx.post_calc - IntGrAnx.pre_calc,
-    swl.dif = swl.post_calc - swl.pre_calc
-  ) %>% 
+# Variables removed for study 1 due to high multicollinearity:
+varNamS1Out <- dtMiS1 %>%
   select(
-    -any_of(varNamDifS1)
+    any_of(varNamDifS1),
+    mdmq.calmness.pre_calc,
+    mdmq.alertness.pre_calc,
+    mdmq.valence.pre_calc,
+    relatednessFrust.pre_calc,
+    competenceFrust.pre_calc,
+    competenceSat.pre_calc,
+    relatednessSat.pre_calc,
+    DutchFriends.pre,
+    secNatDum.pre,
+    timeNL.pre,
+    stress.post,
+    discrimination_month.post,
+    rosenberg.post,
+    qualityStar,
+    starts_with("SSAS")
+  ) %>%
+  names
+
+dtMiS1 <- dtMiS1 %>%
+  # mutate(
+  #   assimilation.dif = assimilation.post - assimilation.pre,
+  #   integration.dif = integration.post - integration.pre,
+  #   marginalization.dif = marginalization.post - marginalization.pre,
+  #   separation.dif = separation.post - separation.pre,
+  #   VIA_Dutch.dif = VIA_Dutch.post - VIA_Dutch.post,
+  #   VIA_heritage.dif = VIA_heritage.post - VIA_heritage.pre,
+  #   IntGrAnx.dif = IntGrAnx.post_calc - IntGrAnx.pre_calc,
+  #   swl.dif = swl.post_calc - swl.pre_calc
+  # ) %>% 
+  select(
+    -any_of(varNamS1Out)
   ) %>%
   select(PID,
          TID,
@@ -2586,18 +2608,18 @@ dtMiS1 <- dtMiS1 %>%
   as.data.frame
 
 dtMiS1Daily <- dtMiS1Daily %>%
-  mutate(
-    assimilation.dif = assimilation.post - assimilation.pre,
-    integration.dif = integration.post - integration.pre,
-    marginalization.dif = marginalization.post - marginalization.pre,
-    separation.dif = separation.post - separation.pre,
-    VIA_Dutch.dif = VIA_Dutch.post - VIA_Dutch.post,
-    VIA_heritage.dif = VIA_heritage.post - VIA_heritage.pre,
-    IntGrAnx.dif = IntGrAnx.post_calc - IntGrAnx.pre_calc,
-    swl.dif = swl.post_calc - swl.pre_calc
-  ) %>% 
+  # mutate(
+  #   assimilation.dif = assimilation.post - assimilation.pre,
+  #   integration.dif = integration.post - integration.pre,
+  #   marginalization.dif = marginalization.post - marginalization.pre,
+  #   separation.dif = separation.post - separation.pre,
+  #   VIA_Dutch.dif = VIA_Dutch.post - VIA_Dutch.post,
+  #   VIA_heritage.dif = VIA_heritage.post - VIA_heritage.pre,
+  #   IntGrAnx.dif = IntGrAnx.post_calc - IntGrAnx.pre_calc,
+  #   swl.dif = swl.post_calc - swl.pre_calc
+  # ) %>% 
   select(
-    -any_of(varNamDifS1)
+    -any_of(varNamS1Out)
   ) %>%
   select(PID,
          TIDnum,
@@ -2607,18 +2629,18 @@ dtMiS1Daily <- dtMiS1Daily %>%
   as.data.frame
 
 dtMiS1Weekly <- dtMiS1Weekly %>%
-  mutate(
-    assimilation.dif = assimilation.post - assimilation.pre,
-    integration.dif = integration.post - integration.pre,
-    marginalization.dif = marginalization.post - marginalization.pre,
-    separation.dif = separation.post - separation.pre,
-    VIA_Dutch.dif = VIA_Dutch.post - VIA_Dutch.post,
-    VIA_heritage.dif = VIA_heritage.post - VIA_heritage.pre,
-    IntGrAnx.dif = IntGrAnx.post_calc - IntGrAnx.pre_calc,
-    swl.dif = swl.post_calc - swl.pre_calc
-  ) %>% 
+  # mutate(
+  #   assimilation.dif = assimilation.post - assimilation.pre,
+  #   integration.dif = integration.post - integration.pre,
+  #   marginalization.dif = marginalization.post - marginalization.pre,
+  #   separation.dif = separation.post - separation.pre,
+  #   VIA_Dutch.dif = VIA_Dutch.post - VIA_Dutch.post,
+  #   VIA_heritage.dif = VIA_heritage.post - VIA_heritage.pre,
+  #   IntGrAnx.dif = IntGrAnx.post_calc - IntGrAnx.pre_calc,
+  #   swl.dif = swl.post_calc - swl.pre_calc
+  # ) %>% 
   select(
-    -any_of(varNamDifS1)
+    -any_of(varNamS1Out)
   ) %>%
   select(PID,
          TIDnum,
@@ -2632,63 +2654,69 @@ lares::corr_cross(
   top = 20 # display top 20 couples of variables (by correlation coefficient)
 )
 
+lares::corr_cross(
+  dtMiS1Daily %>% select_if(is.numeric), # name of dataset
+  max_pvalue = 0.05, # display only significant correlations (at 5% level)
+  top = 20 # display top 20 couples of variables (by correlation coefficient)
+)
+
 ##----------------------------------------------------------------
 ##                    IMPUTATIONS
 ##----------------------------------------------------------------
 
-# MiS1 <-
-#   amelia(
-#     dtMiS1,
-#     m = 1, # 20
-#     ts = "TIDnum",
-#     cs = "PID",
-#     idvars = c("TID", "date", "week"),
-#     # lags = names(dtMiS1)[!names(dtMiS1) %in% idVars],
-#     # lags = names(dtMiS1)[names(dtMiS1) %in% varNamS1MiPsbl], # alternative?
-#     # leads = ...,
-#     # noms = names(dtMiS1)[grepl(paste(varNamdtS1Noms, collapse = "|^"), names(dtMiS1))],
-#     # parallel = "multicore",
-#     # ncpus = parallel::detectCores(),
-#     p2s = 2
-#   )
-# save(MiS1, file = "data/imputed/S1Imputed.RData")
-# load("data/imputed/S1Imputed.RData")
-# 
-# MiS1Daily <-
-#   amelia(
-#     dtMiS1Daily,
-#     m = 1, # 20
-#     ts = "TIDnum",
-#     cs = "PID",
-#     idvars = c("date", "week"),
-#     # lags = names(dtMiS1)[!names(dtMiS1) %in% idVars],
-#     # lags = names(dtMiS1)[names(dtMiS1) %in% varNamS1MiPsbl], # alternative?
-#     # leads = ...,
-#     # noms = names(dtMiS1)[grepl(paste(varNamdtS1Noms, collapse = "|^"), names(dtMiS1))],
-#     # parallel = "multicore",
-#     # ncpus = parallel::detectCores(),
-#     p2s = 2
-#   )
-# save(MiS1Daily, file = "data/imputed/S1DailyImputed.RData")
-# load("data/imputed/S1DailyImputed.RData")
-# 
-# MiS1Weekly <-
-#   amelia(
-#     dtMiS1Weekly,
-#     m = 1, # 20
-#     ts = "TIDnum",
-#     cs = "PID",
-#     idvars = c("week"),
-#     # lags = names(dtMiS1)[!names(dtMiS1) %in% idVars],
-#     # lags = names(dtMiS1)[names(dtMiS1) %in% varNamS1MiPsbl], # alternative?
-#     # leads = ...,
-#     # noms = names(dtMiS1)[grepl(paste(varNamdtS1Noms, collapse = "|^"), names(dtMiS1))],
-#     # parallel = "multicore",
-#     # ncpus = parallel::detectCores(),
-#     p2s = 1
-#   )
-# save(MiS1Weekly, file = "data/imputed/S1WeeklyImputed.RData")
-# load("data/imputed/S1WeeklyImputed.RData")
+MiS1 <-
+  amelia(
+    dtMiS1,
+    m = 1, # 20
+    ts = "TIDnum",
+    cs = "PID",
+    idvars = c("TID", "date", "week"),
+    # lags = names(dtMiS1)[!names(dtMiS1) %in% idVars],
+    # lags = names(dtMiS1)[names(dtMiS1) %in% varNamS1MiPsbl], # alternative?
+    # leads = ...,
+    # noms = names(dtMiS1)[grepl(paste(varNamdtS1Noms, collapse = "|^"), names(dtMiS1))],
+    # parallel = "multicore",
+    # ncpus = parallel::detectCores(),
+    p2s = 2
+  )
+save(MiS1, file = "data/imputed/S1Imputed.RData")
+load("data/imputed/S1Imputed.RData")
+
+MiS1Daily <-
+  amelia(
+    dtMiS1Daily,
+    m = 1, # 20
+    ts = "TIDnum",
+    cs = "PID",
+    idvars = c("date", "week"),
+    # lags = names(dtMiS1)[!names(dtMiS1) %in% idVars],
+    # lags = names(dtMiS1)[names(dtMiS1) %in% varNamS1MiPsbl], # alternative?
+    # leads = ...,
+    # noms = names(dtMiS1)[grepl(paste(varNamdtS1Noms, collapse = "|^"), names(dtMiS1))],
+    # parallel = "multicore",
+    # ncpus = parallel::detectCores(),
+    p2s = 2
+  )
+save(MiS1Daily, file = "data/imputed/S1DailyImputed.RData")
+load("data/imputed/S1DailyImputed.RData")
+
+MiS1Weekly <-
+  amelia(
+    dtMiS1Weekly,
+    m = 1, # 20
+    ts = "TIDnum",
+    cs = "PID",
+    idvars = c("week"),
+    # lags = names(dtMiS1)[!names(dtMiS1) %in% idVars],
+    # lags = names(dtMiS1)[names(dtMiS1) %in% varNamS1MiPsbl], # alternative?
+    # leads = ...,
+    # noms = names(dtMiS1)[grepl(paste(varNamdtS1Noms, collapse = "|^"), names(dtMiS1))],
+    # parallel = "multicore",
+    # ncpus = parallel::detectCores(),
+    p2s = 1
+  )
+save(MiS1Weekly, file = "data/imputed/S1WeeklyImputed.RData")
+load("data/imputed/S1WeeklyImputed.RData")
 ```
 
 ### Study 2
