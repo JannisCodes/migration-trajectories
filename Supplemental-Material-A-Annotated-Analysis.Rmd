@@ -2425,22 +2425,23 @@ dtMiMainWeeekly <- rbind(
 #################################################################
 ##                     Imputation Bi-daily                     ##
 #################################################################
-MiMain <-
-  amelia(
-    dtMiMain,
-    m = 1, # 20
-    ts = "TIDnum",
-    cs = "ID",
-    idvars = c("TID", "date", "week", "study", "IntergroupContact", "IngroupContact"), #"PID",
-    #lags = names(dtMiMain)[!names(dtMiMain) %in% idVars],
-    #lags = names(dtMiMain)[names(dtMiMain) %in%varNamInMiMainRed],
-    #noms = names(dtMiMain)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMain))],
-    noms = c("InteractionDum"),
-    parallel = "multicore",
-    ncpus = parallel::detectCores(),
-    p2s = 1
-  )
-save(MiMain, file = "data/imputed/MainImputed.RData")
+# set.seed(123)
+# MiMain <-
+#   amelia(
+#     dtMiMain,
+#     m = 1, # 20
+#     ts = "TIDnum",
+#     cs = "ID",
+#     idvars = c("TID", "date", "week", "study", "IntergroupContact", "IngroupContact"), #"PID",
+#     #lags = names(dtMiMain)[!names(dtMiMain) %in% idVars],
+#     #lags = names(dtMiMain)[names(dtMiMain) %in%varNamInMiMainRed],
+#     #noms = names(dtMiMain)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMain))],
+#     noms = c("InteractionDum"),
+#     parallel = "multicore",
+#     ncpus = parallel::detectCores(),
+#     p2s = 1
+#   )
+# save(MiMain, file = "data/imputed/MainImputed.RData")
 load("data/imputed/MainImputed.RData")
 
 ##---------------------------------------------------------------
@@ -2454,42 +2455,42 @@ load("data/imputed/MainImputed.RData")
 #################################################################
 ##               Imputation at Daily Aggregation               ##
 #################################################################
-MiMainDaily <-
-  amelia(
-    dtMiMainDaily,
-    m = 1, # 20
-    ts = "TIDnum",
-    cs = "ID",
-    idvars = c("date", "study", "IntergroupContact", "IngroupContact"), #"PID",
-    #lags = names(dtMiMainDaily)[!names(dtMiMainDaily) %in% idVars],
-    #lags = names(dtMiMainDaily)[names(dtMiMainDaily) %in%varNamInMiMainRed],
-    #noms = names(dtMiMainDaily)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMainDaily))],
-    parallel = "multicore",
-    ncpus = parallel::detectCores(),
-    p2s = 1
-  )
-save(MiMainDaily, file = "data/imputed/MainDailyImputed.RData")
+# MiMainDaily <-
+#   amelia(
+#     dtMiMainDaily,
+#     m = 1, # 20
+#     ts = "TIDnum",
+#     cs = "ID",
+#     idvars = c("date", "study", "IntergroupContact", "IngroupContact"), #"PID",
+#     #lags = names(dtMiMainDaily)[!names(dtMiMainDaily) %in% idVars],
+#     #lags = names(dtMiMainDaily)[names(dtMiMainDaily) %in%varNamInMiMainRed],
+#     #noms = names(dtMiMainDaily)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMainDaily))],
+#     parallel = "multicore",
+#     ncpus = parallel::detectCores(),
+#     p2s = 1
+#   )
+# save(MiMainDaily, file = "data/imputed/MainDailyImputed.RData")
 load("data/imputed/MainDailyImputed.RData")
 
 
 ##################################################################
 ##               Imputation at Weekly Aggregation               ##
 ##################################################################
-MiMainWeekly <-
-  amelia(
-    dtMiMainWeeekly,
-    m = 1, # 20
-    ts = "TIDnum",
-    cs = "ID",
-    idvars = c("week", "study", "IntergroupContact", "IngroupContact"), #"PID",
-    #lags = names(dtMiMainWeeekly)[!names(dtMiMainWeeekly) %in% idVars],
-    #lags = names(dtMiMainWeeekly)[names(dtMiMainWeeekly) %in%varNamInMiMainRed],
-    #noms = names(dtMiMainWeeekly)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMainWeeekly))],
-    parallel = "multicore",
-    ncpus = parallel::detectCores(),
-    p2s = 1
-  )
-save(MiMainWeekly, file = "data/imputed/MainWeeklyImputed.RData")
+# MiMainWeekly <-
+#   amelia(
+#     dtMiMainWeeekly,
+#     m = 1, # 20
+#     ts = "TIDnum",
+#     cs = "ID",
+#     idvars = c("week", "study", "IntergroupContact", "IngroupContact"), #"PID",
+#     #lags = names(dtMiMainWeeekly)[!names(dtMiMainWeeekly) %in% idVars],
+#     #lags = names(dtMiMainWeeekly)[names(dtMiMainWeeekly) %in%varNamInMiMainRed],
+#     #noms = names(dtMiMainWeeekly)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMainWeeekly))],
+#     parallel = "multicore",
+#     ncpus = parallel::detectCores(),
+#     p2s = 1
+#   )
+# save(MiMainWeekly, file = "data/imputed/MainWeeklyImputed.RData")
 load("data/imputed/MainWeeklyImputed.RData")
 ```
 
@@ -2717,23 +2718,23 @@ dtMiS1Weekly <- dtMiS1Weekly %>%
   mutate_all(~ifelse(is.nan(.), NA, .)) %>%
   as.data.frame
 
-lares::corr_cross(
-  dtMiS1 %>% select_if(is.numeric), # name of dataset
-  max_pvalue = 0.05, # display only significant correlations (at 5% level)
-  top = 20 # display top 20 couples of variables (by correlation coefficient)
-)
-
-lares::corr_cross(
-  dtMiS1Daily %>% select_if(is.numeric), # name of dataset
-  max_pvalue = 0.05, # display only significant correlations (at 5% level)
-  top = 20 # display top 20 couples of variables (by correlation coefficient)
-)
-
-lares::corr_cross(
-  dtMiS1Weekly %>% select_if(is.numeric), # name of dataset
-  max_pvalue = 0.05, # display only significant correlations (at 5% level)
-  top = 20 # display top 20 couples of variables (by correlation coefficient)
-)
+# lares::corr_cross(
+#   dtMiS1 %>% select_if(is.numeric), # name of dataset
+#   max_pvalue = 0.05, # display only significant correlations (at 5% level)
+#   top = 20 # display top 20 couples of variables (by correlation coefficient)
+# )
+# 
+# lares::corr_cross(
+#   dtMiS1Daily %>% select_if(is.numeric), # name of dataset
+#   max_pvalue = 0.05, # display only significant correlations (at 5% level)
+#   top = 20 # display top 20 couples of variables (by correlation coefficient)
+# )
+# 
+# lares::corr_cross(
+#   dtMiS1Weekly %>% select_if(is.numeric), # name of dataset
+#   max_pvalue = 0.05, # display only significant correlations (at 5% level)
+#   top = 20 # display top 20 couples of variables (by correlation coefficient)
+# )
 
 # Missingness Percentage
 # (colMeans(is.na(dtMiS1Weekly)))*100
@@ -2741,65 +2742,65 @@ lares::corr_cross(
 #################################################################
 ##                     Imputation Bi-daily                     ##
 #################################################################
-MiS1 <-
-  amelia(
-    dtMiS1,
-    m = 1, # 20
-    ts = "TIDnum",
-    cs = "PID",
-    idvars = c("TID", "date", "week", "IntergroupContact", "IngroupContact"),
-    # lags = names(dtMiS1)[!names(dtMiS1) %in% idVars],
-    # lags = names(dtMiS1)[names(dtMiS1) %in% varNamS1MiPsbl], # alternative?
-    # leads = ...,
-    # noms = names(dtMiS1)[grepl(paste(varNamdtS1Noms, collapse = "|^"), names(dtMiS1))],
-    # parallel = "multicore",
-    # ncpus = parallel::detectCores(),
-    p2s = 2
-  )
-save(MiS1, file = "data/imputed/S1Imputed.RData")
+# MiS1 <-
+#   amelia(
+#     dtMiS1,
+#     m = 1, # 20
+#     ts = "TIDnum",
+#     cs = "PID",
+#     idvars = c("TID", "date", "week", "IntergroupContact", "IngroupContact"),
+#     # lags = names(dtMiS1)[!names(dtMiS1) %in% idVars],
+#     # lags = names(dtMiS1)[names(dtMiS1) %in% varNamS1MiPsbl], # alternative?
+#     # leads = ...,
+#     # noms = names(dtMiS1)[grepl(paste(varNamdtS1Noms, collapse = "|^"), names(dtMiS1))],
+#     # parallel = "multicore",
+#     # ncpus = parallel::detectCores(),
+#     p2s = 2
+#   )
+# save(MiS1, file = "data/imputed/S1Imputed.RData")
 load("data/imputed/S1Imputed.RData")
 
 
 #################################################################
 ##               Imputation at Daily Aggregation               ##
 #################################################################
-MiS1Daily <-
-  amelia(
-    dtMiS1Daily,
-    m = 1, # 20
-    ts = "TIDnum",
-    cs = "PID",
-    idvars = c("date", "week", "IntergroupContact", "IngroupContact"),
-    # lags = names(dtMiS1)[!names(dtMiS1) %in% idVars],
-    # lags = names(dtMiS1)[names(dtMiS1) %in% varNamS1MiPsbl], # alternative?
-    # leads = ...,
-    # noms = names(dtMiS1)[grepl(paste(varNamdtS1Noms, collapse = "|^"), names(dtMiS1))],
-    # parallel = "multicore",
-    # ncpus = parallel::detectCores(),
-    p2s = 2
-  )
-save(MiS1Daily, file = "data/imputed/S1DailyImputed.RData")
+# MiS1Daily <-
+#   amelia(
+#     dtMiS1Daily,
+#     m = 1, # 20
+#     ts = "TIDnum",
+#     cs = "PID",
+#     idvars = c("date", "week", "IntergroupContact", "IngroupContact"),
+#     # lags = names(dtMiS1)[!names(dtMiS1) %in% idVars],
+#     # lags = names(dtMiS1)[names(dtMiS1) %in% varNamS1MiPsbl], # alternative?
+#     # leads = ...,
+#     # noms = names(dtMiS1)[grepl(paste(varNamdtS1Noms, collapse = "|^"), names(dtMiS1))],
+#     # parallel = "multicore",
+#     # ncpus = parallel::detectCores(),
+#     p2s = 2
+#   )
+# save(MiS1Daily, file = "data/imputed/S1DailyImputed.RData")
 load("data/imputed/S1DailyImputed.RData")
 
 ##################################################################
 ##               Imputation at Weekly Aggregation               ##
 ##################################################################
-MiS1Weekly <-
-  amelia(
-    dtMiS1Weekly,
-    m = 1, # 20
-    ts = "TIDnum",
-    cs = "PID",
-    idvars = c("week", "IntergroupContact", "IngroupContact"),
-    # lags = names(dtMiS1)[!names(dtMiS1) %in% idVars],
-    # lags = names(dtMiS1)[names(dtMiS1) %in% varNamS1MiPsbl], # alternative?
-    # leads = ...,
-    # noms = names(dtMiS1)[grepl(paste(varNamdtS1Noms, collapse = "|^"), names(dtMiS1))],
-    # parallel = "multicore",
-    # ncpus = parallel::detectCores(),
-    p2s = 1
-  )
-save(MiS1Weekly, file = "data/imputed/S1WeeklyImputed.RData")
+# MiS1Weekly <-
+#   amelia(
+#     dtMiS1Weekly,
+#     m = 1, # 20
+#     ts = "TIDnum",
+#     cs = "PID",
+#     idvars = c("week", "IntergroupContact", "IngroupContact"),
+#     # lags = names(dtMiS1)[!names(dtMiS1) %in% idVars],
+#     # lags = names(dtMiS1)[names(dtMiS1) %in% varNamS1MiPsbl], # alternative?
+#     # leads = ...,
+#     # noms = names(dtMiS1)[grepl(paste(varNamdtS1Noms, collapse = "|^"), names(dtMiS1))],
+#     # parallel = "multicore",
+#     # ncpus = parallel::detectCores(),
+#     p2s = 1
+#   )
+# save(MiS1Weekly, file = "data/imputed/S1WeeklyImputed.RData")
 load("data/imputed/S1WeeklyImputed.RData")
 ```
 
@@ -3385,8 +3386,6 @@ plotStat(
   title = "Study 2 Means over time [bi-daily]"
 )
 
-sum(apply(dtS2Red, 2, is.finite))
-
 plotStat(
   dt = dtS2Red,
   varNams = varNamS2PCA,
@@ -3705,35 +3704,21 @@ plotStat(
 
 # **Three-Mode PCA**
 
-1.  Center across participants (within time point and variable).\
-2.  Normalize across time points and participants (within variable).\
-3.  Select number of components for each mode (i.e., mode complexity; using Convex Hull procedure heuristic based on total number of components and scree test value taken from a PCA-SUP analysis [where, PCASUP analyses are PCA's of supermatrices with slices of the 3way array next to each other, thus 3 supermatrices are analyed by PCA, and for each we get a component matrix, and eigenvalues. The eigenvalues may give an indication as to the required number of components for each mode.]).
-4.  Run 3MPCA
-5.  Test
 
-```{r 3mpcaMain}
-#library("ThreeWay")
+## Center and Normalize
 
-capture.output(
-  threeWayAnoBiDailyImp <- threewayanova(
-    Y = dtMainImpWide,
-    n = nrow(dtMainImpWide), # Nr. ppt.s (A)
-    m = length(unique(sub("T[0-9]{2}_", "", names(dtMainImpWide)))), # Nr. variables (B)
-    p = length(unique(sub("_.*", "", names(dtMainImpWide)))) # Nr. time points (C)
-  ), 
-file='NUL')
+We begin by centering across participants (within time point and variable) and normalize across time points and participants (within variable).
 
-nrow(dtMainImpWide)
-length(names(dtPcaS123Imp)[!names(dtPcaS123Imp) %in% idVars])
-length(unique(dtPcaS123Imp$TIDnum))
+<div class="alert alert-warning alert-dismissible fade in" role="alert">
+  <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+  <i class="fas fa-exclamation-triangle"></i> <b>Question: </b><br/>
+  Are the centering and especially the normalization done correctly?
+</div>
 
-# t3MainFull <- ThreeWay::T3(
-#   dtMainImpWide,
-#   paste("PP", 1:nrow(dtMainImpWide), sep = "_"),
-#   names(dtPcaS123Imp)[!names(dtPcaS123Imp) %in% idVars],
-#   paste("T", 1:length(unique(dtPcaS123Imp$TIDnum)), sep = "")
-# )
-
+```{r 3mpcaMainPrep}
+##################################################################
+##                  Center across Participants                  ##
+##################################################################
 dtMainImpWideC <- ThreeWay::cent3(
   X = dtMainImpWide, 
   n = nrow(dtMainImpWide), # Nr. ppt.s (A)
@@ -3744,6 +3729,10 @@ dtMainImpWideC <- ThreeWay::cent3(
   as.data.frame
 #apply(dtMainImpWideC,2,sum)
 
+
+##################################################################
+##                 Normalize across Time Points                 ##
+##################################################################
 dtMainImpWideCZ <- ThreeWay::norm3(
   X = dtMainImpWideC, 
   n = nrow(dtMainImpWideC), # Nr. ppt.s (A)
@@ -3759,16 +3748,27 @@ names(dtMainImpWideCZ) <- names(dtMainImpWideC)
 #   unlist %>%
 #   sd
 # psych::describe(dtMainImpWideCZ)
+```
 
-MainPcaSup <- ThreeWay::T3runsApproxFit(
-  X = dtMainImpWideCZ, 
-  n = nrow(dtMainImpWideCZ), # Nr. ppt.s (A)
-  m = length(unique(sub("T[0-9]{2}_", "", names(dtMainImpWideCZ)))), # Nr. variables (B)
-  p = length(unique(sub("_.*", "", names(dtMainImpWideCZ)))), # Nr. time points (C)
-  maxa = 20,
-  maxb = 20,
-  maxc = 20
-)
+## Select Component Complexity
+
+We then select the optimal number of components for each mode (i.e., mode complexity). To do so, we use Convex Hull procedure heuristic based on total number of components and scree test value taken from a PCA-SUP analysis (where, PCASUP analyses are PCA's of supermatrices with slices of the 3way array next to each other, thus 3 supermatrices are analyed by PCA, and for each we get a component matrix, and eigenvalues. The eigenvalues may give an indication as to the required number of components for each mode.).
+
+```{r 3mpcaMainCompNum}
+# Run PCA SUP to determine best combination
+capture.output(
+  MainPcaSup <- ThreeWay::T3runsApproxFit(
+    X = dtMainImpWideCZ, 
+    n = nrow(dtMainImpWideCZ), # Nr. ppt.s (A)
+    m = length(unique(sub("T[0-9]{2}_", "", names(dtMainImpWideCZ)))), # Nr. variables (B)
+    p = length(unique(sub("_.*", "", names(dtMainImpWideCZ)))), # Nr. time points (C)
+    maxa = 20,
+    maxb = 20,
+    maxc = 20
+  ), 
+file='NUL')
+
+# Select Dimension Complexity
 MainDimSelector <- capture.output(
   ThreeWay::DimSelector(
     out = MainPcaSup,
@@ -3778,7 +3778,6 @@ MainDimSelector <- capture.output(
     model = 2
   )
 )
-
 MainDim <- tail(MainDimSelector, n = 1) %>%
   str_extract("\\(.*\\)") %>%
   stringr::str_extract_all('\\d+',simplify=TRUE) %>%
@@ -3789,20 +3788,59 @@ MainDim <- tail(MainDimSelector, n = 1) %>%
     B = V2,
     C = V3
   ))
-MainDim
+#MainDim
+```
 
-t3Main <- ThreeWay::T3func(
-  X = dtMainImpWideCZ,
-  n = nrow(dtMainImpWideCZ), # Nr. ppt.s (A)
-  m = length(unique(sub("T[0-9]{2}_", "", names(dtMainImpWideCZ)))), # Nr. variables (B)
-  p = length(unique(sub("_.*", "", names(dtMainImpWideCZ)))), # Nr. time points (C)
-  r1 = MainDim$A,
-  r2 = MainDim$B,
-  r3 = MainDim$C,
-  start = 0,
-  conv = 1e-6
-)
+Based on the Convex Hull heuristic, we select `r MainDim$A` components for the participant mode, `r MainDim$B` principle components for the variable mode, and `r MainDim$C` components for the time mode. It should be noted that these heuristics are sensitive to variations in the multiple imputation procedure. 
 
+## Model Fitting
+
+We then run the actual three-mode PCA with the inputs from the dimension selection procedure.
+
+```{r 3mpcaMainRun}
+
+# nrow(dtMainImpWide)
+# length(names(dtPcaS123Imp)[!names(dtPcaS123Imp) %in% idVars])
+# length(unique(dtPcaS123Imp$TIDnum))
+# 
+# t3MainFull <- ThreeWay::T3(
+#   dtMainImpWide,
+#   paste("PP", 1:nrow(dtMainImpWide), sep = "_"),
+#   names(dtPcaS123Imp)[!names(dtPcaS123Imp) %in% idVars],
+#   paste("T", 1:length(unique(dtPcaS123Imp$TIDnum)), sep = "")
+# )
+
+# 3MPCA with general trend
+capture.output(
+  t3MainRaw <- ThreeWay::T3func(
+    X = dtMainImpWide,
+    n = nrow(dtMainImpWide), # Nr. ppt.s (A)
+    m = length(unique(sub("T[0-9]{2}_", "", names(dtMainImpWide)))), # Nr. variables (B)
+    p = length(unique(sub("_.*", "", names(dtMainImpWide)))), # Nr. time points (C)
+    r1 = MainDim$A,
+    r2 = MainDim$B,
+    r3 = MainDim$C,
+    start = 0,
+    conv = 1e-6
+  ), 
+file='NUL')
+
+# 3MPCA without general trend
+capture.output(
+  t3Main <- ThreeWay::T3func(
+    X = dtMainImpWideCZ,
+    n = nrow(dtMainImpWideCZ), # Nr. ppt.s (A)
+    m = length(unique(sub("T[0-9]{2}_", "", names(dtMainImpWideCZ)))), # Nr. variables (B)
+    p = length(unique(sub("_.*", "", names(dtMainImpWideCZ)))), # Nr. time points (C)
+    r1 = MainDim$A,
+    r2 = MainDim$B,
+    r3 = MainDim$C,
+    start = 0,
+    conv = 1e-6
+  ), 
+file='NUL')
+
+# individual fit partitioning
 FitT3Main <- T3fitpartitioning(
   Xprep = dtMainImpWideCZ,
   n = nrow(dtMainImpWideCZ), # Nr. ppt.s (A)
@@ -3818,51 +3856,253 @@ FitT3Main <- T3fitpartitioning(
   labc = paste("T", 1:length(unique(dtPcaS123Imp$TIDnum)), sep = "")
 )
 
+# Split half analysis
+capture.output(
+  SplitT3Main <- splithalfT3(
+    X = dtMainImpWide,
+    n = nrow(dtMainImpWide), # Nr. ppt.s (A)
+    m = length(unique(sub("T[0-9]{2}_", "", names(dtMainImpWide)))), # Nr. variables (B)
+    p = length(unique(sub("_.*", "", names(dtMainImpWide)))), # Nr. time points (C)
+    r1 = MainDim$A,
+    r2 = MainDim$B,
+    r3 = MainDim$C, 
+    centopt = 1,
+    normopt = 2,
+    conv = 1e-6,
+    renormmode = 0,
+    addanal = 5,
+    wa_rel = 0,
+    wb_rel = 0,
+    wc_rel = 0,
+    laba = paste("PP", 1:nrow(dtMainImpWideCZ), sep = "_"), 
+    labb = names(dtPcaS123Imp)[!names(dtPcaS123Imp) %in% idVars], 
+    labc = paste("T", 1:length(unique(dtPcaS123Imp$TIDnum)), sep = "")
+  ), 
+file='NUL')
+# 0
+# 0
+```
 
-t3MainRot <- varimcoco(
-  A = t3Main$A, 
-  B = t3Main$B, 
-  C = t3Main$C, 
-  H = t3Main$H,
-  wa_rel = 0,
-  wb_rel = 0,
-  wc_rel = 0
+In terms of fit percentage, we find that the three-mode PCA with the general trend included captures `r format(round(t3MainRaw$fp,2), nsmall = 2)`\% of the original variance, and the three-mode PCA without the general trend captures `r format(round(t3Main$fp,2), nsmall = 2)`\% of the variance.
+
+<div class="alert alert-warning alert-dismissible fade in" role="alert">
+  <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+  <i class="fas fa-exclamation-triangle"></i> <b>Question: </b><br/>
+  What is the interpretation of these Percentages? What exactly do the differences mean?
+</div>
+
+## Rotation
+
+For interpretability of the components we perform an orthomax rotation of the component matrices and the core array.
+
+```{r 3mpcaMainRotation}
+capture.output(
+  t3MainRot <- varimcoco(
+    A = t3Main$A, 
+    B = t3Main$B, 
+    C = t3Main$C, 
+    H = t3Main$H,
+    wa_rel = 0,
+    wb_rel = 0,
+    wc_rel = 0
+  ),
+  file = 'NULL'
 )
+```
+
+```{r 3mpcaMainAMat}
+t3MainRot$AS %>%
+  as.data.frame %>%
+  rename_all(funs(str_replace_all(., "V", "Component_"))) %>%
+  mutate(Participant = paste("PP", row_number(), sep = "_")) %>%
+  select(
+    Participant, 
+    everything()
+  ) %>%
+  kbl(
+  .,
+  format = "html",
+  escape = FALSE,
+  align = c("l", rep("c",ncol(.)-1)),
+  booktabs = TRUE,
+  digits = 3,
+  caption = "Rotated Component Matrix: Person Mode" # complete caption for main document
+) %>%
+  kable_classic(
+    full_width = FALSE,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  ) %>%
+  scroll_box(width = "100%", height = "500px")
+```
+
+```{r 3mpcaMainBMat}
+t3MainRot$BT %>%
+  as.data.frame %>%
+  rename_all(funs(str_replace_all(., "V", "Component_"))) %>%
+  mutate(Variable = names(dtPcaS123Imp)[!names(dtPcaS123Imp) %in% idVars]) %>%
+  select(
+    Variable, 
+    everything()
+  ) %>%
+  kbl(
+  .,
+  format = "html",
+  escape = FALSE,
+  align = c("l", rep("c",ncol(.)-1)),
+  booktabs = TRUE,
+  digits = 3,
+  caption = "Rotated Component Matrix: Variable Mode" # complete caption for main document
+) %>%
+  kable_classic(
+    full_width = FALSE,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  )
+```
+
+```{r 3mpcaMainCMat}
+t3MainRot$CU %>%
+  as.data.frame %>%
+  rename_all(funs(str_replace_all(., "V", "Component_"))) %>%
+  mutate(Time = paste("T", row_number()-1, sep = "")) %>%
+  select(
+    Time, 
+    everything()
+  ) %>%
+  kbl(
+  .,
+  format = "html",
+  escape = FALSE,
+  align = c("l", rep("c",ncol(.)-1)),
+  booktabs = TRUE,
+  digits = 3,
+  caption = "Rotated Component Matrix: Time Mode" # complete caption for main document
+) %>%
+  kable_classic(
+    full_width = FALSE,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  ) %>%
+  scroll_box(width = "100%", height = "500px")
+```
+
+## Visualization: Time Components
+
+We visualize the `r ncol(t3MainRot$C)` time components in their component scores over time.
+
+<div class="alert alert-warning alert-dismissible fade in" role="alert">
+  <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+  <i class="fas fa-exclamation-triangle"></i> <b>Note: </b><br/>
+  Not sure whether this interpretation is correct.
+</div>
 
 
-plot(t3MainRot$C[, 1], type = "n", ylim = range(t3MainRot$C), xlab = "Time occasion", ylab = "Component score")
-points(t3MainRot$C[, 1], pch = 16)
-lines(t3MainRot$C[, 1])
-points(t3MainRot$C[, 2], pch = 17)
-lines(t3MainRot$C[, 2])
-legend("topleft", legend = c("C1", "C2"), pch = c(16, 17), bty = "n")
-
-
-
-
-# library(factoextra)
-# fviz_nbclust(t3MainRot$A[,1:2], kmeans, method = "wss")
-# clusterdata <- t3MainRot$A[,1:2]
-# km.res <- kmeans(clusterdata, 6, nstart = 25)
-# fviz_cluster(object = km.res, # kmeans object 
-#              data = clusterdata, # data used for clustering
-#              ellipse.type = "norm",
-#              geom = "point",
-#              palette = "jco",
-#              main = "",
-#              xlab = "PC1",
-#              ylab = "PC2",
-#              ggtheme = theme_minimal())
-
-
-# lares::corr_cross(
-#   dtMainImpWideCZ, # name of dataset
-#   max_pvalue = 0.05, # display only significant correlations (at 5% level)
-#   top = 50 # display top 50 couples of variables (by correlation coefficient)
-# )
+```{r 3mpcaMainCompVizTime}
+t3MainRot$C %>%
+  as.data.frame %>%
+  rename_all(funs(str_replace_all(., "V", "Component_"))) %>%
+  mutate(tid = row_number()) %>%
+  melt(., id.vars = "tid") %>%
+  ggplot(
+    .,
+    aes(
+      x = tid,
+      y = value,
+      linetype = variable,
+      shape = variable,
+      color = variable
+    )
+  ) +
+  geom_point() +
+  geom_line() +
+  geom_line(
+    stat = "smooth",
+    method = "loess",
+    se = FALSE,
+    span = .25,
+    alpha = 0.75
+  ) +
+  labs(x = "Time occasion",
+       y = "Component score",
+       linetype = "Component",
+       shape = "Component",
+       color = "Component") +
+  theme_Publication()
 
 ```
 
+## Visualization: Person Components
+
+We visualize how well the first two person components separate the participants. We focus on the first two components because they capture the most variance, while retaining easy two dimensional visualization options. We additionally color the participants using k means clustering to further showcase the separation.
+
+```{r 3mpcaMainCompVizPerson}
+# # Unsure how this should be interpreted 
+# jointplotgen(
+#   K = t3MainRot$K,
+#   A = t3MainRot$A,
+#   B = t3MainRot$B,
+#   C = t3MainRot$C,
+#   fixmode = 1,
+#   fixunit = 3,
+#   laba = paste("PP", 1:nrow(dtMainImpWideCZ), sep = "_"),
+#   labb = names(dtPcaS123Imp)[!names(dtPcaS123Imp) %in% idVars],
+#   labc = paste("T", 1:length(unique(dtPcaS123Imp$TIDnum)), sep = "")
+# )
+
+library(factoextra)
+fviz_nbclust(t3MainRot$A[,1:2], kmeans, method = "wss")
+clusterdata <- t3MainRot$A[,1:2]
+km.res <- kmeans(clusterdata, 3, nstart = 25)
+fviz_cluster(object = km.res, # kmeans object
+             data = clusterdata, # data used for clustering
+             ellipse.type = "norm",
+             geom = "point",
+             palette = "jco",
+             main = "",
+             xlab = "Person Component 1",
+             ylab = "Person Component 2",
+             ggtheme = theme_Publication())
+```
+
+
+## Visualization: Variable Components
+
+To visualize how the principle components separate the different variables, we draw the component scores for all variables.
+
+```{r 3mpcaMainCompVizVariable}
+t3MainRot$B %>%
+  as.data.frame %>%
+  rename_all(funs(str_replace_all(., "V", "Component_"))) %>%
+  mutate(var = names(dtPcaS123Imp)[!names(dtPcaS123Imp) %in% idVars]) %>%
+  melt(., id.vars = "var") %>%
+  ggplot(
+    .,
+    aes(
+      x = var,
+      y = value,
+      group = variable,
+      linetype = variable,
+      shape = variable,
+      color = variable
+    )
+  ) +
+  geom_point() +
+  geom_line() +
+  coord_flip() +
+  labs(x = "Variable",
+       y = "Component score",
+       linetype = "Component",
+       shape = "Component",
+       color = "Component") +
+  theme_Publication()
+```
+
+<div class="alert alert-warning alert-dismissible fade in" role="alert">
+  <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+  <i class="fas fa-exclamation-triangle"></i> <b>Note: </b><br/>
+  How do we best interpret and visualize the joint decomposition? 
+</div>
 
 # **Software Information**
 
