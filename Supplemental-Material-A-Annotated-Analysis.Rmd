@@ -2201,89 +2201,89 @@ varNamMiMainNoms <- varNames %>%
 ##               EXPORT FOR STM MACHINE LEARNING               ##
 #################################################################
 # bannerCommenter::banner("EXPORT FOR STM MACHINE LEARNING", centre = TRUE, bandChar = "#")
-varNamPosAdd <- c("relatedness", "autonomy", "competence")
-
-dtAllStm <- rbind(
-  dtS1$full %>% select(KeyNeed, DaytimeNeed, any_of(varNamS123MiRed), any_of(varNamPosAdd)) %>% mutate(study = "S1") %>%
-    mutate(across(!TID & !study & !KeyNeed & !DaytimeNeed, as.numeric)),
-  dtS2$full %>% select(KeyNeed, DaytimeNeed, any_of(varNamS123MiRed), any_of(varNamPosAdd)) %>% mutate(study = "S2"),
-  dtS3$full %>% select(KeyNeed, DaytimeNeed, any_of(varNamS123MiRed), any_of(varNamPosAdd)) %>% mutate(study = "S3")
-) %>%
-  group_by(study, PID) %>%
-  mutate(ID = cur_group_id()) %>%
-  ungroup %>%
-  mutate(
-    date = as.Date(gsub(" .*", "", TID)),
-    week = strftime(date, format = "%Y-W%V")
-  ) %>%
-  select(ID,
-         PID,
-         study,
-         TID,
-         TIDnum,
-         date,
-         week,
-         IntergroupContact,
-         IngroupContact,
-         everything(),
-         -starts_with("ResponseId")) %>%
-  as.data.frame
-
-dtAllStm2 <- dtAllStm
-
-dtAllStm2$IntGrAnx.pre_calc <-
-  psych::scoreItems(
-    keys = c(rep(1,6),rep(-1,6)),
-    items = dtAllStm2 %>% select(matches("^IntGrAnx[0-9]{2}.?\\.pre")),
-    min = 1,
-    max = 10
-  )$scores %>%
-  as.numeric
-
-dtAllStm2$IntGrAnx.post_calc <-
-  psych::scoreItems(
-    keys = c(rep(1,6),rep(-1,6)),
-    items = dtAllStm2 %>% select(matches("^IntGrAnx[0-9]{2}.?\\.post")),
-    min = 1,
-    max = 10
-  )$scores %>%
-  as.numeric
-
-dtAllStm2$swl.pre_calc <-
-  psych::scoreItems(
-    keys = rep(1,5),
-    items = dtAllStm2 %>% select(matches("^SWL[0-9]{2}\\.pre")),
-    min = 1,
-    max = 7,
-    missing = TRUE,
-    impute = "none",
-  )$scores %>%
-  as.numeric
-
-dtAllStm2$discrimination.post_calc <-
-  psych::scoreItems(
-    keys = rep(1,9),
-    items = dtAllStm2 %>% select(matches("^EvDayDiscr[0-9]{2}\\.post")),
-    min = 1,
-    max = 6,
-    missing = TRUE,
-    impute = "none",
-  )$scores %>%
-  as.numeric
-
-dtAllStm3 <- dtAllStm2 %>%
-  select(
-    -matches("^IntGrAnx[0-9]{2}.?\\.pre"),
-    -matches("^IntGrAnx[0-9]{2}.?\\.post"),
-    -matches("^SWL[0-9]{2}\\.pre"),
-    -matches("^EvDayDiscr[0-9]{2}\\.post"),
-    -relatednessSelf,
-    -relatednessOther,
-    -relatednessNoInteraction
-  )
-
-write.csv2(dtAllStm3,
-           file = "data/keyMotivesSTM.csv")
+# varNamPosAdd <- c("relatedness", "autonomy", "competence")
+# 
+# dtAllStm <- rbind(
+#   dtS1$full %>% select(KeyNeed, DaytimeNeed, any_of(varNamS123MiRed), any_of(varNamPosAdd)) %>% mutate(study = "S1") %>%
+#     mutate(across(!TID & !study & !KeyNeed & !DaytimeNeed, as.numeric)),
+#   dtS2$full %>% select(KeyNeed, DaytimeNeed, any_of(varNamS123MiRed), any_of(varNamPosAdd)) %>% mutate(study = "S2"),
+#   dtS3$full %>% select(KeyNeed, DaytimeNeed, any_of(varNamS123MiRed), any_of(varNamPosAdd)) %>% mutate(study = "S3")
+# ) %>%
+#   group_by(study, PID) %>%
+#   mutate(ID = cur_group_id()) %>%
+#   ungroup %>%
+#   mutate(
+#     date = as.Date(gsub(" .*", "", TID)),
+#     week = strftime(date, format = "%Y-W%V")
+#   ) %>%
+#   select(ID,
+#          PID,
+#          study,
+#          TID,
+#          TIDnum,
+#          date,
+#          week,
+#          IntergroupContact,
+#          IngroupContact,
+#          everything(),
+#          -starts_with("ResponseId")) %>%
+#   as.data.frame
+# 
+# dtAllStm2 <- dtAllStm
+# 
+# dtAllStm2$IntGrAnx.pre_calc <-
+#   psych::scoreItems(
+#     keys = c(rep(1,6),rep(-1,6)),
+#     items = dtAllStm2 %>% select(matches("^IntGrAnx[0-9]{2}.?\\.pre")),
+#     min = 1,
+#     max = 10
+#   )$scores %>%
+#   as.numeric
+# 
+# dtAllStm2$IntGrAnx.post_calc <-
+#   psych::scoreItems(
+#     keys = c(rep(1,6),rep(-1,6)),
+#     items = dtAllStm2 %>% select(matches("^IntGrAnx[0-9]{2}.?\\.post")),
+#     min = 1,
+#     max = 10
+#   )$scores %>%
+#   as.numeric
+# 
+# dtAllStm2$swl.pre_calc <-
+#   psych::scoreItems(
+#     keys = rep(1,5),
+#     items = dtAllStm2 %>% select(matches("^SWL[0-9]{2}\\.pre")),
+#     min = 1,
+#     max = 7,
+#     missing = TRUE,
+#     impute = "none",
+#   )$scores %>%
+#   as.numeric
+# 
+# dtAllStm2$discrimination.post_calc <-
+#   psych::scoreItems(
+#     keys = rep(1,9),
+#     items = dtAllStm2 %>% select(matches("^EvDayDiscr[0-9]{2}\\.post")),
+#     min = 1,
+#     max = 6,
+#     missing = TRUE,
+#     impute = "none",
+#   )$scores %>%
+#   as.numeric
+# 
+# dtAllStm3 <- dtAllStm2 %>%
+#   select(
+#     -matches("^IntGrAnx[0-9]{2}.?\\.pre"),
+#     -matches("^IntGrAnx[0-9]{2}.?\\.post"),
+#     -matches("^SWL[0-9]{2}\\.pre"),
+#     -matches("^EvDayDiscr[0-9]{2}\\.post"),
+#     -relatednessSelf,
+#     -relatednessOther,
+#     -relatednessNoInteraction
+#   )
+# 
+# write.csv2(dtAllStm3,
+#            file = "data/keyMotivesSTM.csv")
 #################################################################
 
 
@@ -3705,68 +3705,161 @@ plotStat(
 
 # **Three-Mode PCA**
 
+1.  Center across participants (within time point and variable).\
+2.  Normalize across time points and participants (within variable).\
+3.  Select number of components for each mode (i.e., mode complexity; using Convex Hull procedure heuristic based on total number of components and scree test value taken from a PCA-SUP analysis [where, PCASUP analyses are PCA's of supermatrices with slices of the 3way array next to each other, thus 3 supermatrices are analyed by PCA, and for each we get a component matrix, and eigenvalues. The eigenvalues may give an indication as to the required number of components for each mode.]).
+4.  Run 3MPCA
+5.  Test
+
 ```{r 3mpcaMain}
 #library("ThreeWay")
-
-nrow(dtMainImpWide)
-length(names(dtPcaS123Imp)[!names(dtPcaS123Imp) %in% idVars])
-length(unique(dtPcaS123Imp$TIDnum))
-
-t3MainFull <- ThreeWay::T3(
-  dtMainImpWide, 
-  paste("PP", 1:nrow(dtMainImpWide), sep = "_"), 
-  names(dtPcaS123Imp)[!names(dtPcaS123Imp) %in% idVars], 
-  paste("T", 1:length(unique(dtPcaS123Imp$TIDnum)), sep = "")
-)
-
-
-t3Main <- ThreeWay::T3func(
-  X = dtMainImpWide,
-  n = nrow(dtMainImpWide), # Nr. ppt.s (A)
-  m = length(names(dtPcaS123Imp)[!names(dtPcaS123Imp) %in% idVars]), # Nr. variables (B)
-  p = length(unique(dtPcaS123Imp$TIDnum)), # Nr. time points (C)
-  r1 = 3,
-  r2 = 3,
-  r3 = 2,
-  start = 0,
-  conv = 1e-6
-)
-
-FitT3Main <- T3fitpartitioning(
-  Xprep = dtMainImpWide,
-  n = nrow(dtMainImpWide), # Nr. ppt.s (A)
-  m = length(names(dtPcaS123Imp)[!names(dtPcaS123Imp) %in% idVars]), # Nr. variables (B)
-  p = length(unique(dtPcaS123Imp$TIDnum)), # Nr. time points (C)
-  AS = t3Main$A, 
-  BT = t3Main$B, 
-  CU = t3Main$C, 
-  K = t3Main$H, 
-  renormmode = 0,
-  laba = paste("PP", 1:nrow(dtMainImpWide), sep = "_"), 
-  labb = names(dtPcaS123Imp)[!names(dtPcaS123Imp) %in% idVars], 
-  labc = paste("T", 1:length(unique(dtPcaS123Imp$TIDnum)), sep = "")
-)
 
 capture.output(
   threeWayAnoBiDailyImp <- threewayanova(
     Y = dtMainImpWide,
     n = nrow(dtMainImpWide), # Nr. ppt.s (A)
-    m = length(names(dtPcaS123Imp)[!names(dtPcaS123Imp) %in% idVars]), # Nr. variables (B)
-    p = length(unique(dtPcaS123Imp$TIDnum)) # Nr. time points (C)
+    m = length(unique(sub("T[0-9]{2}_", "", names(dtMainImpWide)))), # Nr. variables (B)
+    p = length(unique(sub("_.*", "", names(dtMainImpWide)))) # Nr. time points (C)
   ), 
 file='NUL')
 
-rrcov3way::Tucker3(
+nrow(dtMainImpWide)
+length(names(dtPcaS123Imp)[!names(dtPcaS123Imp) %in% idVars])
+length(unique(dtPcaS123Imp$TIDnum))
+
+# t3MainFull <- ThreeWay::T3(
+#   dtMainImpWide,
+#   paste("PP", 1:nrow(dtMainImpWide), sep = "_"),
+#   names(dtPcaS123Imp)[!names(dtPcaS123Imp) %in% idVars],
+#   paste("T", 1:length(unique(dtPcaS123Imp$TIDnum)), sep = "")
+# )
+
+dtMainImpWideC <- ThreeWay::cent3(
   X = dtMainImpWide, 
-  P = nrow(dtMainImpWide), # Nr. ppt.s (A)
-  Q = length(names(dtPcaS123Imp)[!names(dtPcaS123Imp) %in% idVars]), # Nr. variables (B)
-  R = length(unique(dtPcaS123Imp$TIDnum)), # Nr. time points (C)
-  center = FALSE, #center.mode = c("A", "B", "C", "AB", "AC", "BC", "ABC"), 
-  scale = FALSE, #scale.mode = c("B", "A", "C"), 
-  conv = 1e-06, start="svd",
-  robust = FALSE, coda.transform=c("none", "ilr", "clr"), 
-  ncomp.rpca = 0, alpha = 0.75, robiter=100, crit=0.975, trace = FALSE
+  n = nrow(dtMainImpWide), # Nr. ppt.s (A)
+  m = length(unique(sub("T[0-9]{2}_", "", names(dtMainImpWide)))), # Nr. variables (B)
+  p = length(unique(sub("_.*", "", names(dtMainImpWide)))), # Nr. time points (C)
+  mode = 1
+) %>%
+  as.data.frame
+#apply(dtMainImpWideC,2,sum)
+
+dtMainImpWideCZ <- ThreeWay::norm3(
+  X = dtMainImpWideC, 
+  n = nrow(dtMainImpWideC), # Nr. ppt.s (A)
+  m = length(unique(sub("T[0-9]{2}_", "", names(dtMainImpWideC)))), # Nr. variables (B)
+  p = length(unique(sub("_.*", "", names(dtMainImpWideC)))), # Nr. time points (C)
+  mode = 2
+) %>%
+  as.data.frame
+names(dtMainImpWideCZ) <- names(dtMainImpWideC)
+#apply(dtMainImpWideC,2,sum)
+# dtMainImpWideCZ %>%
+#   select(ends_with("_AttitudesDutch")) %>%
+#   unlist %>%
+#   sd
+# psych::describe(dtMainImpWideCZ)
+
+MainPcaSup <- ThreeWay::T3runsApproxFit(
+  X = dtMainImpWideCZ, 
+  n = nrow(dtMainImpWideCZ), # Nr. ppt.s (A)
+  m = length(unique(sub("T[0-9]{2}_", "", names(dtMainImpWideCZ)))), # Nr. variables (B)
+  p = length(unique(sub("_.*", "", names(dtMainImpWideCZ)))), # Nr. time points (C)
+  maxa = 20,
+  maxb = 20,
+  maxc = 20
 )
+MainDimSelector <- capture.output(
+  ThreeWay::DimSelector(
+    out = MainPcaSup,
+    n = nrow(dtMainImpWideCZ), # Nr. ppt.s (A)
+    m = length(unique(sub("T[0-9]{2}_", "", names(dtMainImpWideCZ)))), # Nr. variables (B)
+    p = length(unique(sub("_.*", "", names(dtMainImpWideCZ)))), # Nr. time points (C)
+    model = 2
+  )
+)
+
+MainDim <- tail(MainDimSelector, n = 1) %>%
+  str_extract("\\(.*\\)") %>%
+  stringr::str_extract_all('\\d+',simplify=TRUE) %>%
+  as.data.frame %>% 
+  mutate_all(as.numeric) %>%
+  dplyr::rename(c(
+    A = V1,
+    B = V2,
+    C = V3
+  ))
+MainDim
+
+t3Main <- ThreeWay::T3func(
+  X = dtMainImpWideCZ,
+  n = nrow(dtMainImpWideCZ), # Nr. ppt.s (A)
+  m = length(unique(sub("T[0-9]{2}_", "", names(dtMainImpWideCZ)))), # Nr. variables (B)
+  p = length(unique(sub("_.*", "", names(dtMainImpWideCZ)))), # Nr. time points (C)
+  r1 = MainDim$A,
+  r2 = MainDim$B,
+  r3 = MainDim$C,
+  start = 0,
+  conv = 1e-6
+)
+
+FitT3Main <- T3fitpartitioning(
+  Xprep = dtMainImpWideCZ,
+  n = nrow(dtMainImpWideCZ), # Nr. ppt.s (A)
+  m = length(unique(sub("T[0-9]{2}_", "", names(dtMainImpWideCZ)))), # Nr. variables (B)
+  p = length(unique(sub("_.*", "", names(dtMainImpWideCZ)))), # Nr. time points (C)
+  AS = t3Main$A, 
+  BT = t3Main$B, 
+  CU = t3Main$C, 
+  K = t3Main$H, 
+  renormmode = 0,
+  laba = paste("PP", 1:nrow(dtMainImpWideCZ), sep = "_"), 
+  labb = names(dtPcaS123Imp)[!names(dtPcaS123Imp) %in% idVars], 
+  labc = paste("T", 1:length(unique(dtPcaS123Imp$TIDnum)), sep = "")
+)
+
+
+t3MainRot <- varimcoco(
+  A = t3Main$A, 
+  B = t3Main$B, 
+  C = t3Main$C, 
+  H = t3Main$H,
+  wa_rel = 0,
+  wb_rel = 0,
+  wc_rel = 0
+)
+
+
+plot(t3MainRot$C[, 1], type = "n", ylim = range(t3MainRot$C), xlab = "Time occasion", ylab = "Component score")
+points(t3MainRot$C[, 1], pch = 16)
+lines(t3MainRot$C[, 1])
+points(t3MainRot$C[, 2], pch = 17)
+lines(t3MainRot$C[, 2])
+legend("topleft", legend = c("C1", "C2"), pch = c(16, 17), bty = "n")
+
+
+
+
+# library(factoextra)
+# fviz_nbclust(t3MainRot$A[,1:2], kmeans, method = "wss")
+# clusterdata <- t3MainRot$A[,1:2]
+# km.res <- kmeans(clusterdata, 6, nstart = 25)
+# fviz_cluster(object = km.res, # kmeans object 
+#              data = clusterdata, # data used for clustering
+#              ellipse.type = "norm",
+#              geom = "point",
+#              palette = "jco",
+#              main = "",
+#              xlab = "PC1",
+#              ylab = "PC2",
+#              ggtheme = theme_minimal())
+
+
+# lares::corr_cross(
+#   dtMainImpWideCZ, # name of dataset
+#   max_pvalue = 0.05, # display only significant correlations (at 5% level)
+#   top = 50 # display top 50 couples of variables (by correlation coefficient)
+# )
 
 ```
 
