@@ -4106,7 +4106,7 @@ t3MainRot$B %>%
 
 # **Software Information**
 
-The full ResponseId information with all relevant system information and all loaded and installed packages is available in the collapsible section below.
+The full session information with all relevant system information and all loaded and installed packages is available in the collapsible section below.
 
 <details>
 
