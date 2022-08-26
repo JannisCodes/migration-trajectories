@@ -2557,8 +2557,6 @@ load("data/imputed/S1ImputedStability.RData")
 
 #### Study 2
 
-To be done once initial tests approved.
-
 ```{r MiS2Prep}
 #################################################################
 ##                    Variable Name Vectors                    ##
@@ -2612,63 +2610,65 @@ dtMiS2 <-
          date,
          week,
          everything()) %>%
-  select_if(function(x) is.character(x) | (is.numeric(x) && sd(x) > 0)) %>%
-         #which(sapply(. %>% select(where(is.numeric)), sd, na.rm = TRUE) > 0)) %>% # only vars that sd != 0
-         #) %>% # only include variables that vary (i.e., sd != 0)
-         #which(sd(., na.rm = TRUE) > 0)) %>% # only include variables that vary (i.e., sd != 0)
-  as.data.frame 
-
-
+  select_if(function(x) is.character(x) | is.factor(x) | (is.numeric(x) && sd(x, na.rm = TRUE) > 0)) %>%
+  as.data.frame
 
 varNamDifS2 <- names(dtMiS2)[gsub(".pre|.post|_calc", "", names(dtMiS2)) %>% allDuplicated]
 
 # # Variables removed for study 2 due to high multicollinearity:
-# varNamS1Out <- dtMiS1 %>%
-#   select(
-#     any_of(varNamDifS1),
-#     mdmq.calmness.pre_calc,
-#     mdmq.alertness.pre_calc,
-#     mdmq.valence.pre_calc,
-#     relatednessFrust.pre_calc,
-#     competenceFrust.pre_calc,
-#     competenceSat.pre_calc,
-#     relatednessSat.pre_calc,
-#     DutchFriends.pre,
-#     secNatDum.pre,
-#     timeNL.pre,
-#     stress.post,
-#     discrimination_month.post,
-#     rosenberg.post,
-#     qualityStar,
-#     starts_with("SSAS")
-#   ) %>%
-#   names
+varNamS2Out <- dtMiS2 %>%
+  select(
+    any_of(varNamDifS2),
+    ContactDesire,
+    DesireIntergroup,
+    DesireIngroup,
+    Reason.pre,
+    # mdmq.calmness.pre_calc,
+    # mdmq.alertness.pre_calc,
+    # mdmq.valence.pre_calc,
+    # relatednessFrust.pre_calc,
+    # competenceFrust.pre_calc,
+    # competenceSat.pre_calc,
+    # relatednessSat.pre_calc,
+    # DutchFriends.pre,
+    # secNatDum.pre,
+    timeNL.pre,
+    starts_with("HS"),
+    starts_with("Home")
+    # stress.post,
+    # discrimination_month.post,
+    # rosenberg.post,
+    # qualityStar,
+    # starts_with("SSAS")
+  ) %>%
+  names
 
-# dtMiS2Fin <- dtMiS2 %>%
-#   # mutate(
-#   #   assimilation.dif = assimilation.post - assimilation.pre,
-#   #   integration.dif = integration.post - integration.pre,
-#   #   marginalization.dif = marginalization.post - marginalization.pre,
-#   #   separation.dif = separation.post - separation.pre,
-#   #   VIA_Dutch.dif = VIA_Dutch.post - VIA_Dutch.post,
-#   #   VIA_heritage.dif = VIA_heritage.post - VIA_heritage.pre,
-#   #   IntGrAnx.dif = IntGrAnx.post_calc - IntGrAnx.pre_calc,
-#   #   swl.dif = swl.post_calc - swl.pre_calc
-#   # ) %>% 
-#   # select(
-#   #   -any_of(varNamS2Out)
-#   # ) %>%
-#   select(PID,
-#          TID,
-#          TIDnum,
-#          date,
-#          week,
-#          which(sapply(., sd, na.rm = TRUE) > 0)) %>% 
-#   mutate_all(~ifelse(is.nan(.), NA, .)) %>%
-#   as.data.frame
+dtMiS2Fin <- dtMiS2 %>%
+  # mutate(
+  #   assimilation.dif = assimilation.post - assimilation.pre,
+  #   integration.dif = integration.post - integration.pre,
+  #   marginalization.dif = marginalization.post - marginalization.pre,
+  #   separation.dif = separation.post - separation.pre,
+  #   VIA_Dutch.dif = VIA_Dutch.post - VIA_Dutch.post,
+  #   VIA_heritage.dif = VIA_heritage.post - VIA_heritage.pre,
+  #   IntGrAnx.dif = IntGrAnx.post_calc - IntGrAnx.pre_calc,
+  #   swl.dif = swl.post_calc - swl.pre_calc
+  # ) %>%
+  select(
+    -any_of(varNamS2Out)
+  ) %>%
+  select(PID,
+         TID,
+         TIDnum,
+         date,
+         week,
+         everything()) %>%
+         #which(sapply(., sd, na.rm = TRUE) > 0)) %>%
+  mutate_all(~ifelse(is.nan(.), NA, .)) %>%
+  as.data.frame
 
 # lares::corr_cross(
-#   dtMiS2 %>% select_if(is.numeric), # name of dataset
+#   dtMiS2Fin %>% select_if(is.numeric), # name of dataset
 #   max_pvalue = 0.05, # display only significant correlations (at 5% level)
 #   top = 20 # display top 20 couples of variables (by correlation coefficient)
 # )
@@ -2681,7 +2681,7 @@ varNamDifS2 <- names(dtMiS2)[gsub(".pre|.post|_calc", "", names(dtMiS2)) %>% all
 # set.seed(123)
 # MiS2 <-
 #   amelia(
-#     dtMiS2,
+#     dtMiS2Fin,
 #     m = 1, # 20
 #     ts = "TIDnum",
 #     cs = "PID",
@@ -2690,9 +2690,9 @@ varNamDifS2 <- names(dtMiS2)[gsub(".pre|.post|_calc", "", names(dtMiS2)) %>% all
 #     # lags = names(dtMiS1)[names(dtMiS1) %in% varNamS1MiPsbl], # alternative?
 #     # leads = ...,
 #     # noms = names(dtMiS1)[grepl(paste(varNamdtS1Noms, collapse = "|^"), names(dtMiS1))],
-#     # parallel = "multicore",
-#     # ncpus = parallel::detectCores(),
-#     p2s = 1
+#     parallel = "multicore",
+#     ncpus = parallel::detectCores(),
+#     p2s = 2
 #   )
 # save(MiS2, file = "data/imputed/S2Imputed.RData")
 #load("data/imputed/S2Imputed.RData")
@@ -2710,8 +2710,8 @@ varNamDifS2 <- names(dtMiS2)[gsub(".pre|.post|_calc", "", names(dtMiS2)) %>% all
 #     # lags = names(dtMiS1)[names(dtMiS1) %in% varNamS1MiPsbl], # alternative?
 #     # leads = ...,
 #     # noms = names(dtMiS1)[grepl(paste(varNamdtS1Noms, collapse = "|^"), names(dtMiS1))],
-#     # parallel = "multicore",
-#     # ncpus = parallel::detectCores(),
+#     parallel = "multicore",
+#     ncpus = parallel::detectCores(),
 #     p2s = 1
 #   )
 # save(MiS2Stability, file = "data/imputed/S2ImputedStability.RData")
@@ -2720,10 +2720,164 @@ varNamDifS2 <- names(dtMiS2)[gsub(".pre|.post|_calc", "", names(dtMiS2)) %>% all
 
 #### Study 3
 
-To be done once initial tests approved.
+```{r MiS3Prep}
+#################################################################
+##                    Variable Name Vectors                    ##
+#################################################################
+varNamS3MiPsbl <- c(
+  paste(varNamS3MI, rep(".pre", length(varNamS3MI)), sep = ""),
+  varNamS3MI,
+  paste(varNamS3MI, rep(".post", length(varNamS3MI)), sep = "")
+)
+
+varNamdtS3Noms <- varNames %>%
+  filter(
+    aux == 1,
+    format == "nominal",
+    studyS3 == "S2"
+  ) %>%
+  select(varNam) %>%
+  pull
+
+#################################################################
+##                    Dataframe Preparation                    ##
+#################################################################
+dtMiS3 <- 
+  dtS3Red %>% 
+  select(TID, any_of(varNamS3MiPsbl)) %>% 
+  mutate(across(!TID, as.numeric)) %>%
+  mutate(
+    date = as.Date(gsub(" .*", "", TID)),
+    week = strftime(date, format = "%Y-W%V")
+  ) %>%
+  select(PID,
+         date,
+         week,
+         everything(),
+         -starts_with("ResponseId")) %>%
+  as.data.frame %>% 
+  select_if(~ sum(!is.na(.)) > 1) %>% # only include variables that have any data (i.e., not all NA)
+  complete(., PID, TIDnum) %>% # add na if id and TID combination is missing
+  group_by(PID) %>%
+  mutate(across(ends_with(c(".pre", ".post")),  ~ replace_na(.x, mean(.x, na.rm = TRUE)))) %>%
+  ungroup %>% 
+  group_by(TIDnum) %>%
+  mutate(across(c("date", "week", "TID"),  ~ replace_na(.x, calc_mode(.x)))) %>%
+  ungroup %>% 
+  mutate(across(ends_with(c(".pre", ".post")), ~ ifelse(is.nan(.), NA, .))) %>% 
+  as.data.frame %>%
+  mutate(date = as.character(date)) %>%
+  select(PID,
+         TID,
+         TIDnum,
+         date,
+         week,
+         everything()) %>%
+  select_if(function(x) is.character(x) | is.factor(x) | (is.numeric(x) && sd(x, na.rm = TRUE) > 0)) %>%
+  as.data.frame
+
+varNamDifS3 <- names(dtMiS3)[gsub(".pre|.post|_calc", "", names(dtMiS3)) %>% allDuplicated]
+
+# # Variables removed for study 2 due to high multicollinearity:
+varNamS3Out <- dtMiS3 %>%
+  select(
+    any_of(varNamDifS3),
+    # ContactDesire,
+    # DesireIntergroup,
+    # DesireIngroup,
+    # Reason.pre,
+    # mdmq.calmness.pre_calc,
+    # mdmq.alertness.pre_calc,
+    # mdmq.valence.pre_calc,
+    # relatednessFrust.pre_calc,
+    # competenceFrust.pre_calc,
+    # competenceSat.pre_calc,
+    # relatednessSat.pre_calc,
+    # DutchFriends.pre,
+    # secNatDum.pre,
+    # timeNL.pre,
+    # starts_with("HS"),
+    # starts_with("Home")
+    # stress.post,
+    # discrimination_month.post,
+    # rosenberg.post,
+    # qualityStar,
+    # starts_with("SSAS")
+  ) %>%
+  names
+
+dtMiS3Fin <- dtMiS3 %>%
+  # mutate(
+  #   assimilation.dif = assimilation.post - assimilation.pre,
+  #   integration.dif = integration.post - integration.pre,
+  #   marginalization.dif = marginalization.post - marginalization.pre,
+  #   separation.dif = separation.post - separation.pre,
+  #   VIA_Dutch.dif = VIA_Dutch.post - VIA_Dutch.post,
+  #   VIA_heritage.dif = VIA_heritage.post - VIA_heritage.pre,
+  #   IntGrAnx.dif = IntGrAnx.post_calc - IntGrAnx.pre_calc,
+  #   swl.dif = swl.post_calc - swl.pre_calc
+  # ) %>%
+  select(
+    -any_of(varNamS3Out)
+  ) %>%
+  select(PID,
+         TID,
+         TIDnum,
+         date,
+         week,
+         everything()) %>%
+  mutate_all(~ifelse(is.nan(.), NA, .)) %>%
+  as.data.frame
+
+lares::corr_cross(
+  dtMiS3Fin %>% select_if(is.numeric), # name of dataset
+  max_pvalue = 0.05, # display only significant correlations (at 5% level)
+  top = 20 # display top 20 couples of variables (by correlation coefficient)
+)
+```
 
 ```{r MiS3}
-# BASED ON MiS1
+#################################################################
+##                     Imputation Bi-daily                     ##
+#################################################################
+# set.seed(123)
+# MiS3 <-
+#   amelia(
+#     dtMiS3Fin,
+#     m = 1, # 20
+#     ts = "TIDnum",
+#     cs = "PID",
+#     idvars = c("TID", "date", "week", "IntergroupContact", "IngroupContact"),
+#     # lags = names(dtMiS1)[!names(dtMiS1) %in% idVars],
+#     # lags = names(dtMiS1)[names(dtMiS1) %in% varNamS1MiPsbl], # alternative?
+#     # leads = ...,
+#     # noms = names(dtMiS1)[grepl(paste(varNamdtS1Noms, collapse = "|^"), names(dtMiS1))],
+#     parallel = "multicore",
+#     ncpus = parallel::detectCores(),
+#     p2s = 2
+#   )
+# save(MiS3, file = "data/imputed/S3Imputed.RData")
+#load("data/imputed/S2Imputed.RData")
+
+# Imputation Stability:
+# set.seed(123)
+# MiS3Stability <-
+#   amelia(
+#     dtMiS3Fin,
+#     m = 20,
+#     ts = "TIDnum",
+#     cs = "PID",
+#     idvars = c("TID", "date", "week", "IntergroupContact", "IngroupContact"),
+#     # lags = names(dtMiS1)[!names(dtMiS1) %in% idVars],
+#     # lags = names(dtMiS1)[names(dtMiS1) %in% varNamS1MiPsbl], # alternative?
+#     # leads = ...,
+#     # noms = names(dtMiS1)[grepl(paste(varNamdtS1Noms, collapse = "|^"), names(dtMiS1))],
+#     parallel = "multicore",
+#     ncpus = parallel::detectCores(),
+#     p2s = 1
+#   )
+# save(MiS3Stability, file = "data/imputed/S3ImputedStability.RData")
+#load("data/imputed/S2ImputedStability.RData")
 ```
 
 
