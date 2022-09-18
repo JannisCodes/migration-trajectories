@@ -51,6 +51,8 @@ header-includes:
 }
 </style>
 ```
+
+
 ```{r setup, include=FALSE}
 # R Studio Clean-Up
 cat("\014") # clear console
@@ -2198,96 +2200,6 @@ varNamMiMainNoms <- varNames %>%
   pull
 
 #################################################################
-##               EXPORT FOR STM MACHINE LEARNING               ##
-#################################################################
-# bannerCommenter::banner("EXPORT FOR STM MACHINE LEARNING", centre = TRUE, bandChar = "#")
-# varNamPosAdd <- c("relatedness", "autonomy", "competence")
-# 
-# dtAllStm <- rbind(
-#   dtS1$full %>% select(KeyNeed, DaytimeNeed, any_of(varNamS123MiRed), any_of(varNamPosAdd)) %>% mutate(study = "S1") %>%
-#     mutate(across(!TID & !study & !KeyNeed & !DaytimeNeed, as.numeric)),
-#   dtS2$full %>% select(KeyNeed, DaytimeNeed, any_of(varNamS123MiRed), any_of(varNamPosAdd)) %>% mutate(study = "S2"),
-#   dtS3$full %>% select(KeyNeed, DaytimeNeed, any_of(varNamS123MiRed), any_of(varNamPosAdd)) %>% mutate(study = "S3")
-# ) %>%
-#   group_by(study, PID) %>%
-#   mutate(ID = cur_group_id()) %>%
-#   ungroup %>%
-#   mutate(
-#     date = as.Date(gsub(" .*", "", TID)),
-#     week = strftime(date, format = "%Y-W%V")
-#   ) %>%
-#   select(ID,
-#          PID,
-#          study,
-#          TID,
-#          TIDnum,
-#          date,
-#          week,
-#          IntergroupContact,
-#          IngroupContact,
-#          everything(),
-#          -starts_with("ResponseId")) %>%
-#   as.data.frame
-# 
-# dtAllStm2 <- dtAllStm
-# 
-# dtAllStm2$IntGrAnx.pre_calc <-
-#   psych::scoreItems(
-#     keys = c(rep(1,6),rep(-1,6)),
-#     items = dtAllStm2 %>% select(matches("^IntGrAnx[0-9]{2}.?\\.pre")),
-#     min = 1,
-#     max = 10
-#   )$scores %>%
-#   as.numeric
-# 
-# dtAllStm2$IntGrAnx.post_calc <-
-#   psych::scoreItems(
-#     keys = c(rep(1,6),rep(-1,6)),
-#     items = dtAllStm2 %>% select(matches("^IntGrAnx[0-9]{2}.?\\.post")),
-#     min = 1,
-#     max = 10
-#   )$scores %>%
-#   as.numeric
-# 
-# dtAllStm2$swl.pre_calc <-
-#   psych::scoreItems(
-#     keys = rep(1,5),
-#     items = dtAllStm2 %>% select(matches("^SWL[0-9]{2}\\.pre")),
-#     min = 1,
-#     max = 7,
-#     missing = TRUE,
-#     impute = "none",
-#   )$scores %>%
-#   as.numeric
-# 
-# dtAllStm2$discrimination.post_calc <-
-#   psych::scoreItems(
-#     keys = rep(1,9),
-#     items = dtAllStm2 %>% select(matches("^EvDayDiscr[0-9]{2}\\.post")),
-#     min = 1,
-#     max = 6,
-#     missing = TRUE,
-#     impute = "none",
-#   )$scores %>%
-#   as.numeric
-# 
-# dtAllStm3 <- dtAllStm2 %>%
-#   select(
-#     -matches("^IntGrAnx[0-9]{2}.?\\.pre"),
-#     -matches("^IntGrAnx[0-9]{2}.?\\.post"),
-#     -matches("^SWL[0-9]{2}\\.pre"),
-#     -matches("^EvDayDiscr[0-9]{2}\\.post"),
-#     -relatednessSelf,
-#     -relatednessOther,
-#     -relatednessNoInteraction
-#   )
-# 
-# write.csv2(dtAllStm3,
-#            file = "data/keyMotivesSTM.csv")
-#################################################################
-
-
-#################################################################
 ##                    Dataframe Preparation                    ##
 #################################################################
 dtMiMain <- rbind(
@@ -2673,6 +2585,30 @@ dtMiS2Fin <- dtMiS2 %>%
 #   top = 20 # display top 20 couples of variables (by correlation coefficient)
 # )
 ```
+
+```{r s2StlTest}
+# Seasonal Decomposition of Time Series by Loess
+
+dtMiS2 %>% 
+  select(
+    PID,
+    TIDnum,
+    AttitudesDutch
+  ) %>%
+  #filter(PID == 1) %>%
+  #na.exclude(as.ts(.)) %>%
+  as.ts %>%
+  stats::stl(., na.action=na.omit)
+
+testLoess <- loess(AttitudesDutch ~ TIDnum, data = dtMiS2 %>% filter(PID == 1))
+testSpline <- pspline::sm.spline(dtMiS2$AttitudesDutch, dtMiS2$TIDnum)
+testMarkov <- semiMarkov()
+
+stats::stl(dtMiS2Fin)
+
+
+```
+
 
 ```{r MiS2}
 #################################################################
