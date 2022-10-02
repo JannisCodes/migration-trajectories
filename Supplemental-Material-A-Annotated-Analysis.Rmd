@@ -69,6 +69,8 @@ lib <- c(
   "knitr",
   "remedy",
   "bookdown",
+  #"tidyverse",
+  "MASS",
   "brms",
   "psych",
   "ggplot2",
@@ -76,6 +78,7 @@ lib <- c(
   "haven",
   "RColorBrewer",
   "plotly",
+  "grid",
   "gridExtra",
   "ggpattern",
   "lme4",
@@ -97,6 +100,7 @@ lib <- c(
   "stringr",
   "stringi",
   "reshape2",
+  "anytime",
   "lubridate",
   "purrr",
   "metafor",
@@ -105,10 +109,26 @@ lib <- c(
   "reshape",
   "factoextra",
   "Amelia", 
-  "ThreeWay"
+  "ThreeWay",
+  "DescTools",
+  # GAM
+  "gratia",
+  #"MASS",
+  "mgcv",
+  # For moving window models
+  "Kendall",
+  # For the Hamed & Rao correction of tau
+  "modifiedmk", 
+  "mgcViz",
+  "shiny"
 )
 invisible(lapply(lib, library, character.only = TRUE))
 rm(lib)
+
+anytime::addFormats("%d-%m-%Y %H:%M:%S")  ## add format to anytime package (not default)
+anytime::addFormats("%Y-%m-%d %H:%M:%S")
+anytime::addFormats("%d-%m-%Y")  
+#options(rgl.useNULL = TRUE)
 
 # Load Custom Packages
 source("./scripts/functions/fun.panel.R")
@@ -118,6 +138,8 @@ source("./scripts/functions/MlCorMat.R")
 source("./scripts/functions/MlTbl.R")
 source("./scripts/functions/metaLmer.R")
 source("./scripts/functions/meanViz.R")
+source("./scripts/functions/gam.R")
+source("./scripts/functions/tsFeatureExtractor.R")
 
 # Markdown Options
 knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file()) # set working directory
@@ -2589,22 +2611,22 @@ dtMiS2Fin <- dtMiS2 %>%
 ```{r s2StlTest}
 # Seasonal Decomposition of Time Series by Loess
 
-dtMiS2 %>% 
-  select(
-    PID,
-    TIDnum,
-    AttitudesDutch
-  ) %>%
-  #filter(PID == 1) %>%
-  #na.exclude(as.ts(.)) %>%
-  as.ts %>%
-  stats::stl(., na.action=na.omit)
-
-testLoess <- loess(AttitudesDutch ~ TIDnum, data = dtMiS2 %>% filter(PID == 1))
-testSpline <- pspline::sm.spline(dtMiS2$AttitudesDutch, dtMiS2$TIDnum)
-testMarkov <- semiMarkov()
-
-stats::stl(dtMiS2Fin)
+# dtMiS2 %>% 
+#   select(
+#     PID,
+#     TIDnum,
+#     AttitudesDutch
+#   ) %>%
+#   #filter(PID == 1) %>%
+#   #na.exclude(as.ts(.)) %>%
+#   as.ts %>%
+#   stats::stl(., na.action=na.omit)
+# 
+# testLoess <- loess(AttitudesDutch ~ TIDnum, data = dtMiS2 %>% filter(PID == 1))
+# testSpline <- pspline::sm.spline(dtMiS2$AttitudesDutch, dtMiS2$TIDnum)
+# testMarkov <- semiMarkov()
+# 
+# stats::stl(dtMiS2Fin)
 
 
 ```
@@ -3781,6 +3803,574 @@ for (i in 1:length(MiMainWeeklyStability$imputations)) {
     select(-ID)
 }
 ```
+
+
+# **Feature-based Time-Series Clustering**
+
+1. central tendency
+    + mean ✓
+    + median ✓
+2. variation around the central tendency (i.e., density)
+    + SD ✓
+    + MAD ✓
+3. (in)stability
+    + root mean square of successive differences (rmssd) ✓
+    + mean absolute change ✓
+4. inertia
+    + lag-1 autocorrelation ✓
+    + periodicity (lag-2 & lag-14 autocorrelation) ✓
+5. linear trend
+    + OLS regression parameter ✓
+6. non-linear trend
+    + GAM edf ✓
+    
+(!discuss NA procedures!)
+
+## Variable Selection
+
+```{r variable names for all analyses}
+
+# ID Variables (just to re-iterate)
+idVars <- idVars
+
+# Common variables across studies 
+varNamS123 <- varNamS123PCA[!varNamS123PCA %in% idVars]
+
+# Variable Groups
+varNames %>%
+  filter(pca != 0) %>%
+  mutate(contactSpecific = recode(.$contactSpecific, 
+                         `-1`="No Interaction Only",
+                         `0`="unspecific",
+                         `1`="Interaction Only")) %>%
+  crosstable::crosstable(., varGroup, by=contactSpecific) %>%
+  select(-c(.id, label)) %>%
+  kbl(.,
+      escape = FALSE,
+      booktabs = T,
+      align = c("l", "r", "c"),
+      digits=2,
+      caption = "Full Analysis: Variable Groups by Interaction Types") %>%
+  kable_classic(
+    full_width = F,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  )
+
+varNames %>%
+  filter(
+    pca != 0
+  ) %>%
+  mutate(contactSpecific = recode(.$contactSpecific, 
+                         `-1`="No Interaction Only",
+                         `0`="unspecific",
+                         `1`="Interaction Only")) %>%
+  select(varNam, varGroup, contactSpecific) %>%
+  group_by(varGroup, varNam, contactSpecific) %>%
+  summarise(n = n()) %>%
+  pivot_wider(names_from = c("varGroup", "varNam"), values_from = n, names_sep=" - ") %>%
+  ungroup %>%
+  t %>%
+  as.data.frame %>%
+  janitor::row_to_names(1) %>%
+  replace(is.na(.), 0) %>%
+  tibble::rownames_to_column(., var = "variable") %>%
+  separate(variable, c("concept", "variable"), " - ") %>%
+  arrange(concept, unspecific, `Interaction Only`) %>%
+  mutate_all(~recode(.x, `0`="", ` 1`="✓")) %>%
+  kbl(.,
+      escape = FALSE,
+      booktabs = T,
+      align = c("l", "l", rep("c", ncol(.)-2)),
+      digits=2,
+      caption = "All Possible Variables by Interaction Types") %>%
+  kable_classic(
+    full_width = F,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  )
+
+varNames %>%
+  filter(
+    pca != 0,
+    varNam %in% varNamS123PCA
+  ) %>%
+  mutate(contactSpecific = recode(.$contactSpecific, 
+                         `-1`="No Interaction Only",
+                         `0`="unspecific",
+                         `1`="Interaction Only")) %>%
+  select(varNam, varGroup, contactSpecific) %>%
+  group_by(varGroup, varNam, contactSpecific) %>%
+  summarise(n = n()) %>%
+  pivot_wider(names_from = c("varGroup", "varNam"), values_from = n, names_sep=" - ") %>%
+  ungroup %>%
+  t %>%
+  as.data.frame %>%
+  janitor::row_to_names(1) %>%
+  replace(is.na(.), 0) %>%
+  tibble::rownames_to_column(., var = "variable") %>%
+  separate(variable, c("concept", "variable"), " - ") %>%
+  arrange(concept, unspecific, `Interaction Only`) %>%
+  mutate_all(~recode(.x, `0`="", ` 1`="✓")) %>%
+  kbl(.,
+      escape = FALSE,
+      booktabs = T,
+      align = c("l", "l", rep("c", ncol(.)-2)),
+      digits=2,
+      caption = "Full Analysis: Variables by Interaction Types") %>%
+  kable_classic(
+    full_width = F,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  )
+
+# Non-Interaction Specific Variables
+varNamS123NoInt <- varNames %>%
+  filter(
+    varNam %in% varNamS123PCA,
+    contactSpecific == 0
+  ) %>%
+  select(varNam) %>%
+  pull
+
+# Interaction Specific Variables
+varNamS123Int <- varNames %>%
+  filter(
+    varNam %in% varNamS123PCA,
+    contactSpecific == 1
+  ) %>%
+  select(varNam) %>%
+  pull
+
+# S1 variables
+varNamS1Clust <- varNamS1PCA[!varNamS1PCA %in% idVars]
+
+# S1 Non-Interaction Specific Variables
+varNamS1NoInt <- varNames %>%
+  filter(
+    varNam %in% varNamS1Clust,
+    contactSpecific == 0
+  ) %>%
+  select(varNam) %>%
+  pull
+
+# S1 Interaction Specific Variables
+varNamS1Int <- varNames %>%
+  filter(
+    varNam %in% varNamS1Clust,
+    contactSpecific == 1
+  ) %>%
+  select(varNam) %>%
+  pull
+
+
+# S2 variables
+varNamS2Clust <- varNamS2PCA[!varNamS2PCA %in% idVars]
+
+# S2 Non-Interaction Specific Variables
+varNamS2NoInt <- varNames %>%
+  filter(
+    varNam %in% varNamS2Clust,
+    contactSpecific == 0
+  ) %>%
+  select(varNam) %>%
+  pull
+
+# S2 Interaction Specific Variables
+varNamS2Int <- varNames %>%
+  filter(
+    varNam %in% varNamS2Clust,
+    contactSpecific == 1
+  ) %>%
+  select(varNam) %>%
+  pull
+
+# S3 variables
+varNamS3Clust <- varNamS3PCA[!varNamS3PCA %in% idVars]
+
+# S3 Non-Interaction Specific Variables
+varNamS3NoInt <- varNames %>%
+  filter(
+    varNam %in% varNamS3Clust,
+    contactSpecific == 0
+  ) %>%
+  select(varNam) %>%
+  pull
+
+# S3 Interaction Specific Variables
+varNamS3Int <- varNames %>%
+  filter(
+    varNam %in% varNamS3Clust,
+    contactSpecific == 1
+  ) %>%
+  select(varNam) %>%
+  pull
+```
+
+## Feature Extraction
+
+```{r load saved and prepared features}
+load("data/features/featOut.RData")
+
+```
+
+### Across Studies
+
+```{r Feature Extraction Main Analysis}
+# varNames
+#items <- varNamS123PCA[!varNamS123PCA %in% idVars]
+
+# Joined Dataset of all three studies
+featData <- rbind(
+  dtS1Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S1") %>%
+    mutate(across(!TID & !study, as.numeric)),
+  dtS2Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S2"),
+  dtS3Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S3")
+) %>%
+  group_by(study, PID) %>%
+  mutate(ID = cur_group_id()) %>%
+  ungroup %>%
+  mutate(date = as.Date(gsub(" .*", "", TID)),
+         week = strftime(date, format = "%Y-W%V")) %>%
+  select(ID,
+         PID,
+         study,
+         date,
+         week,
+         TIDnum,
+         any_of(varNamS123PCA)) %>%
+   mutate(
+     across(all_of(varNamS123PCA), ~ lag(.x, n = 1), .names = "{col}_lag1"),
+     across(all_of(varNamS123PCA), ~ lag(.x, n = 2), .names = "{col}_lag2"),
+     across(all_of(varNamS123PCA), ~ lag(.x, n = 14), .names = "{col}_lag14")
+   ) %>%
+  arrange(ID, TIDnum) %>%
+  select_if(~ sum(!is.na(.)) > 1) %>% # only include variables that have any data (i.e., not all NA)
+  as.data.frame
+
+
+# Don't re-run unless you have a few hours to spare!
+# featFull <-
+#   featureExtractor(
+#     data = featData,
+#     pid = "ID",
+#     tid = "TIDnum",
+#     items = varNamS123
+#   )
+# 
+# featFullContact <-
+#   featureExtractor(
+#     data = featData,
+#     pid = "ID",
+#     tid = "TIDnum",
+#     items = varNamS123Int
+#   )
+# 
+# featFullNoContact <-
+#   featureExtractor(
+#     data = featData,
+#     pid = "ID",
+#     tid = "TIDnum",
+#     items = varNamS123NoInt
+#   )
+# 
+# 
+# featFull$features <- featFull$features %>%
+#     filter(
+#       ID != 19
+#     )
+
+
+pMissFeat(
+  all = featFull$features,
+  contact = featFullContact$features,
+  nocontact = featFullNoContact$features,
+  title = "Feature-wise Missingess Across all Studies"
+)
+
+# featFullImp <- featureImputer(featFull)
+# featFullNoContactImp <- featureImputer(featFullNoContact)
+# featFullContactImp <- featureImputer(featFullContact)
+
+```
+
+### Study 1
+
+```{r Feature Extraction Study 1 specific variables}
+# varNames
+#items <- varNamS1Clust
+
+# Prepare Dataframe
+featDataS1 <- 
+  dtS1Red %>%
+  mutate(date = as.Date(gsub(" .*", "", TID)),
+         week = strftime(date, format = "%Y-W%V")) %>%
+  select(PID,
+         date,
+         week,
+         TIDnum,
+         any_of(varNamS1Clust)) %>%
+   mutate(
+     across(all_of(varNamS1Clust), ~ lag(.x, n = 1), .names = "{col}_lag1"),
+     across(all_of(varNamS1Clust), ~ lag(.x, n = 2), .names = "{col}_lag2"),
+     across(all_of(varNamS1Clust), ~ lag(.x, n = 14), .names = "{col}_lag14")
+   ) %>%
+  arrange(PID, TIDnum) %>%
+  select_if(~ sum(!is.na(.)) > 1) %>% # only include variables that have any data (i.e., not all NA)
+  as.data.frame
+
+# Don't re-run unless you have a few hours to spare!
+# featS1 <-
+#   featureExtractor(
+#     data = featDataS1,
+#     pid = "PID",
+#     tid = "TIDnum",
+#     items = varNamS1Clust
+#   )
+# 
+# featS1Contact <-
+#   featureExtractor(
+#     data = featDataS1,
+#     pid = "PID",
+#     tid = "TIDnum",
+#     items = varNamS1Int
+#   )
+# 
+# featS1NoContact <-
+#   featureExtractor(
+#     data = featDataS1,
+#     pid = "PID",
+#     tid = "TIDnum",
+#     items = varNamS1NoInt
+#   )
+
+pMissFeat(
+  all = featS1$features,
+  contact = featS1Contact$features,
+  nocontact = featS1NoContact$features,
+  title = "Feature-wise Missingess Study 1"
+)
+
+# featS1Imp <- featureImputer(featS1)
+# featS1NoContactImp <- featureImputer(featS1NoContact)
+# featS1ContactImp <- featureImputer(featS1Contact)
+
+```
+
+### Study 2
+
+```{r Feature Extraction Study 2 specific variables}
+# varNames
+#items <- varNamS2Clust
+
+# Prepare Dataframe
+featDataS2 <- 
+  dtS2Red %>%
+  mutate(date = as.Date(gsub(" .*", "", TID)),
+         week = strftime(date, format = "%Y-W%V")) %>%
+  select(PID,
+         date,
+         week,
+         TIDnum,
+         any_of(varNamS2Clust)) %>%
+   mutate(
+     across(all_of(varNamS2Clust), ~ lag(.x, n = 1), .names = "{col}_lag1"),
+     across(all_of(varNamS2Clust), ~ lag(.x, n = 2), .names = "{col}_lag2"),
+     across(all_of(varNamS2Clust), ~ lag(.x, n = 14), .names = "{col}_lag14")
+   ) %>%
+  arrange(PID, TIDnum) %>%
+  select_if(~ sum(!is.na(.)) > 1) %>% # only include variables that have any data (i.e., not all NA)
+  as.data.frame
+
+# Don't re-run unless you have a few hours to spare!
+# featS2 <-
+#   featureExtractor(
+#     data = featDataS2,
+#     pid = "PID",
+#     tid = "TIDnum",
+#     items = varNamS2Clust
+#   )
+# 
+# featS2Contact <-
+#   featureExtractor(
+#     data = featDataS2,
+#     pid = "PID",
+#     tid = "TIDnum",
+#     items = varNamS2Int
+#   )
+# 
+# featS2NoContact <-
+#   featureExtractor(
+#     data = featDataS2,
+#     pid = "PID",
+#     tid = "TIDnum",
+#     items = varNamS2NoInt
+#   )
+
+pMissFeat(
+  all = featS2$features,
+  contact = featS2Contact$features,
+  nocontact = featS2NoContact$features,
+  title = "Feature-wise Missingess Study 2"
+)
+
+# featS2Imp <- featureImputer(featS2)
+# featS2NoContactImp <- featureImputer(featS2NoContact)
+# featS2ContactImp <- featureImputer(featS2Contact)
+```
+
+### Study 3
+
+```{r Feature Extraction Study 3 specific variables}
+# varNames
+#items <- varNamS3Clust
+
+# Prepare Dataframe
+featDataS3 <- 
+  dtS3Red %>%
+  mutate(date = as.Date(gsub(" .*", "", TID)),
+         week = strftime(date, format = "%Y-W%V")) %>%
+  select(PID,
+         date,
+         week,
+         TIDnum,
+         any_of(varNamS3Clust)) %>%
+   mutate(
+     across(all_of(varNamS3Clust), ~ lag(.x, n = 1), .names = "{col}_lag1"),
+     across(all_of(varNamS3Clust), ~ lag(.x, n = 2), .names = "{col}_lag2"),
+     across(all_of(varNamS3Clust), ~ lag(.x, n = 14), .names = "{col}_lag14")
+   ) %>%
+  arrange(PID, TIDnum) %>%
+  select_if(~ sum(!is.na(.)) > 1) %>% # only include variables that have any data (i.e., not all NA)
+  as.data.frame
+
+# Don't re-run unless you have a few hours to spare!
+# featS3 <-
+#   featureExtractor(
+#     data = featDataS3,
+#     pid = "PID",
+#     tid = "TIDnum",
+#     items = varNamS3Clust
+#   )
+# 
+# featS3Contact <-
+#   featureExtractor(
+#     data = featDataS3,
+#     pid = "PID",
+#     tid = "TIDnum",
+#     items = varNamS3Int
+#   )
+# 
+# featS3NoContact <-
+#   featureExtractor(
+#     data = featDataS3,
+#     pid = "PID",
+#     tid = "TIDnum",
+#     items = varNamS3NoInt
+#   )
+
+pMissFeat(
+  all = featS3$features,
+  contact = featS3Contact$features,
+  nocontact = featS3NoContact$features,
+  title = "Feature-wise Missingess Study 3"
+)
+
+# featS3Imp <- featureImputer(featS3)
+# featS3NoContactImp <- featureImputer(featS3NoContact)
+# featS3ContactImp <- featureImputer(featS3Contact)
+# 
+# save(list = ls(pattern = "feat"), file = "data/features/featOut.RData")
+```
+
+
+## Clustering
+
+### Across Studies
+
+#### Centroid-based
+
+k-means
+
+```{r kmeans determin k}
+library(factoextra)
+library(NbClust)
+
+scaled_data <- featFull2$featuresImpZMat
+
+# Elbow method
+fviz_nbclust(scaled_data, kmeans, method = "wss") +
+  geom_vline(xintercept = 2, linetype = 2)+
+  labs(subtitle = "Elbow method")
+# Silhouette method
+fviz_nbclust(scaled_data, kmeans, method = "silhouette")+
+  labs(subtitle = "Silhouette method")
+# Gap statistic
+# nboot = 50 to keep the function speedy. 
+# recommended value: nboot= 500 for your analysis.
+# Use verbose = FALSE to hide computing progression.
+set.seed(123)
+fviz_nbclust(scaled_data, kmeans, nstart = 50,  method = "gap_stat", nboot = 500)+
+  labs(subtitle = "Gap statistic method")
+
+kmeansOut <- kmeans(scaled_data, centers = 2, nstart = 100)
+
+fviz_cluster(kmeansOut, geom = "point", data = scaled_data, ggtheme = theme_Publication())
+
+as.data.frame(kmeansOut$cluster)
+
+```
+
+#### Distribution-based
+
+Gaussian mixture model (GMM)
+
+```{r gaussian mixture model}
+library(mclust)
+
+BIC <- mclustBIC(scaled_data)
+plot(BIC)
+summary(BIC)
+
+mod1 <- Mclust(scaled_data, x = BIC)
+
+merge(featOutZRowNam, as.data.frame(mod1$classification), by="row.names") %>% View
+
+summary(mod1, parameters = TRUE)
+table(class, mod1$classification)
+
+
+mod1dr <- MclustDR(mod1)
+summary(mod1dr)
+plot(mod1dr, what = "pairs")
+```
+
+
+#### Density-based
+
+dbscan
+
+```{r dbscan}
+library(dbscan)
+library(fpc)
+
+# to plot the eps values
+eps_plot = kNNdistplot(scaled_data, k=3)
+
+# to draw an optimum line
+eps_plot %>% abline(h = 13, lty = 2)
+
+eps <- 13
+minPts <- 3
+
+res.fpc <- fpc::dbscan(scaled_data, eps=eps, MinPts=minPts, scale=FALSE, method="raw")
+res.db <- dbscan::dbscan(scaled_data, eps=eps, minPts=minPts)
+all(res.fpc$cluster == res.db$cluster)
+
+fviz_cluster(res.fpc, scaled_data, geom = "point", ggtheme = theme_Publication())
+
+```
+
 
 
 # **Three-Way ANOVA**
