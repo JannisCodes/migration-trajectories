@@ -216,7 +216,7 @@ featureImputer <- function(extractorList) {
   input
 }
 
-pMiss <- function(x){sum(is.na(x))/(ncol(x)*nrow(x))*100}
+pMissTot <- function(x){sum(is.na(x))/(ncol(x)*nrow(x))*100}
 pColMiss <- function(x){sum(is.na(x))/length(x)*100}
 
 pMissFeat <- function(all, contact, nocontact, title) {
@@ -227,16 +227,16 @@ pMissFeat <- function(all, contact, nocontact, title) {
   # title = "Feature-wise Missingess Across all Studies"
   
   pMiss <- list()
-  pMiss$All <- data.frame(set="All", pMissTotal=pMiss(all))
-  pMiss$Contact <- data.frame(set="Contact", pMissTotal=pMiss(contact))
-  pMiss$NoContact <- data.frame(set="No Contact", pMissTotal=pMiss(nocontact))
+  pMiss$All <- data.frame(set="All", pMissTotal=pMissTot(all))
+  pMiss$Contact <- data.frame(set="Contact", pMissTotal=pMissTot(contact))
+  pMiss$NoContact <- data.frame(set="No Contact", pMissTotal=pMissTot(nocontact))
   pMiss <- Reduce(function(x, y) merge(x, y, all=TRUE), pMiss) 
   
   pMissFeature <- list()
   pMissFeature$All <- apply(all, 2, pColMiss) %>% data.frame(feature=names(.), All=., row.names=NULL)
   pMissFeature$Contact <- apply(contact, 2, pColMiss) %>% data.frame(feature=names(.), Contact=., row.names=NULL)
   pMissFeature$NoContact <- apply(nocontact, 2, pColMiss) %>% data.frame(feature=names(.), NoContact=., row.names=NULL)
-  pMissFeature %>% 
+  pMissPlot <- pMissFeature %>% 
     reduce(full_join, by='feature') %>% 
     reshape2::melt(id="feature", variable.name="set", value.name="pMiss") %>% 
     na.omit %>% 
@@ -251,4 +251,10 @@ pMissFeat <- function(all, contact, nocontact, title) {
     ) +
     facet_wrap(~lab) +
     theme_Publication()
+  out <- list(
+    pmiss = pMiss,
+    pMissFeature = pMissFeature,
+    pMissPlot = pMissPlot
+  )
+  out
 }

@@ -1,0 +1,3823 @@
+---
+title: "3mpca"
+author: "Jannis Kreienkamp"
+date: "2022-10-02"
+output: html_document
+---
+
+## Multiple Imputation
+
+We ultimately aim to create 20 imputed data sets to perform the analyses on. As outlined by @Monden2015, we will use the key variables themselves as well as auxiliary variables to impute missing values. Auxiliary variables are any pre-, post-, or daily dairy variables other than the main variables. If there are any modeling issues we will limit the auxiliary variables to all variables that that are significantly ($p$ \< .01) and meaningfully ($r$ \> .3) correlated with (1) the key variables or (2) missingness on the key variables.
+
+We create the imputed data set for each of the analyses. This includes the main analyses with across all three studies, using the set of common variables, as well as follow-up analyses for study-specific, interaction-specific and time scale specific data sets.
+
+```{r varNames}
+varNamS123Aux <- varNames %>%
+  filter(
+    aux != 0,
+    studyS1 == "S1",
+    studyS2 == "S2",
+    studyS3 == "S3"
+  ) %>%
+  select(varNam) %>%
+  pull
+varNamS1Aux <- varNames %>%
+  filter(
+    aux != 0,
+    studyS1 == "S1"
+  ) %>%
+  select(varNam) %>%
+  pull
+varNamS2Aux <- varNames %>%
+  filter(
+    aux != 0,
+    studyS2 == "S2"
+  ) %>%
+  select(varNam) %>%
+  pull
+varNamS3Aux <- varNames %>%
+  filter(
+    aux != 0,
+    studyS3 == "S3"
+  ) %>%
+  select(varNam) %>%
+  pull
+
+varNamS123PCA <- varNames %>%
+  filter(
+    pca != 0,
+    studyS1 == "S1",
+    studyS2 == "S2",
+    studyS3 == "S3"
+  ) %>%
+  select(varNam) %>%
+  pull
+varNamS1PCA <- varNames %>%
+  filter(
+    pca != 0,
+    studyS1 == "S1"
+  ) %>%
+  select(varNam) %>%
+  pull
+varNamS2PCA <- varNames %>%
+  filter(
+    pca != 0,
+    studyS2 == "S2"
+  ) %>%
+  select(varNam) %>% 
+  pull
+varNamS3PCA <- varNames %>%
+  filter(
+    pca != 0,
+    studyS3 == "S3"
+  ) %>%
+  select(varNam) %>%
+  pull
+
+varNamOut <- c(
+  "ResponseId",
+  "relatednessNoInteraction",
+  "relatednessSelf",
+  "relatednessOther",
+  "autonomy_Int",
+  "autonomy_NoInt",
+  "competence_Int",
+  "competence_NoInt",
+  varNamS1PCA[grepl('^MDMQ', varNamS1PCA)],
+  varNamS2PCA[grepl('^ProSo|^AntiSo', varNamS2PCA)],
+  varNamS3PCA[grepl(
+    '^ProSo|^AntiSo|^agency|^autoFrust|^autoSat|^relatFrust|^relatSat|^compFrust|^compSat|^lonely[0-9]|^emotRegPos|^emotRegNeg',
+    varNamS3PCA
+  )]
+)
+varNamCore <- c(
+  "PID",
+  "TID",
+  "TIDnum"
+)
+varNamNewAll <- c(
+  "relatedness",
+  "autonomy",
+  "competence"
+)
+varNamNewS1 <- c(
+  "relatedness",
+  "autonomy",
+  "competence",
+  "alertness", 
+  "calmness", 
+  "valence"
+)
+varNamNewS2 <- c(
+  "relatedness",
+  "autonomy",
+  "competence",
+  "ProSo", 
+  "AntiSo"
+)
+varNamNewS3 <- c(
+  "relatedness",
+  "autonomy",
+  "competence",
+  "ProSo", 
+  "AntiSo",
+  "agency",
+  "autoFrust",
+  "autoSat",
+  "relatFrust",
+  "relatSat",
+  "compFrust",
+  "compSat",
+  "lonely",
+  "emotRegPos",
+  "emotRegNeg"
+)
+
+varNamNewCat <- c(
+  "closeness_Calc",
+  "gender_Calc",
+  "ethnicity_Calc",
+  "relationship_Calc"
+)
+
+varNamIntDep <- c(
+  varNamS123PCA[grepl('^InteractionContext|AttitudesPartner|KeyNeedDueToPartner|^quality', varNamS123PCA)]
+)
+
+varNamIndiceItemsS1 <- varNames %>%
+  filter(
+    aux == -1,
+    studyS1 == "S1"
+  ) %>%
+  select(varNam) %>%
+  pull %>%
+  append(., gsub(".pre|.post|_calc", "", varNamIndicesS1)) %>%
+  unique
+
+varNamS123MI <- c(varNamCore, varNamNewAll, varNamS123Aux)
+varNamS1MI <- c(varNamCore, varNamIndicesS1, varNamS1Aux[!varNamS1Aux %in% varNamIndiceItemsS1]) #
+varNamS2MI <- c(varNamCore, varNamNewS2, varNamS2Aux)
+varNamS3MI <- c(varNamCore, varNamNewS3, varNamS3Aux)
+
+varNamS123PCA <- c(varNamCore, varNamS123PCA[!varNamS123PCA %in% varNamOut])
+varNamS1PCA <- c(varNamCore, varNamNewS1, varNamS1PCA[!varNamS1PCA %in% varNamOut])
+varNamS2PCA <- c(varNamCore, varNamNewS2, varNamS2PCA[!varNamS2PCA %in% varNamOut])
+varNamS3PCA <- c(varNamCore, varNamNewS3, varNamS3PCA[!varNamS3PCA %in% varNamOut])
+
+idVars <- c("ID", "PID", "TID", "TIDnum", "date", "week", "study")
+```
+
+### Main Analysis
+
+We begin by preparing the data for the main analysis, which combines the common variables of all three studies. Here, we:
+
+1.  Select the variables for all relevant analysis (i.e., imputation, 3MPCA, and validation) across all three studies.
+2.  Create the combined dataset in the correct format (long format with all missed time points as NAs).
+3.  Impute the data and save the imputed datasets for later recall.
+
+```{r MiMainPrep}
+#################################################################
+##                    Variable Name Vectors                    ##
+#################################################################
+varNamS123MIPsbl <- c(
+  paste(varNamS123MI, rep(".pre", length(varNamS123MI)), sep = ""),
+  varNamS123MI,
+  paste(varNamS123MI, rep(".post", length(varNamS123MI)), sep = "")
+)
+
+varNamS123MiRed <- Reduce(
+  intersect,
+  list(
+    dtS1Red %>% select(PID, TID, TIDnum, any_of(varNamS123MIPsbl)) %>% names,
+    dtS2Red %>% select(PID, TID, TIDnum, any_of(varNamS123MIPsbl)) %>% names,
+    dtS3Red %>% select(PID, TID, TIDnum, any_of(varNamS123MIPsbl)) %>% names
+  )
+)
+
+varNamMiMainNoms <- varNames %>%
+  filter(
+    aux == 1,
+    format == "nominal",
+    studyS1 == "S1",
+    studyS2 == "S2",
+    studyS3 == "S3"
+  ) %>%
+  select(varNam) %>%
+  pull
+
+#################################################################
+##                    Dataframe Preparation                    ##
+#################################################################
+dtMiMain <- rbind(
+  dtS1Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S1") %>% 
+    mutate(across(!TID & !study, as.numeric)),
+  dtS2Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S2"),
+  dtS3Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S3")
+) %>%
+  group_by(study, PID) %>%
+  mutate(ID = cur_group_id()) %>%
+  ungroup %>%
+  mutate(
+    date = as.Date(gsub(" .*", "", TID)),
+    week = strftime(date, format = "%Y-W%V")
+  ) %>%
+  rowwise() %>%
+  mutate(
+    InteractionDum = sum(IntergroupContact, IngroupContact, na.rm = TRUE),
+    InteractionDum = if_else(InteractionDum > 0, 1, InteractionDum)
+  ) %>%
+  ungroup() %>%
+  select(ID,
+         study,
+         date,
+         week,
+         everything(),
+         -PID,
+         -starts_with("ResponseId"), 
+         -starts_with("roommate"),
+         -starts_with("Reason")) %>%
+  as.data.frame %>%
+  select_if(~ sum(!is.na(.)) > 1) %>% # only include variables that have any data (i.e., not all NA)
+  complete(., ID, TIDnum) %>% # add na if id and TID combination is missing
+  group_by(ID) %>%
+  mutate(across(ends_with(c(".pre", ".post")),  ~ replace_na(.x, mean(.x, na.rm = TRUE)))) %>%
+  mutate(study = replace_na(study, calc_mode(study))) %>%
+  ungroup %>%
+  group_by(study, TIDnum) %>%
+  mutate(across(c("date", "week", "TID"),  ~ replace_na(.x, calc_mode(.x)))) %>%
+  ungroup %>% 
+  mutate(across(ends_with(c(".pre", ".post")), ~ ifelse(is.nan(.), NA, .))) %>%
+  as.data.frame 
+```
+
+
+```{r MainImp}
+#################################################################
+##                     Imputation Bi-daily                     ##
+#################################################################
+# set.seed(123)
+# MiMain <-
+#   amelia(
+#     dtMiMain,
+#     m = 1, # 20
+#     ts = "TIDnum",
+#     cs = "ID",
+#     idvars = c("TID", "date", "week", "study", "IntergroupContact", "IngroupContact"), #"PID",
+#     #lags = names(dtMiMain)[!names(dtMiMain) %in% idVars],
+#     #lags = names(dtMiMain)[names(dtMiMain) %in%varNamInMiMainRed],
+#     #noms = names(dtMiMain)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMain))],
+#     noms = c("InteractionDum"),
+#     parallel = "multicore",
+#     ncpus = parallel::detectCores(),
+#     p2s = 1
+#   )
+# save(MiMain, file = "data/imputed/MainImputed.RData")
+load("data/imputed/MainImputed.RData")
+
+
+# # Stability to imputations:
+# set.seed(123)
+# MiMainStability <-
+#   amelia(
+#     dtMiMain,
+#     m = 20,
+#     ts = "TIDnum",
+#     cs = "ID",
+#     idvars = c(
+#       "TID",
+#       "date",
+#       "week",
+#       "study",
+#       "IntergroupContact",
+#       "IngroupContact"
+#     ),
+#     #lags = names(dtMiMain)[!names(dtMiMain) %in% idVars],
+#     #lags = names(dtMiMain)[names(dtMiMain) %in%varNamInMiMainRed],
+#     #noms = names(dtMiMain)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMain))],
+#     noms = c("InteractionDum"),
+#     parallel = "multicore",
+#     ncpus = parallel::detectCores(),
+#     p2s = 1
+#   )
+# save(MiMainStability, file = "data/imputed/MainImputedStability.RData")
+load("data/imputed/MainImputedStability.RData")
+
+##---------------------------------------------------------------
+##                Restore Missingness by Design                --
+##---------------------------------------------------------------
+
+# SHOULD STILL BE DONE? 
+# (remove imputed values that were missing by design. E.g., partner attitudes when there were no interactions)
+
+```
+
+### Follow-up: Studies
+
+#### Study 1
+
+```{r MiS1Prep}
+#################################################################
+##                    Variable Name Vectors                    ##
+#################################################################
+varNamS1MiPsbl <- c(
+  paste(varNamS1MI, rep(".pre", length(varNamS1MI)), sep = ""),
+  varNamS1MI,
+  paste(varNamS1MI, rep(".post", length(varNamS1MI)), sep = "")
+)
+
+varNamdtS1Noms <- varNames %>%
+  filter(
+    aux == 1,
+    format == "nominal",
+    studyS1 == "S1"
+  ) %>%
+  select(varNam) %>%
+  pull
+
+#################################################################
+##                    Dataframe Preparation                    ##
+#################################################################
+dtMiS1 <- dtS1Red %>% 
+  select(TID, any_of(varNamS1MiPsbl)) %>% 
+  mutate(across(!TID, as.numeric)) %>%
+  mutate(
+    date = as.Date(gsub(" .*", "", TID)),
+    week = strftime(date, format = "%Y-W%V")
+  ) %>%
+  select(PID,
+         date,
+         week,
+         everything(),
+         -starts_with("ResponseId")) %>%
+  as.data.frame %>% 
+  select_if(~ sum(!is.na(.)) > 1) %>% # only include variables that have any data (i.e., not all NA)
+  complete(., PID, TIDnum) %>% # add na if id and TID combination is missing
+  group_by(PID) %>%
+  mutate(across(ends_with(c(".pre", ".post")),  ~ replace_na(.x, mean(.x, na.rm = TRUE)))) %>%
+  ungroup %>% 
+  group_by(TIDnum) %>%
+  mutate(across(c("date", "week", "TID"),  ~ replace_na(.x, calc_mode(.x)))) %>%
+  ungroup %>% 
+  mutate(across(ends_with(c(".pre", ".post")), ~ ifelse(is.nan(.), NA, .))) %>% 
+  select(PID,
+         TID,
+         TIDnum,
+         date,
+         week,
+         which(sapply(., sd, na.rm = TRUE) > 0)) %>% # only include variables that vary (i.e., sd != 0)
+  as.data.frame 
+
+
+allDuplicated <- function(vec){
+  front <- duplicated(vec)
+  back <- duplicated(vec, fromLast = TRUE)
+  all_dup <- front + back > 0
+  return(all_dup)
+}
+
+varNamDifS1 <- names(dtMiS1)[gsub(".pre|.post|_calc", "", names(dtMiS1)) %>% allDuplicated]
+
+# Variables removed for study 1 due to high multicollinearity:
+varNamS1Out <- dtMiS1 %>%
+  select(
+    any_of(varNamDifS1),
+    mdmq.calmness.pre_calc,
+    mdmq.alertness.pre_calc,
+    mdmq.valence.pre_calc,
+    relatednessFrust.pre_calc,
+    competenceFrust.pre_calc,
+    competenceSat.pre_calc,
+    relatednessSat.pre_calc,
+    DutchFriends.pre,
+    secNatDum.pre,
+    timeNL.pre,
+    stress.post,
+    discrimination_month.post,
+    rosenberg.post,
+    qualityStar,
+    starts_with("SSAS")
+  ) %>%
+  names
+
+dtMiS1 <- dtMiS1 %>%
+  # mutate(
+  #   assimilation.dif = assimilation.post - assimilation.pre,
+  #   integration.dif = integration.post - integration.pre,
+  #   marginalization.dif = marginalization.post - marginalization.pre,
+  #   separation.dif = separation.post - separation.pre,
+  #   VIA_Dutch.dif = VIA_Dutch.post - VIA_Dutch.post,
+  #   VIA_heritage.dif = VIA_heritage.post - VIA_heritage.pre,
+  #   IntGrAnx.dif = IntGrAnx.post_calc - IntGrAnx.pre_calc,
+  #   swl.dif = swl.post_calc - swl.pre_calc
+  # ) %>% 
+  select(
+    -any_of(varNamS1Out)
+  ) %>%
+  select(PID,
+         TID,
+         TIDnum,
+         date,
+         week,
+         which(sapply(., sd, na.rm = TRUE) > 0)) %>% 
+  mutate_all(~ifelse(is.nan(.), NA, .)) %>%
+  as.data.frame
+
+# lares::corr_cross(
+#   dtMiS1 %>% select_if(is.numeric), # name of dataset
+#   max_pvalue = 0.05, # display only significant correlations (at 5% level)
+#   top = 20 # display top 20 couples of variables (by correlation coefficient)
+# )
+```
+
+```{r MiS1}
+#################################################################
+##                     Imputation Bi-daily                     ##
+#################################################################
+# set.seed(123)
+# MiS1 <-
+#   amelia(
+#     dtMiS1,
+#     m = 1, # 20
+#     ts = "TIDnum",
+#     cs = "PID",
+#     idvars = c("TID", "date", "week", "IntergroupContact", "IngroupContact"),
+#     # lags = names(dtMiS1)[!names(dtMiS1) %in% idVars],
+#     # lags = names(dtMiS1)[names(dtMiS1) %in% varNamS1MiPsbl], # alternative?
+#     # leads = ...,
+#     # noms = names(dtMiS1)[grepl(paste(varNamdtS1Noms, collapse = "|^"), names(dtMiS1))],
+#     # parallel = "multicore",
+#     # ncpus = parallel::detectCores(),
+#     p2s = 1
+#   )
+# save(MiS1, file = "data/imputed/S1Imputed.RData")
+load("data/imputed/S1Imputed.RData")
+
+# # Imputation Stability:
+# set.seed(123)
+# MiS1Stability <-
+#   amelia(
+#     dtMiS1,
+#     m = 20,
+#     ts = "TIDnum",
+#     cs = "PID",
+#     idvars = c("TID", "date", "week", "IntergroupContact", "IngroupContact"),
+#     # lags = names(dtMiS1)[!names(dtMiS1) %in% idVars],
+#     # lags = names(dtMiS1)[names(dtMiS1) %in% varNamS1MiPsbl], # alternative?
+#     # leads = ...,
+#     # noms = names(dtMiS1)[grepl(paste(varNamdtS1Noms, collapse = "|^"), names(dtMiS1))],
+#     # parallel = "multicore",
+#     # ncpus = parallel::detectCores(),
+#     p2s = 2
+#   )
+# save(MiS1Stability, file = "data/imputed/S1ImputedStability.RData")
+load("data/imputed/S1ImputedStability.RData")
+```
+
+#### Study 2
+
+```{r MiS2Prep}
+#################################################################
+##                    Variable Name Vectors                    ##
+#################################################################
+varNamS2MiPsbl <- c(
+  paste(varNamS2MI, rep(".pre", length(varNamS2MI)), sep = ""),
+  varNamS2MI,
+  paste(varNamS2MI, rep(".post", length(varNamS2MI)), sep = "")
+)
+
+varNamdtS2Noms <- varNames %>%
+  filter(
+    aux == 1,
+    format == "nominal",
+    studyS2 == "S2"
+  ) %>%
+  select(varNam) %>%
+  pull
+
+#################################################################
+##                    Dataframe Preparation                    ##
+#################################################################
+dtMiS2 <- 
+  dtS2Red %>% 
+  select(TID, any_of(varNamS2MiPsbl)) %>% 
+  mutate(across(!TID, as.numeric)) %>%
+  mutate(
+    date = as.Date(gsub(" .*", "", TID)),
+    week = strftime(date, format = "%Y-W%V")
+  ) %>%
+  select(PID,
+         date,
+         week,
+         everything(),
+         -starts_with("ResponseId")) %>%
+  as.data.frame %>% 
+  select_if(~ sum(!is.na(.)) > 1) %>% # only include variables that have any data (i.e., not all NA)
+  complete(., PID, TIDnum) %>% # add na if id and TID combination is missing
+  group_by(PID) %>%
+  mutate(across(ends_with(c(".pre", ".post")),  ~ replace_na(.x, mean(.x, na.rm = TRUE)))) %>%
+  ungroup %>% 
+  group_by(TIDnum) %>%
+  mutate(across(c("date", "week", "TID"),  ~ replace_na(.x, calc_mode(.x)))) %>%
+  ungroup %>% 
+  mutate(across(ends_with(c(".pre", ".post")), ~ ifelse(is.nan(.), NA, .))) %>% 
+  as.data.frame %>%
+  mutate(date = as.character(date)) %>%
+  select(PID,
+         TID,
+         TIDnum,
+         date,
+         week,
+         everything()) %>%
+  select_if(function(x) is.character(x) | is.factor(x) | (is.numeric(x) && sd(x, na.rm = TRUE) > 0)) %>%
+  as.data.frame
+
+varNamDifS2 <- names(dtMiS2)[gsub(".pre|.post|_calc", "", names(dtMiS2)) %>% allDuplicated]
+
+# # Variables removed for study 2 due to high multicollinearity:
+varNamS2Out <- dtMiS2 %>%
+  select(
+    any_of(varNamDifS2),
+    ContactDesire,
+    DesireIntergroup,
+    DesireIngroup,
+    Reason.pre,
+    # mdmq.calmness.pre_calc,
+    # mdmq.alertness.pre_calc,
+    # mdmq.valence.pre_calc,
+    # relatednessFrust.pre_calc,
+    # competenceFrust.pre_calc,
+    # competenceSat.pre_calc,
+    # relatednessSat.pre_calc,
+    # DutchFriends.pre,
+    # secNatDum.pre,
+    timeNL.pre,
+    starts_with("HS"),
+    starts_with("Home")
+    # stress.post,
+    # discrimination_month.post,
+    # rosenberg.post,
+    # qualityStar,
+    # starts_with("SSAS")
+  ) %>%
+  names
+
+dtMiS2Fin <- dtMiS2 %>%
+  # mutate(
+  #   assimilation.dif = assimilation.post - assimilation.pre,
+  #   integration.dif = integration.post - integration.pre,
+  #   marginalization.dif = marginalization.post - marginalization.pre,
+  #   separation.dif = separation.post - separation.pre,
+  #   VIA_Dutch.dif = VIA_Dutch.post - VIA_Dutch.post,
+  #   VIA_heritage.dif = VIA_heritage.post - VIA_heritage.pre,
+  #   IntGrAnx.dif = IntGrAnx.post_calc - IntGrAnx.pre_calc,
+  #   swl.dif = swl.post_calc - swl.pre_calc
+  # ) %>%
+  select(
+    -any_of(varNamS2Out)
+  ) %>%
+  select(PID,
+         TID,
+         TIDnum,
+         date,
+         week,
+         everything()) %>%
+         #which(sapply(., sd, na.rm = TRUE) > 0)) %>%
+  mutate_all(~ifelse(is.nan(.), NA, .)) %>%
+  as.data.frame
+
+# lares::corr_cross(
+#   dtMiS2Fin %>% select_if(is.numeric), # name of dataset
+#   max_pvalue = 0.05, # display only significant correlations (at 5% level)
+#   top = 20 # display top 20 couples of variables (by correlation coefficient)
+# )
+```
+
+```{r s2StlTest}
+# Seasonal Decomposition of Time Series by Loess
+
+# dtMiS2 %>% 
+#   select(
+#     PID,
+#     TIDnum,
+#     AttitudesDutch
+#   ) %>%
+#   #filter(PID == 1) %>%
+#   #na.exclude(as.ts(.)) %>%
+#   as.ts %>%
+#   stats::stl(., na.action=na.omit)
+# 
+# testLoess <- loess(AttitudesDutch ~ TIDnum, data = dtMiS2 %>% filter(PID == 1))
+# testSpline <- pspline::sm.spline(dtMiS2$AttitudesDutch, dtMiS2$TIDnum)
+# testMarkov <- semiMarkov()
+# 
+# stats::stl(dtMiS2Fin)
+
+
+```
+
+
+```{r MiS2}
+#################################################################
+##                     Imputation Bi-daily                     ##
+#################################################################
+# set.seed(123)
+# MiS2 <-
+#   amelia(
+#     dtMiS2Fin,
+#     m = 1, # 20
+#     ts = "TIDnum",
+#     cs = "PID",
+#     idvars = c("TID", "date", "week", "IntergroupContact", "IngroupContact"),
+#     # lags = names(dtMiS1)[!names(dtMiS1) %in% idVars],
+#     # lags = names(dtMiS1)[names(dtMiS1) %in% varNamS1MiPsbl], # alternative?
+#     # leads = ...,
+#     # noms = names(dtMiS1)[grepl(paste(varNamdtS1Noms, collapse = "|^"), names(dtMiS1))],
+#     parallel = "multicore",
+#     ncpus = parallel::detectCores(),
+#     p2s = 2
+#   )
+# save(MiS2, file = "data/imputed/S2Imputed.RData")
+#load("data/imputed/S2Imputed.RData")
+
+# # Imputation Stability:
+# set.seed(123)
+# MiS2Stability <-
+#   amelia(
+#     dtMiS2,
+#     m = 20,
+#     ts = "TIDnum",
+#     cs = "PID",
+#     idvars = c("TID", "date", "week", "IntergroupContact", "IngroupContact"),
+#     # lags = names(dtMiS1)[!names(dtMiS1) %in% idVars],
+#     # lags = names(dtMiS1)[names(dtMiS1) %in% varNamS1MiPsbl], # alternative?
+#     # leads = ...,
+#     # noms = names(dtMiS1)[grepl(paste(varNamdtS1Noms, collapse = "|^"), names(dtMiS1))],
+#     parallel = "multicore",
+#     ncpus = parallel::detectCores(),
+#     p2s = 1
+#   )
+# save(MiS2Stability, file = "data/imputed/S2ImputedStability.RData")
+#load("data/imputed/S2ImputedStability.RData")
+```
+
+#### Study 3
+
+```{r MiS3Prep}
+#################################################################
+##                    Variable Name Vectors                    ##
+#################################################################
+varNamS3MiPsbl <- c(
+  paste(varNamS3MI, rep(".pre", length(varNamS3MI)), sep = ""),
+  varNamS3MI,
+  paste(varNamS3MI, rep(".post", length(varNamS3MI)), sep = "")
+)
+
+varNamdtS3Noms <- varNames %>%
+  filter(
+    aux == 1,
+    format == "nominal",
+    studyS3 == "S2"
+  ) %>%
+  select(varNam) %>%
+  pull
+
+#################################################################
+##                    Dataframe Preparation                    ##
+#################################################################
+dtMiS3 <- 
+  dtS3Red %>% 
+  select(TID, any_of(varNamS3MiPsbl)) %>% 
+  mutate(across(!TID, as.numeric)) %>%
+  mutate(
+    date = as.Date(gsub(" .*", "", TID)),
+    week = strftime(date, format = "%Y-W%V")
+  ) %>%
+  select(PID,
+         date,
+         week,
+         everything(),
+         -starts_with("ResponseId")) %>%
+  as.data.frame %>% 
+  select_if(~ sum(!is.na(.)) > 1) %>% # only include variables that have any data (i.e., not all NA)
+  complete(., PID, TIDnum) %>% # add na if id and TID combination is missing
+  group_by(PID) %>%
+  mutate(across(ends_with(c(".pre", ".post")),  ~ replace_na(.x, mean(.x, na.rm = TRUE)))) %>%
+  ungroup %>% 
+  group_by(TIDnum) %>%
+  mutate(across(c("date", "week", "TID"),  ~ replace_na(.x, calc_mode(.x)))) %>%
+  ungroup %>% 
+  mutate(across(ends_with(c(".pre", ".post")), ~ ifelse(is.nan(.), NA, .))) %>% 
+  as.data.frame %>%
+  mutate(date = as.character(date)) %>%
+  select(PID,
+         TID,
+         TIDnum,
+         date,
+         week,
+         everything()) %>%
+  select_if(function(x) is.character(x) | is.factor(x) | (is.numeric(x) && sd(x, na.rm = TRUE) > 0)) %>%
+  as.data.frame
+
+varNamDifS3 <- names(dtMiS3)[gsub(".pre|.post|_calc", "", names(dtMiS3)) %>% allDuplicated]
+
+# # Variables removed for study 2 due to high multicollinearity:
+varNamS3Out <- dtMiS3 %>%
+  select(
+    any_of(varNamDifS3),
+    # ContactDesire,
+    # DesireIntergroup,
+    # DesireIngroup,
+    # Reason.pre,
+    # mdmq.calmness.pre_calc,
+    # mdmq.alertness.pre_calc,
+    # mdmq.valence.pre_calc,
+    # relatednessFrust.pre_calc,
+    # competenceFrust.pre_calc,
+    # competenceSat.pre_calc,
+    # relatednessSat.pre_calc,
+    # DutchFriends.pre,
+    # secNatDum.pre,
+    # timeNL.pre,
+    # starts_with("HS"),
+    # starts_with("Home")
+    # stress.post,
+    # discrimination_month.post,
+    # rosenberg.post,
+    # qualityStar,
+    # starts_with("SSAS")
+  ) %>%
+  names
+
+dtMiS3Fin <- dtMiS3 %>%
+  # mutate(
+  #   assimilation.dif = assimilation.post - assimilation.pre,
+  #   integration.dif = integration.post - integration.pre,
+  #   marginalization.dif = marginalization.post - marginalization.pre,
+  #   separation.dif = separation.post - separation.pre,
+  #   VIA_Dutch.dif = VIA_Dutch.post - VIA_Dutch.post,
+  #   VIA_heritage.dif = VIA_heritage.post - VIA_heritage.pre,
+  #   IntGrAnx.dif = IntGrAnx.post_calc - IntGrAnx.pre_calc,
+  #   swl.dif = swl.post_calc - swl.pre_calc
+  # ) %>%
+  select(
+    -any_of(varNamS3Out)
+  ) %>%
+  select(PID,
+         TID,
+         TIDnum,
+         date,
+         week,
+         everything()) %>%
+  mutate_all(~ifelse(is.nan(.), NA, .)) %>%
+  as.data.frame
+
+lares::corr_cross(
+  dtMiS3Fin %>% select_if(is.numeric), # name of dataset
+  max_pvalue = 0.05, # display only significant correlations (at 5% level)
+  top = 20 # display top 20 couples of variables (by correlation coefficient)
+)
+```
+
+```{r MiS3}
+#################################################################
+##                     Imputation Bi-daily                     ##
+#################################################################
+# set.seed(123)
+# MiS3 <-
+#   amelia(
+#     dtMiS3Fin,
+#     m = 1, # 20
+#     ts = "TIDnum",
+#     cs = "PID",
+#     idvars = c("TID", "date", "week", "IntergroupContact", "IngroupContact"),
+#     # lags = names(dtMiS1)[!names(dtMiS1) %in% idVars],
+#     # lags = names(dtMiS1)[names(dtMiS1) %in% varNamS1MiPsbl], # alternative?
+#     # leads = ...,
+#     # noms = names(dtMiS1)[grepl(paste(varNamdtS1Noms, collapse = "|^"), names(dtMiS1))],
+#     parallel = "multicore",
+#     ncpus = parallel::detectCores(),
+#     p2s = 2
+#   )
+# save(MiS3, file = "data/imputed/S3Imputed.RData")
+#load("data/imputed/S2Imputed.RData")
+
+# Imputation Stability:
+# set.seed(123)
+# MiS3Stability <-
+#   amelia(
+#     dtMiS3Fin,
+#     m = 20,
+#     ts = "TIDnum",
+#     cs = "PID",
+#     idvars = c("TID", "date", "week", "IntergroupContact", "IngroupContact"),
+#     # lags = names(dtMiS1)[!names(dtMiS1) %in% idVars],
+#     # lags = names(dtMiS1)[names(dtMiS1) %in% varNamS1MiPsbl], # alternative?
+#     # leads = ...,
+#     # noms = names(dtMiS1)[grepl(paste(varNamdtS1Noms, collapse = "|^"), names(dtMiS1))],
+#     parallel = "multicore",
+#     ncpus = parallel::detectCores(),
+#     p2s = 1
+#   )
+# save(MiS3Stability, file = "data/imputed/S3ImputedStability.RData")
+#load("data/imputed/S2ImputedStability.RData")
+```
+
+
+### Follow-up: Time Scales
+
+#### Daily
+
+Preparing the data for the time scale follow-up, which combines the common variables of all three studies on a daily level. Here, we:
+
+1.  Select the variables for all relevant analysis (i.e., imputation, 3MPCA, and validation) across all three studies.
+2.  Create the combined dataset in the correct format (long format with all missed time points as NAs).
+3.  Impute the data and save the imputed datasets for later recall.
+
+```{r MiDailyPrep}
+#################################################################
+##                    Dataframe Preparation                    ##
+#################################################################
+dtMiMainDaily <- rbind(
+  dtS1Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S1") %>% 
+    mutate(across(!TID & !study, as.numeric)),
+  dtS2Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S2"),
+  dtS3Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S3")
+) %>%
+  group_by(study, PID) %>%
+  mutate(ID = cur_group_id()) %>%
+  ungroup %>%
+  mutate(
+    date = as.Date(gsub(" .*", "", TID)),
+    week = strftime(date, format = "%Y-W%V")
+  ) %>%
+  rowwise() %>%
+  mutate(
+    InteractionDum = sum(IntergroupContact, IngroupContact, na.rm = TRUE),
+    InteractionDum = if_else(InteractionDum > 0, 1, InteractionDum)
+  ) %>%
+  ungroup() %>%
+  group_by(ID, date, study) %>%
+  summarise_if(is.numeric, mean, na.rm = TRUE) %>% # contact dum should be summarized as sum()
+  ungroup %>%
+  group_by(study) %>%
+  mutate(TIDnum = as.numeric(factor(date))) %>%
+  ungroup %>%
+  select(ID,
+         study,
+         date,
+         everything(),
+         -PID,
+         -starts_with("ResponseId")) %>%
+  as.data.frame %>%
+  select_if(~ sum(!is.na(.)) > 1) %>% # only include variables that have any data (i.e., not all NA)
+  complete(., ID, TIDnum) %>% # add na if id and TID combination is missing
+  group_by(ID) %>%
+  mutate(across(ends_with(c(".pre", ".post")),  ~ replace_na(.x, mean(.x, na.rm = TRUE)))) %>%
+  mutate(study = replace_na(study, calc_mode(study))) %>%
+  ungroup %>%
+  group_by(study, TIDnum) %>%
+  mutate(across(c("date"),  ~ replace_na(.x, calc_mode(.x)))) %>%
+  ungroup %>% 
+  mutate_if(is.numeric, ~ ifelse(is.nan(.), NA, .)) %>%
+  as.data.frame 
+```
+
+
+```{r DailyImp}
+#################################################################
+##               Imputation at Daily Aggregation               ##
+#################################################################
+# MiMainDaily <-
+#   amelia(
+#     dtMiMainDaily,
+#     m = 1, # 20
+#     ts = "TIDnum",
+#     cs = "ID",
+#     idvars = c("date", "study", "IntergroupContact", "IngroupContact"), #"PID",
+#     #lags = names(dtMiMainDaily)[!names(dtMiMainDaily) %in% idVars],
+#     #lags = names(dtMiMainDaily)[names(dtMiMainDaily) %in%varNamInMiMainRed],
+#     #noms = names(dtMiMainDaily)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMainDaily))],
+#     parallel = "multicore",
+#     ncpus = parallel::detectCores(),
+#     p2s = 1
+#   )
+# save(MiMainDaily, file = "data/imputed/MainDailyImputed.RData")
+load("data/imputed/MainDailyImputed.RData")
+
+# # Stability to imputations:
+# set.seed(123)
+# MiMainDailyStability <-
+#   amelia(
+#     dtMiMainDaily,
+#     m = 20,
+#     ts = "TIDnum",
+#     cs = "ID",
+#     idvars = c("date", "study", "IntergroupContact", "IngroupContact"), #"PID",
+#     #lags = names(dtMiMainDaily)[!names(dtMiMainDaily) %in% idVars],
+#     #lags = names(dtMiMainDaily)[names(dtMiMainDaily) %in%varNamInMiMainRed],
+#     #noms = names(dtMiMainDaily)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMainDaily))],
+#     parallel = "multicore",
+#     ncpus = parallel::detectCores(),
+#     p2s = 1
+#   )
+# save(MiMainDailyStability, file = "data/imputed/MainDailyImputedStability.RData")
+load("data/imputed/MainDailyImputedStability.RData")
+```
+
+
+#### Weekly
+
+Preparing the data for the time scale follow-up, which combines the common variables of all three studies on a weekly level. Here, we:
+
+1.  Select the variables for all relevant analysis (i.e., imputation, 3MPCA, and validation) across all three studies.
+2.  Create the combined dataset in the correct format (long format with all missed time points as NAs).
+3.  Impute the data and save the imputed datasets for later recall.
+
+```{r MiWeeklyPrep}
+dtMiMainWeeekly <- rbind(
+  dtS1Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S1") %>% 
+    mutate(across(!TID & !study, as.numeric)),
+  dtS2Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S2"),
+  dtS3Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S3")
+) %>%
+  group_by(study, PID) %>%
+  mutate(ID = cur_group_id()) %>%
+  ungroup %>%
+  mutate(
+    date = as.Date(gsub(" .*", "", TID)),
+    week = strftime(date, format = "%Y-W%V")
+  ) %>%
+  rowwise() %>%
+  mutate(
+    InteractionDum = sum(IntergroupContact, IngroupContact, na.rm = TRUE),
+    InteractionDum = if_else(InteractionDum > 0, 1, InteractionDum)
+  ) %>%
+  ungroup() %>%
+  group_by(ID, week, study) %>%
+  summarise_if(is.numeric, mean, na.rm = TRUE) %>%
+  ungroup %>%
+  group_by(study) %>%
+  mutate(TIDnum = as.numeric(factor(week))) %>%
+  ungroup %>%
+  select(ID,
+         study,
+         week,
+         everything(),
+         -PID,
+         -starts_with("ResponseId")) %>%
+  as.data.frame %>%
+  select_if(~ sum(!is.na(.)) > 1) %>% # only include variables that have any data (i.e., not all NA)
+  complete(., ID, TIDnum) %>% # add na if id and TID combination is missing
+  group_by(ID) %>%
+  mutate(across(ends_with(c(".pre", ".post")),  ~ replace_na(.x, mean(.x, na.rm = TRUE)))) %>%
+  mutate(study = replace_na(study, calc_mode(study))) %>%
+  ungroup %>%
+  group_by(study, TIDnum) %>%
+  mutate(across(c("week"),  ~ replace_na(.x, calc_mode(.x)))) %>%
+  ungroup %>% 
+  mutate_if(is.numeric, ~ ifelse(is.nan(.), NA, .)) %>%
+  as.data.frame 
+```
+
+
+```{r WeeklyImp}
+##################################################################
+##               Imputation at Weekly Aggregation               ##
+##################################################################
+# MiMainWeekly <-
+#   amelia(
+#     dtMiMainWeeekly,
+#     m = 1, # 20
+#     ts = "TIDnum",
+#     cs = "ID",
+#     idvars = c("week", "study", "IntergroupContact", "IngroupContact"), #"PID",
+#     #lags = names(dtMiMainWeeekly)[!names(dtMiMainWeeekly) %in% idVars],
+#     #lags = names(dtMiMainWeeekly)[names(dtMiMainWeeekly) %in%varNamInMiMainRed],
+#     #noms = names(dtMiMainWeeekly)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMainWeeekly))],
+#     parallel = "multicore",
+#     ncpus = parallel::detectCores(),
+#     p2s = 1
+#   )
+# save(MiMainWeekly, file = "data/imputed/MainWeeklyImputed.RData")
+load("data/imputed/MainWeeklyImputed.RData")
+
+# # Stability to imputations:
+# set.seed(123)
+# MiMainWeeklyStability <-
+#   amelia(
+#     dtMiMainWeeekly,
+#     m = 20,
+#     ts = "TIDnum",
+#     cs = "ID",
+#     idvars = c("week", "study", "IntergroupContact", "IngroupContact"), #"PID",
+#     #lags = names(dtMiMainWeeekly)[!names(dtMiMainWeeekly) %in% idVars],
+#     #lags = names(dtMiMainWeeekly)[names(dtMiMainWeeekly) %in%varNamInMiMainRed],
+#     #noms = names(dtMiMainWeeekly)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMainWeeekly))],
+#     parallel = "multicore",
+#     ncpus = parallel::detectCores(),
+#     p2s = 1
+#   )
+# save(MiMainWeeklyStability, file = "data/imputed/MainWeeklyImputedStability.RData")
+load("data/imputed/MainWeeklyImputedStability.RData")
+```
+
+### Follow-up: Response Type
+
+#### Interaction Responses
+
+```{r MiInteractionPrep}
+#################################################################
+##                    Dataframe Preparation                    ##
+#################################################################
+
+# any interaction
+dtMiInteraction <- 
+  dtMiMain %>%
+    mutate_at(vars(any_of(varNamS123PCA), -any_of(idVars)), funs(ifelse(dtMiMain$InteractionDum != 1, NA, .))) %>%
+    #mutate_at(vars(-any_of(idVars), -ends_with(".pre"), -ends_with(".post"), -InteractionDum), funs(ifelse(dtMiMain$InteractionDum != 1, NA, .))) %>%
+    as.data.frame
+
+# Intergroup Contact
+dtMiIntergroup <- 
+  dtMiMain %>%
+  mutate_at(vars(any_of(varNamS123PCA), -any_of(idVars)), funs(ifelse(dtMiMain$IntergroupContact != 1, NA, .))) %>%
+  #mutate_at(vars(-any_of(idVars), -ends_with(".pre"), -ends_with(".post"), -IntergroupContact), funs(ifelse(dtMiMain$IntergroupContact != 1, NA, .))) %>%
+  #filter(is.na(relatednessNoInteraction)) %>%
+  select(-relatednessNoInteraction) %>% # remove completely missing col
+  as.data.frame
+
+# dtMiIntergroup %>% 
+#   select(ID, TIDnum, IntergroupContact, relatednessNoInteraction) %>%
+#   arrange(ID, TIDnum, IntergroupContact)
+
+# Ingroup Contact
+dtMiIngroup <- 
+  dtMiMain %>%
+    #mutate_at(vars(any_of(varNamS123PCA), -any_of(idVars)), funs(ifelse(dtMiMain$IngroupContact != 1, NA, .))) %>%
+    mutate_at(vars(-any_of(idVars), -ends_with(".pre"), -ends_with(".post"), -IngroupContact), funs(ifelse(dtMiMain$IngroupContact != 1, NA, .))) %>%
+    as.data.frame
+```
+
+```{r InteractionImp}
+#################################################################
+##                       Any Interaction                       ##
+#################################################################
+
+##---------------------------------------------------------------
+##                      Single Imputation                      --
+##---------------------------------------------------------------
+# set.seed(123)
+# MiInteraction <-
+#   amelia(
+#     dtMiInteraction,
+#     m = 1, # 20
+#     ts = "TIDnum",
+#     cs = "ID",
+#     idvars = c("TID", "date", "week", "study", "IntergroupContact", "IngroupContact"), #"PID",
+#     #lags = names(dtMiMain)[!names(dtMiMain) %in% idVars],
+#     #lags = names(dtMiMain)[names(dtMiMain) %in%varNamInMiMainRed],
+#     #noms = names(dtMiMain)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMain))],
+#     #noms = c("InteractionDum"),
+#     parallel = "multicore",
+#     ncpus = parallel::detectCores(),
+#     p2s = 2
+#   )
+# save(MiInteraction, file = "data/imputed/InteractionImputed.RData")
+load("data/imputed/InteractionImputed.RData")
+
+
+##---------------------------------------------------------------
+##                     Multiple Imputation                     --
+##---------------------------------------------------------------
+
+# # Stability to imputations:
+# set.seed(123)
+# MiInteractionStab <-
+#   amelia(
+#     dtMiInteraction,
+#     m = 20,
+#     ts = "TIDnum",
+#     cs = "ID",
+#     idvars = c("TID", "date", "week", "study", "IntergroupContact", "IngroupContact"), #"PID",
+#     #lags = names(dtMiMain)[!names(dtMiMain) %in% idVars],
+#     #lags = names(dtMiMain)[names(dtMiMain) %in%varNamInMiMainRed],
+#     #noms = names(dtMiMain)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMain))],
+#     #noms = c("InteractionDum"),
+#     parallel = "multicore",
+#     ncpus = parallel::detectCores(),
+#     p2s = 2
+#   )
+# save(MiInteractionStab, file = "data/imputed/InteractionImputedStability.RData")
+load("data/imputed/InteractionImputedStability.RData")
+```
+
+```{r intergroupImp}
+##################################################################
+##                    Intergroup Interaction                    ##
+##################################################################
+
+##---------------------------------------------------------------
+##                      Single Imputation                      --
+##---------------------------------------------------------------
+# set.seed(123)
+# MiIntergroup <-
+#   amelia(
+#     dtMiIntergroup,
+#     m = 1, # 20
+#     ts = "TIDnum",
+#     cs = "ID",
+#     idvars = c("TID", "date", "week", "study", "IntergroupContact", "IngroupContact", "InteractionDum"), #"PID",
+#     #lags = names(dtMiMain)[!names(dtMiMain) %in% idVars],
+#     #lags = names(dtMiMain)[names(dtMiMain) %in%varNamInMiMainRed],
+#     #noms = names(dtMiMain)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMain))],
+#     #noms = c("InteractionDum"),
+#     parallel = "multicore",
+#     ncpus = parallel::detectCores(),
+#     p2s = 2
+#   )
+# save(MiIntergroup, file = "data/imputed/IntergroupImputed.RData")
+load("data/imputed/IntergroupImputed.RData")
+
+
+##---------------------------------------------------------------
+##                     Multiple Imputation                     --
+##---------------------------------------------------------------
+
+# # Stability to imputations:
+# set.seed(123)
+# MiIntergroupStab <-
+#   amelia(
+#     dtMiIntergroup,
+#     m = 20,
+#     ts = "TIDnum",
+#     cs = "ID",
+#     idvars = c("TID", "date", "week", "study", "IntergroupContact", "IngroupContact", "InteractionDum"), #"PID",
+#     #lags = names(dtMiMain)[!names(dtMiMain) %in% idVars],
+#     #lags = names(dtMiMain)[names(dtMiMain) %in%varNamInMiMainRed],
+#     #noms = names(dtMiMain)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMain))],
+#     #noms = c("InteractionDum"),
+#     parallel = "multicore",
+#     ncpus = parallel::detectCores(),
+#     p2s = 2
+#   )
+# save(MiIntergroupStab, file = "data/imputed/IntergroupImputedStability.RData")
+load("data/imputed/IntergroupImputedStability.RData")
+```
+
+```{r ingroupImp}
+#################################################################
+##                     Ingroup Interaction                     ##
+##                        NOT CONVERGING                       ##
+#################################################################
+
+##---------------------------------------------------------------
+##                      Single Imputation                      --
+##---------------------------------------------------------------
+# set.seed(123)
+# MiIngroup <-
+#   amelia(
+#     dtMiIngroup,
+#     m = 1, # 20
+#     ts = "TIDnum",
+#     cs = "ID",
+#     idvars = c("TID", "date", "week", "study", "IntergroupContact", "IngroupContact", "InteractionDum"), #"PID",
+#     #lags = names(dtMiMain)[!names(dtMiMain) %in% idVars],
+#     #lags = names(dtMiMain)[names(dtMiMain) %in%varNamInMiMainRed],
+#     #noms = names(dtMiMain)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMain))],
+#     #noms = c("InteractionDum"),
+#     parallel = "multicore",
+#     ncpus = parallel::detectCores(),
+#     p2s = 2
+#   )
+# save(MiIngroup, file = "data/imputed/IngroupImputed.RData")
+# load("data/imputed/IngroupImputed.RData")
+
+
+##---------------------------------------------------------------
+##                     Multiple Imputation                     --
+##---------------------------------------------------------------
+
+# # Stability to imputations:
+# set.seed(123)
+# MiIngroupStab <-
+#   amelia(
+#     dtMiIngroup,
+#     m = 20,
+#     ts = "TIDnum",
+#     cs = "ID",
+#     idvars = c("TID", "date", "week", "study", "IntergroupContact", "IngroupContact", "InteractionDum"), #"PID",
+#     #lags = names(dtMiMain)[!names(dtMiMain) %in% idVars],
+#     #lags = names(dtMiMain)[names(dtMiMain) %in%varNamInMiMainRed],
+#     #noms = names(dtMiMain)[grepl(paste(varNamMiMainNoms, collapse = "|^"), names(dtMiMain))],
+#     #noms = c("InteractionDum"),
+#     parallel = "multicore",
+#     ncpus = parallel::detectCores(),
+#     p2s = 2
+#   )
+# save(MiIngroupStab, file = "data/imputed/IngroupImputedStability.RData")
+# load("data/imputed/IngroupImputedStability.RData")
+```
+
+#### Non-Interaction Responses
+
+```{r MiNoInteractionPrep}
+# TBD
+```
+
+```{r NoInteractionImp}
+# TBD
+```
+
+
+## Center and Normalize
+
+For the 3MPCA, we center (across participants but within time point) and normalize (within variable but across time points) all key variables. The between-person centering, ensures that all variations are around the mean trend (which is removed by the centering). The normalization within variable are important for ensuring equal variances across variables, which ensures equal weighting of the variables in the 3MPCA.
+
+```{r mainCentered}
+varNam3mpcaMainAnalysis <- varNamesDailyFull %>%
+  filter(!varNam %in% c(dropVarPcaMain, "PID", "TID", "TIDnum", "startDate", "startTime")) %>%
+  pull
+
+dtMainMi <- MiMain$imputations$imp1 %>%
+  rowwise() %>%
+  mutate(
+    InteractionDumOg = sum(IntergroupContact, IngroupContact, na.rm = TRUE),
+    InteractionDumOg = if_else(InteractionDum > 0, 1, InteractionDum),
+    InteractionDumOg = if_else(sum(is.na(c(IntergroupContact, IngroupContact))) == 2, NA_real_, InteractionDum),
+    relatednessInteraction = mean(c(relatednessSelf, relatednessOther), na.rm = TRUE),
+    relatedness = if_else(InteractionDum == 1, relatednessInteraction, relatednessNoInteraction)
+    #relatednessNoInteraction = if_else(is.na(InteractionDumOg), NA_real_, relatednessNoInteraction)
+  ) %>%
+  ungroup()
+
+dtMain3mpcaNorm <-
+  PCAnorm(data = MiMain$imputations$imp1,
+          pid = "ID",
+          tid = "TIDnum",
+          selection = varNam3mpcaMainAnalysis)
+```
+
+## Long to Wide
+
+For the Three-way ANOVA and the Three-mode PCA, the datasets need to be in a $n * mp$ matrix format, where $n$ is are the participants, $m$ are the time points, and $p$ are the variables. We do this by taking the prepared datasets, melting them into a id-variable-value table and casting the table into a wide format of variables_timepoint columns.
+
+### Main Analysis 
+
+```{r longToWideMain}
+dtPcaS123 <- rbind(
+  dtS1Red %>% select(any_of(varNamS123PCA)) %>% mutate(study = "S1"),
+  dtS2Red %>% select(any_of(varNamS123PCA)) %>% mutate(study = "S2"),
+  dtS3Red %>% select(any_of(varNamS123PCA)) %>% mutate(study = "S3")
+  ) %>%
+  group_by(study, PID) %>%
+  mutate(ID = cur_group_id()) %>%
+  ungroup %>%
+  mutate(
+    date = as.Date(gsub(" .*", "", TID)),
+    week = strftime(date, format = "%Y-W%V")
+    ) %>%
+  select(
+    ID,
+    PID,
+    TID,
+    date,
+    week,
+    TIDnum,
+    study,
+    everything()
+  ) %>%
+  arrange(ID, TIDnum) %>%
+  filter(TIDnum <= min(max(dtS1Red$TIDnum), max(dtS2Red$TIDnum), max(dtS3Red$TIDnum)))
+# 
+# dtMainWideC <- PCAnorm(data = dtPcaS123,
+#           pid = "ID",
+#           tid = "TIDnum",
+#           selection = names(dtPcaS123)[!names(dtPcaS123) %in% idVars]) %>%
+#   select(
+#     ID,
+#     PID,
+#     TIDnum,
+#     study,
+#     ends_with("_gmc")
+#   ) %>%
+#   data.frame %>% 
+#   melt(
+#     .,
+#     id=c("ID", "PID", "TIDnum", "study")
+#   ) %>%
+#   mutate(
+#     variable = paste(gsub("_gmc", "", variable), stringr::str_pad(TIDnum, width = 2, pad = 0), sep = "_")
+#   ) %>%
+#   arrange(variable, ID) %>%
+#   #arrange(ID, variable, TIDnum) %>%
+#   select(-TIDnum) %>%
+#   pivot_wider(names_from = variable, values_from = value) %>%
+#   replace(is.na(.), 0) %>%
+#   select(-ID, -PID, -study)
+#   #reshape(., idvar = "ID", timevar = "variable", direction = "wide") %>% View
+#   #pivot_wider(names_from = variable, values_from = value)
+# 
+# # dtMainWideC %>%
+# #   filter(
+# #     ID == 54
+# #   ) %>% 
+# #   t
+# # 
+# # dtMainWideC$AttitudesDutch_59[dtMainWideC$ID == 54]
+# 
+# dtMainWide <- dtPcaS123 %>%
+#   select(
+#     -TID,
+#     -date,
+#     -week
+#   ) %>%
+#   data.frame %>% 
+#   melt(
+#     .,
+#     id=c("ID", "PID", "TIDnum", "study")
+#   ) %>%
+#   mutate(
+#     variable = paste(variable, stringr::str_pad(TIDnum, width = 2, pad = 0), sep = "_")
+#   ) %>%
+#   select(-TIDnum) %>%
+#   arrange(variable, ID) %>%
+#   pivot_wider(names_from = variable, values_from = value) %>%
+#   replace(is.na(.), 0) %>%
+#   select(-ID, -PID, -study)
+
+dtPcaS123Imp <- MiMain$imputations[[1]] %>% 
+  select(ID, date, week, study, any_of(varNamS123PCA)) %>%
+  arrange(ID, TIDnum) %>%
+  filter(TIDnum <= min(max(dtS1Red$TIDnum), max(dtS2Red$TIDnum), max(dtS3Red$TIDnum)))
+
+dtMainImpWide <- MiMain$imputations[[1]] %>% 
+  select(ID, date, week, study, any_of(varNamS123PCA)) %>%
+  arrange(ID, TIDnum) %>%
+  filter(TIDnum <= min(max(dtS1Red$TIDnum), max(dtS2Red$TIDnum), max(dtS3Red$TIDnum))) %>%
+  select(
+    -TID,
+    -date,
+    -week
+  ) %>%
+  melt(
+    .,
+    id=c("ID", "TIDnum", "study")
+  ) %>%
+  mutate(
+    variable = paste("T", stringr::str_pad(TIDnum, width = 2, pad = 0), "_", variable, sep = "")
+  ) %>%
+  select(-TIDnum, -study) %>%
+  arrange(ID, variable) %>%
+  pivot_wider(names_from = variable, values_from = value) %>%
+  #replace(is.na(.), 0) %>%
+  select(-ID)
+```
+
+```{r longToWideMainStability}
+# Long to Wide Main Bi-daily
+MiMainStabilityWide <- list()
+for (i in 1:length(MiMainStability$imputations)) {
+  MiMainStabilityWide[[i]] <-
+    MiMainStability$imputations[[i]]  %>%
+    # Variable selection
+    select(ID, date, week, study, any_of(varNamS123PCA)) %>%
+    # Sorting
+    arrange(ID, TIDnum) %>%
+    # Filter minimum common num of measurements
+    filter(TIDnum <= min(
+      max(dtS1Red$TIDnum), max(dtS2Red$TIDnum), max(dtS3Red$TIDnum)
+    )) %>%
+    # Rm unnecessary variables for restructuring
+    select(-TID,
+           -date,
+           -week) %>%
+    # Long to wide
+    melt(.,
+         id = c("ID", "TIDnum", "study")) %>%
+    mutate(variable = paste(
+      "T",
+      stringr::str_pad(TIDnum, width = 2, pad = 0),
+      "_",
+      variable,
+      sep = ""
+    )) %>%
+    select(-TIDnum, -study) %>%
+    arrange(ID, variable) %>%
+    pivot_wider(names_from = variable, values_from = value) %>%
+    #replace(is.na(.), 0) %>%
+    select(-ID)
+}
+```
+
+### Follow-up: Studies
+
+#### Study 1
+
+##### Common Variables
+
+```{r longToWideS1Common}
+dtS1ImpWide <- MiS1$imputations[[1]] %>% 
+  select(PID, date, week, any_of(varNamS123PCA)) %>%
+  arrange(PID, TIDnum) %>%
+  #filter(TIDnum <= min(max(dtS1Red$TIDnum), max(dtS2Red$TIDnum), max(dtS3Red$TIDnum))) %>%
+  select(
+    -TID,
+    -date,
+    -week
+  ) %>%
+  melt(
+    .,
+    id=c("PID", "TIDnum")
+  ) %>%
+  mutate(
+    variable = paste("T", stringr::str_pad(TIDnum, width = 2, pad = 0), "_", variable, sep = "")
+  ) %>%
+  select(-TIDnum) %>%
+  arrange(PID, variable) %>%
+  pivot_wider(names_from = variable, values_from = value) %>%
+  #replace(is.na(.), 0) %>%
+  select(-PID)
+```
+
+```{r longToWideS1StabilityCommon}
+# Long to Wide S1 Bi-daily
+MiS1StabilityWide <- list()
+for (i in 1:length(MiS1Stability$imputations)) {
+  MiS1StabilityWide[[i]] <-
+    MiS1Stability$imputations[[i]]  %>%
+    # Variable selection
+    select(PID, date, week, any_of(varNamS123PCA)) %>%
+    # Sorting
+    arrange(PID, TIDnum) %>%
+    # Rm unnecessary variables for restructuring
+    select(-TID,
+           -date,
+           -week) %>%
+    # Long to wide
+    melt(.,
+         id = c("PID", "TIDnum")) %>%
+    mutate(variable = paste(
+      "T",
+      stringr::str_pad(TIDnum, width = 2, pad = 0),
+      "_",
+      variable,
+      sep = ""
+    )) %>%
+    select(-TIDnum) %>%
+    arrange(PID, variable) %>%
+    pivot_wider(names_from = variable, values_from = value) %>%
+    #replace(is.na(.), 0) %>%
+    select(-PID)
+}
+```
+
+
+##### Idiosyncratic Variables
+
+```{r longToWideS1Idiosyncratic}
+dtS1ImpWideIdio <- MiS1$imputations[[1]] %>% 
+  select(PID, date, week, any_of(varNamS1PCA)) %>%
+  arrange(PID, TIDnum) %>%
+  #filter(TIDnum <= min(max(dtS1Red$TIDnum), max(dtS2Red$TIDnum), max(dtS3Red$TIDnum))) %>%
+  select(
+    -TID,
+    -date,
+    -week
+  ) %>%
+  melt(
+    .,
+    id=c("PID", "TIDnum")
+  ) %>%
+  mutate(
+    variable = paste("T", stringr::str_pad(TIDnum, width = 2, pad = 0), "_", variable, sep = "")
+  ) %>%
+  select(-TIDnum) %>%
+  arrange(PID, variable) %>%
+  pivot_wider(names_from = variable, values_from = value) %>%
+  #replace(is.na(.), 0) %>%
+  select(-PID)
+```
+
+```{r longToWideS1StabilityIdiosyncratic}
+# Long to Wide S1 Bi-daily
+MiS1StabilityWideIdio <- list()
+for (i in 1:length(MiS1Stability$imputations)) {
+  MiS1StabilityWideIdio[[i]] <-
+    MiS1Stability$imputations[[i]]  %>%
+    # Variable selection
+    select(PID, date, week, any_of(varNamS1PCA)) %>%
+    # Sorting
+    arrange(PID, TIDnum) %>%
+    # Rm unnecessary variables for restructuring
+    select(-TID,
+           -date,
+           -week) %>%
+    # Long to wide
+    melt(.,
+         id = c("PID", "TIDnum")) %>%
+    mutate(variable = paste(
+      "T",
+      stringr::str_pad(TIDnum, width = 2, pad = 0),
+      "_",
+      variable,
+      sep = ""
+    )) %>%
+    select(-TIDnum) %>%
+    arrange(PID, variable) %>%
+    pivot_wider(names_from = variable, values_from = value) %>%
+    #replace(is.na(.), 0) %>%
+    select(-PID)
+}
+```
+
+
+#### Study 2
+
+#### Study 3
+
+### Follow-up: Response Type
+
+#### All Interaction Responses
+
+```{r longToWideInteraction}
+
+dtInteractionImpWide <- MiInteraction$imputations[[1]] %>% 
+  select(ID, date, week, study, any_of(varNamS123PCA)) %>%
+  arrange(ID, TIDnum) %>%
+  filter(TIDnum <= min(max(dtS1Red$TIDnum), max(dtS2Red$TIDnum), max(dtS3Red$TIDnum))) %>%
+  select(
+    -TID,
+    -date,
+    -week
+  ) %>%
+  melt(
+    .,
+    id=c("ID", "TIDnum", "study")
+  ) %>%
+  mutate(
+    variable = paste("T", stringr::str_pad(TIDnum, width = 2, pad = 0), "_", variable, sep = "")
+  ) %>%
+  select(-TIDnum, -study) %>%
+  arrange(ID, variable) %>%
+  pivot_wider(names_from = variable, values_from = value) %>%
+  #replace(is.na(.), 0) %>%
+  select(-ID)
+```
+
+```{r longToWidInteractionStability}
+# Long to Wide Main Bi-daily
+MiInteractionStabilityWide <- list()
+for (i in 1:length(MiInteractionStab$imputations)) {
+  MiInteractionStabilityWide[[i]] <-
+    MiInteractionStab$imputations[[i]]  %>%
+    # Variable selection
+    select(ID, date, week, study, any_of(varNamS123PCA)) %>%
+    # Sorting
+    arrange(ID, TIDnum) %>%
+    # Filter minimum common num of measurements
+    filter(TIDnum <= min(
+      max(dtS1Red$TIDnum), max(dtS2Red$TIDnum), max(dtS3Red$TIDnum)
+    )) %>%
+    # Rm unnecessary variables for restructuring
+    select(-TID,
+           -date,
+           -week) %>%
+    # Long to wide
+    melt(.,
+         id = c("ID", "TIDnum", "study")) %>%
+    mutate(variable = paste(
+      "T",
+      stringr::str_pad(TIDnum, width = 2, pad = 0),
+      "_",
+      variable,
+      sep = ""
+    )) %>%
+    select(-TIDnum, -study) %>%
+    arrange(ID, variable) %>%
+    pivot_wider(names_from = variable, values_from = value) %>%
+    #replace(is.na(.), 0) %>%
+    select(-ID)
+}
+```
+
+
+#### Intergroup Interaction Responses
+
+```{r longToWideIntergroup}
+dtIntergroupImpWide <- MiIntergroup$imputations[[1]] %>% 
+  select(ID, date, week, study, any_of(varNamS123PCA)) %>%
+  arrange(ID, TIDnum) %>%
+  filter(TIDnum <= min(max(dtS1Red$TIDnum), max(dtS2Red$TIDnum), max(dtS3Red$TIDnum))) %>%
+  select(
+    -TID,
+    -date,
+    -week
+  ) %>%
+  melt(
+    .,
+    id=c("ID", "TIDnum", "study")
+  ) %>%
+  mutate(
+    variable = paste("T", stringr::str_pad(TIDnum, width = 2, pad = 0), "_", variable, sep = "")
+  ) %>%
+  select(-TIDnum, -study) %>%
+  arrange(ID, variable) %>%
+  pivot_wider(names_from = variable, values_from = value) %>%
+  #replace(is.na(.), 0) %>%
+  select(-ID)
+```
+
+```{r longToWidIntergroupStability}
+# Long to Wide Main Bi-daily
+MiIntergroupStabilityWide <- list()
+for (i in 1:length(MiIntergroupStab$imputations)) {
+  MiIntergroupStabilityWide[[i]] <-
+    MiIntergroupStab$imputations[[i]]  %>%
+    # Variable selection
+    select(ID, date, week, study, any_of(varNamS123PCA)) %>%
+    # Sorting
+    arrange(ID, TIDnum) %>%
+    # Filter minimum common num of measurements
+    filter(TIDnum <= min(
+      max(dtS1Red$TIDnum), max(dtS2Red$TIDnum), max(dtS3Red$TIDnum)
+    )) %>%
+    # Rm unnecessary variables for restructuring
+    select(-TID,
+           -date,
+           -week) %>%
+    # Long to wide
+    melt(.,
+         id = c("ID", "TIDnum", "study")) %>%
+    mutate(variable = paste(
+      "T",
+      stringr::str_pad(TIDnum, width = 2, pad = 0),
+      "_",
+      variable,
+      sep = ""
+    )) %>%
+    select(-TIDnum, -study) %>%
+    arrange(ID, variable) %>%
+    pivot_wider(names_from = variable, values_from = value) %>%
+    #replace(is.na(.), 0) %>%
+    select(-ID)
+}
+```
+
+#### Non-Interaction Responses
+
+### Follow-up: Time Scales
+
+#### Daily
+
+```{r longToWideDaily}
+dtMainDailyImpWide <- MiMainDaily$imputations[[1]] %>%
+  select(ID, date, study, any_of(varNamS123PCA)) %>%
+  arrange(ID, TIDnum) %>%
+  filter(
+    TIDnum <= dtMiMainDaily %>% group_by(study) %>% summarise(TIDmax = max(TIDnum)) %>% select(TIDmax) %>% min
+  ) %>%
+  select(
+    -date
+  ) %>% 
+  melt(
+    .,
+    id=c("ID", "TIDnum", "study")
+  ) %>%
+  mutate(
+    variable = paste("T", stringr::str_pad(TIDnum, width = 2, pad = 0), "_", variable, sep = "")
+  ) %>%
+  select(-TIDnum, -study) %>%
+  arrange(ID, variable) %>%
+  pivot_wider(names_from = variable, values_from = value) %>%
+  #replace(is.na(.), 0) %>%
+  select(-ID)
+```
+
+```{r longToWideDailyStability}
+# Long to Wide Main Daily
+MiMainDailyStabilityWide <- list()
+for (i in 1:length(MiMainDailyStability$imputations)) {
+  MiMainDailyStabilityWide[[i]] <-
+    MiMainDailyStability$imputations[[i]] %>%
+    # Variable selection
+    select(ID, date, study, any_of(varNamS123PCA)) %>%
+    # Sorting
+    arrange(ID, TIDnum) %>%
+    # Filter minimum common num of measurements
+    filter(
+      TIDnum <= dtMiMainDaily %>% group_by(study) %>% summarise(TIDmax = max(TIDnum)) %>% select(TIDmax) %>% min
+    ) %>%
+    # Rm unnecessary variables for restructuring
+    select(-date) %>%
+    # Long to wide
+    melt(.,
+         id = c("ID", "TIDnum", "study")) %>%
+    mutate(variable = paste(
+      "T",
+      stringr::str_pad(TIDnum, width = 2, pad = 0),
+      "_",
+      variable,
+      sep = ""
+    )) %>%
+    select(-TIDnum, -study) %>%
+    arrange(ID, variable) %>%
+    pivot_wider(names_from = variable, values_from = value) %>%
+    #replace(is.na(.), 0) %>%
+    select(-ID)
+}
+```
+
+
+#### Weekly
+
+```{r longToWideWeekly}
+dtMainWeeklyImpWide <- MiMainWeekly$imputations[[1]] %>%
+  select(ID, week, study, any_of(varNamS123PCA)) %>%
+  arrange(ID, TIDnum) %>%
+  filter(
+    TIDnum <= dtMiMainWeeekly %>% group_by(study) %>% summarise(TIDmax = max(TIDnum)) %>% select(TIDmax) %>% min
+  ) %>%
+  select(
+    -week
+  ) %>% 
+  melt(
+    .,
+    id=c("ID", "TIDnum", "study")
+  ) %>%
+  mutate(
+    variable = paste("T", stringr::str_pad(TIDnum, width = 2, pad = 0), "_", variable, sep = "")
+  ) %>%
+  select(-TIDnum, -study) %>%
+  arrange(ID, variable) %>%
+  pivot_wider(names_from = variable, values_from = value) %>%
+  #replace(is.na(.), 0) %>%
+  select(-ID)
+```
+
+```{r longToWideWeeklyStability}
+# Long to Wide Main Weekly
+MiMainWeeklyStabilityWide <- list()
+for (i in 1:length(MiMainWeeklyStability$imputations)) {
+  MiMainWeeklyStabilityWide[[i]] <-
+    MiMainWeeklyStability$imputations[[i]] %>%
+    # Variable selection
+    select(ID, week, study, any_of(varNamS123PCA)) %>%
+    # Sorting
+    arrange(ID, TIDnum) %>%
+    # Filter minimum common num of measurements
+    filter(
+      TIDnum <= dtMiMainWeeekly %>% group_by(study) %>% summarise(TIDmax = max(TIDnum)) %>% select(TIDmax) %>% min
+    ) %>%
+    # Rm unnecessary variables for restructuring
+    select(-week) %>%
+    # Long to wide
+    melt(.,
+         id = c("ID", "TIDnum", "study")) %>%
+    mutate(variable = paste(
+      "T",
+      stringr::str_pad(TIDnum, width = 2, pad = 0),
+      "_",
+      variable,
+      sep = ""
+    )) %>%
+    select(-TIDnum, -study) %>%
+    arrange(ID, variable) %>%
+    pivot_wider(names_from = variable, values_from = value) %>%
+    #replace(is.na(.), 0) %>%
+    select(-ID)
+}
+```
+
+# **Three-Way ANOVA**
+
+We assess the percentages of explained variance for the person-, variable-, and time aspects --- which offers an indication of whether a 3MPCA is useful for the dataset. Based on the grand mean centered variables we conduct a fixed-effects three-way ANOVA of the person-, variable-, and time modes as well as their various interactions. We are particularly interested in the highest order interaction term Person \* Variable \* Time + error, as a large amount of variance in this effect would speak towards the possible interdependence of the three modes.
+
+```{r threeWayAnovaMainBiDaily, message=FALSE, warning=FALSE}
+capture.output(
+  threeWayAnoBiDailyImp <- threewayanova(
+    Y = dtMainImpWide,
+    n = nrow(dtMainImpWide), # Nr. ppt.s (A)
+    m = length(unique(sub("T[0-9]{2}_", "", names(dtMainImpWide)))), # Nr. variables (B)
+    p = length(unique(sub("_.*", "", names(dtMainImpWide)))) # Nr. time points (C)
+  ),
+file='NUL')
+
+options(knitr.kable.NA = '')
+data.frame(SS = sapply(threeWayAnoBiDailyImp, c)) %>%
+  rownames_to_column(., var = "EffectNam") %>%
+  mutate(RSqrd = SS / sum(SS) * 100) %>%
+  add_row(
+    EffectNam = "Total",
+    SS = sum(.$SS),
+    RSqrd = NA
+  ) %>%
+  mutate(
+    Effect = c(
+      "Person",
+      "Variable",
+      "Time",
+      "Person*Variable",
+      "Person*Time",
+      "Variable*Time",
+      "Person*Variable*Time+error",
+      "Total"
+    )
+  ) %>%
+  select(Effect, everything(), -EffectNam) %>%
+  kbl(.,
+      escape = FALSE,
+      booktabs = T,
+      align = c("l", "r", "c"),
+      digits=2,
+      col.names = c(
+        "Effect",
+        "Sum of Squares",
+        "$R^2$"
+      ),
+      caption = "Three-way ANOVA Main Analysis Bi-daily (Single Imputation)") %>%
+  kable_classic(
+    full_width = F,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  )
+```
+
+<br>
+
+We find that for the bi-daily time scale the $Person*Time*Variable+error$ sums of squares are indeed the largest and speak towards the utility of a Three-Mode PCA. Interestingly, time itself has a relatively small percentage of explained variance and only becomes important in compination with person- or person- and variable-specific differences.
+
+```{r threeWayAnovaMainDaily, message=FALSE, warning=FALSE}
+capture.output(
+  threeWayAnoDailyImp <- threewayanova(
+    Y = dtMainDailyImpWide,
+    n = nrow(dtMainDailyImpWide), # Nr. ppt.s (A)
+    m = length(unique(sub("T[0-9]{2}_", "", names(dtMainDailyImpWide)))), # Nr. variables (B)
+    p = length(unique(sub("_.*", "", names(dtMainDailyImpWide)))) # Nr. time points (C)
+  ),
+file='NUL')
+
+options(knitr.kable.NA = '')
+data.frame(SS = sapply(threeWayAnoDailyImp, c)) %>%
+  rownames_to_column(., var = "EffectNam") %>%
+  mutate(RSqrd = SS / sum(SS) * 100) %>%
+  add_row(
+    EffectNam = "Total",
+    SS = sum(.$SS),
+    RSqrd = NA
+  ) %>%
+  mutate(
+    Effect = c(
+      "Person",
+      "Variable",
+      "Time",
+      "Person*Variable",
+      "Person*Time",
+      "Variable*Time",
+      "Person*Variable*Time+error",
+      "Total"
+    )
+  ) %>%
+  select(Effect, everything(), -EffectNam) %>%
+  kbl(.,
+      escape = FALSE,
+      booktabs = T,
+      align = c("l", "r", "c"),
+      digits=2,
+      col.names = c(
+        "Effect",
+        "Sum of Squares",
+        "$R^2$"
+      ),
+      caption = "Three-way ANOVA Main Analysis Daily (Single Imputation)") %>%
+  kable_classic(
+    full_width = F,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  )
+```
+
+<br>
+
+We additionally see that for the daily time scale aggregation, the $Person*Time*Variable+error$ sums of squares are reduced but remain the largest sums of squares and are still substantial.
+
+```{r threeWayAnovaMainWweekly, message=FALSE, warning=FALSE}
+capture.output(
+  threeWayAnoWeeklyImp <- threewayanova(
+    Y = dtMainWeeklyImpWide,
+    n = nrow(dtMainWeeklyImpWide), # Nr. ppt.s (A)
+    m = length(unique(sub("T[0-9]{2}_", "", names(dtMainWeeklyImpWide)))), # Nr. variables (B)
+    p = length(unique(sub("_.*", "", names(dtMainWeeklyImpWide)))) # Nr. time points (C)
+  ),
+file='NUL')
+
+options(knitr.kable.NA = '')
+data.frame(SS = sapply(threeWayAnoWeeklyImp, c)) %>%
+  rownames_to_column(., var = "EffectNam") %>%
+  mutate(RSqrd = SS / sum(SS) * 100) %>%
+  add_row(
+    EffectNam = "Total",
+    SS = sum(.$SS),
+    RSqrd = NA
+  ) %>%
+  mutate(
+    Effect = c(
+      "Person",
+      "Variable",
+      "Time",
+      "Person*Variable",
+      "Person*Time",
+      "Variable*Time",
+      "Person*Variable*Time+error",
+      "Total"
+    )
+  ) %>%
+  select(Effect, everything(), -EffectNam) %>%
+  kbl(.,
+      escape = FALSE,
+      booktabs = T,
+      align = c("l", "r", "c"),
+      digits=2,
+      col.names = c(
+        "Effect",
+        "Sum of Squares",
+        "$R^2$"
+      ),
+      caption = "Three-way ANOVA Main Analysis Weekly (Single Imputation)") %>%
+  kable_classic(
+    full_width = F,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  )
+```
+
+<br>
+
+However, with the aggregation to `r length(unique(sub("_.*", "", names(dtMainWeeklyImpWide))))` weekly measurements, the $Person*Time*Variable+error$ sums of squares become less prominent and the variable differences explain substantially more variance.
+
+# **Plots per Item** {.tabset .tabset-fade}
+
+The three-mode PCA ultimately aims to explain the most variance with the fewest components (by maximizing the variance of data mapped in a lower dimensional space --- often by maximally separating groups of cases with similar variable patterns). Importantly, this procedure depends on variances and covariances to be present within the data. As one of our three modes is time and variance over time is not always given (e.g., because a variable is stable over the measured time span, such as personality over a month), it becomes important to assess whether a dimension reduction is possible for the variables measured during the measured time period. We, thus, start by visually inspecting the average changes and variance developments of all potentially relevant variables. We hope so see changes within the means and standard deviations over the measurement periods.
+
+Please note that the items might be measured on different ranges. To avoid misinterpretation of variances and changes over time, we cluster variables with similar ranges in different plots where necessary.
+
+## Means
+
+To illustrate the developments of the means,we plot the item means of all variables. We plot the means of the individual variables for each measurement occasion, summarizing the responses of all participants at any given time point. The displayed time grouping is based on the measurement index rather than the actual date to ensure comparability of the changes between each measurement as well as studies. We plot the means for bi-daily, daily, and weekly timescales.
+
+### Studies 1-3 (Means) {.unlisted .unnumbered}
+
+We begin by assessing the imputed dataset of the main analysis, where participants from all three studies are combined, using the relevant variables that are available for all three studies.
+
+```{r plotAllMean}
+varClS123 <- dtPcaS123Imp %>%
+  PCAnorm(data = .,
+          pid = "ID",
+          tid = "TIDnum",
+          selection = names(.)[!names(.) %in% idVars]) %>%
+  select(
+    ends_with("_gmc")
+  ) %>%
+  data.frame %>%
+  summarise_all(
+    sd, na.rm = TRUE
+  ) %>%
+  t %>%
+  as.data.frame %>%
+  kmeans(., centers = 2)
+
+PCAnorm(data = dtPcaS123Imp,
+          pid = "ID",
+          tid = "TIDnum",
+          selection = names(dtPcaS123)[!names(dtPcaS123) %in% idVars]) %>%
+  select(
+    ID,
+    TIDnum,
+    ends_with("_gmc")
+  ) %>%
+  data.frame %>%
+  melt(
+    .,
+    id=c("ID","TIDnum")
+  ) %>%
+  mutate(
+    variable = gsub("_gmc", "", variable)
+  ) %>%
+  ggplot(., aes(x = variable, y = value, group = TIDnum, color = TIDnum)) +
+  #geom_jitter() +
+  stat_summary(fun=mean, geom="line") +
+  labs(
+    title = "Studies 1-3 Means over time [bi-daily]",
+    y = "Grand Mean Centered Average",
+    x = "Variable",
+    color = "Timepoint",
+    group = "Timepoint"
+  ) +
+  #coord_flip() +
+  theme_Publication() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust=1),
+    legend.key.size = unit(1, 'cm'),
+    legend.key.height = unit(0.4, 'cm'),
+  )
+
+dtPcaS123 %>%
+  group_by(ID, date, study) %>%
+  summarise_if(is.numeric, mean, na.rm = TRUE) %>%
+  ungroup %>%
+  group_by(study) %>%
+  mutate(TIDnum = as.numeric(factor(date))) %>%
+  ungroup %>%
+  select(ID, date, TIDnum, everything()) %>%
+  mutate_all(~ifelse(is.nan(.), NA, .)) %>%
+  PCAnorm(data = .,
+          pid = "ID",
+          tid = "TIDnum",
+          selection = names(.)[!names(.) %in% idVars]) %>%
+  select(
+    ID,
+    TIDnum,
+    ends_with("_gmc")
+  ) %>%
+  data.frame %>%
+  melt(
+    .,
+    id=c("ID","TIDnum")
+  ) %>%
+  mutate(
+    variable = gsub("_gmc", "", variable)
+  ) %>%
+  ggplot(., aes(x = variable, y = value, group = TIDnum, color = TIDnum)) +
+  #geom_jitter() +
+  stat_summary(fun=mean, geom="line") +
+  labs(
+    title = "Studies 1-3 Means over time [daily]",
+    y = "Grand Mean Centered Average",
+    x = "Variable",
+    color = "Timepoint",
+    group = "Timepoint"
+  ) +
+  #coord_flip() +
+  theme_Publication() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust=1),
+    legend.key.size = unit(1, 'cm'),
+    legend.key.height = unit(0.4, 'cm'),
+  )
+
+dtPcaS123 %>%
+  group_by(ID, week, study) %>%
+  summarise_if(is.numeric, mean, na.rm = TRUE) %>%
+  ungroup %>%
+  group_by(study) %>%
+  mutate(TIDnum = as.numeric(factor(week))) %>%
+  ungroup %>%
+  select(ID, week, TIDnum, everything()) %>%
+  mutate_all(~ifelse(is.nan(.), NA, .)) %>%
+  PCAnorm(data = .,
+          pid = "ID",
+          tid = "TIDnum",
+          selection = names(.)[!names(.) %in% idVars]) %>%
+  select(
+    ID,
+    TIDnum,
+    ends_with("_gmc")
+  ) %>%
+  data.frame %>%
+  melt(
+    .,
+    id=c("ID","TIDnum")
+  ) %>%
+  mutate(
+    variable = gsub("_gmc", "", variable)
+  ) %>%
+  ggplot(., aes(x = variable, y = value, group = TIDnum, color = TIDnum)) +
+  #geom_jitter() +
+  stat_summary(fun=mean, geom="line") +
+  labs(
+    title = "Studies 1-3 Means over time [weekly]",
+    y = "Grand Mean Centered Average",
+    x = "Variable",
+    color = "Timepoint",
+    group = "Timepoint"
+  ) +
+  #coord_flip() +
+  theme_Publication() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust=1),
+    legend.key.size = unit(1, 'cm'),
+    legend.key.height = unit(0.4, 'cm'),
+  )
+```
+
+### Study 1 (Means) {.unlisted .unnumbered}
+
+The first study, utilized not only the smallest sample but also a slightly different set of measured variables compared to the later two studies. Several variables are consistent across all three studies (e.g., types of social interactions, interaction needs, self-determiantion theory needs, outgroup attitudes, and experienced well-being). Study 1 additionally included several emotion and mood measurements but fewer cognitive and behavioral measures than studies two and three.
+
+```{r plotS1Mean, fig.height=16}
+plotStat(
+  dt = dtS1Red,
+  varNams = varNamS1PCA,
+  id = "PID",
+  timescale = "bi-daily",
+  clNum = 2,
+  idVars = idVars,
+  stat = "mean",
+  title = "Study 1 Means over time [bi-daily]"
+)
+
+plotStat(
+  dt = dtS1Red,
+  varNams = varNamS1PCA,
+  id = "PID",
+  timescale = "daily",
+  clNum = 2,
+  idVars = idVars,
+  stat = "mean",
+  title = "Study 1 Means over time [daily]"
+)
+
+plotStat(
+  dt = dtS1Red,
+  varNams = varNamS1PCA,
+  id = "PID",
+  timescale = "weekly",
+  clNum = 2,
+  idVars = idVars,
+  stat = "mean",
+  title = "Study 1 Means over time [weekly]"
+)
+```
+
+### Study 2 (Means) {.unlisted .unnumbered}
+
+During the second study we collected the largest sample and additionally collected a range of motivations as well as pro-social and anti-social behaviors.
+
+We, again, select all potentially relevant variables and their labels, and then plot their developments on a bi-daily, daily, and weekly level.
+
+We again begin by plotting the item means of all variables. The plotting method is identical to that of Study 1.
+
+```{r plotS2Mean, fig.height=16}
+plotStat(
+  dt = dtS2Red,
+  varNams = varNamS2PCA,
+  id = "PID",
+  timescale = "bi-daily",
+  clNum = 2,
+  idVars = idVars,
+  stat = "mean",
+  title = "Study 2 Means over time [bi-daily]"
+)
+
+plotStat(
+  dt = dtS2Red,
+  varNams = varNamS2PCA,
+  id = "PID",
+  timescale = "daily",
+  clNum = 2,
+  idVars = idVars,
+  stat = "mean",
+  title = "Study 2 Means over time [daily]"
+)
+
+plotStat(
+  dt = dtS2Red,
+  varNams = varNamS2PCA,
+  id = "PID",
+  timescale = "weekly",
+  clNum = 2,
+  idVars = idVars,
+  stat = "mean",
+  title = "Study 2 Means over time [weekly]"
+)
+```
+
+### Study 3 (Means) {.unlisted .unnumbered}
+
+The third study uses a similar set up as Study 2 but targets a more vulnerable sample (of young medical professionals). While most key variables are identical to Study 2, in this last study we additionally collected several cognitive evaluations (e.g., importance ratings) and emotional status measures (e.g., anger, nervousness, energy, and loneliness).
+
+We, again, select all potentially relevant variables and their labels, and then plot their developments on a bi-daily, daily, and weekly level.
+
+As with the previous studies, we begin by plotting the item means of all variables. The plotting method is identical to that of Studies 1 and 2.
+
+```{r plotS3Mean, fig.height=16}
+plotStat(
+  dt = dtS3Red,
+  varNams = varNamS3PCA,
+  id = "PID",
+  timescale = "bi-daily",
+  clNum = 2,
+  idVars = idVars,
+  stat = "mean",
+  title = "Study 3 Means over time [bi-daily]"
+)
+
+plotStat(
+  dt = dtS3Red,
+  varNams = varNamS3PCA,
+  id = "PID",
+  timescale = "daily",
+  clNum = 2,
+  idVars = idVars,
+  stat = "mean",
+  title = "Study 3 Means over time [daily]"
+)
+
+plotStat(
+  dt = dtS3Red,
+  varNams = varNamS3PCA,
+  id = "PID",
+  timescale = "weekly",
+  clNum = 2,
+  idVars = idVars,
+  stat = "mean",
+  title = "Study 3 Means over time [weekly]"
+)
+```
+
+## SD
+
+To illustrate the developments of variance around the means, we also plot the item standard deviations of all variables. We, thus, plot the average variation from the mean for each individual variable, again summarizing the responses of all participants at any given time point. We retain the same measurement indices as the x axis.
+
+### Studies 1-3 (SDs) {.unlisted .unnumbered}
+
+<!-- <font size="5">Studies 1-3 (SDs)</font>  -->
+
+```{r plotAllSd}
+PCAnorm(data = dtPcaS123,
+          pid = "ID",
+          tid = "TIDnum",
+          selection = names(dtPcaS123)[!names(dtPcaS123) %in% idVars]) %>%
+  select(
+    ID,
+    TIDnum,
+    ends_with("_gmc")
+  ) %>%
+  data.frame %>%
+  melt(
+    .,
+    id=c("ID","TIDnum")
+  ) %>%
+  mutate(
+    variable = gsub("_gmc", "", variable)
+  ) %>%
+  ggplot(., aes(x = variable, y = value, group = TIDnum, color = TIDnum)) +
+  #geom_jitter() +
+  stat_summary(fun=sd, geom="line") +
+  labs(
+    title = "Studies 1-3 SDs over time [bi-daily]",
+    y = "Standard Deviation",
+    x = "Variable",
+    color = "Timepoint",
+    group = "Timepoint"
+  ) +
+  #coord_flip() +
+  theme_Publication() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust=1),
+    legend.key.size = unit(1, 'cm'),
+    legend.key.height = unit(0.4, 'cm'),
+  )
+
+dtPcaS123 %>%
+  group_by(ID, date, study) %>%
+  summarise_if(is.numeric, mean, na.rm = TRUE) %>%
+  ungroup %>%
+  group_by(study) %>%
+  mutate(TIDnum = as.numeric(factor(date))) %>%
+  ungroup %>%
+  select(ID, date, TIDnum, everything()) %>%
+  mutate_all(~ifelse(is.nan(.), NA, .)) %>%
+  PCAnorm(data = .,
+          pid = "ID",
+          tid = "TIDnum",
+          selection = names(.)[!names(.) %in% idVars]) %>%
+  select(
+    ID,
+    TIDnum,
+    ends_with("_gmc")
+  ) %>%
+  data.frame %>%
+  melt(
+    .,
+    id=c("ID","TIDnum")
+  ) %>%
+  mutate(
+    variable = gsub("_gmc", "", variable)
+  ) %>%
+  ggplot(., aes(x = variable, y = value, group = TIDnum, color = TIDnum)) +
+  #geom_jitter() +
+  stat_summary(fun=sd, geom="line") +
+  labs(
+    title = "Studies 1-3 SDs over time [daily]",
+    y = "Standard Deviation",
+    x = "Variable",
+    color = "Timepoint",
+    group = "Timepoint"
+  ) +
+  #coord_flip() +
+  theme_Publication() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust=1),
+    legend.key.size = unit(1, 'cm'),
+    legend.key.height = unit(0.4, 'cm'),
+  )
+
+dtPcaS123 %>%
+  group_by(ID, week, study) %>%
+  summarise_if(is.numeric, mean, na.rm = TRUE) %>%
+  ungroup %>%
+  group_by(study) %>%
+  mutate(TIDnum = as.numeric(factor(week))) %>%
+  ungroup %>%
+  select(ID, week, TIDnum, everything()) %>%
+  mutate_all(~ifelse(is.nan(.), NA, .)) %>%
+  PCAnorm(data = .,
+          pid = "ID",
+          tid = "TIDnum",
+          selection = names(.)[!names(.) %in% idVars]) %>%
+  select(
+    ID,
+    TIDnum,
+    ends_with("_gmc")
+  ) %>%
+  data.frame %>%
+  melt(
+    .,
+    id=c("ID","TIDnum")
+  ) %>%
+  mutate(
+    variable = gsub("_gmc", "", variable)
+  ) %>%
+  ggplot(., aes(x = variable, y = value, group = TIDnum, color = TIDnum)) +
+  #geom_jitter() +
+  stat_summary(fun=sd, geom="line") +
+  labs(
+    title = "Studies 1-3 SDs over time [weekly]",
+    y = "Standard Deviation",
+    x = "Variable",
+    color = "Timepoint",
+    group = "Timepoint"
+  ) +
+  #coord_flip() +
+  theme_Publication() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust=1),
+    legend.key.size = unit(1, 'cm'),
+    legend.key.height = unit(0.4, 'cm'),
+  )
+```
+
+### Study 1 (SDs) {.unlisted .unnumbered}
+
+```{r plotS1Sd, fig.height=16}
+plotStat(
+  dt = dtS1Red,
+  varNams = varNamS1PCA,
+  id = "PID",
+  timescale = "bi-daily",
+  clNum = 2,
+  idVars = idVars,
+  stat = "sd",
+  title = "Study 1 SDs over time [bi-daily]"
+)
+
+plotStat(
+  dt = dtS1Red,
+  varNams = varNamS1PCA,
+  id = "PID",
+  timescale = "daily",
+  clNum = 2,
+  idVars = idVars,
+  stat = "sd",
+  title = "Study 1 SDs over time [daily]"
+)
+
+plotStat(
+  dt = dtS1Red,
+  varNams = varNamS1PCA,
+  id = "PID",
+  timescale = "weekly",
+  clNum = 2,
+  idVars = idVars,
+  stat = "sd",
+  title = "Study 1 SDs over time [weekly]"
+)
+```
+
+### Study 2 (SDs) {.unlisted .unnumbered}
+
+```{r plotS2Sd, fig.height=16}
+plotStat(
+  dt = dtS2Red,
+  varNams = varNamS2PCA,
+  id = "PID",
+  timescale = "bi-daily",
+  clNum = 2,
+  idVars = idVars,
+  stat = "sd",
+  title = "Study 2 SDs over time [bi-daily]"
+)
+
+plotStat(
+  dt = dtS2Red,
+  varNams = varNamS2PCA,
+  id = "PID",
+  timescale = "daily",
+  clNum = 2,
+  idVars = idVars,
+  stat = "sd",
+  title = "Study 2 SDs over time [daily]"
+)
+
+plotStat(
+  dt = dtS2Red,
+  varNams = varNamS2PCA,
+  id = "PID",
+  timescale = "weekly",
+  clNum = 2,
+  idVars = idVars,
+  stat = "sd",
+  title = "Study 2 SDs over time [weekly]"
+)
+```
+
+### Study 3 (SDs) {.unlisted .unnumbered}
+
+```{r plotS3Sd, fig.height=16}
+plotStat(
+  dt = dtS3Red,
+  varNams = varNamS3PCA,
+  id = "PID",
+  timescale = "bi-daily",
+  clNum = 2,
+  idVars = idVars,
+  stat = "sd",
+  title = "Study 3 SDs over time [bi-daily]"
+)
+
+plotStat(
+  dt = dtS3Red,
+  varNams = varNamS3PCA,
+  id = "PID",
+  timescale = "daily",
+  clNum = 2,
+  idVars = idVars,
+  stat = "sd",
+  title = "Study 3 SDs over time [daily]"
+)
+
+plotStat(
+  dt = dtS3Red,
+  varNams = varNamS3PCA,
+  id = "PID",
+  timescale = "weekly",
+  clNum = 2,
+  idVars = idVars,
+  stat = "sd",
+  title = "Study 3 SDs over time [weekly]"
+)
+```
+
+</br>
+
+------------------------------------------------------------------------
+
+</br>
+
+# **Three-Mode PCA**
+
+## Stability Test
+
+### Main Analysis
+
+- all three studies combined
+- variables shared across studies
+- interaction and no interaction responses
+- bi-daily time scale
+
+#### Center and Normalize
+
+```{r MainStabCZ}
+##################################################################
+##                  Center across Participants                  ##
+##################################################################
+MiMainStabilityWideC <- list()
+for (i in 1:length(MiMainStabilityWide)) {
+  MiMainStabilityWideC[[i]] <-
+    ThreeWay::cent3(
+      X = MiMainStabilityWide[[i]],
+      # Nr. ppt.s (A)
+      n = nrow(MiMainStabilityWide[[i]]),
+      # Nr. variables (B)
+      m = length(unique(sub("T[0-9]{2}_", "", names(MiMainStabilityWide[[i]])))),
+      # Nr. time points (C)
+      p = length(unique(sub("_.*", "", names(MiMainStabilityWide[[i]])))),
+      # Center across Participants
+      mode = 1
+    ) %>%
+    as.data.frame
+}
+
+##################################################################
+##                 Normalize across Time Points                 ##
+##################################################################
+MiMainStabilityWideCZ <- list()
+for (i in 1:length(MiMainStabilityWideC)) {
+  MiMainStabilityWideCZ[[i]] <-
+    ThreeWay::norm3(
+      X = MiMainStabilityWideC[[i]],
+      # Nr. ppt.s (A)
+      n = nrow(MiMainStabilityWideC[[i]]),
+      # Nr. variables (B)
+      m = length(unique(sub("T[0-9]{2}_", "", names(MiMainStabilityWideC[[i]])))),
+      # Nr. time points (C)
+      p = length(unique(sub("_.*", "", names(MiMainStabilityWideC[[i]])))),
+      # Normalize across Time Points
+      mode = 2
+    ) %>%
+    as.data.frame
+  names(MiMainStabilityWideCZ[[i]]) <- names(MiMainStabilityWideC[[i]])
+}
+```
+
+#### Component Complexity
+
+```{r MainStabCompNum}
+# Run PCA SUP to determine best combination
+MainStabPcaSup <- list()
+capture.output(
+  for(i in 1:length(MiMainStabilityWideCZ)) {
+    MainStabPcaSup[[i]] <-
+    ThreeWay::T3runsApproxFit(
+    X = MiMainStabilityWideCZ[[i]],
+    n = nrow(MiMainStabilityWideCZ[[i]]), # Nr. ppt.s (A)
+    m = length(unique(sub("T[0-9]{2}_", "", names(MiMainStabilityWideCZ[[i]])))), # Nr. variables (B)
+    p = length(unique(sub("_.*", "", names(MiMainStabilityWideCZ[[i]])))), # Nr. time points (C)
+    maxa = 20,
+    maxb = 20,
+    maxc = 20
+  )
+  },
+file='NUL')
+
+# Select Dimension Complexity
+MainStabDimSelector <- list()
+for (i in 1:length(MainStabPcaSup)) {
+  MainStabDimSelector[[i]] <- capture.output(
+    ThreeWay::DimSelector(
+      out = MainStabPcaSup[[i]],
+      n = nrow(MiMainStabilityWideCZ[[i]]), # Nr. ppt.s (A)
+      m = length(unique(sub("T[0-9]{2}_", "", names(MiMainStabilityWideCZ[[i]])))), # Nr. variables (B)
+      p = length(unique(sub("_.*", "", names(MiMainStabilityWideCZ[[i]])))), # Nr. time points (C)
+      model = 2
+    )
+  )
+}
+
+MainStabDim <- list()
+for (i in 1:length(MainStabDimSelector)) {
+  MainStabDim[[i]] <-
+    tail(MainStabDimSelector[[i]], n = 1) %>%
+    str_extract("\\(.*\\)") %>%
+    stringr::str_extract_all('\\d+', simplify = TRUE) %>%
+    as.data.frame %>%
+    mutate_all(as.numeric) %>%
+    dplyr::rename(c(A = V1,
+                    B = V2,
+                    C = V3))
+}
+
+MainStabDim %>%
+  bind_rows %>%
+  as.data.frame %>%
+  rownames_to_column(., var = "imputation") %>%
+  group_by(A, B, C) %>%
+  summarise(Frequency = n()) %>%
+  arrange(-Frequency) %>%
+  mutate(Percentage = formattable::percent(Frequency/sum(.$Frequency))) %>%
+  kbl(
+    .,
+    escape = FALSE,
+    booktabs = TRUE,
+    align = "c",
+    digits = 2,
+    col.names = c(
+      "Person",
+      "Variable",
+      "Time",
+      "Frequency",
+      "Percentage"
+    ),
+    caption = "Frequency Table of Suggested Component Dimensions (from 20 imputed datasets)") %>%
+  kable_classic(
+    full_width = FALSE,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  )
+```
+
+### Follow-up: Studies (common variables)
+
+- **individual studies**
+- variables shared across studies
+- interaction and no interaction responses
+- bi-daily time scale
+
+#### Study 1
+
+##### Center and Normalize
+
+```{r S1CommonStabCZ}
+#################################################################
+##                           Study 1                           ##
+#################################################################
+
+
+##----------------------------------------------------------------
+##                  Center across Participants                  --
+##----------------------------------------------------------------
+MiS1StabilityWideC <- list()
+for (i in 1:length(MiS1StabilityWide)) {
+  MiS1StabilityWideC[[i]] <-
+    ThreeWay::cent3(
+      X = MiS1StabilityWide[[i]],
+      # Nr. ppt.s (A)
+      n = nrow(MiS1StabilityWide[[i]]),
+      # Nr. variables (B)
+      m = length(unique(sub("T[0-9]{2}_", "", names(MiS1StabilityWide[[i]])))),
+      # Nr. time points (C)
+      p = length(unique(sub("_.*", "", names(MiS1StabilityWide[[i]])))),
+      # Center across Participants
+      mode = 1
+    ) %>%
+    as.data.frame
+}
+
+##----------------------------------------------------------------
+##                 Normalize across Time Points                 --
+##----------------------------------------------------------------
+MiS1StabilityWideCZ <- list()
+for (i in 1:length(MiS1StabilityWideC)) {
+  MiS1StabilityWideCZ[[i]] <-
+    ThreeWay::norm3(
+      X = MiS1StabilityWideC[[i]],
+      # Nr. ppt.s (A)
+      n = nrow(MiS1StabilityWideC[[i]]),
+      # Nr. variables (B)
+      m = length(unique(sub("T[0-9]{2}_", "", names(MiS1StabilityWideC[[i]])))),
+      # Nr. time points (C)
+      p = length(unique(sub("_.*", "", names(MiS1StabilityWideC[[i]])))),
+      # Normalize across Time Points
+      mode = 2
+    ) %>%
+    as.data.frame
+  names(MiS1StabilityWideCZ[[i]]) <- names(MiS1StabilityWideC[[i]])
+}
+```
+
+##### Component Complexity
+
+```{r S1CommonStabCompNum}
+# Run PCA SUP to determine best combination
+S1StabPcaSup <- list()
+capture.output(
+  for(i in 1:length(MiS1StabilityWideCZ)) {
+    S1StabPcaSup[[i]] <-
+    ThreeWay::T3runsApproxFit(
+    X = MiS1StabilityWideCZ[[i]],
+    n = nrow(MiS1StabilityWideCZ[[i]]), # Nr. ppt.s (A)
+    m = length(unique(sub("T[0-9]{2}_", "", names(MiS1StabilityWideCZ[[i]])))), # Nr. variables (B)
+    p = length(unique(sub("_.*", "", names(MiS1StabilityWideCZ[[i]])))), # Nr. time points (C)
+    maxa = 20,
+    maxb = 20,
+    maxc = 20
+  )
+  },
+file='NUL')
+
+# Select Dimension Complexity
+S1StabDimSelector <- list()
+for (i in 1:length(S1StabPcaSup)) {
+  S1StabDimSelector[[i]] <- capture.output(
+    ThreeWay::DimSelector(
+      out = S1StabPcaSup[[i]],
+      n = nrow(MiS1StabilityWideCZ[[i]]), # Nr. ppt.s (A)
+      m = length(unique(sub("T[0-9]{2}_", "", names(MiS1StabilityWideCZ[[i]])))), # Nr. variables (B)
+      p = length(unique(sub("_.*", "", names(MiS1StabilityWideCZ[[i]])))), # Nr. time points (C)
+      model = 2
+    )
+  )
+}
+
+S1StabDim <- list()
+for (i in 1:length(S1StabDimSelector)) {
+  S1StabDim[[i]] <-
+    tail(S1StabDimSelector[[i]], n = 1) %>%
+    str_extract("\\(.*\\)") %>%
+    stringr::str_extract_all('\\d+', simplify = TRUE) %>%
+    as.data.frame %>%
+    mutate_all(as.numeric) %>%
+    dplyr::rename(c(A = V1,
+                    B = V2,
+                    C = V3))
+}
+
+S1StabDim %>%
+  bind_rows %>%
+  as.data.frame %>%
+  rownames_to_column(., var = "imputation") %>%
+  group_by(A, B, C) %>%
+  summarise(Frequency = n()) %>%
+  arrange(-Frequency) %>%
+  mutate(Percentage = formattable::percent(Frequency/sum(.$Frequency))) %>%
+  kbl(
+    .,
+    escape = FALSE,
+    booktabs = TRUE,
+    align = "c",
+    digits = 2,
+    col.names = c(
+      "Person",
+      "Variable",
+      "Time",
+      "Frequency",
+      "Percentage"
+    ),
+    caption = "Follow-up (S1 Common): Frequency Table of Suggested Component Dimensions (from 20 imputed datasets)") %>%
+  kable_classic(
+    full_width = FALSE,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  )
+```
+
+#### Study 2
+
+##### Center and Normalize
+
+##### Component Complexity
+
+#### Study 3
+
+##### Center and Normalize
+
+##### Component Complexity
+
+
+### Follow-up: Studies (ideosyncratic variables)
+
+- **individual studies**
+- **variables idiosyncratic to studies**
+- interaction and no interaction responses
+- bi-daily time scale
+
+#### Study 1
+
+##### Center and Normalize
+
+```{r S1IdiosyncraticStabCZ}
+#################################################################
+##                           Study 1                           ##
+#################################################################
+
+##----------------------------------------------------------------
+##                  Center across Participants                  --
+##----------------------------------------------------------------
+MiS1IdioStabilityWideC <- list()
+for (i in 1:length(MiS1StabilityWideIdio)) {
+  MiS1IdioStabilityWideC[[i]] <-
+    ThreeWay::cent3(
+      X = MiS1StabilityWideIdio[[i]],
+      # Nr. ppt.s (A)
+      n = nrow(MiS1StabilityWideIdio[[i]]),
+      # Nr. variables (B)
+      m = length(unique(sub("T[0-9]{2}_", "", names(MiS1StabilityWideIdio[[i]])))),
+      # Nr. time points (C)
+      p = length(unique(sub("_.*", "", names(MiS1StabilityWideIdio[[i]])))),
+      # Center across Participants
+      mode = 1
+    ) %>%
+    as.data.frame
+}
+
+##----------------------------------------------------------------
+##                 Normalize across Time Points                 --
+##----------------------------------------------------------------
+MiS1IdioStabilityWideCZ <- list()
+for (i in 1:length(MiS1IdioStabilityWideC)) {
+  MiS1IdioStabilityWideCZ[[i]] <-
+    ThreeWay::norm3(
+      X = MiS1IdioStabilityWideC[[i]],
+      # Nr. ppt.s (A)
+      n = nrow(MiS1IdioStabilityWideC[[i]]),
+      # Nr. variables (B)
+      m = length(unique(sub("T[0-9]{2}_", "", names(MiS1IdioStabilityWideC[[i]])))),
+      # Nr. time points (C)
+      p = length(unique(sub("_.*", "", names(MiS1IdioStabilityWideC[[i]])))),
+      # Normalize across Time Points
+      mode = 2
+    ) %>%
+    as.data.frame
+  names(MiS1IdioStabilityWideCZ[[i]]) <- names(MiS1IdioStabilityWideC[[i]])
+}
+```
+
+##### Component Complexity
+
+```{r S1IdiosyncraticStabCompNum}
+# Run PCA SUP to determine best combination
+S1IdioStabPcaSup <- list()
+capture.output(
+  for(i in 1:length(MiS1IdioStabilityWideCZ)) {
+    S1IdioStabPcaSup[[i]] <-
+    ThreeWay::T3runsApproxFit(
+    X = MiS1IdioStabilityWideCZ[[i]],
+    n = nrow(MiS1IdioStabilityWideCZ[[i]]), # Nr. ppt.s (A)
+    m = length(unique(sub("T[0-9]{2}_", "", names(MiS1IdioStabilityWideCZ[[i]])))), # Nr. variables (B)
+    p = length(unique(sub("_.*", "", names(MiS1IdioStabilityWideCZ[[i]])))), # Nr. time points (C)
+    maxa = 20,
+    maxb = 20,
+    maxc = 20
+  )
+  },
+file='NUL')
+
+# Select Dimension Complexity
+S1IdioStabDimSelector <- list()
+for (i in 1:length(S1IdioStabPcaSup)) {
+  S1IdioStabDimSelector[[i]] <- capture.output(
+    ThreeWay::DimSelector(
+      out = S1IdioStabPcaSup[[i]],
+      n = nrow(MiS1IdioStabilityWideCZ[[i]]), # Nr. ppt.s (A)
+      m = length(unique(sub("T[0-9]{2}_", "", names(MiS1IdioStabilityWideCZ[[i]])))), # Nr. variables (B)
+      p = length(unique(sub("_.*", "", names(MiS1IdioStabilityWideCZ[[i]])))), # Nr. time points (C)
+      model = 2
+    )
+  )
+}
+
+S1IdioStabDim <- list()
+for (i in 1:length(S1IdioStabDimSelector)) {
+  S1IdioStabDim[[i]] <-
+    tail(S1IdioStabDimSelector[[i]], n = 1) %>%
+    str_extract("\\(.*\\)") %>%
+    stringr::str_extract_all('\\d+', simplify = TRUE) %>%
+    as.data.frame %>%
+    mutate_all(as.numeric) %>%
+    dplyr::rename(c(A = V1,
+                    B = V2,
+                    C = V3))
+}
+
+S1IdioStabDim %>%
+  bind_rows %>%
+  as.data.frame %>%
+  rownames_to_column(., var = "imputation") %>%
+  group_by(A, B, C) %>%
+  summarise(Frequency = n()) %>%
+  arrange(-Frequency) %>%
+  mutate(Percentage = formattable::percent(Frequency/sum(.$Frequency))) %>%
+  kbl(
+    .,
+    escape = FALSE,
+    booktabs = TRUE,
+    align = "c",
+    digits = 2,
+    col.names = c(
+      "Person",
+      "Variable",
+      "Time",
+      "Frequency",
+      "Percentage"
+    ),
+    caption = "Follow-up (S1 Idiosyncratic): Frequency Table of Suggested Component Dimensions (from 20 imputed datasets)") %>%
+  kable_classic(
+    full_width = FALSE,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  )
+```
+
+#### Study 2
+
+##### Center and Normalize
+
+##### Component Complexity
+
+#### Study 3
+
+##### Center and Normalize
+
+##### Component Complexity
+
+
+### Follow-up: Response Type (interaction vs. no interaction)
+
+- all three studies combined
+- variables shared across studies
+- **interaction vs. no interaction responses**
+- bi-daily time scale
+
+#### All Interactions
+
+##### Center and Normalize
+
+```{r InteractionStabCZ}
+##################################################################
+##                  Center across Participants                  ##
+##################################################################
+MiInteractionStabilityWideC <- list()
+for (i in 1:length(MiInteractionStabilityWide)) {
+  MiInteractionStabilityWideC[[i]] <-
+    ThreeWay::cent3(
+      X = MiInteractionStabilityWide[[i]],
+      # Nr. ppt.s (A)
+      n = nrow(MiInteractionStabilityWide[[i]]),
+      # Nr. variables (B)
+      m = length(unique(sub("T[0-9]{2}_", "", names(MiInteractionStabilityWide[[i]])))),
+      # Nr. time points (C)
+      p = length(unique(sub("_.*", "", names(MiInteractionStabilityWide[[i]])))),
+      # Center across Participants
+      mode = 1
+    ) %>%
+    as.data.frame
+}
+
+##################################################################
+##                 Normalize across Time Points                 ##
+##################################################################
+MiInteractionStabilityWideCZ <- list()
+for (i in 1:length(MiInteractionStabilityWideC)) {
+  MiInteractionStabilityWideCZ[[i]] <-
+    ThreeWay::norm3(
+      X = MiInteractionStabilityWideC[[i]],
+      # Nr. ppt.s (A)
+      n = nrow(MiInteractionStabilityWideC[[i]]),
+      # Nr. variables (B)
+      m = length(unique(sub("T[0-9]{2}_", "", names(MiInteractionStabilityWideC[[i]])))),
+      # Nr. time points (C)
+      p = length(unique(sub("_.*", "", names(MiInteractionStabilityWideC[[i]])))),
+      # Normalize across Time Points
+      mode = 2
+    ) %>%
+    as.data.frame
+  names(MiInteractionStabilityWideCZ[[i]]) <- names(MiInteractionStabilityWideC[[i]])
+}
+```
+
+##### Component Complexity
+
+```{r InteractionStabCompNum}
+
+# Run PCA SUP to determine best combination
+InteractionStabPcaSup <- list()
+capture.output(
+  for(i in 1:length(MiInteractionStabilityWideCZ)) {
+    InteractionStabPcaSup[[i]] <-
+    ThreeWay::T3runsApproxFit(
+    X = MiInteractionStabilityWideCZ[[i]],
+    n = nrow(MiInteractionStabilityWideCZ[[i]]), # Nr. ppt.s (A)
+    m = length(unique(sub("T[0-9]{2}_", "", names(MiInteractionStabilityWideCZ[[i]])))), # Nr. variables (B)
+    p = length(unique(sub("_.*", "", names(MiInteractionStabilityWideCZ[[i]])))), # Nr. time points (C)
+    maxa = 20,
+    maxb = 20,
+    maxc = 20
+  )
+  },
+file='NUL')
+
+# Select Dimension Complexity
+InteractionStabDimSelector <- list()
+for (i in 1:length(InteractionStabPcaSup)) {
+  InteractionStabDimSelector[[i]] <- capture.output(
+    ThreeWay::DimSelector(
+      out = InteractionStabPcaSup[[i]],
+      n = nrow(MiInteractionStabilityWideCZ[[i]]), # Nr. ppt.s (A)
+      m = length(unique(sub("T[0-9]{2}_", "", names(MiInteractionStabilityWideCZ[[i]])))), # Nr. variables (B)
+      p = length(unique(sub("_.*", "", names(MiInteractionStabilityWideCZ[[i]])))), # Nr. time points (C)
+      model = 2
+    )
+  )
+}
+
+InteractionStabDim <- list()
+for (i in 1:length(InteractionStabDimSelector)) {
+  InteractionStabDim[[i]] <-
+    tail(InteractionStabDimSelector[[i]], n = 1) %>%
+    str_extract("\\(.*\\)") %>%
+    stringr::str_extract_all('\\d+', simplify = TRUE) %>%
+    as.data.frame %>%
+    mutate_all(as.numeric) %>%
+    dplyr::rename(c(A = V1,
+                    B = V2,
+                    C = V3))
+}
+
+InteractionStabDim %>%
+  bind_rows %>%
+  as.data.frame %>%
+  rownames_to_column(., var = "imputation") %>%
+  group_by(A, B, C) %>%
+  summarise(Frequency = n()) %>%
+  arrange(-Frequency) %>%
+  mutate(Percentage = formattable::percent(Frequency/sum(.$Frequency))) %>%
+  kbl(
+    .,
+    escape = FALSE,
+    booktabs = TRUE,
+    align = "c",
+    digits = 2,
+    col.names = c(
+      "Person",
+      "Variable",
+      "Time",
+      "Frequency",
+      "Percentage"
+    ),
+    caption = "Follow-up (Interactions): Frequency Table of Suggested Component Dimensions (from 20 imputed datasets)") %>%
+  kable_classic(
+    full_width = FALSE,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  )
+```
+
+#### Intergroup Interactions
+
+##### Center and Normalize
+
+```{r IntergroupStabCZ}
+##################################################################
+##                  Center across Participants                  ##
+##################################################################
+MiIntergroupStabilityWideC <- list()
+for (i in 1:length(MiIntergroupStabilityWide)) {
+  MiIntergroupStabilityWideC[[i]] <-
+    ThreeWay::cent3(
+      X = MiIntergroupStabilityWide[[i]],
+      # Nr. ppt.s (A)
+      n = nrow(MiIntergroupStabilityWide[[i]]),
+      # Nr. variables (B)
+      m = length(unique(sub("T[0-9]{2}_", "", names(MiIntergroupStabilityWide[[i]])))),
+      # Nr. time points (C)
+      p = length(unique(sub("_.*", "", names(MiIntergroupStabilityWide[[i]])))),
+      # Center across Participants
+      mode = 1
+    ) %>%
+    as.data.frame
+}
+
+##################################################################
+##                 Normalize across Time Points                 ##
+##################################################################
+MiIntergroupStabilityWideCZ <- list()
+for (i in 1:length(MiIntergroupStabilityWideC)) {
+  MiIntergroupStabilityWideCZ[[i]] <-
+    ThreeWay::norm3(
+      X = MiIntergroupStabilityWideC[[i]],
+      # Nr. ppt.s (A)
+      n = nrow(MiIntergroupStabilityWideC[[i]]),
+      # Nr. variables (B)
+      m = length(unique(sub("T[0-9]{2}_", "", names(MiIntergroupStabilityWideC[[i]])))),
+      # Nr. time points (C)
+      p = length(unique(sub("_.*", "", names(MiIntergroupStabilityWideC[[i]])))),
+      # Normalize across Time Points
+      mode = 2
+    ) %>%
+    as.data.frame
+  names(MiIntergroupStabilityWideCZ[[i]]) <- names(MiIntergroupStabilityWideC[[i]])
+}
+```
+
+##### Component Complexity
+
+```{r IntergroupStabCompNum}
+
+# Run PCA SUP to determine best combination
+IntergroupStabPcaSup <- list()
+capture.output(
+  for(i in 1:length(MiIntergroupStabilityWideCZ)) {
+    IntergroupStabPcaSup[[i]] <-
+    ThreeWay::T3runsApproxFit(
+    X = MiIntergroupStabilityWideCZ[[i]],
+    n = nrow(MiIntergroupStabilityWideCZ[[i]]), # Nr. ppt.s (A)
+    m = length(unique(sub("T[0-9]{2}_", "", names(MiIntergroupStabilityWideCZ[[i]])))), # Nr. variables (B)
+    p = length(unique(sub("_.*", "", names(MiIntergroupStabilityWideCZ[[i]])))), # Nr. time points (C)
+    maxa = 20,
+    maxb = 20,
+    maxc = 20
+  )
+  },
+file='NUL')
+
+# Select Dimension Complexity
+IntergroupStabDimSelector <- list()
+for (i in 1:length(IntergroupStabPcaSup)) {
+  IntergroupStabDimSelector[[i]] <- capture.output(
+    ThreeWay::DimSelector(
+      out = IntergroupStabPcaSup[[i]],
+      n = nrow(MiIntergroupStabilityWideCZ[[i]]), # Nr. ppt.s (A)
+      m = length(unique(sub("T[0-9]{2}_", "", names(MiIntergroupStabilityWideCZ[[i]])))), # Nr. variables (B)
+      p = length(unique(sub("_.*", "", names(MiIntergroupStabilityWideCZ[[i]])))), # Nr. time points (C)
+      model = 2
+    )
+  )
+}
+
+IntergroupStabDim <- list()
+for (i in 1:length(IntergroupStabDimSelector)) {
+  IntergroupStabDim[[i]] <-
+    tail(IntergroupStabDimSelector[[i]], n = 1) %>%
+    str_extract("\\(.*\\)") %>%
+    stringr::str_extract_all('\\d+', simplify = TRUE) %>%
+    as.data.frame %>%
+    mutate_all(as.numeric) %>%
+    dplyr::rename(c(A = V1,
+                    B = V2,
+                    C = V3))
+}
+
+IntergroupStabDim %>%
+  bind_rows %>%
+  as.data.frame %>%
+  rownames_to_column(., var = "imputation") %>%
+  group_by(A, B, C) %>%
+  summarise(Frequency = n()) %>%
+  arrange(-Frequency) %>%
+  mutate(Percentage = formattable::percent(Frequency/sum(.$Frequency))) %>%
+  kbl(
+    .,
+    escape = FALSE,
+    booktabs = TRUE,
+    align = "c",
+    digits = 2,
+    col.names = c(
+      "Person",
+      "Variable",
+      "Time",
+      "Frequency",
+      "Percentage"
+    ),
+    caption = "Follow-up (Intergroup Interactions): Frequency Table of Suggested Component Dimensions (from 20 imputed datasets)") %>%
+  kable_classic(
+    full_width = FALSE,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  )
+```
+
+
+### Follow-up: Time Scales (daily, weekly)
+
+- all three studies combined
+- variables shared across studies
+- interaction and no interaction responses
+- **daily and weekly time scales**
+
+#### Daily
+
+##### Center and Normalize
+
+```{r DailyStabCZ}
+##################################################################
+##                  Center across Participants                  ##
+##################################################################
+MiMainDailyStabilityWideC <- list()
+for (i in 1:length(MiMainDailyStabilityWide)) {
+  MiMainDailyStabilityWideC[[i]] <-
+    ThreeWay::cent3(
+      X = MiMainDailyStabilityWide[[i]],
+      # Nr. ppt.s (A)
+      n = nrow(MiMainDailyStabilityWide[[i]]),
+      # Nr. variables (B)
+      m = length(unique(sub("T[0-9]{2}_", "", names(MiMainDailyStabilityWide[[i]])))),
+      # Nr. time points (C)
+      p = length(unique(sub("_.*", "", names(MiMainDailyStabilityWide[[i]])))),
+      # Center across Participants
+      mode = 1
+    ) %>%
+    as.data.frame
+}
+
+##################################################################
+##                 Normalize across Time Points                 ##
+##################################################################
+MiMainDailyStabilityWideCZ <- list()
+for (i in 1:length(MiMainDailyStabilityWideC)) {
+  MiMainDailyStabilityWideCZ[[i]] <-
+    ThreeWay::norm3(
+      X = MiMainDailyStabilityWideC[[i]],
+      # Nr. ppt.s (A)
+      n = nrow(MiMainDailyStabilityWideC[[i]]),
+      # Nr. variables (B)
+      m = length(unique(sub("T[0-9]{2}_", "", names(MiMainDailyStabilityWideC[[i]])))),
+      # Nr. time points (C)
+      p = length(unique(sub("_.*", "", names(MiMainDailyStabilityWideC[[i]])))),
+      # Normalize across Time Points
+      mode = 2
+    ) %>%
+    as.data.frame
+  names(MiMainDailyStabilityWideCZ[[i]]) <- names(MiMainDailyStabilityWideC[[i]])
+}
+```
+
+##### Component Complexity
+
+```{r MainDailyStabCompNum}
+# Run PCA SUP to determine best combination
+MainDailyStabPcaSup <- list()
+capture.output(
+  for(i in 1:length(MiMainDailyStabilityWideCZ)) {
+    MainDailyStabPcaSup[[i]] <-
+    ThreeWay::T3runsApproxFit(
+    X = MiMainDailyStabilityWideCZ[[i]],
+    n = nrow(MiMainDailyStabilityWideCZ[[i]]), # Nr. ppt.s (A)
+    m = length(unique(sub("T[0-9]{2}_", "", names(MiMainDailyStabilityWideCZ[[i]])))), # Nr. variables (B)
+    p = length(unique(sub("_.*", "", names(MiMainDailyStabilityWideCZ[[i]])))), # Nr. time points (C)
+    maxa = 20,
+    maxb = 20,
+    maxc = 20
+  )
+  },
+file='NUL')
+
+# Select Dimension Complexity
+MainDailyStabDimSelector <- list()
+for (i in 1:length(MainDailyStabPcaSup)) {
+  MainDailyStabDimSelector[[i]] <- capture.output(
+    ThreeWay::DimSelector(
+      out = MainDailyStabPcaSup[[i]],
+      n = nrow(MiMainDailyStabilityWideCZ[[i]]), # Nr. ppt.s (A)
+      m = length(unique(sub("T[0-9]{2}_", "", names(MiMainDailyStabilityWideCZ[[i]])))), # Nr. variables (B)
+      p = length(unique(sub("_.*", "", names(MiMainDailyStabilityWideCZ[[i]])))), # Nr. time points (C)
+      model = 2
+    )
+  )
+}
+
+MainDailyStabDim <- list()
+for (i in 1:length(MainDailyStabDimSelector)) {
+  MainDailyStabDim[[i]] <-
+    tail(MainDailyStabDimSelector[[i]], n = 1) %>%
+    str_extract("\\(.*\\)") %>%
+    stringr::str_extract_all('\\d+', simplify = TRUE) %>%
+    as.data.frame %>%
+    mutate_all(as.numeric) %>%
+    dplyr::rename(c(A = V1,
+                    B = V2,
+                    C = V3))
+}
+
+MainDailyStabDim %>%
+  bind_rows %>%
+  as.data.frame %>%
+  rownames_to_column(., var = "imputation") %>%
+  group_by(A, B, C) %>%
+  summarise(Frequency = n()) %>%
+  arrange(-Frequency) %>%
+  mutate(Percentage = formattable::percent(Frequency/sum(.$Frequency))) %>%
+  kbl(
+    .,
+    escape = FALSE,
+    booktabs = TRUE,
+    align = "c",
+    digits = 2,
+    col.names = c(
+      "Person",
+      "Variable",
+      "Time",
+      "Frequency",
+      "Percentage"
+    ),
+    caption = "Follow-up (Daily): Frequency Table of Suggested Component Dimensions (from 20 imputed datasets)") %>%
+  kable_classic(
+    full_width = FALSE,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  )
+```
+
+
+#### Weekly
+
+##### Center and Normalize
+
+```{r MainWeeklyStabCZ}
+##################################################################
+##                  Center across Participants                  ##
+##################################################################
+MiMainWeeklyStabilityWideC <- list()
+for (i in 1:length(MiMainWeeklyStabilityWide)) {
+  MiMainWeeklyStabilityWideC[[i]] <-
+    ThreeWay::cent3(
+      X = MiMainWeeklyStabilityWide[[i]],
+      # Nr. ppt.s (A)
+      n = nrow(MiMainWeeklyStabilityWide[[i]]),
+      # Nr. variables (B)
+      m = length(unique(sub("T[0-9]{2}_", "", names(MiMainWeeklyStabilityWide[[i]])))),
+      # Nr. time points (C)
+      p = length(unique(sub("_.*", "", names(MiMainWeeklyStabilityWide[[i]])))),
+      # Center across Participants
+      mode = 1
+    ) %>%
+    as.data.frame
+}
+
+##################################################################
+##                 Normalize across Time Points                 ##
+##################################################################
+MiMainWeeklyStabilityWideCZ <- list()
+for (i in 1:length(MiMainWeeklyStabilityWideC)) {
+  MiMainWeeklyStabilityWideCZ[[i]] <-
+    ThreeWay::norm3(
+      X = MiMainWeeklyStabilityWideC[[i]],
+      # Nr. ppt.s (A)
+      n = nrow(MiMainWeeklyStabilityWideC[[i]]),
+      # Nr. variables (B)
+      m = length(unique(sub("T[0-9]{2}_", "", names(MiMainWeeklyStabilityWideC[[i]])))),
+      # Nr. time points (C)
+      p = length(unique(sub("_.*", "", names(MiMainWeeklyStabilityWideC[[i]])))),
+      # Normalize across Time Points
+      mode = 2
+    ) %>%
+    as.data.frame
+  names(MiMainWeeklyStabilityWideCZ[[i]]) <- names(MiMainWeeklyStabilityWideC[[i]])
+}
+```
+
+##### Component Complexity
+
+```{r MainWeeklyStabCompNum}
+# Run PCA SUP to determine best combination
+MainWeeklyStabPcaSup <- list()
+capture.output(
+  for(i in 1:length(MiMainWeeklyStabilityWideCZ)) {
+    MainWeeklyStabPcaSup[[i]] <-
+    ThreeWay::T3runsApproxFit(
+    X = MiMainWeeklyStabilityWideCZ[[i]],
+    n = nrow(MiMainWeeklyStabilityWideCZ[[i]]), # Nr. ppt.s (A)
+    m = length(unique(sub("T[0-9]{2}_", "", names(MiMainWeeklyStabilityWideCZ[[i]])))), # Nr. variables (B)
+    p = length(unique(sub("_.*", "", names(MiMainWeeklyStabilityWideCZ[[i]])))), # Nr. time points (C)
+    maxa = 20,
+    maxb = 20,
+    maxc = 20
+  )
+  },
+file='NUL')
+
+# Select Dimension Complexity
+MainWeeklyStabDimSelector <- list()
+for (i in 1:length(MainWeeklyStabPcaSup)) {
+  MainWeeklyStabDimSelector[[i]] <- capture.output(
+    ThreeWay::DimSelector(
+      out = MainWeeklyStabPcaSup[[i]],
+      n = nrow(MiMainWeeklyStabilityWideCZ[[i]]), # Nr. ppt.s (A)
+      m = length(unique(sub("T[0-9]{2}_", "", names(MiMainWeeklyStabilityWideCZ[[i]])))), # Nr. variables (B)
+      p = length(unique(sub("_.*", "", names(MiMainWeeklyStabilityWideCZ[[i]])))), # Nr. time points (C)
+      model = 2
+    )
+  )
+}
+
+MainWeeklyStabDim <- list()
+for (i in 1:length(MainWeeklyStabDimSelector)) {
+  MainWeeklyStabDim[[i]] <-
+    tail(MainWeeklyStabDimSelector[[i]], n = 1) %>%
+    str_extract("\\(.*\\)") %>%
+    stringr::str_extract_all('\\d+', simplify = TRUE) %>%
+    as.data.frame %>%
+    mutate_all(as.numeric) %>%
+    dplyr::rename(c(A = V1,
+                    B = V2,
+                    C = V3))
+}
+
+MainWeeklyStabDim %>%
+  bind_rows %>%
+  as.data.frame %>%
+  rownames_to_column(., var = "imputation") %>%
+  group_by(A, B, C) %>%
+  summarise(Frequency = n()) %>%
+  arrange(-Frequency) %>%
+  mutate(Percentage = formattable::percent(Frequency/sum(.$Frequency))) %>%
+  kbl(
+    .,
+    escape = FALSE,
+    booktabs = TRUE,
+    align = "c",
+    digits = 2,
+    col.names = c(
+      "Person",
+      "Variable",
+      "Time",
+      "Frequency",
+      "Percentage"
+    ),
+    caption = "Follow-up (Weekly): Frequency Table of Suggested Component Dimensions (from 20 imputed datasets)") %>%
+  kable_classic(
+    full_width = FALSE,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  )
+```
+
+## Main Analysis
+
+### Center and Normalize
+
+We begin by centering across participants (within time point and variable) and normalize across time points and participants (within variable).
+
+<div class="alert alert-warning alert-dismissible fade in" role="alert">
+  <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+  <i class="fas fa-exclamation-triangle"></i> <b>Question: </b><br/>
+  Are the centering and especially the normalization done correctly?
+</div>
+
+```{r 3mpcaMainPrep}
+##################################################################
+##                  Center across Participants                  ##
+##################################################################
+dtMainImpWideC <- ThreeWay::cent3(
+  X = dtMainImpWide,
+  n = nrow(dtMainImpWide), # Nr. ppt.s (A)
+  m = length(unique(sub("T[0-9]{2}_", "", names(dtMainImpWide)))), # Nr. variables (B)
+  p = length(unique(sub("_.*", "", names(dtMainImpWide)))), # Nr. time points (C)
+  mode = 1
+) %>%
+  as.data.frame
+#apply(dtMainImpWideC,2,sum)
+
+
+##################################################################
+##                 Normalize across Time Points                 ##
+##################################################################
+dtMainImpWideCZ <- ThreeWay::norm3(
+  X = dtMainImpWideC,
+  n = nrow(dtMainImpWideC), # Nr. ppt.s (A)
+  m = length(unique(sub("T[0-9]{2}_", "", names(dtMainImpWideC)))), # Nr. variables (B)
+  p = length(unique(sub("_.*", "", names(dtMainImpWideC)))), # Nr. time points (C)
+  mode = 2
+) %>%
+  as.data.frame
+names(dtMainImpWideCZ) <- names(dtMainImpWideC)
+#apply(dtMainImpWideC,2,sum)
+# dtMainImpWideCZ %>%
+#   select(ends_with("_AttitudesDutch")) %>%
+#   unlist %>%
+#   sd
+# psych::describe(dtMainImpWideCZ)
+```
+
+### Select Component Complexity
+
+We then select the optimal number of components for each mode (i.e., mode complexity). To do so, we use Convex Hull procedure heuristic based on total number of components and scree test value taken from a PCA-SUP analysis (where, PCASUP analyses are PCA's of supermatrices with slices of the 3way array next to each other, thus 3 supermatrices are analyed by PCA, and for each we get a component matrix, and eigenvalues. The eigenvalues may give an indication as to the required number of components for each mode.).
+
+```{r 3mpcaMainCompNum}
+# Run PCA SUP to determine best combination
+capture.output(
+  MainPcaSup <- ThreeWay::T3runsApproxFit(
+    X = dtMainImpWideCZ,
+    n = nrow(dtMainImpWideCZ), # Nr. ppt.s (A)
+    m = length(unique(sub("T[0-9]{2}_", "", names(dtMainImpWideCZ)))), # Nr. variables (B)
+    p = length(unique(sub("_.*", "", names(dtMainImpWideCZ)))), # Nr. time points (C)
+    maxa = 20,
+    maxb = 20,
+    maxc = 20
+  ),
+file='NUL')
+
+# Select Dimension Complexity
+MainDimSelector <- capture.output(
+  ThreeWay::DimSelector(
+    out = MainPcaSup,
+    n = nrow(dtMainImpWideCZ), # Nr. ppt.s (A)
+    m = length(unique(sub("T[0-9]{2}_", "", names(dtMainImpWideCZ)))), # Nr. variables (B)
+    p = length(unique(sub("_.*", "", names(dtMainImpWideCZ)))), # Nr. time points (C)
+    model = 2
+  )
+)
+MainDim <- tail(MainDimSelector, n = 1) %>%
+  str_extract("\\(.*\\)") %>%
+  stringr::str_extract_all('\\d+',simplify=TRUE) %>%
+  as.data.frame %>%
+  mutate_all(as.numeric) %>%
+  dplyr::rename(c(
+    A = V1,
+    B = V2,
+    C = V3
+  ))
+#MainDim
+```
+
+Based on the Convex Hull heuristic, we select `r MainDim$A` components for the participant mode, `r MainDim$B` principle components for the variable mode, and `r MainDim$C` components for the time mode. It should be noted that these heuristics are sensitive to variations in the multiple imputation procedure.
+
+### Model Fitting
+
+We then run the actual three-mode PCA with the inputs from the dimension selection procedure.
+
+```{r 3mpcaMainRun}
+
+# nrow(dtMainImpWide)
+# length(names(dtPcaS123Imp)[!names(dtPcaS123Imp) %in% idVars])
+# length(unique(dtPcaS123Imp$TIDnum))
+#
+# t3MainFull <- ThreeWay::T3(
+#   dtMainImpWide,
+#   paste("PP", 1:nrow(dtMainImpWide), sep = "_"),
+#   names(dtPcaS123Imp)[!names(dtPcaS123Imp) %in% idVars],
+#   paste("T", 1:length(unique(dtPcaS123Imp$TIDnum)), sep = "")
+# )
+
+# 3MPCA with general trend
+capture.output(
+  t3MainRaw <- ThreeWay::T3func(
+    X = dtMainImpWide,
+    n = nrow(dtMainImpWide), # Nr. ppt.s (A)
+    m = length(unique(sub("T[0-9]{2}_", "", names(dtMainImpWide)))), # Nr. variables (B)
+    p = length(unique(sub("_.*", "", names(dtMainImpWide)))), # Nr. time points (C)
+    r1 = MainDim$A,
+    r2 = MainDim$B,
+    r3 = MainDim$C,
+    start = 0,
+    conv = 1e-6
+  ),
+file='NUL')
+
+# 3MPCA without general trend
+capture.output(
+  t3Main <- ThreeWay::T3func(
+    X = dtMainImpWideCZ,
+    n = nrow(dtMainImpWideCZ), # Nr. ppt.s (A)
+    m = length(unique(sub("T[0-9]{2}_", "", names(dtMainImpWideCZ)))), # Nr. variables (B)
+    p = length(unique(sub("_.*", "", names(dtMainImpWideCZ)))), # Nr. time points (C)
+    r1 = MainDim$A,
+    r2 = MainDim$B,
+    r3 = MainDim$C,
+    start = 0,
+    conv = 1e-6
+  ),
+file='NUL')
+
+# individual fit partitioning
+FitT3Main <- T3fitpartitioning(
+  Xprep = dtMainImpWideCZ,
+  n = nrow(dtMainImpWideCZ), # Nr. ppt.s (A)
+  m = length(unique(sub("T[0-9]{2}_", "", names(dtMainImpWideCZ)))), # Nr. variables (B)
+  p = length(unique(sub("_.*", "", names(dtMainImpWideCZ)))), # Nr. time points (C)
+  AS = t3Main$A,
+  BT = t3Main$B,
+  CU = t3Main$C,
+  K = t3Main$H,
+  renormmode = 0,
+  laba = paste("PP", 1:nrow(dtMainImpWideCZ), sep = "_"),
+  labb = names(dtPcaS123Imp)[!names(dtPcaS123Imp) %in% idVars],
+  labc = paste("T", 1:length(unique(dtPcaS123Imp$TIDnum)), sep = "")
+)
+
+# Split half analysis
+capture.output(
+  SplitT3Main <- splithalfT3(
+    X = dtMainImpWide,
+    n = nrow(dtMainImpWide), # Nr. ppt.s (A)
+    m = length(unique(sub("T[0-9]{2}_", "", names(dtMainImpWide)))), # Nr. variables (B)
+    p = length(unique(sub("_.*", "", names(dtMainImpWide)))), # Nr. time points (C)
+    r1 = MainDim$A,
+    r2 = MainDim$B,
+    r3 = MainDim$C,
+    centopt = 1,
+    normopt = 2,
+    conv = 1e-6,
+    renormmode = 0,
+    addanal = 5,
+    wa_rel = 0,
+    wb_rel = 0,
+    wc_rel = 0,
+    laba = paste("PP", 1:nrow(dtMainImpWideCZ), sep = "_"),
+    labb = names(dtPcaS123Imp)[!names(dtPcaS123Imp) %in% idVars],
+    labc = paste("T", 1:length(unique(dtPcaS123Imp$TIDnum)), sep = "")
+  ),
+file='NUL')
+# 0
+# 0
+```
+
+In terms of fit percentage, we find that the three-mode PCA with the general trend included captures `r format(round(t3MainRaw$fp,2), nsmall = 2)`\% of the original variance, and the three-mode PCA without the general trend captures `r format(round(t3Main$fp,2), nsmall = 2)`\% of the variance.
+
+<div class="alert alert-warning alert-dismissible fade in" role="alert">
+  <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+  <i class="fas fa-exclamation-triangle"></i> <b>Question: </b><br/>
+  What is the interpretation of these Percentages? What exactly do the differences mean?
+</div>
+
+### Rotation
+
+For interpretability of the components we perform an orthomax rotation of the component matrices and the core array.
+
+```{r 3mpcaMainRotation}
+capture.output(
+  t3MainRot <- varimcoco(
+    A = t3Main$A,
+    B = t3Main$B,
+    C = t3Main$C,
+    H = t3Main$H,
+    wa_rel = 0,
+    wb_rel = 0,
+    wc_rel = 0
+  ),
+  file = 'NULL'
+)
+```
+
+```{r 3mpcaMainAMat}
+t3MainRot$AS %>%
+  as.data.frame %>%
+  rename_all(funs(str_replace_all(., "V", "Component_"))) %>%
+  mutate(Participant = paste("PP", row_number(), sep = "_")) %>%
+  select(
+    Participant,
+    everything()
+  ) %>%
+  kbl(
+  .,
+  format = "html",
+  escape = FALSE,
+  align = c("l", rep("c",ncol(.)-1)),
+  booktabs = TRUE,
+  digits = 3,
+  caption = "Rotated Component Matrix: Person Mode" # complete caption for main document
+) %>%
+  kable_classic(
+    full_width = FALSE,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  ) %>%
+  scroll_box(width = "100%", height = "500px")
+```
+
+```{r 3mpcaMainBMat}
+t3MainRot$BT %>%
+  as.data.frame %>%
+  rename_all(funs(str_replace_all(., "V", "Component_"))) %>%
+  mutate(Variable = names(dtPcaS123Imp)[!names(dtPcaS123Imp) %in% idVars]) %>%
+  select(
+    Variable,
+    everything()
+  ) %>%
+  kbl(
+  .,
+  format = "html",
+  escape = FALSE,
+  align = c("l", rep("c",ncol(.)-1)),
+  booktabs = TRUE,
+  digits = 3,
+  caption = "Rotated Component Matrix: Variable Mode" # complete caption for main document
+) %>%
+  kable_classic(
+    full_width = FALSE,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  )
+```
+
+```{r 3mpcaMainCMat}
+t3MainRot$CU %>%
+  as.data.frame %>%
+  rename_all(funs(str_replace_all(., "V", "Component_"))) %>%
+  mutate(Time = paste("T", row_number()-1, sep = "")) %>%
+  select(
+    Time,
+    everything()
+  ) %>%
+  kbl(
+  .,
+  format = "html",
+  escape = FALSE,
+  align = c("l", rep("c",ncol(.)-1)),
+  booktabs = TRUE,
+  digits = 3,
+  caption = "Rotated Component Matrix: Time Mode" # complete caption for main document
+) %>%
+  kable_classic(
+    full_width = FALSE,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  ) %>%
+  scroll_box(width = "100%", height = "500px")
+```
+
+### Visualization: Time Components
+
+We visualize the `r ncol(t3MainRot$C)` time components in their component scores over time.
+
+<div class="alert alert-warning alert-dismissible fade in" role="alert">
+  <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+  <i class="fas fa-exclamation-triangle"></i> <b>Note: </b><br/>
+  Not sure whether this interpretation is correct.
+</div>
+
+
+```{r 3mpcaMainCompVizTime}
+t3MainRot$C %>%
+  as.data.frame %>%
+  rename_all(funs(str_replace_all(., "V", "Component_"))) %>%
+  mutate(tid = row_number()) %>%
+  melt(., id.vars = "tid") %>%
+  ggplot(
+    .,
+    aes(
+      x = tid,
+      y = value,
+      linetype = variable,
+      shape = variable,
+      color = variable
+    )
+  ) +
+  geom_point() +
+  geom_line() +
+  geom_line(
+    stat = "smooth",
+    method = "loess",
+    se = FALSE,
+    span = .25,
+    alpha = 0.75
+  ) +
+  labs(x = "Time occasion",
+       y = "Component score",
+       linetype = "Component",
+       shape = "Component",
+       color = "Component") +
+  theme_Publication()
+
+```
+
+### Visualization: Person Components
+
+We visualize how well the first two person components separate the participants. We focus on the first two components because they capture the most variance, while retaining easy two dimensional visualization options. We additionally color the participants using k means clustering to further showcase the separation.
+
+```{r 3mpcaMainCompVizPerson}
+# # Unsure how this should be interpreted
+# jointplotgen(
+#   K = t3MainRot$K,
+#   A = t3MainRot$A,
+#   B = t3MainRot$B,
+#   C = t3MainRot$C,
+#   fixmode = 1,
+#   fixunit = 3,
+#   laba = paste("PP", 1:nrow(dtMainImpWideCZ), sep = "_"),
+#   labb = names(dtPcaS123Imp)[!names(dtPcaS123Imp) %in% idVars],
+#   labc = paste("T", 1:length(unique(dtPcaS123Imp$TIDnum)), sep = "")
+# )
+
+library(factoextra)
+fviz_nbclust(t3MainRot$A[,1:2], kmeans, method = "wss")
+clusterdata <- t3MainRot$A[,1:2]
+km.res <- kmeans(clusterdata, 3, nstart = 25)
+fviz_cluster(object = km.res, # kmeans object
+             data = clusterdata, # data used for clustering
+             ellipse.type = "norm",
+             geom = "point",
+             palette = "jco",
+             main = "",
+             xlab = "Person Component 1",
+             ylab = "Person Component 2",
+             ggtheme = theme_Publication())
+```
+
+
+### Visualization: Variable Components
+
+To visualize how the principle components separate the different variables, we draw the component scores for all variables.
+
+```{r 3mpcaMainCompVizVariable}
+t3MainRot$B %>%
+  as.data.frame %>%
+  rename_all(funs(str_replace_all(., "V", "Component_"))) %>%
+  mutate(var = names(dtPcaS123Imp)[!names(dtPcaS123Imp) %in% idVars]) %>%
+  melt(., id.vars = "var") %>%
+  ggplot(
+    .,
+    aes(
+      x = var,
+      y = value,
+      group = variable,
+      linetype = variable,
+      shape = variable,
+      color = variable
+    )
+  ) +
+  geom_point() +
+  geom_line() +
+  coord_flip() +
+  labs(x = "Variable",
+       y = "Component score",
+       linetype = "Component",
+       shape = "Component",
+       color = "Component") +
+  theme_Publication()
+```
+
+<div class="alert alert-warning alert-dismissible fade in" role="alert">
+  <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+  <i class="fas fa-exclamation-triangle"></i> <b>Note: </b><br/>
+  How do we best interpret and visualize the joint decomposition?
+</div>
