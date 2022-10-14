@@ -2756,10 +2756,19 @@ The main clustering procedure, uses the features calculated for the relevant var
 For our main method, we use the centroid-based k-means clustering. The procedure needs the researcher to make a selection on the optimal number of clusters in order to run the main algorithm. We use the Elbow and the Silhouette method, which both suggest two clusters to be the optimal solution.
 
 ```{r kmeans determin k}
+
+featureExclusion <- c(
+  "mean",
+  "sd",
+  "rmssd",
+  "ar02",
+  "edf_ar"
+)
+
 # prepare data for main analysis
 raw_data <- featData
-z_data <- featFullImp$featuresImpZ
-scaled_data <- featFullImp$featuresImpZMat
+z_data <- featFullImp$featuresImpZ %>% select(-ends_with(featureExclusion))
+scaled_data <- featFullImp$featuresImpZMat %>% select(-ends_with(featureExclusion))
 
 # load libraries
 library(factoextra)
@@ -2889,7 +2898,7 @@ We again begin by determining the optimal number of clusters. For GMMs this is d
 ```{r gaussian mixture model}
 library(mclust)
 
-scaled_data <- featFullImp$featuresImpZMat
+scaled_data <- featFullImp$featuresImpZMat %>% select(-ends_with(featureExclusion))
 
 # scaled_data <- featS1Imp$featuresImpZMat  %>% #select(starts_with(varNamS123Int))
 #   select(-any_of(names(which(colSums(is.na(.)) > 0))))
@@ -2923,8 +2932,9 @@ summary(mod1, parameters = FALSE)
 </div>
 
 ```{r MClust feature specific cluster numbers}
+scaled_data <- featFullImp$featuresImpZMat %>% select(-ends_with(featureExclusion))
 nMClust <- list()
-for(f in unique(gsub("^.*?\\_", "", names(featFullImp$featuresImpZMat)))){
+for(f in unique(gsub("^.*?\\_", "", names(scaled_data)))){
   scaled_data <- featFullImp$featuresImpZMat %>% select(ends_with(f))
   mod1 <- Mclust(scaled_data)
   #summary(mod1, parameters = FALSE)
@@ -2949,6 +2959,7 @@ nMClust %>%
     lightable_options = "hover",
     html_font = "Cambria"
   )
+
 ```
 
 
@@ -2967,7 +2978,7 @@ library(dbscan)
 library(fpc)
 
 #scaled_data <- featFullImp$featuresImpZMat %>% select(starts_with(varNamS123Int))
-scaled_data <- featFullImp$featuresImpZMat  # %>% select(starts_with(varNamS123NoInt))#%>%
+scaled_data <- featFullImp$featuresImpZMat %>% select(-ends_with(featureExclusion))  # %>% select(starts_with(varNamS123NoInt))#%>%
   #select(-any_of(names(which(colSums(is.na(scaled_data)) > 0))))
   
 #is.na(scaled_data) %>% table
@@ -2975,11 +2986,11 @@ scaled_data <- featFullImp$featuresImpZMat  # %>% select(starts_with(varNamS123N
 # to plot the eps values
 eps_plot = kNNdistplot(scaled_data, k=3)
 # to draw an optimum line
-eps_plot %>% abline(h = 15, lty = 2)
+eps_plot %>% abline(h = 11, lty = 2)
 
 
 potentialMinPts <- round(SciViews::ln(nrow(scaled_data)))
-eps <- 15
+eps <- 11
 minPts <- 2
 
 res.fpc <- fpc::dbscan(scaled_data, eps=eps, MinPts=minPts, scale=FALSE, showplot=0)
@@ -3001,10 +3012,11 @@ fviz_cluster(res.fpc, scaled_data, geom = "point", ggtheme = theme_Publication()
 </div>
 
 ```{r dbscan feature specific cluister numbers}
+scaled_data <- featFullImp$featuresImpZMat %>% select(-ends_with(featureExclusion))
 minPts <- 3
 xi <- 0.04 #0.05
 nDbscan <- list()
-for(f in unique(gsub("^.*?\\_", "", names(featFullImp$featuresImpZMat)))){
+for(f in unique(gsub("^.*?\\_", "", names(scaled_data)))){
   scaled_data <- featFullImp$featuresImpZMat %>% select(ends_with(f))
   #res.fpc <- dbscan::dbscan(scaled_data, eps=eps_cl, MinPts=minPts)
   
