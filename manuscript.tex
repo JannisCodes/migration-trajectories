@@ -88,11 +88,15 @@ unicode,
 breaklinks=true,
 }
 
+% custom open science badge height
+\newlength{\badgeheight}
+\setlength{\badgeheight}{1em}
+
 % language settings
 \DeclareLanguageMapping{american}{american-apa}
 
 % add reference library file
-\addbibresource{references.bib}
+\addbibresource{referencesZotero.bib}
 
 % Title and header
 \title{Migration Experience Trajectories (Working Title)}
@@ -121,7 +125,8 @@ breaklinks=true,
 
 We have no known conflict of interest to declare. The authors received no specific funding for this work. Materials and  software is available at \url{https://janniscodes.github.io/migration-trajectories/}  \citep{KreienkampTBD}. Protocols, materials, data, and code are available at \url{https://osf.io/TBA} \citep{KreienkampTBD}. The preregistration of our analysis can be accessed as part of our Open Science Framework repository \citep{KreienkampTBD}.
 
-Correspondence concerning this article should be addressed to Jannis Kreienkamp, Department of Psychology, University of Groningen, Grote Kruisstraat 2/1, 9712 TS Groningen (The Netherlands).  E-mail: j.kreienkamp@rug.nl}
+Correspondence concerning this article should be addressed to Jannis Kreienkamp, Department of Psychology, University of Groningen, Grote Kruisstraat 2/1, 9712 TS Groningen (The Netherlands).  E-mail: \href{mailto:j.kreienkamp@rug.nl}{j.kreienkamp@rug.nl}
+}
 
 \leftheader{Kreienkamp}
 
@@ -130,9 +135,19 @@ Correspondence concerning this article should be addressed to Jannis Kreienkamp,
 To be written.
 
 \noindent\textbf{Public significance statement}: To be written.
+
 }
 
-\keywords{TBD}
+\keywords{
+    TBD\\
+    \vspace{1em}
+    \noindent \textbf{Open Science Practices:}\\
+    \noindent \href{https://osf.io}{\includegraphics[height=\badgeheight]{assets/open-badges-small/registration-color.png}} Preregistration+, 
+    \href{https://osf.io}{\includegraphics[height=\badgeheight]{assets/open-badges-small/material-color.png}} Open Materials, 
+    \href{https://osf.io}{\includegraphics[height=\badgeheight]{assets/open-badges-small/data-color.png}} Open Data, 
+    \href{https://osf.io}{\includegraphics[height=\badgeheight]{assets/open-badges-small/code-color.png}} Open Code, 
+    \href{https://osf.io}{\includegraphics[height=\badgeheight]{assets/open-badges-small/supplements-color.png}} Open Supplements
+}
 
 
 % set indentation size
@@ -213,6 +228,23 @@ To be written.
 % '\#' hash symbol
 % ------------------------------------------------------------------
 
+Recent reviews have called for more comprehensive assessment of human experiences and for more longitudinal real-life data, within the psychological sciences more broadly and in migration research in particular \citep[e.g.,][]{Kreienkamp2022d, MacInnis2015, McKeown2017, Pettigrew2011, Ward2019}. However, while generally speaking analytical methods for such, more complex, data have become more readily available \citep[e.g.,][]{ODonnell2021}, it remains unclear how we should identify key developmental patterns --- especially across multiple variables at the same time.
+
+In essence, the novel extensive longitudinal datasets come with new forms of heterogeneity, where we have to consider differences between people, over time, and across variables. Yet, past analytical advances have almost exclusively pushed for inferential modeling procedures\footnote{For example, stationary lagged regression models that assume stable means and variances over time (incl., vector autoregressive models, dynamic structural equation models, autoregressive integrated moving average models, and cross-lagged panel analyses) or basic trajectory models (e.g., mixed effects models, spline regression models, and latent growth curve modeling).}. And while inferential model testing is certainly important, we still miss discussions of methods for the more fundamental task of describing, summarizing, and understanding the initial developmental data patterns.
+
+As an example, a recent review of migration experiences has pointed out that despite many complex and dynamic theories, investigations of migrant adaptation have undervalued developmental data --- especially when it comes to the more internal experiences of motivations and emotions \citep[e.g.,][]{Kreienkamp2022d}. Yet, understanding how people differ in their migration trajectories, can be crucial in understanding adaptive and maladaptive patterns. To identify which variables are most important in the adaptation of migrants over time, we need methods to break down the data heterogeneity into its core components (in terms of important variables and developments) and we need ways to identify how these core components relate to key adaptation markers (including, well-being, intergroup anxiety, outgroup trust, or societal participation). There is, thus, a clear need to assess the utility of analysis procedures focused on the description and understanding of complex dynamical data. 
+
+In this manuscript, we aim to assess the utility of one such promising analysis technique --- \textit{three-mode principle component analysis} (3MPCA). We use 3MPCA specifically because recent studies have laid out the potential effectiveness of dimension reduction procedures, which can address the new forms of person-, variable-, and time point heterogeneity jointly \citep[e.g.,][]{Monden2015}. We are among the first to apply this analysis to experience sampling data and, to the best of our knowledge, we are the first to decompose social psychological experiences. This stands in stark contrast, to a renewed recognition that social psychological phenomena unfold over time, a rapid increase of extensive longitudinal data collections, and a growing interest in understanding the co-development of multiple experience aspects \citep[e.g.,][]{Kreienkamp2022d, MacInnis2015, McKeown2017, Pettigrew2011, Ward2019}. 
+
+To untangle the heterogeneity in real-life migrant adaptations, we will analyse data from three experience sampling studies, which followed the migration experiences of recent migrants to the Netherlands. All three studies focus on the psychological adaptation of migrants (i.e., psychological acculturation). However, given that past investigations of psychological acculturation have underexplored the crucial aspect of motivational experiences \citep[e.g.,][]{Kreienkamp2022d}, the three studies have placed a particular emphasis on the needs, goals, and motives of young migrants. To make full use of all three data sets and to guide future use of dimension reduction procedures with extensive psychological data, we will analyze the data in a descriptive and step wise manner, where we first consider the data jointly and will then assess potential differences between datasets, variables, and time scales. 
+
+ALTERNATIVE:
+
+Recent reviews have called for more comprehensive assessment of human experiences and for more longitudinal real-life data, within the psychological sciences more broadly and in migration research in particular \citep[e.g.,][]{Kreienkamp2022d, MacInnis2015, McKeown2017, Pettigrew2011, Ward2019}. However, while generally speaking analytical methods for such, more complex, data have become more readily available \citep[e.g.,][]{ODonnell2021}, it remains unclear how we should identify key developmental patterns --- especially across multiple variables at the same time.
+
+In this manuscript, we aim to assess the utility of a promising analysis technique for describing, summarizing, and understanding the initial developmental data patterns --- \textit{three-mode principle component analysis} (3MPCA). We use 3MPCA specifically because recent studies have laid out the potential effectiveness of dimension reduction procedures, which can address the new forms of person-, variable-, and time point heterogeneity jointly \citep[e.g.,][]{Monden2015}. We analyse data from three experience sampling studies, which followed the migration experiences of recent migrants to the Netherlands. All three studies focus on the psychological adaptation of migrants (i.e., psychological acculturation). However, given that past investigations of psychological acculturation have underexplored the crucial aspect of motivational experiences \citep[e.g.,][]{Kreienkamp2022d}, the three studies have placed a particular emphasis on the needs, goals, and motives of young migrants. To make full use of all three data sets and to guide future use of dimension reduction procedures with extensive psychological data, we will analyze the data in a descriptive and step wise manner, where we first consider the data jointly and will then assess potential differences between datasets, variables, and time scales. 
+
+
 % Relevance Pragraph
 
 
@@ -221,6 +253,38 @@ To be written.
 
 % Aim / Solution / Proposal Paragraph:
 
+ALTERNATIVE:
+
+Two important developments, within the psychological sciences in general and in migration research in particular, have been (1) a shift towards more comprehensive assessment of human experiences and (2) a growing focus on longitudinal real-life data. Within the migration research field, recent reviews have been pushing for models that take into account affects, behaviors, cognitions, and desires when it comes to migrant adaptations \citep[e.g.,][]{Kreienkamp2022d, Ward2019}. At the same time prominent figures in the field have called for studies that collect longitudinal \citep[e.g.,][]{Pettigrew1998, Pettigrew2008, Pettigrew2008b, Pettigrew2011} and real-life experience-sampling data outside the lab \citep[e.g.,][]{MacInnis2015, McKeown2017, Dixon2005}.
+
+In the past, such data collections were often unfeasible because they were either physically impractical or too expensive. However, recent technological developments now allow us to easily collect large amounts of experience sampling data on mobile devices \citep[e.g.,][]{Keil2020} or using web-based applications \citep[e.g.,][]{Arslan2020}. And while generally speaking analytical methods for such, more complex, data have become more readily available \citep[e.g.,][]{ODonnell2021}, it remains unclear how we should identify key developmental patterns --- especially across multiple variables at the same time (i.e., multiple aspects). In essence, the new extensive longitudinal data comes with new forms of heterogeneity when jointly considering differences between people, over time, and across variables. Yet, past analytical advances have almost exclusively pushed for stationary lagged regression models\footnote{meaning models that assume stable means and variances over time; e.g., vector autoregression models, dynamic structural equation models, autoregressive integrated moving average models, and cross-lagged panel analyses} or basic trajectory models\footnote{e.g., mixed effects models, spline regression models, and latent growth curve modeling.}. 
+And while these two approaches are important for inferential model testing, both approaches ignore the more fundamental task of describing and unraveling the developmental data patterns.  
+And while these two approaches are important for inferential model testing, we still miss methods for the more fundamental task of describing and unraveling the developmental data patterns. 
+
+Such descriptive methods are not merely important for hypothesis generation, but also for identifying and understanding adaptive and maladaptive patterns. We we need to identify which variables are most important in the adaptation of migrants, we need methods to identify clusters of similar individuals and developments, and we need to assess whether such clusters differ in key adaptation markers (including, well-being, intergroup anxiety, outgroup trust, or societal participation). 
+
+We recently conducted three experience sampling studies, following the migration experiences of recent migrants to the Netherlands. In this manuscript, we aim to assess the utility of an analytical methods that has recently received increasing attention for simultaneously decomposing/considering person-, variable-, and time heterogeneity. The proposed three mode principle component analysis is of particular interest because its approach mirrors the famous data box of participants, variables, and measurement occasions (Catell's data box) for understanding psychological data.
+
+
+
+Problem: HOWEVER, ...
+
+
+* unclear how do deal with this more complex data (many variables, persons, and time points).
+  + many different variables could be important.
+  + how to consider them jointly (e.g., VAR, DSEM, ARIMA, cross-lagged panel analysis for testing model predictions, limited to specified lag and mean stationarity; Trajectory focused: mixed effects model, spline regressions, latent growth curve modeling, limited: often univariate outcome). At the same time, analytical methods for such more complex data have become more readily available, making the analyses more approachable \citep[][]{ODonnell2021}. 
+* heterogeneity between people, over time, and across variables.
+* **unclear how to identify core/important developments.** Especially across multiple variables at he same time (i.e., multiple aspects).
+* unclear which variables, time scales, and methods are useful in practice.
+* curse of dimensionality: clustering algorithms fail 
+
+
+Solution:   
+
+* 3MPCA uses the data cube   
+
+
+little data has thus far investigated the development of migration experiences and no research has assessed the co-development of multiple experience aspects. Yet, understanding how people differ in their migration trajectories, can be crucial in understanding adaptive and maladaptive patterns. Simultaneously clustering the person-, experience aspect-, and time level of migration experiences, using a three mode PCA, may allow to identify clusters of similar developments and whether these clusters differ in key adaptation markers (including, well-being, anxiety, trust, or societal inclusion).
 
 \section{Section Heading}
 
@@ -235,7 +299,7 @@ To be written.
 To be written.
 
 \section{Results}
-
+To be written.
 
 \section{Discussion}
 % aims re-iterated
@@ -250,6 +314,13 @@ To be written.
 
 \subsection{Conclusion}
 To be written.
+
+
+\section{Notes}
+
+\citep[][]{Madley-Dowd2019} [proportion of missing data and imputations]
+
+\citep[e.g., see][]{Ram2014} [Processes Across Multiple Time-Scales]
 
 
 % Tables
