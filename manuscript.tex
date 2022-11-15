@@ -29,7 +29,8 @@
 \usepackage{fontawesome5}
 \usepackage[normalem]{ulem}
 % \usepackage{longtable}
-\usepackage{amsmath}
+\usepackage{amsmath, nccmath}
+\usepackage{mdframed}
 \usepackage{ntheorem}
 \usepackage{afterpage}
 \usepackage{float}
@@ -88,6 +89,11 @@ unicode,
 breaklinks=true,
 }
 
+% ref labels
+\newcommand{\fgrref}[2][]{\hyperref[#2]{Figure \ref*{#2}#1}}
+\newcommand{\tblref}[2][]{\hyperref[#2]{Table \ref*{#2}#1}}
+\newcommand{\appref}[2][]{\hyperref[#2]{Appendix \ref*{#2}#1}}
+
 % custom open science badge height
 \newlength{\badgeheight}
 \setlength{\badgeheight}{1em}
@@ -99,7 +105,7 @@ breaklinks=true,
 \addbibresource{referencesZotero.bib}
 
 % Title and header
-\title{Migration Experience Trajectories (Working Title)}
+\title{Describe and Explore: Using feature-based time-series clustering to understand modern intensive longitudinal data (Working Title)}
 \shorttitle{Migration Experience Trajectories}
 
 % Authors
@@ -108,18 +114,18 @@ breaklinks=true,
 \author[1,3]{Kai Epstude}
 \author[1,3]{Maximilian Agostini}
 \author[1,3]{Peter de Jonge}
-\author[2,3]{Rei Tendeiro-Monden}
+\author[2,3]{Rei Monden}
 \affiliation{\hfill}
 
 \affil[1]{University of Groningen, Department of Psychology}
 \affil[2]{Hiroshima University, Graduate School of Advanced Science and Engineering}
 \affil[3]{Author order TBD (currently in first name alphabetical order)}
 
-\authornote{
+\authornote{   
    \addORCIDlink{* Jannis Kreienkamp}{0000-0002-1831-5604}\\
    \addORCIDlink{Laura F. Bringmann}{0000-0002-8091-9935}\\
-   \addORCIDlink{Maximilian Agostini}{0000-0001-6435-7621}\\
    \addORCIDlink{Kai Epstude}{0000-0001-9817-3847}\\
+   \addORCIDlink{Maximilian Agostini}{0000-0001-6435-7621}\\
    \addORCIDlink{Peter de Jonge}{0000-0002-0866-6929}\\
    \addORCIDlink{Rei Monden}{0000-0003-1744-5447}
 
@@ -132,7 +138,7 @@ Correspondence concerning this article should be addressed to Jannis Kreienkamp,
 
 % Abstract
 \abstract{
-To be written.
+Abstract to be written.
 
 \noindent\textbf{Public significance statement}: To be written.
 
@@ -141,10 +147,10 @@ To be written.
 \keywords{
     TBD\\
     \vspace{1em}
-    \noindent \textbf{Open Science Practices:}\\
-    \noindent \href{https://osf.io}{\includegraphics[height=\badgeheight]{assets/open-badges-small/registration-color.png}} Preregistration+, 
+    \textit{Open Science Practices [?]:}
+    \noindent \href{https://osf.io}{\includegraphics[height=\badgeheight]{assets/open-badges-small/registration-color.png}} Preregistration, 
     \href{https://osf.io}{\includegraphics[height=\badgeheight]{assets/open-badges-small/material-color.png}} Open Materials, 
-    \href{https://osf.io}{\includegraphics[height=\badgeheight]{assets/open-badges-small/data-color.png}} Open Data, 
+    \href{https://osf.io}{\includegraphics[height=\badgeheight]{assets/open-badges-small/data-color.png}} Open Data, \break
     \href{https://osf.io}{\includegraphics[height=\badgeheight]{assets/open-badges-small/code-color.png}} Open Code, 
     \href{https://osf.io}{\includegraphics[height=\badgeheight]{assets/open-badges-small/supplements-color.png}} Open Supplements
 }
@@ -228,70 +234,68 @@ To be written.
 % '\#' hash symbol
 % ------------------------------------------------------------------
 
-Recent reviews have called for more comprehensive assessment of human experiences and for more longitudinal real-life data, within the psychological sciences more broadly and in migration research in particular \citep[e.g.,][]{Kreienkamp2022d, MacInnis2015, McKeown2017, Pettigrew2011, Ward2019}. However, while generally speaking analytical methods for such, more complex, data have become more readily available \citep[e.g.,][]{ODonnell2021}, it remains unclear how we should identify key developmental patterns --- especially across multiple variables at the same time.
+\newlength{\mdfmar}
+\setlength{\mdfmar}{1.5em}
+\mdfdefinestyle{mdfbox}{
+    innerleftmargin = +\mdfmar, %
+    innerrightmargin = +2\mdfmar, 
+    innertopmargin = +0\mdfmar, 
+    innerbottommargin = +1.5\mdfmar, 
+    skipabove = -12pt
+}
 
-In essence, the novel extensive longitudinal datasets come with new forms of heterogeneity, where we have to consider differences between people, over time, and across variables. Yet, past analytical advances have almost exclusively pushed for inferential modeling procedures\footnote{For example, stationary lagged regression models that assume stable means and variances over time (incl., vector autoregressive models, dynamic structural equation models, autoregressive integrated moving average models, and cross-lagged panel analyses) or basic trajectory models (e.g., mixed effects models, spline regression models, and latent growth curve modeling).}. And while inferential model testing is certainly important, we still miss discussions of methods for the more fundamental task of describing, summarizing, and understanding the initial developmental data patterns.
+\begin{mdframed}[style=mdfbox]
+\noindent\center\textit{Argument Structure Introduction}:
+\begin{itemize}[noitemsep]
+    \item\ [Relevance]: increase in number and variety of ESM data
+    \item\ [Problem]: no descriptive / understand structure analyses
+    \item\ [Proposal]: feature based clusterting = flexible +  transparent
+    \item\ [Section]: new type of ESM data and issues for analysis:
+    \begin{itemize}[noitemsep]
+        \item incomplete data (complete data models vs. structural missingness)
+        \item non-equidistant
+        \item non-stationary
+        \item changes/trends on different time scales
+        \item interest in multivariate developments
+        \item dimensionality curse
+    \end{itemize}
+    \item\ [Section]: time-series clustering
+    \begin{itemize}[noitemsep]
+        \item shape-based
+        \item model-based
+        \item \textbf{feature-based}
+    \end{itemize}
+    \item\ [Section]: The present Research
+\end{itemize}
+\end{mdframed}
 
-As an example, a recent review of migration experiences has pointed out that despite many complex and dynamic theories, investigations of migrant adaptation have undervalued developmental data --- especially when it comes to the more internal experiences of motivations and emotions \citep[e.g.,][]{Kreienkamp2022d}. Yet, understanding how people differ in their migration trajectories, can be crucial in understanding adaptive and maladaptive patterns. To identify which variables are most important in the adaptation of migrants over time, we need methods to break down the data heterogeneity into its core components (in terms of important variables and developments) and we need ways to identify how these core components relate to key adaptation markers (including, well-being, intergroup anxiety, outgroup trust, or societal participation). There is, thus, a clear need to assess the utility of analysis procedures focused on the description and understanding of complex dynamical data. 
-
-In this manuscript, we aim to assess the utility of one such promising analysis technique --- \textit{three-mode principle component analysis} (3MPCA). We use 3MPCA specifically because recent studies have laid out the potential effectiveness of dimension reduction procedures, which can address the new forms of person-, variable-, and time point heterogeneity jointly \citep[e.g.,][]{Monden2015}. We are among the first to apply this analysis to experience sampling data and, to the best of our knowledge, we are the first to decompose social psychological experiences. This stands in stark contrast, to a renewed recognition that social psychological phenomena unfold over time, a rapid increase of extensive longitudinal data collections, and a growing interest in understanding the co-development of multiple experience aspects \citep[e.g.,][]{Kreienkamp2022d, MacInnis2015, McKeown2017, Pettigrew2011, Ward2019}. 
-
-To untangle the heterogeneity in real-life migrant adaptations, we will analyse data from three experience sampling studies, which followed the migration experiences of recent migrants to the Netherlands. All three studies focus on the psychological adaptation of migrants (i.e., psychological acculturation). However, given that past investigations of psychological acculturation have underexplored the crucial aspect of motivational experiences \citep[e.g.,][]{Kreienkamp2022d}, the three studies have placed a particular emphasis on the needs, goals, and motives of young migrants. To make full use of all three data sets and to guide future use of dimension reduction procedures with extensive psychological data, we will analyze the data in a descriptive and step wise manner, where we first consider the data jointly and will then assess potential differences between datasets, variables, and time scales. 
-
-ALTERNATIVE:
-
-Recent reviews have called for more comprehensive assessment of human experiences and for more longitudinal real-life data, within the psychological sciences more broadly and in migration research in particular \citep[e.g.,][]{Kreienkamp2022d, MacInnis2015, McKeown2017, Pettigrew2011, Ward2019}. However, while generally speaking analytical methods for such, more complex, data have become more readily available \citep[e.g.,][]{ODonnell2021}, it remains unclear how we should identify key developmental patterns --- especially across multiple variables at the same time.
-
-In this manuscript, we aim to assess the utility of a promising analysis technique for describing, summarizing, and understanding the initial developmental data patterns --- \textit{three-mode principle component analysis} (3MPCA). We use 3MPCA specifically because recent studies have laid out the potential effectiveness of dimension reduction procedures, which can address the new forms of person-, variable-, and time point heterogeneity jointly \citep[e.g.,][]{Monden2015}. We analyse data from three experience sampling studies, which followed the migration experiences of recent migrants to the Netherlands. All three studies focus on the psychological adaptation of migrants (i.e., psychological acculturation). However, given that past investigations of psychological acculturation have underexplored the crucial aspect of motivational experiences \citep[e.g.,][]{Kreienkamp2022d}, the three studies have placed a particular emphasis on the needs, goals, and motives of young migrants. To make full use of all three data sets and to guide future use of dimension reduction procedures with extensive psychological data, we will analyze the data in a descriptive and step wise manner, where we first consider the data jointly and will then assess potential differences between datasets, variables, and time scales. 
-
-
-% Relevance Pragraph
-
+% Relevance Pragraph and issue
+Recent years have seen a striking increase in the number and variety of research studies using experience sampling data \citep[][; also see \fgrref{fig:ScopusEsm}]{hamaker2017}. 
+With the increased availability of technologies to easily collect large amounts of experience sampling data using mobile devices \citep[e.g.,][]{Keil2020} and web-based applications \citep[e.g.,][]{Arslan2020}, the experience-sampling method (ESM) has been applied to a host of new types of psychological data. One example of this phenomenon has been the cultural adaptation literature, where researchers have started using ESM data to follow the daily interactions of migrants with the local majority \citep[e.g.,][]{Kreienkamp2022b}. 
+This move toward a broader application of the experience-sampling method, however, stands in stark contrast with recent developments within the psychometric literature on ESM analyses, which have become more specialized and model-focused. 
+While generally speaking analytical methods for ESM data have become more readily available \citep[e.g.,][]{ODonnell2021}, flexible descriptive and exploratory analyses have largely been neglected and remain crucially understudied within the experience sampling literature. 
 
 % Problem Illustration Paragraph
-
+Importantly, the understudied `describe and explore' analyses are not only important for contextualizing inferential model tests, but are powerful methods for theoretical and applied users in their own regard. Extensive longitudinal data sets come with new forms of heterogeneity, where researchers have to consider differences across large numbers of participants, time points, and variables. Data-driven models not only describe and summarize this complex data but can help us understand the data by uncovering patterns that might not be detectable otherwise. Returning to the case of migration experiences, understanding how people differ in their migration trajectories can be crucial in understanding adaptive and maladaptive patterns. By identifying and contextualizing distinct trajectories, we might for example determine which situation- or person-specific differences discern positive from negative developments. Outcomes from such an approach might inform both practical early-warning signals as well as academic theory-building efforts. There is, thus, a clear need to assess the utility of data-driven/bottom-up analysis procedures that are flexible enough to address the growing variety of intensive longitudinal psychological data. 
 
 % Aim / Solution / Proposal Paragraph:
+In this article, we propose to look at recent developments within the wider time-series clustering literature to identify an exploratory data analysis that is flexible enough to apply to the growing variety of ESM data. In particular, we propose that feature-based clustering is ideally suited because it offers a flexible variety of validated and intuitive components while also allowing for adequate control by the researcher. To showcase the utility of this technique, we apply feature-based clustering to a set of three ESM studies following recent migrants in their daily interactions and relations with the cultural majority group. 
 
-ALTERNATIVE:
+\section{Modern ESM Data}
+Two important developments within the psychological sciences have been (1) a shift towards more comprehensive assessments of psychological phenomena and (2) a growing focus on intensive longitudinal real-life data. As an example, within the cultural adaptation literature prominent reviews have called for more longitudinal \citep[e.g.,][]{Ward2019} and real-world data \citep[e.g.,][]{McKeown2017}, while at the same time conceptual works have pushed for more comprehensive assessments of human experiences, including motivational, affective, cognitive, and behavioral aspects \citep[e.g.,][]{Kreienkamp2022d}. Such a multivariate, experience-sampling approach allows researchers to test theories more exhaustively and helps build a more embedded understanding of migration processes. However, such data also deviates from past intensive longitudinal data sets that have focused on psychological states that are more homogeneous in their developmental characteristics. In particular, the new applications of ESM tend to bring new challenges for data dimensionality, -missingness, and time scales. 
 
-Two important developments, within the psychological sciences in general and in migration research in particular, have been (1) a shift towards more comprehensive assessment of human experiences and (2) a growing focus on longitudinal real-life data. Within the migration research field, recent reviews have been pushing for models that take into account affects, behaviors, cognitions, and desires when it comes to migrant adaptations \citep[e.g.,][]{Kreienkamp2022d, Ward2019}. At the same time prominent figures in the field have called for studies that collect longitudinal \citep[e.g.,][]{Pettigrew1998, Pettigrew2008, Pettigrew2008b, Pettigrew2011} and real-life experience-sampling data outside the lab \citep[e.g.,][]{MacInnis2015, McKeown2017, Dixon2005}.
+Concerning dimensionality issues, especially more abstract psychological experiences often need a wider variety of measurements to be captured adequately. Today, few clinical conditions are captured with a single symptom measure, emotions are rarely assessed in isolation, and as introduced earlier cultural adaptation has at least four psychological aspects. This also means that modern analysis techniques increasingly need be able to accommodate this increased focus on multivariate developments. The recent rise in psychological network models has highlighted this need for more multivariate outcome measurements (REFERENCE). Additionally, the increased number of variables also heightens the computational load for model estimations and especially when the number of variables and measurements compounds models may not converge --- an issue sometimes referred to as the dimensionality curse. A modern descriptive and exploratory analysis technique should consequently be able to summarize and structure the multivariate phenomena without running into computational load issues.
 
-In the past, such data collections were often unfeasible because they were either physically impractical or too expensive. However, recent technological developments now allow us to easily collect large amounts of experience sampling data on mobile devices \citep[e.g.,][]{Keil2020} or using web-based applications \citep[e.g.,][]{Arslan2020}. And while generally speaking analytical methods for such, more complex, data have become more readily available \citep[e.g.,][]{ODonnell2021}, it remains unclear how we should identify key developmental patterns --- especially across multiple variables at the same time (i.e., multiple aspects). In essence, the new extensive longitudinal data comes with new forms of heterogeneity when jointly considering differences between people, over time, and across variables. Yet, past analytical advances have almost exclusively pushed for stationary lagged regression models\footnote{meaning models that assume stable means and variances over time; e.g., vector autoregression models, dynamic structural equation models, autoregressive integrated moving average models, and cross-lagged panel analyses} or basic trajectory models\footnote{e.g., mixed effects models, spline regression models, and latent growth curve modeling.}. 
-And while these two approaches are important for inferential model testing, both approaches ignore the more fundamental task of describing and unraveling the developmental data patterns.  
-And while these two approaches are important for inferential model testing, we still miss methods for the more fundamental task of describing and unraveling the developmental data patterns. 
+The push for more contextualized models also presents new issues with missing data. More event-based assessments tend to encounter issues when models require time intervals between measurements to be identical (i.e., equidistant measurements) and an increased focus on context-specific phenomena has lead to issues when data is only available under certain conditions, including follow-up questions (i.e., structurally missing data). Smaller issues of non-equidistant data can be avoided with transformations (e.g., dynamic time warping, REFERENCE) or newer modeling procedures (e.g., continuous-time models, REFERENCE) but it's prevalence is indicative of the structure of real-world issues researchers seek to investigate. Structural missingness remains a much more strenuous challenge. Many of the most commonly used models need complete data (including, ...) and structurally missing data cannot be imputed as it logically does not exist (REFERENCE). This type of missingness becomes a colossal issue when researchers are interested in how two things co-develop and one of the concepts has structural missingness under certain conditions. In the example of the migration experiences, researchers might for example be interested in how well-being develops in relations the quality of interactions with the majority group. Because rating of interaction quality are only possible when an interaction actually happened, one cannot impute interaction quality ratings for measurements that did not include an interaction. The most common practice for structurally missing data is to either exclude the variable or any measurement that has no structurally missing data (REFERENCE) --- neither option suits a research question that includes a developmental relationship between the two variables. In short, adequate descriptive approaches should be able to deal with non-equidistant and structurally missing data in order to address modern ESM data.
 
-Such descriptive methods are not merely important for hypothesis generation, but also for identifying and understanding adaptive and maladaptive patterns. We we need to identify which variables are most important in the adaptation of migrants, we need methods to identify clusters of similar individuals and developments, and we need to assess whether such clusters differ in key adaptation markers (including, well-being, intergroup anxiety, outgroup trust, or societal participation). 
+Finally, both the push for more multivariate conceptualizations and contextualized measurements have highlighted issues with how temporal developments are conceptualized. Firstly, researchers are increasingly interested in how mean levels of variables change over time (i.e., non-stationary), such trend data is often assumed to be non-linear, and with the increased focus on more diverse conceptualizations researchers are interested in relationships between variables that change on fundamentally different time scales. Many of the commonly used analyses for ESM data are stationary lagged regression models that assume stable means and variances over time (incl., vector autoregressive models, dynamic structural equation models, autoregressive integrated moving average models, and cross-lagged panel analyses) or basic trajectory models (e.g., mixed effects models, spline regression models, and latent growth curve modeling). And even fewer analysis techniques allow for substantially different time scales between variables. A modern descriptive and exploratory methodology should thus be able to flexibly capture and comparable non-stationary and non-linear trends, also across different time scales.
 
-We recently conducted three experience sampling studies, following the migration experiences of recent migrants to the Netherlands. In this manuscript, we aim to assess the utility of an analytical methods that has recently received increasing attention for simultaneously decomposing/considering person-, variable-, and time heterogeneity. The proposed three mode principle component analysis is of particular interest because its approach mirrors the famous data box of participants, variables, and measurement occasions (Catell's data box) for understanding psychological data.
+\section{Clustering}
+One promising approach to describing and exploring time-series data has been the idea of structuring the data using clustering analyses. Clustering seeks to organize data into groups that are maximally different from one another while minimizing differences within the groups. Time-series clustering has been extremely common in other fields, including analyses of astronomical, meteorological, and aviation pathways, biological and medical developments, or energy and finance patterns \citep{Aghabozorgi2015}. But also for psychological data time-series clustering is not entirely novel \citep[e.g.,][]{ernst2021}. However, most clustering introduced for psychological data has faced the dimensionality, -missingness, and time scale issues described above.
 
-
-
-Problem: HOWEVER, ...
-
-
-* unclear how do deal with this more complex data (many variables, persons, and time points).
-  + many different variables could be important.
-  + how to consider them jointly (e.g., VAR, DSEM, ARIMA, cross-lagged panel analysis for testing model predictions, limited to specified lag and mean stationarity; Trajectory focused: mixed effects model, spline regressions, latent growth curve modeling, limited: often univariate outcome). At the same time, analytical methods for such more complex data have become more readily available, making the analyses more approachable \citep[][]{ODonnell2021}. 
-* heterogeneity between people, over time, and across variables.
-* **unclear how to identify core/important developments.** Especially across multiple variables at he same time (i.e., multiple aspects).
-* unclear which variables, time scales, and methods are useful in practice.
-* curse of dimensionality: clustering algorithms fail 
-
-
-Solution:   
-
-* 3MPCA uses the data cube   
-
-
-little data has thus far investigated the development of migration experiences and no research has assessed the co-development of multiple experience aspects. Yet, understanding how people differ in their migration trajectories, can be crucial in understanding adaptive and maladaptive patterns. Simultaneously clustering the person-, experience aspect-, and time level of migration experiences, using a three mode PCA, may allow to identify clusters of similar developments and whether these clusters differ in key adaptation markers (including, well-being, anxiety, trust, or societal inclusion).
-
-\section{Section Heading}
-
+Many of the common time-series clustering algorithms used today have been developed within the machine learning literature and have commonly been separated into three different approaches: (1) shape-based, (2) model-based, and (3) feature-based clustering \citep{hautamaki2008, liao2005}. Shape-based clustering analyses use the raw time series and seeks to match time series by non-linearly stretching and contracting the time axes. The other two approaches do not use the the raw time series directly but convert the data first. The model-based clustering has been the most-commonly used method within the psychological literature and clusters the parameters of a parametric model fitted for each participant \citep[e.g.,][]{ernst2021}. The flexibility of such clustering is restricted to the assumptions of the model used, so that stationary models, for example, do not capture non-stationary data well. Finally, feature-based clustering analyses are the most flexible, as they allow users to summarize the time series data with a wide variety of features that capture the data characteristics of interest. The participants are then clustered on basis of the extracted features. To showcase the flexibility of this approach, a commonly used software package for this approach allows users to extract a total of 794 time series features \citep[][]{christ2018}. Time series features can be chosen by the user based on their research question and can, for example, include the mean and standard deviation of a time-series, but also linear and non-linear trends, inertia related features such as auto-correlations, or the stability of the time series (e.g., mean absolute change). Given the flexibility of feature-based approach, users should be able to apply the analysis across multivariate data, feature extraction should mitigate issues of non-equidistant and structurally missing data, and the features can capture and compare across non-linear trends at different time scales.
 
 \section{The Present Research}
-To be written.
-
 
 % Methods and Results from RMarkdown render
 %\input{Methods-and-Results}
@@ -316,11 +320,55 @@ To be written.
 To be written.
 
 
+
+
 \section{Notes}
 
 \citep[][]{Madley-Dowd2019} [proportion of missing data and imputations]
 
 \citep[e.g., see][]{Ram2014} [Processes Across Multiple Time-Scales]
+
+"The goal of clustering is to identify structure in an unlabeled data set by objectively organizing data into homogeneous groups where the within-group-object dissimilarity is minimized and the between-group-object dissimilarity is maximized." --- \citep[][p.1857]{liao2005}
+
+\section{Draft Graveyard (for scrapping only):}
+
+Extensive longitudinal data sets come with new forms of heterogeneity, where we have to consider differences between people, over time, and across variables. Yet, past analytical advances have almost exclusively pushed for inferential modeling procedures\footnote{For example, stationary lagged regression models that assume stable means and variances over time (incl., vector autoregressive models, dynamic structural equation models, autoregressive integrated moving average models, and cross-lagged panel analyses) or basic trajectory models (e.g., mixed effects models, spline regression models, and latent growth curve modeling).}. And while inferential model testing is certainly important, we still miss discussions of methods for the more fundamental task of describing, summarizing, and understanding the raw/complex developmental data patterns.
+
+As an example, a recent review of migration experiences has pointed out that despite many complex and dynamic theories, investigations of migrant adaptation have undervalued developmental data --- especially when it comes to the more internal experiences of motivations and emotions \citep[e.g.,][]{Kreienkamp2022d}. Yet, understanding how people differ in their migration trajectories, can be crucial in understanding adaptive and maladaptive patterns. To identify which variables are most important in the adaptation of migrants over time, we need methods to break down the data heterogeneity into its core components (in terms of important variables and developments) and we need ways to identify how these core components relate to key adaptation markers (including, well-being, intergroup anxiety, outgroup trust, or societal participation). There is, thus, a clear need to assess the utility of analysis procedures focused on the description and understanding of complex dynamical data. 
+
+We are among the first to apply this analysis to experience sampling data and, to the best of our knowledge, we are the first to cluster social psychological trajectories. This stands in stark contrast, to a renewed recognition that social psychological phenomena unfold over time, a rapid increase of extensive longitudinal data collections, and a growing interest in understanding the co-development of multiple experience aspects \citep[e.g.,][]{Kreienkamp2022d, MacInnis2015, McKeown2017, Pettigrew2011, Ward2019}. 
+
+To untangle the heterogeneity in real-life migrant adaptations, we will analyze data from three experience sampling studies, which followed the migration experiences of recent migrants to the Netherlands. All three studies focus on the psychological adaptation of migrants (i.e., psychological acculturation). However, given that past investigations of psychological acculturation have under-explored the crucial aspect of motivational experiences \citep[e.g.,][]{Kreienkamp2022d}, the three studies have placed a particular emphasis on the needs, goals, and motives of young migrants. To make full use of all three data sets and to guide future use of clustering procedures with extensive longitudinal psychological data, we will analyze the data in a descriptive and step-wise manner, where we consider the data jointly (and will then assess potential differences between data- and variable sets). 
+
+
+ALTERNATIVE:
+
+In the past, such data collections were often unfeasible because they were either physically impractical or too expensive. However, recent technological developments now allow us to easily collect large amounts of experience sampling data on mobile devices \citep[e.g.,][]{Keil2020} or using web-based applications \citep[e.g.,][]{Arslan2020}. And while generally speaking analytical methods for such, more complex, data have become more readily available \citep[e.g.,][]{ODonnell2021}, it remains unclear how we should identify key developmental patterns --- especially across multiple variables at the same time (i.e., multiple aspects). In essence, the new extensive longitudinal data comes with new forms of heterogeneity when jointly considering differences between people, over time, and across variables. Yet, past analytical advances have almost exclusively pushed for stationary lagged regression models\footnote{meaning models that assume stable means and variances over time; e.g., vector autoregression models, dynamic structural equation models, autoregressive integrated moving average models, and cross-lagged panel analyses} or basic trajectory models\footnote{e.g., mixed effects models, spline regression models, and latent growth curve modeling.}. And while these two approaches are important for inferential model testing, we still miss methods for the more fundamental task of describing and unraveling the developmental data patterns. 
+
+Such descriptive methods are not merely important for hypothesis generation, but also for identifying and understanding adaptive and maladaptive patterns. We need to identify which variables are most important in the adaptation of migrants, we need methods to identify clusters of similar individuals and developments, and we need to assess whether such clusters differ in key adaptation markers (including, well-being, intergroup anxiety, outgroup trust, or societal participation). 
+
+
+Problem: HOWEVER, ...
+
+\begin{itemize}
+    \item unclear how do deal with this more complex data (many variables, persons, and time points).
+    \begin{itemize}
+        \item many different variables could be important.
+        \item how to consider them jointly (e.g., VAR, DSEM, ARIMA, cross-lagged panel analysis for testing model predictions, limited to specified lag and mean stationarity; Trajectory focused: mixed effects model, spline regressions, latent growth curve modeling, limited: often univariate outcome). 
+    \end{itemize}
+    \item \textbf{unclear how to identify core/important developments.} Especially across multiple variables at he same time (i.e., multiple aspects).
+    \item unclear which variables, time scales, and methods are useful in practice.
+    \item curse of dimensionality: clustering algorithms fail 
+\end{itemize}
+
+
+Solution:   
+
+feature-based clustering
+
+little data has thus far investigated the development of migration experiences and no research has assessed the co-development of multiple experience aspects. Clustering participants across variables and time-series features may allow to identify groups of similar developments and whether these clusters differ in key adaptation markers (including, well-being, anxiety, trust, or societal inclusion).
+
+
 
 
 % Tables
@@ -330,14 +378,20 @@ To be written.
 
 % Figures
 
-
+\begin{figure}
+  \caption{Scopus ESM Development}
+  \label{fig:ScopusEsm}
+  \centering\includegraphics[width=\textwidth]{figures/Scopus-ESM-Development.png}
+  \caption*{Note: \\
+  Search Terms: `( "ecological momentary assessment"  OR  "experience sampling"  OR  "intensive longitudinal")' in Title, Abstract, or Keyword.}
+\end{figure}
 
 \printbibliography
 
 \appendix
 
-\section{Appendix A: Title}
+\section{Placeholder Title}
 \label{app:AppendixTitle}
-To be written.
+To be written, if necessary.
 
 \end{document}

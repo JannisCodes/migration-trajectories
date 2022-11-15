@@ -53,14 +53,15 @@ breaklinks=true,
 % language settings
 \DeclareLanguageMapping{american}{american-apa}
 
-% add reference library file
-\addbibresource{references.bib}
+% custom open science badge height
+\newlength{\badgeheight}
+\setlength{\badgeheight}{1em}
 
 % add reference library file
-\addbibresource{references.bib}
+\addbibresource{referencesZotero.bib}
 
 % Title and header
-\title{Migration Experience Trajectories: Subtitle TBD}
+\title{Migration Experience Trajectories (Working Title)}
 \shorttitle{Migration Experience Trajectories}
 
 % Authors
@@ -69,25 +70,35 @@ breaklinks=true,
 \author[1,3]{Kai Epstude}
 \author[1,3]{Maximilian Agostini}
 \author[1,3]{Peter de Jonge}
-\author[2,3]{Rei Tendeiro-Monden}
+\author[2,3]{Rei Monden}
 \affiliation{\hfill}
 
 \affil[1]{University of Groningen, Department of Psychology}
 \affil[2]{Hiroshima University, Graduate School of Advanced Science and Engineering}
-\affil[3]{Author order TBD (currently in first name alphabetical order)}
-
+\affil[3]{Author order TBD (currently mostly in first name alphabetical order)}
 
 \authornote{
    \addORCIDlink{* Jannis Kreienkamp}{0000-0002-1831-5604}\\
    \addORCIDlink{Laura F. Bringmann}{0000-0002-8091-9935}\\
-   \addORCIDlink{Maximilian Agostini}{0000-0001-6435-7621}\\
    \addORCIDlink{Kai Epstude}{0000-0001-9817-3847}\\
+   \addORCIDlink{Maximilian Agostini}{0000-0001-6435-7621}\\
    \addORCIDlink{Peter de Jonge}{0000-0002-0866-6929}\\
    \addORCIDlink{Rei Monden}{0000-0003-1744-5447}
 
 We have no known conflict of interest to declare. The authors received no specific funding for this work. Materials and  software is available at \url{https://janniscodes.github.io/migration-trajectories/}  \citep{KreienkampTBD}. Protocols, materials, data, and code are available at \url{https://osf.io/TBA} \citep{KreienkampTBD}. The preregistration of our analysis can be accessed as part of our Open Science Framework repository \citep{KreienkampTBD}.
 
-Correspondence concerning this article should be addressed to Jannis Kreienkamp, Department of Psychology, University of Groningen, Grote Kruisstraat 2/1, 9712 TS Groningen (The Netherlands).  E-mail: j.kreienkamp@rug.nl}
+Correspondence concerning this article should be addressed to Jannis Kreienkamp, Department of Psychology, University of Groningen, Grote Kruisstraat 2/1, 9712 TS Groningen (The Netherlands).  E-mail: \href{mailto:j.kreienkamp@rug.nl}{j.kreienkamp@rug.nl}
+
+\vspace{1em}
+\noindent\textit{Open Science Practices [?]:}\\
+\noindent \href{https://osf.io}{\includegraphics[height=\badgeheight]{assets/open-badges-small/registrationplus-color.png}} Preregistration+, 
+\href{https://osf.io}{\includegraphics[height=\badgeheight]{assets/open-badges-small/material-color.png}} Open Materials, 
+\href{https://osf.io}{\includegraphics[height=\badgeheight]{assets/open-badges-small/data-color.png}} Open Data,
+\href{https://osf.io}{\includegraphics[height=\badgeheight]{assets/open-badges-small/code-color.png}} Open Code, 
+\href{https://osf.io}{\includegraphics[height=\badgeheight]{assets/open-badges-small/supplements-color.png}} Open Supplements
+
+}
+
 
 \leftheader{Kreienkamp}
 
@@ -97,7 +108,23 @@ Correspondence concerning this article should be addressed to Jannis Kreienkamp,
 \begin{document}
 
 % add title information (incl. title page and abstract)
-\maketitle
+%\maketitle
+
+\makeatletter
+\vspace*{3em}
+\begin{center}
+\noindent \textbf\@title
+\vspace{1em}
+\noindent \@author
+\end{center}
+\vspace{5em}
+\begin{center}%
+    \textbf\acksname%
+\end{center}%
+\vspace{-1em}
+\protect\raggedright
+\setlength{\parindent}{0.5in}
+\indent\par\@acks%
 
 \printbibliography
 
