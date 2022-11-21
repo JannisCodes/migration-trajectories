@@ -127,7 +127,7 @@ load("data/s123Red.RData")
 ```
 
 
-```{r Preparation of Variable Names}
+```{r Preparation of Variable Names, include=FALSE}
 varNamIndicesS1 <- c(
   "autonomy",
   "competence",
@@ -329,7 +329,7 @@ varNamS123MiRed <- Reduce(
 idVars <- c("ID", "PID", "TID", "TIDnum", "date", "week", "study")
 ```
 
-```{r variable names for all analyses}
+```{r variable names for all analyses, include=FALSE}
 # ID Variables (just to re-iterate)
 idVars <- idVars
 
@@ -474,7 +474,7 @@ varNamS3Int <- varNames %>%
   pull
 ```
 
-```{r variable names by response type and study}
+```{r variable names by response type and study, include=FALSE}
 varNames %>%
   filter(
     pca != 0,
@@ -521,7 +521,7 @@ varNames %>%
   )
 ```
 
-```{r missingness filtering}
+```{r missingness filtering, include=FALSE}
 missInfo <- function(full = NA, reduced = NA){
   missTab <- data.frame(
     nFull = nrow(full),
@@ -642,6 +642,6 @@ random forest search \citep[][]{}
 
 
 
-```{r}
+```{r, include=FALSE}
 
 ```
