@@ -612,6 +612,7 @@ maximize relevance and minimize redundancy
 "However, most of the existing UFS methods primarily focus on the significance of features in maintaining the data structure while ignoring the redundancy among features. Moreover, the determination of the proper number of features is another challenge."
 
 \begin{itemize}
+  \item dimension reduction
   \item feature selection
   \begin{itemize}
     \item filter: evaluate individual features' impact / importance / relevance. Univariate (ranking-based) or multivariate (preferred bc. can handle redundant and irrelevant features)
@@ -625,10 +626,9 @@ maximize relevance and minimize redundancy
       \item backward elimination
       \item Bi-directional elimination (Stepwise Selection)
     \end{itemize}
-    \item hybrid: first filter then wrapper
+    \item hybrid: (usually) first filter then wrapper (e.g., Bayesian Filter KMeans)
     \item [embedded: feature selection as part of the model construction process. E.g., LASSO Regularization L1, or Random Forest Importance] MOSTLY FOR SUPERVISED / LABELED DATA (e.g., regressions)
   \end{itemize}
-  \item dimension reduction
 \end{itemize}
 
 
@@ -638,7 +638,40 @@ maximize relevance and minimize redundancy
 random forest search \citep[][]{}
 
 
+\subsection{Clustering}
 
+\begin{itemize}
+  \item centroid-based (e.g., k-means)
+  \begin{itemize}
+    \item non-probabilistic
+    \item no assumptions
+    \item fast
+    \item sensitive to local minima
+  \end{itemize}
+  \item distribution-based (e.g., gaussian mixture model [GMM])
+  \begin{itemize}
+    \item probabilistic
+    \item (gaussian) distributions assumed
+    \item more flexible shape than vanilla centroid-based
+  \end{itemize}
+  \item density-based (e.g., dbscan)
+  \begin{itemize}
+    \item no shape assumption
+    \item do not assign outliers (i.e., outlier detection)
+  \end{itemize}
+  \item Hierarchical-based (e.g., Ward hierarchical clustering)
+  \begin{itemize}
+    \item divisive (top-down) and agglomerative (bottom-up)
+    \item no pre-specified number of clusters
+    \item easy visual inspection (dendogram)
+    \item best for small number of cases
+    \item no reversal of assignments
+  \end{itemize}
+  \item Hybrid (e.g, GMM with kmeans centroids as starting point)
+  \begin{itemize}
+    \item helps avoid individual shortcomings (e.g., local minima avoidance)
+  \end{itemize}
+\end{itemize}
 
 
 
