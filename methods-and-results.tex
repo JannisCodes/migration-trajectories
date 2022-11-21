@@ -19,11 +19,50 @@ use domain knowledge to extract new variables from raw data (summarize)
 options: tsfresh \citep[][]{christ2018}, spikes
 \citep[][]{caro-martin2018}
 
-Our selection: density, inertia, instability, diversity
-\citep[][]{dejonckheere2019, kuppens2017}
+Our selection based on describing time series aspects relevant to human
+experiences
+\citep[density, inertia, instability, diversity;][]{dejonckheere2019, kuppens2017}
 
 \begin{itemize}
-  \item 
+  \item diversity: multiple variables
+  \begin{itemize}
+    \item field and concept specific: affect, behavior, cognition, desire
+  \end{itemize}
+  \item (in)stability
+  \begin{itemize}
+    \item mean of sum squared differences
+    \item mean absolute change
+  \end{itemize}
+  \item central tendency
+  \begin{itemize}
+    \item mean
+    \item median
+  \end{itemize}
+  \item variance
+  \begin{itemize}
+    \item variance / standard deviation
+    \item median absolute distance
+    \item (range / min + max)
+    \item (change in SD)
+    \item (variation coefficient (SE/mean))
+  \end{itemize}
+  \item inertia
+  \begin{itemize}
+    \item autocorrelation (lag-1)
+    \item (additional periodicity/seasonality (e.g., day, week))
+  \end{itemize}
+  \item linear trend
+  \begin{itemize}
+    \item OLS regression slope
+  \end{itemize}
+  \item nonlinear trend
+  \begin{itemize}
+    \item GAM spline coefficient: estimated degrees of freedom (edf; how wiggly the line is)
+    \item (number of spikes \citep[e.g.,][]{caro-martin2018})
+    \item (Fourier Transform Coefficients (representation in square- and sine waves))
+    \item (polynomial coefficients (Langevin model))
+    \item (semi-markov model parameters)
+  \end{itemize}
 \end{itemize}
 
 \subsubsection{Feature Selection}
@@ -55,7 +94,7 @@ the proper number of features is another challenge.''
       \item Bi-directional elimination (Stepwise Selection)
     \end{itemize}
     \item hybrid: (usually) first filter then wrapper (e.g., Bayesian Filter KMeans)
-    \item [embedded: feature selection as part of the model construction process. E.g., LASSO Regularization L1, or Random Forest Importance] MOSTLY FOR SUPERVISED / LABELED DATA (e.g., regressions)
+    \item (embedded: feature selection as part of the model construction process. E.g., LASSO Regularization L1, or Random Forest Importance) MOSTLY FOR SUPERVISED / LABELED DATA (e.g., regressions)
   \end{itemize}
 \end{itemize}
 
