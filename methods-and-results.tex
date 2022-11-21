@@ -1,0 +1,588 @@
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{varNamIndicesS1 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}
+  \StringTok{"autonomy"}\NormalTok{,}
+  \StringTok{"competence"}\NormalTok{,}
+  \StringTok{"relatedness"}\NormalTok{,}
+  \StringTok{"education\_level.pre"}\NormalTok{,}
+  \StringTok{"associationMerged.pre"}\NormalTok{,}
+  \StringTok{"assimilation.pre"}\NormalTok{,}
+  \StringTok{"separation.pre"}\NormalTok{,}
+  \StringTok{"integration.pre"}\NormalTok{,}
+  \StringTok{"marginalization.pre"}\NormalTok{,}
+  \StringTok{"VIA\_heritage.pre"}\NormalTok{,}
+  \StringTok{"VIA\_Dutch.pre"}\NormalTok{,}
+  \StringTok{"SSAS\_surrounding.pre"}\NormalTok{,}
+  \StringTok{"SSAS\_privat.pre"}\NormalTok{,}
+  \StringTok{"SSAS\_public.pre"}\NormalTok{,}
+  \StringTok{"assimilation.post"}\NormalTok{,}
+  \StringTok{"separation.post"}\NormalTok{,}
+  \StringTok{"integration.post"}\NormalTok{,}
+  \StringTok{"marginalization.post"}\NormalTok{,}
+  \StringTok{"VIA\_heritage.post"}\NormalTok{,}
+  \StringTok{"VIA\_Dutch.post"}\NormalTok{,}
+  \StringTok{"rosenberg.post"}\NormalTok{,}
+  \StringTok{"social\_support.post"}\NormalTok{,}
+  \StringTok{"stress.post"}\NormalTok{,}
+  \StringTok{"discrimination.post"}\NormalTok{,}
+  \StringTok{"discrimination\_month.post"}\NormalTok{,}
+  \StringTok{"NLE\_1month.post"}\NormalTok{,}
+  \StringTok{"NLE\_6month.post"}\NormalTok{,}
+  \StringTok{"NLE\_12month.post"}
+\NormalTok{  )}
+
+\NormalTok{varNamS123Aux }\OtherTok{\textless{}{-}}\NormalTok{ varNames }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(}
+\NormalTok{    aux }\SpecialCharTok{!=} \DecValTok{0}\NormalTok{,}
+\NormalTok{    studyS1 }\SpecialCharTok{==} \StringTok{"S1"}\NormalTok{,}
+\NormalTok{    studyS2 }\SpecialCharTok{==} \StringTok{"S2"}\NormalTok{,}
+\NormalTok{    studyS3 }\SpecialCharTok{==} \StringTok{"S3"}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(varNam) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  pull}
+\NormalTok{varNamS1Aux }\OtherTok{\textless{}{-}}\NormalTok{ varNames }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(}
+\NormalTok{    aux }\SpecialCharTok{!=} \DecValTok{0}\NormalTok{,}
+\NormalTok{    studyS1 }\SpecialCharTok{==} \StringTok{"S1"}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(varNam) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  pull}
+\NormalTok{varNamS2Aux }\OtherTok{\textless{}{-}}\NormalTok{ varNames }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(}
+\NormalTok{    aux }\SpecialCharTok{!=} \DecValTok{0}\NormalTok{,}
+\NormalTok{    studyS2 }\SpecialCharTok{==} \StringTok{"S2"}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(varNam) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  pull}
+\NormalTok{varNamS3Aux }\OtherTok{\textless{}{-}}\NormalTok{ varNames }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(}
+\NormalTok{    aux }\SpecialCharTok{!=} \DecValTok{0}\NormalTok{,}
+\NormalTok{    studyS3 }\SpecialCharTok{==} \StringTok{"S3"}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(varNam) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  pull}
+
+\NormalTok{varNamS123PCA }\OtherTok{\textless{}{-}}\NormalTok{ varNames }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(}
+\NormalTok{    pca }\SpecialCharTok{!=} \DecValTok{0}\NormalTok{,}
+\NormalTok{    studyS1 }\SpecialCharTok{==} \StringTok{"S1"}\NormalTok{,}
+\NormalTok{    studyS2 }\SpecialCharTok{==} \StringTok{"S2"}\NormalTok{,}
+\NormalTok{    studyS3 }\SpecialCharTok{==} \StringTok{"S3"}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(varNam) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  pull}
+\NormalTok{varNamS1PCA }\OtherTok{\textless{}{-}}\NormalTok{ varNames }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(}
+\NormalTok{    pca }\SpecialCharTok{!=} \DecValTok{0}\NormalTok{,}
+\NormalTok{    studyS1 }\SpecialCharTok{==} \StringTok{"S1"}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(varNam) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  pull}
+\NormalTok{varNamS2PCA }\OtherTok{\textless{}{-}}\NormalTok{ varNames }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(}
+\NormalTok{    pca }\SpecialCharTok{!=} \DecValTok{0}\NormalTok{,}
+\NormalTok{    studyS2 }\SpecialCharTok{==} \StringTok{"S2"}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(varNam) }\SpecialCharTok{\%\textgreater{}\%} 
+\NormalTok{  pull}
+\NormalTok{varNamS3PCA }\OtherTok{\textless{}{-}}\NormalTok{ varNames }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(}
+\NormalTok{    pca }\SpecialCharTok{!=} \DecValTok{0}\NormalTok{,}
+\NormalTok{    studyS3 }\SpecialCharTok{==} \StringTok{"S3"}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(varNam) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  pull}
+
+\NormalTok{varNamOut }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}
+  \StringTok{"ResponseId"}\NormalTok{,}
+  \StringTok{"relatednessNoInteraction"}\NormalTok{,}
+  \StringTok{"relatednessSelf"}\NormalTok{,}
+  \StringTok{"relatednessOther"}\NormalTok{,}
+  \StringTok{"autonomy\_Int"}\NormalTok{,}
+  \StringTok{"autonomy\_NoInt"}\NormalTok{,}
+  \StringTok{"competence\_Int"}\NormalTok{,}
+  \StringTok{"competence\_NoInt"}\NormalTok{,}
+\NormalTok{  varNamS1PCA[}\FunctionTok{grepl}\NormalTok{(}\StringTok{\textquotesingle{}\^{}MDMQ\textquotesingle{}}\NormalTok{, varNamS1PCA)],}
+\NormalTok{  varNamS2PCA[}\FunctionTok{grepl}\NormalTok{(}\StringTok{\textquotesingle{}\^{}ProSo|\^{}AntiSo\textquotesingle{}}\NormalTok{, varNamS2PCA)],}
+\NormalTok{  varNamS3PCA[}\FunctionTok{grepl}\NormalTok{(}
+    \StringTok{\textquotesingle{}\^{}ProSo|\^{}AntiSo|\^{}agency|\^{}autoFrust|\^{}autoSat|\^{}relatFrust|\^{}relatSat|\^{}compFrust|\^{}compSat|\^{}lonely[0{-}9]|\^{}emotRegPos|\^{}emotRegNeg\textquotesingle{}}\NormalTok{,}
+\NormalTok{    varNamS3PCA}
+\NormalTok{  )]}
+\NormalTok{)}
+\NormalTok{varNamCore }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}
+  \StringTok{"PID"}\NormalTok{,}
+  \StringTok{"TID"}\NormalTok{,}
+  \StringTok{"TIDnum"}
+\NormalTok{)}
+\NormalTok{varNamNewAll }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}
+  \StringTok{"relatedness"}\NormalTok{,}
+  \StringTok{"autonomy"}\NormalTok{,}
+  \StringTok{"competence"}
+\NormalTok{)}
+\NormalTok{varNamNewS1 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}
+  \StringTok{"relatedness"}\NormalTok{,}
+  \StringTok{"autonomy"}\NormalTok{,}
+  \StringTok{"competence"}\NormalTok{,}
+  \StringTok{"alertness"}\NormalTok{, }
+  \StringTok{"calmness"}\NormalTok{, }
+  \StringTok{"valence"}
+\NormalTok{)}
+\NormalTok{varNamNewS2 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}
+  \StringTok{"relatedness"}\NormalTok{,}
+  \StringTok{"autonomy"}\NormalTok{,}
+  \StringTok{"competence"}\NormalTok{,}
+  \StringTok{"ProSo"}\NormalTok{, }
+  \StringTok{"AntiSo"}
+\NormalTok{)}
+\NormalTok{varNamNewS3 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}
+  \StringTok{"relatedness"}\NormalTok{,}
+  \StringTok{"autonomy"}\NormalTok{,}
+  \StringTok{"competence"}\NormalTok{,}
+  \StringTok{"ProSo"}\NormalTok{, }
+  \StringTok{"AntiSo"}\NormalTok{,}
+  \StringTok{"agency"}\NormalTok{,}
+  \StringTok{"autoFrust"}\NormalTok{,}
+  \StringTok{"autoSat"}\NormalTok{,}
+  \StringTok{"relatFrust"}\NormalTok{,}
+  \StringTok{"relatSat"}\NormalTok{,}
+  \StringTok{"compFrust"}\NormalTok{,}
+  \StringTok{"compSat"}\NormalTok{,}
+  \StringTok{"lonely"}\NormalTok{,}
+  \StringTok{"emotRegPos"}\NormalTok{,}
+  \StringTok{"emotRegNeg"}
+\NormalTok{)}
+
+\NormalTok{varNamNewCat }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}
+  \StringTok{"closeness\_Calc"}\NormalTok{,}
+  \StringTok{"gender\_Calc"}\NormalTok{,}
+  \StringTok{"ethnicity\_Calc"}\NormalTok{,}
+  \StringTok{"relationship\_Calc"}
+\NormalTok{)}
+
+\NormalTok{varNamIntDep }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}
+\NormalTok{  varNamS123PCA[}\FunctionTok{grepl}\NormalTok{(}\StringTok{\textquotesingle{}\^{}InteractionContext|AttitudesPartner|KeyNeedDueToPartner|\^{}quality\textquotesingle{}}\NormalTok{, varNamS123PCA)]}
+\NormalTok{)}
+
+\NormalTok{varNamIndiceItemsS1 }\OtherTok{\textless{}{-}}\NormalTok{ varNames }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(}
+\NormalTok{    aux }\SpecialCharTok{==} \SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,}
+\NormalTok{    studyS1 }\SpecialCharTok{==} \StringTok{"S1"}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(varNam) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  pull }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{append}\NormalTok{(., }\FunctionTok{gsub}\NormalTok{(}\StringTok{".pre|.post|\_calc"}\NormalTok{, }\StringTok{""}\NormalTok{, varNamIndicesS1)) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  unique}
+
+\NormalTok{varNamS123MI }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(varNamCore, varNamNewAll, varNamS123Aux)}
+\NormalTok{varNamS1MI }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(varNamCore, varNamIndicesS1, varNamS1Aux[}\SpecialCharTok{!}\NormalTok{varNamS1Aux }\SpecialCharTok{\%in\%}\NormalTok{ varNamIndiceItemsS1]) }\CommentTok{\#}
+\NormalTok{varNamS2MI }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(varNamCore, varNamNewS2, varNamS2Aux)}
+\NormalTok{varNamS3MI }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(varNamCore, varNamNewS3, varNamS3Aux)}
+
+\NormalTok{varNamS123PCA }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(varNamCore, varNamS123PCA[}\SpecialCharTok{!}\NormalTok{varNamS123PCA }\SpecialCharTok{\%in\%}\NormalTok{ varNamOut])}
+\NormalTok{varNamS1PCA }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(varNamCore, varNamNewS1, varNamS1PCA[}\SpecialCharTok{!}\NormalTok{varNamS1PCA }\SpecialCharTok{\%in\%}\NormalTok{ varNamOut])}
+\NormalTok{varNamS2PCA }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(varNamCore, varNamNewS2, varNamS2PCA[}\SpecialCharTok{!}\NormalTok{varNamS2PCA }\SpecialCharTok{\%in\%}\NormalTok{ varNamOut])}
+\NormalTok{varNamS3PCA }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(varNamCore, varNamNewS3, varNamS3PCA[}\SpecialCharTok{!}\NormalTok{varNamS3PCA }\SpecialCharTok{\%in\%}\NormalTok{ varNamOut])}
+
+\NormalTok{varNamS123MIPsbl }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}
+  \FunctionTok{paste}\NormalTok{(varNamS123MI, }\FunctionTok{rep}\NormalTok{(}\StringTok{".pre"}\NormalTok{, }\FunctionTok{length}\NormalTok{(varNamS123MI)), }\AttributeTok{sep =} \StringTok{""}\NormalTok{),}
+\NormalTok{  varNamS123MI,}
+  \FunctionTok{paste}\NormalTok{(varNamS123MI, }\FunctionTok{rep}\NormalTok{(}\StringTok{".post"}\NormalTok{, }\FunctionTok{length}\NormalTok{(varNamS123MI)), }\AttributeTok{sep =} \StringTok{""}\NormalTok{)}
+\NormalTok{)}
+
+\NormalTok{varNamS123MiRed }\OtherTok{\textless{}{-}} \FunctionTok{Reduce}\NormalTok{(}
+\NormalTok{  intersect,}
+  \FunctionTok{list}\NormalTok{(}
+\NormalTok{    dtS1Red }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{select}\NormalTok{(PID, TID, TIDnum, }\FunctionTok{any\_of}\NormalTok{(varNamS123MIPsbl)) }\SpecialCharTok{\%\textgreater{}\%}\NormalTok{ names,}
+\NormalTok{    dtS2Red }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{select}\NormalTok{(PID, TID, TIDnum, }\FunctionTok{any\_of}\NormalTok{(varNamS123MIPsbl)) }\SpecialCharTok{\%\textgreater{}\%}\NormalTok{ names,}
+\NormalTok{    dtS3Red }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{select}\NormalTok{(PID, TID, TIDnum, }\FunctionTok{any\_of}\NormalTok{(varNamS123MIPsbl)) }\SpecialCharTok{\%\textgreater{}\%}\NormalTok{ names}
+\NormalTok{  )}
+\NormalTok{)}
+
+\NormalTok{idVars }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"ID"}\NormalTok{, }\StringTok{"PID"}\NormalTok{, }\StringTok{"TID"}\NormalTok{, }\StringTok{"TIDnum"}\NormalTok{, }\StringTok{"date"}\NormalTok{, }\StringTok{"week"}\NormalTok{, }\StringTok{"study"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# ID Variables (just to re{-}iterate)}
+\NormalTok{idVars }\OtherTok{\textless{}{-}}\NormalTok{ idVars}
+
+\CommentTok{\# Common variables across studies }
+\NormalTok{varNamS123 }\OtherTok{\textless{}{-}}\NormalTok{ varNamS123PCA[}\SpecialCharTok{!}\NormalTok{varNamS123PCA }\SpecialCharTok{\%in\%}\NormalTok{ idVars]}
+
+\CommentTok{\# Variable Groups}
+\CommentTok{\# varNames \%\textgreater{}\%}
+\CommentTok{\#   filter(pca != 0) \%\textgreater{}\%}
+\CommentTok{\#   mutate(contactSpecific = recode(.$contactSpecific, }
+\CommentTok{\#                          \textasciigrave{}{-}1\textasciigrave{}="No Interaction Only",}
+\CommentTok{\#                          \textasciigrave{}0\textasciigrave{}="unspecific",}
+\CommentTok{\#                          \textasciigrave{}1\textasciigrave{}="Interaction Only")) \%\textgreater{}\%}
+\CommentTok{\#   crosstable::crosstable(., varGroup, by=contactSpecific) \%\textgreater{}\%}
+\CommentTok{\#   select({-}c(.id, label)) \%\textgreater{}\%}
+\CommentTok{\#   kbl(.,}
+\CommentTok{\#       escape = FALSE,}
+\CommentTok{\#       booktabs = T,}
+\CommentTok{\#       align = c("l", "r", "c"),}
+\CommentTok{\#       digits=2,}
+\CommentTok{\#       caption = "Full Analysis: Variable Groups by Interaction Types") \%\textgreater{}\%}
+\CommentTok{\#   kable\_classic(}
+\CommentTok{\#     full\_width = F,}
+\CommentTok{\#     lightable\_options = "hover",}
+\CommentTok{\#     html\_font = "Cambria"}
+\CommentTok{\#   )}
+\CommentTok{\# }
+\CommentTok{\# varNames \%\textgreater{}\%}
+\CommentTok{\#   filter(}
+\CommentTok{\#     pca != 0}
+\CommentTok{\#   ) \%\textgreater{}\%}
+\CommentTok{\#   mutate(contactSpecific = recode(.$contactSpecific, }
+\CommentTok{\#                          \textasciigrave{}{-}1\textasciigrave{}="No Interaction Only",}
+\CommentTok{\#                          \textasciigrave{}0\textasciigrave{}="unspecific",}
+\CommentTok{\#                          \textasciigrave{}1\textasciigrave{}="Interaction Only")) \%\textgreater{}\%}
+\CommentTok{\#   select(varNam, varGroup, contactSpecific) \%\textgreater{}\%}
+\CommentTok{\#   group\_by(varGroup, varNam, contactSpecific) \%\textgreater{}\%}
+\CommentTok{\#   summarise(n = n()) \%\textgreater{}\%}
+\CommentTok{\#   pivot\_wider(names\_from = c("varGroup", "varNam"), values\_from = n, names\_sep=" {-} ") \%\textgreater{}\%}
+\CommentTok{\#   ungroup \%\textgreater{}\%}
+\CommentTok{\#   t \%\textgreater{}\%}
+\CommentTok{\#   as.data.frame \%\textgreater{}\%}
+\CommentTok{\#   janitor::row\_to\_names(1) \%\textgreater{}\%}
+\CommentTok{\#   replace(is.na(.), 0) \%\textgreater{}\%}
+\CommentTok{\#   tibble::rownames\_to\_column(., var = "variable") \%\textgreater{}\%}
+\CommentTok{\#   separate(variable, c("concept", "variable"), " {-} ") \%\textgreater{}\%}
+\CommentTok{\#   arrange(concept, unspecific, \textasciigrave{}Interaction Only\textasciigrave{}) \%\textgreater{}\%}
+\CommentTok{\#   mutate\_all(\textasciitilde{}recode(.x, \textasciigrave{}0\textasciigrave{}="", \textasciigrave{} 1\textasciigrave{}="✓")) \%\textgreater{}\%}
+\CommentTok{\#   kbl(.,}
+\CommentTok{\#       escape = FALSE,}
+\CommentTok{\#       booktabs = T,}
+\CommentTok{\#       align = c("l", "l", rep("c", ncol(.){-}2)),}
+\CommentTok{\#       digits=2,}
+\CommentTok{\#       caption = "All Possible Variables by Interaction Types") \%\textgreater{}\%}
+\CommentTok{\#   kable\_classic(}
+\CommentTok{\#     full\_width = F,}
+\CommentTok{\#     lightable\_options = "hover",}
+\CommentTok{\#     html\_font = "Cambria"}
+\CommentTok{\#   ) \%\textgreater{}\%}
+\CommentTok{\#   scroll\_box(width = "100\%", height = "500px")}
+
+\CommentTok{\# Non{-}Interaction Specific Variables}
+\NormalTok{varNamS123NoInt }\OtherTok{\textless{}{-}}\NormalTok{ varNames }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(}
+\NormalTok{    varNam }\SpecialCharTok{\%in\%}\NormalTok{ varNamS123PCA,}
+\NormalTok{    contactSpecific }\SpecialCharTok{==} \DecValTok{0}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(varNam) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  pull}
+
+\CommentTok{\# Interaction Specific Variables}
+\NormalTok{varNamS123Int }\OtherTok{\textless{}{-}}\NormalTok{ varNames }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(}
+\NormalTok{    varNam }\SpecialCharTok{\%in\%}\NormalTok{ varNamS123PCA,}
+\NormalTok{    contactSpecific }\SpecialCharTok{==} \DecValTok{1}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(varNam) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  pull}
+
+\CommentTok{\# S1 variables}
+\NormalTok{varNamS1Clust }\OtherTok{\textless{}{-}}\NormalTok{ varNamS1PCA[}\SpecialCharTok{!}\NormalTok{varNamS1PCA }\SpecialCharTok{\%in\%}\NormalTok{ idVars]}
+
+\CommentTok{\# S1 Non{-}Interaction Specific Variables}
+\NormalTok{varNamS1NoInt }\OtherTok{\textless{}{-}}\NormalTok{ varNames }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(}
+\NormalTok{    varNam }\SpecialCharTok{\%in\%}\NormalTok{ varNamS1Clust,}
+\NormalTok{    contactSpecific }\SpecialCharTok{==} \DecValTok{0}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(varNam) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  pull}
+
+\CommentTok{\# S1 Interaction Specific Variables}
+\NormalTok{varNamS1Int }\OtherTok{\textless{}{-}}\NormalTok{ varNames }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(}
+\NormalTok{    varNam }\SpecialCharTok{\%in\%}\NormalTok{ varNamS1Clust,}
+\NormalTok{    contactSpecific }\SpecialCharTok{==} \DecValTok{1}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(varNam) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  pull}
+
+
+\CommentTok{\# S2 variables}
+\NormalTok{varNamS2Clust }\OtherTok{\textless{}{-}}\NormalTok{ varNamS2PCA[}\SpecialCharTok{!}\NormalTok{varNamS2PCA }\SpecialCharTok{\%in\%}\NormalTok{ idVars]}
+
+\CommentTok{\# S2 Non{-}Interaction Specific Variables}
+\NormalTok{varNamS2NoInt }\OtherTok{\textless{}{-}}\NormalTok{ varNames }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(}
+\NormalTok{    varNam }\SpecialCharTok{\%in\%}\NormalTok{ varNamS2Clust,}
+\NormalTok{    contactSpecific }\SpecialCharTok{==} \DecValTok{0}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(varNam) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  pull}
+
+\CommentTok{\# S2 Interaction Specific Variables}
+\NormalTok{varNamS2Int }\OtherTok{\textless{}{-}}\NormalTok{ varNames }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(}
+\NormalTok{    varNam }\SpecialCharTok{\%in\%}\NormalTok{ varNamS2Clust,}
+\NormalTok{    contactSpecific }\SpecialCharTok{==} \DecValTok{1}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(varNam) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  pull}
+
+\CommentTok{\# S3 variables}
+\NormalTok{varNamS3Clust }\OtherTok{\textless{}{-}}\NormalTok{ varNamS3PCA[}\SpecialCharTok{!}\NormalTok{varNamS3PCA }\SpecialCharTok{\%in\%}\NormalTok{ idVars]}
+
+\CommentTok{\# S3 Non{-}Interaction Specific Variables}
+\NormalTok{varNamS3NoInt }\OtherTok{\textless{}{-}}\NormalTok{ varNames }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(}
+\NormalTok{    varNam }\SpecialCharTok{\%in\%}\NormalTok{ varNamS3Clust,}
+\NormalTok{    contactSpecific }\SpecialCharTok{==} \DecValTok{0}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(varNam) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  pull}
+
+\CommentTok{\# S3 Interaction Specific Variables}
+\NormalTok{varNamS3Int }\OtherTok{\textless{}{-}}\NormalTok{ varNames }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(}
+\NormalTok{    varNam }\SpecialCharTok{\%in\%}\NormalTok{ varNamS3Clust,}
+\NormalTok{    contactSpecific }\SpecialCharTok{==} \DecValTok{1}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(varNam) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  pull}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{varNames }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(}
+\NormalTok{    pca }\SpecialCharTok{!=} \DecValTok{0}\NormalTok{,}
+\NormalTok{    varNam }\SpecialCharTok{\%in\%} \FunctionTok{c}\NormalTok{(varNamS123PCA, varNamS1PCA, varNamS2PCA, varNamS3PCA)}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}
+    \AttributeTok{contactSpecific =} \FunctionTok{recode}\NormalTok{(}
+\NormalTok{      .}\SpecialCharTok{$}\NormalTok{contactSpecific,}
+      \StringTok{\textasciigrave{}}\AttributeTok{{-}1}\StringTok{\textasciigrave{}} \OtherTok{=} \StringTok{"No Interaction Only"}\NormalTok{,}
+      \StringTok{\textasciigrave{}}\AttributeTok{0}\StringTok{\textasciigrave{}} \OtherTok{=} \StringTok{"unspecific"}\NormalTok{,}
+      \StringTok{\textasciigrave{}}\AttributeTok{1}\StringTok{\textasciigrave{}} \OtherTok{=} \StringTok{"Interaction Only"}
+\NormalTok{    ),}
+    \AttributeTok{study1 =} \FunctionTok{ifelse}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(studyS1), }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{),}
+    \AttributeTok{study2 =} \FunctionTok{ifelse}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(studyS2), }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{),}
+    \AttributeTok{study3 =} \FunctionTok{ifelse}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(studyS3), }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{)}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{select}\NormalTok{(varNam, varGroup, contactSpecific, study1, study2, study3) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(varGroup, varNam, contactSpecific, study1, study2, study3) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarise}\NormalTok{(}\AttributeTok{n =} \FunctionTok{n}\NormalTok{()) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{pivot\_wider}\NormalTok{(}\AttributeTok{names\_from =} \FunctionTok{c}\NormalTok{(}\StringTok{"varGroup"}\NormalTok{, }\StringTok{"varNam"}\NormalTok{, }\StringTok{"study1"}\NormalTok{, }\StringTok{"study2"}\NormalTok{, }\StringTok{"study3"}\NormalTok{), }\AttributeTok{values\_from =}\NormalTok{ n, }\AttributeTok{names\_sep=}\StringTok{" {-} "}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  ungroup }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  t }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  as.data.frame }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  janitor}\SpecialCharTok{::}\FunctionTok{row\_to\_names}\NormalTok{(}\DecValTok{1}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{replace}\NormalTok{(}\FunctionTok{is.na}\NormalTok{(.), }\DecValTok{0}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  tibble}\SpecialCharTok{::}\FunctionTok{rownames\_to\_column}\NormalTok{(., }\AttributeTok{var =} \StringTok{"variable"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{separate}\NormalTok{(variable, }\FunctionTok{c}\NormalTok{(}\StringTok{"concept"}\NormalTok{, }\StringTok{"variable"}\NormalTok{, }\StringTok{"study1"}\NormalTok{, }\StringTok{"study2"}\NormalTok{, }\StringTok{"study3"}\NormalTok{), }\StringTok{" {-} "}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\FunctionTok{across}\NormalTok{(}\FunctionTok{c}\NormalTok{(study1, study2, study3), as.numeric)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{arrange}\NormalTok{(concept, unspecific, }\StringTok{\textasciigrave{}}\AttributeTok{Interaction Only}\StringTok{\textasciigrave{}}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate\_all}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\FunctionTok{recode}\NormalTok{(.x, }\StringTok{\textasciigrave{}}\AttributeTok{0}\StringTok{\textasciigrave{}}\OtherTok{=}\StringTok{""}\NormalTok{, }\StringTok{\textasciigrave{}}\AttributeTok{ 1}\StringTok{\textasciigrave{}}\OtherTok{=}\StringTok{"✓"}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{relocate}\NormalTok{(}\FunctionTok{starts\_with}\NormalTok{(}\StringTok{"study"}\NormalTok{), }\AttributeTok{.after =} \FunctionTok{last\_col}\NormalTok{()) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{rename\_with}\NormalTok{(., }\SpecialCharTok{\textasciitilde{}} \FunctionTok{gsub}\NormalTok{(}\StringTok{"study"}\NormalTok{, }\StringTok{"Study "}\NormalTok{, .x, }\AttributeTok{fixed =} \ConstantTok{TRUE}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{kbl}\NormalTok{(.,}
+      \AttributeTok{escape =} \ConstantTok{FALSE}\NormalTok{,}
+      \AttributeTok{booktabs =}\NormalTok{ T,}
+      \AttributeTok{align =} \FunctionTok{c}\NormalTok{(}\StringTok{"l"}\NormalTok{, }\StringTok{"l"}\NormalTok{, }\FunctionTok{rep}\NormalTok{(}\StringTok{"c"}\NormalTok{, }\FunctionTok{ncol}\NormalTok{(.)}\SpecialCharTok{{-}}\DecValTok{2}\NormalTok{)),}
+      \AttributeTok{digits=}\DecValTok{2}\NormalTok{,}
+      \AttributeTok{caption =} \StringTok{"Variables by Interaction Types and Study Availability"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{add\_header\_above}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{" "} \OtherTok{=} \DecValTok{2}\NormalTok{, }\StringTok{"Contact Type"} \OtherTok{=} \DecValTok{2}\NormalTok{, }\StringTok{"Study Availability"} \OtherTok{=} \DecValTok{3}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{kable\_classic}\NormalTok{(}
+    \AttributeTok{full\_width =}\NormalTok{ F,}
+    \AttributeTok{lightable\_options =} \StringTok{"hover"}\NormalTok{,}
+    \AttributeTok{html\_font =} \StringTok{"Cambria"}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{table}
+
+\caption{\label{tab:variable names by response type and study}Variables by Interaction Types and Study Availability}
+\centering
+\begin{tabular}[t]{llccccc}
+\toprule
+\multicolumn{2}{c}{ } & \multicolumn{2}{c}{Contact Type} & \multicolumn{3}{c}{Study Availability} \\
+\cmidrule(l{3pt}r{3pt}){3-4} \cmidrule(l{3pt}r{3pt}){5-7}
+concept & variable & unspecific & Interaction Only & Study 1 & Study 2 & Study 3\\
+\midrule
+acculturation & AttitudesDutch & ✓ &  & ✓ & ✓ & ✓\\
+acculturation & AttitudesPartner &  & ✓ & ✓ & ✓ & ✓\\
+contactQuality & InteractionContextAccidental &  & ✓ & ✓ & ✓ & ✓\\
+contactQuality & InteractionContextCooperative &  & ✓ & ✓ & ✓ & ✓\\
+contactQuality & InteractionContextEqualStatus &  & ✓ &  & ✓ & ✓\\
+\addlinespace
+contactQuality & InteractionContextRepresentativeNL &  & ✓ & ✓ & ✓ & ✓\\
+contactQuality & InteractionContextvoluntary &  & ✓ & ✓ & ✓ & ✓\\
+contactQuality & qualityEffective &  & ✓ &  & ✓ & ✓\\
+contactQuality & qualityImportance &  & ✓ &  & ✓ & ✓\\
+contactQuality & qualityMeaning &  & ✓ & ✓ & ✓ & ✓\\
+\addlinespace
+contactQuality & qualityOverall &  & ✓ & ✓ & ✓ & ✓\\
+contactQuality & qualityStar &  & ✓ & ✓ &  & \\
+emotion & afraid & ✓ &  &  &  & ✓\\
+emotion & angry & ✓ &  &  &  & ✓\\
+emotion & energy & ✓ &  &  &  & ✓\\
+\addlinespace
+emotion & exWB & ✓ &  & ✓ & ✓ & ✓\\
+emotion & lonelyAlways & ✓ &  &  &  & ✓\\
+needs & autonomy & ✓ &  &  & ✓ & ✓\\
+needs & competence & ✓ &  &  & ✓ & ✓\\
+needs & DaytimeNeedFulfillment & ✓ &  & ✓ & ✓ & ✓\\
+\addlinespace
+needs & DaytimeNeedImportance & ✓ &  &  &  & ✓\\
+needs & KeyNeedFulfillment & ✓ &  & ✓ & ✓ & ✓\\
+needs & KeyNeedImp & ✓ &  &  &  & ✓\\
+needs & StudentGoal01 & ✓ &  &  & ✓ & ✓\\
+needs & StudentGoal02 & ✓ &  &  & ✓ & ✓\\
+\addlinespace
+needs & StudentGoal03 & ✓ &  &  & ✓ & ✓\\
+needs & StudentGoal04 & ✓ &  &  & ✓ & ✓\\
+needs & StudentGoal05 & ✓ &  &  & ✓ & ✓\\
+needs & StudentGoal06 & ✓ &  &  & ✓ & ✓\\
+needs & StudentGoal07 & ✓ &  &  & ✓ & ✓\\
+\addlinespace
+needs & StudentGoal08 & ✓ &  &  & ✓ & ✓\\
+needs & StudentGoal09 & ✓ &  &  & ✓ & ✓\\
+needs & StudentGoal10 & ✓ &  &  & ✓ & ✓\\
+needs & KeyNeedDueToPartner &  & ✓ & ✓ & ✓ & ✓\\
+needs & KeyNeedShared &  & ✓ &  & ✓ & ✓\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{missInfo }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(}\AttributeTok{full =} \ConstantTok{NA}\NormalTok{, }\AttributeTok{reduced =} \ConstantTok{NA}\NormalTok{)\{}
+\NormalTok{  missTab }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}
+    \AttributeTok{nFull =} \FunctionTok{nrow}\NormalTok{(full),}
+    \AttributeTok{nRed =} \FunctionTok{nrow}\NormalTok{(reduced),}
+    \AttributeTok{pptFull =} \FunctionTok{length}\NormalTok{(}\FunctionTok{unique}\NormalTok{(full}\SpecialCharTok{$}\NormalTok{PID)),}
+    \AttributeTok{pptRed =} \FunctionTok{length}\NormalTok{(}\FunctionTok{unique}\NormalTok{(reduced}\SpecialCharTok{$}\NormalTok{PID)),}
+    \AttributeTok{timeFull =} \FunctionTok{length}\NormalTok{(}\FunctionTok{unique}\NormalTok{(full}\SpecialCharTok{$}\NormalTok{TID)),}
+    \AttributeTok{timeRed =} \FunctionTok{length}\NormalTok{(}\FunctionTok{unique}\NormalTok{(reduced}\SpecialCharTok{$}\NormalTok{TID))}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{mutate}\NormalTok{(}
+      \AttributeTok{nDif =}\NormalTok{ nFull}\SpecialCharTok{{-}}\NormalTok{nRed,}
+      \AttributeTok{nDifPerc =}\NormalTok{ nDif}\SpecialCharTok{/}\NormalTok{nFull}\SpecialCharTok{*}\DecValTok{100}\NormalTok{,}
+      \AttributeTok{pptDif =}\NormalTok{ pptFull}\SpecialCharTok{{-}}\NormalTok{pptRed,}
+      \AttributeTok{pptDifPerc =}\NormalTok{ pptDif}\SpecialCharTok{/}\NormalTok{pptFull}\SpecialCharTok{*}\DecValTok{100}\NormalTok{,}
+      \AttributeTok{timeDif =}\NormalTok{ timeFull}\SpecialCharTok{{-}}\NormalTok{timeRed,}
+      \AttributeTok{timeDifPerc =}\NormalTok{ timeDif}\SpecialCharTok{/}\NormalTok{timeFull}\SpecialCharTok{*}\DecValTok{100}
+\NormalTok{    ) }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{select}\NormalTok{(}
+\NormalTok{      nFull, nRed, nDif, nDifPerc,}
+\NormalTok{      pptFull, pptRed, pptDif, pptDifPerc,}
+\NormalTok{      timeFull, timeRed, timeDif, timeDifPerc}
+\NormalTok{    )}
+\NormalTok{    missTab}
+\NormalTok{\}}
+
+\NormalTok{missS1 }\OtherTok{\textless{}{-}} \FunctionTok{missInfo}\NormalTok{(}\AttributeTok{full =}\NormalTok{ dtS1}\SpecialCharTok{$}\NormalTok{full, }\AttributeTok{reduced =}\NormalTok{ dtS1Red)}
+\NormalTok{missS2 }\OtherTok{\textless{}{-}} \FunctionTok{missInfo}\NormalTok{(}\AttributeTok{full =}\NormalTok{ dtS2}\SpecialCharTok{$}\NormalTok{full, }\AttributeTok{reduced =}\NormalTok{ dtS2Red)}
+\NormalTok{missS3 }\OtherTok{\textless{}{-}} \FunctionTok{missInfo}\NormalTok{(}\AttributeTok{full =}\NormalTok{ dtS3}\SpecialCharTok{$}\NormalTok{full, }\AttributeTok{reduced =}\NormalTok{ dtS3Red)}
+
+\FunctionTok{rbind}\NormalTok{(}
+\NormalTok{  missS1,}
+\NormalTok{  missS2,}
+\NormalTok{  missS3}
+\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{study =} \FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{3}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(study, }\FunctionTok{everything}\NormalTok{()) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{kbl}\NormalTok{(.,}
+      \AttributeTok{escape =} \ConstantTok{FALSE}\NormalTok{,}
+      \AttributeTok{booktabs =} \ConstantTok{TRUE}\NormalTok{,}
+      \AttributeTok{align =} \StringTok{"c"}\NormalTok{, }\CommentTok{\#c("l", rep("c", ncol(.){-}1)),}
+      \AttributeTok{col.names =} \FunctionTok{c}\NormalTok{(}\StringTok{"Study"}\NormalTok{, }\FunctionTok{rep}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Full"}\NormalTok{,}\StringTok{"Reduced"}\NormalTok{,}\StringTok{"$}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{Delta$"}\NormalTok{, }\StringTok{"\%"}\NormalTok{), }\DecValTok{3}\NormalTok{)),}
+      \AttributeTok{digits=}\DecValTok{2}\NormalTok{,}
+      \AttributeTok{caption =} \StringTok{"Missingness Info by Study"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{add\_header\_above}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{" "} \OtherTok{=} \DecValTok{1}\NormalTok{, }\StringTok{"Measurements"} \OtherTok{=} \DecValTok{4}\NormalTok{, }\StringTok{"Participants"} \OtherTok{=} \DecValTok{4}\NormalTok{, }\StringTok{"Timepoints"} \OtherTok{=} \DecValTok{4}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{kable\_classic}\NormalTok{(}
+    \AttributeTok{full\_width =}\NormalTok{ F,}
+    \AttributeTok{lightable\_options =} \StringTok{"hover"}\NormalTok{,}
+    \AttributeTok{html\_font =} \StringTok{"Cambria"}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{table}
+
+\caption{\label{tab:missingness filtering}Missingness Info by Study}
+\centering
+\begin{tabular}[t]{ccccccccccccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{4}{c}{Measurements} & \multicolumn{4}{c}{Participants} & \multicolumn{4}{c}{Timepoints} \\
+\cmidrule(l{3pt}r{3pt}){2-5} \cmidrule(l{3pt}r{3pt}){6-9} \cmidrule(l{3pt}r{3pt}){10-13}
+Study & Full & Reduced & $\Delta$ & % & Full & Reduced & $\Delta$ & % & Full & Reduced & $\Delta$ & %\\
+\midrule
+1 & 1225 & 1204 & 21 & 1.71 & 23 & 21 & 2 & 8.70 & 63 & 61 & 2 & 3.17\\
+2 & 4965 & 4218 & 747 & 15.05 & 113 & 86 & 27 & 23.89 & 69 & 60 & 9 & 13.04\\
+3 & 4107 & 2710 & 1397 & 34.02 & 71 & 50 & 21 & 29.58 & 155 & 67 & 88 & 56.77\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Data}
+
+To illustrate the
+
+\subsubsection{Participants}
+
+\subsubsection{Timepoints}
+
+\subsubsection{Variables}
+
+\subsection{Procedure}
+
+feature engineering: feature extraction + feature selection
+
+\subsubsection{Feature-Extraction}
+
+use domain knowledge to extract new variables from raw data (summarize)
+
+options: tsfresh \citep[][]{christ2018}, spikes
+\citep[][]{caro-martin2018}
+
+Our selection: density, inertia, instability, diversity
+\citep[][]{dejonckheere2019, kuppens2017}
+
+\begin{itemize}
+  \item 
+\end{itemize}
+
+\subsubsection{Feature Selection}
+
+select most consistent, relevant, and non-redundant features.
+
+\textit{k} features means \(2^k – 1\) possible models
+
+maximize relevance and minimize redundancy
+
+``However, most of the existing UFS methods primarily focus on the
+significance of features in maintaining the data structure while
+ignoring the redundancy among features. Moreover, the determination of
+the proper number of features is another challenge.''
+
+\begin{itemize}
+  \item feature selection
+  \begin{itemize}
+    \item filter: evaluate individual features' impact / importance / relevance. Univariate (ranking-based) or multivariate (preferred bc. can handle redundant and irrelevant features)
+    \begin{itemize}
+      \item unvariate, often based on information or spectral analysis (univariate inclusion test \citep[i.e., alpha-corrected t-tests][]{christ2018})
+    \end{itemize}
+    \item wrapper: search problem --- compare different models based on evaluation criterion (i.e., model performance; e.g., $R^2$, accuracy, ...). "high computational cost, and they are limited to be used in conjunction with a particular clustering algorithm."
+    \begin{itemize}
+      \item Exhaustive Feature Selection (i.e., brute force)
+      \item forward selection (e.g., greedy Forward Search \citep[][]{wang2006})
+      \item backward elimination
+      \item Bi-directional elimination (Stepwise Selection)
+    \end{itemize}
+    \item hybrid: first filter then wrapper
+    \item [embedded: feature selection as part of the model construction process. E.g., LASSO Regularization L1, or Random Forest Importance] MOSTLY FOR SUPERVISED / LABELED DATA (e.g., regressions)
+  \end{itemize}
+  \item dimension reduction
+\end{itemize}
+
+random forest search \citep[][]{}

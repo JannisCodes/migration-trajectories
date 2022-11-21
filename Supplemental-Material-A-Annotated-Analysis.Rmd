@@ -1861,6 +1861,15 @@ kbl(
   scroll_box(width = "100%", height = "500px")
 ```
 
+
+```{r export cleaned and reduced datasets}
+# save cleaned 
+save(dtS1, dtS2, dtS3, file = "data/s123Full.RData")
+
+# save reduced
+save(list = ls(pattern = "Red$"), file = "data/s123Red.RData")
+```
+
 ## Time Scales and Timepoint Aggregation
 
 ```{r checkVarAvailability}

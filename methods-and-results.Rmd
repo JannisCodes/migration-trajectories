@@ -1,0 +1,647 @@
+---
+output: latex_fragment
+editor_options:
+  chunk_output_type: console
+bibliography: references.bib
+csl: apa.csl
+---
+
+```{r setup, include=FALSE}
+# R Studio Clean-Up
+cat("\014") # clear console
+# rm(list=ls()) # clear workspace - use restart R instead [cmd/alt + shift + F10]
+gc() # garbage collector
+
+# Install and Load Packages
+# !IMPORTANT!
+# BEFORE FIRST RENDER:
+# To install all relevant packages please run "renv::restore()" (or renv::init() and then initiate from lockfile) in the console before the first use to ensure that all packages are using the correct version.
+# to store the packages in a contained library within the project folder: renv::settings$use.cache(FALSE) and add 'RENV_CONFIG_SANDBOX_ENABLED = FALSE' to an '.Renviron' file
+lib <- c(
+  "rmarkdown",
+  "knitr",
+  "remedy",
+  "bookdown",
+  #"tidyverse",
+  "MASS",
+  "brms",
+  "psych",
+  "ggplot2",
+  "ggthemes",
+  "haven",
+  "RColorBrewer",
+  "plotly",
+  "grid",
+  "gridExtra",
+  "ggpattern",
+  "lme4",
+  "nlme",
+  "jtools",
+  "gtsummary",
+  "sessioninfo",
+  "tibble",
+  "pander",
+  "devtools",
+  "mada",
+  "data.table",
+  "plyr",
+  "dplyr",
+  "tidyr",
+  "Hmisc",
+  "kableExtra",
+  "papaja",
+  "stringr",
+  "stringi",
+  "reshape2",
+  "anytime",
+  "lubridate",
+  "purrr",
+  "metafor",
+  "dygraphs",
+  "readxl", 
+  "reshape",
+  "factoextra",
+  "Amelia", 
+  "ThreeWay",
+  "DescTools",
+  # GAM
+  "gratia",
+  #"MASS",
+  "mgcv",
+  # For moving window models
+  "Kendall",
+  # For the Hamed & Rao correction of tau
+  "modifiedmk", 
+  "mgcViz",
+  "shiny"
+)
+invisible(lapply(lib, library, character.only = TRUE))
+rm(lib)
+
+anytime::addFormats("%d-%m-%Y %H:%M:%S")  ## add format to anytime package (not default)
+anytime::addFormats("%Y-%m-%d %H:%M:%S")
+anytime::addFormats("%d-%m-%Y")  
+#options(rgl.useNULL = TRUE)
+
+# Load Custom Packages
+source("./scripts/functions/fun.panel.R")
+source("./scripts/functions/themes.R")
+source("./scripts/functions/binaryCor.R")
+source("./scripts/functions/MlCorMat.R")
+source("./scripts/functions/MlTbl.R")
+source("./scripts/functions/metaLmer.R")
+source("./scripts/functions/meanViz.R")
+source("./scripts/functions/gam.R")
+source("./scripts/functions/tsFeatureExtractor.R")
+
+# Markdown Options
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file()) # set working directory
+knitr::opts_knit$get("root.dir") # check working directory
+options(
+  scipen = 999,
+  digits = 4,
+  width = 400
+) # removes scientific quotation
+# knitr::opts_chunk$set(echo = TRUE, cache = F, cache.path = rprojroot::find_rstudio_root_file('cache/')) # cache settings
+
+# Global Chunk Options
+knitr::opts_chunk$set(
+  fig.width = 12,
+  fig.height = 8,
+  fig.path = "Figures/",
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+```{r import data, include=FALSE}
+# Load variable name lookup table
+varNames <- readxl::read_excel("preregistration/varNames.xlsx")
+
+# import full datasets
+load("data/s123Full.RData")
+
+# import reduced datasets
+load("data/s123Red.RData")
+```
+
+
+```{r Preparation of Variable Names}
+varNamIndicesS1 <- c(
+  "autonomy",
+  "competence",
+  "relatedness",
+  "education_level.pre",
+  "associationMerged.pre",
+  "assimilation.pre",
+  "separation.pre",
+  "integration.pre",
+  "marginalization.pre",
+  "VIA_heritage.pre",
+  "VIA_Dutch.pre",
+  "SSAS_surrounding.pre",
+  "SSAS_privat.pre",
+  "SSAS_public.pre",
+  "assimilation.post",
+  "separation.post",
+  "integration.post",
+  "marginalization.post",
+  "VIA_heritage.post",
+  "VIA_Dutch.post",
+  "rosenberg.post",
+  "social_support.post",
+  "stress.post",
+  "discrimination.post",
+  "discrimination_month.post",
+  "NLE_1month.post",
+  "NLE_6month.post",
+  "NLE_12month.post"
+  )
+
+varNamS123Aux <- varNames %>%
+  filter(
+    aux != 0,
+    studyS1 == "S1",
+    studyS2 == "S2",
+    studyS3 == "S3"
+  ) %>%
+  select(varNam) %>%
+  pull
+varNamS1Aux <- varNames %>%
+  filter(
+    aux != 0,
+    studyS1 == "S1"
+  ) %>%
+  select(varNam) %>%
+  pull
+varNamS2Aux <- varNames %>%
+  filter(
+    aux != 0,
+    studyS2 == "S2"
+  ) %>%
+  select(varNam) %>%
+  pull
+varNamS3Aux <- varNames %>%
+  filter(
+    aux != 0,
+    studyS3 == "S3"
+  ) %>%
+  select(varNam) %>%
+  pull
+
+varNamS123PCA <- varNames %>%
+  filter(
+    pca != 0,
+    studyS1 == "S1",
+    studyS2 == "S2",
+    studyS3 == "S3"
+  ) %>%
+  select(varNam) %>%
+  pull
+varNamS1PCA <- varNames %>%
+  filter(
+    pca != 0,
+    studyS1 == "S1"
+  ) %>%
+  select(varNam) %>%
+  pull
+varNamS2PCA <- varNames %>%
+  filter(
+    pca != 0,
+    studyS2 == "S2"
+  ) %>%
+  select(varNam) %>% 
+  pull
+varNamS3PCA <- varNames %>%
+  filter(
+    pca != 0,
+    studyS3 == "S3"
+  ) %>%
+  select(varNam) %>%
+  pull
+
+varNamOut <- c(
+  "ResponseId",
+  "relatednessNoInteraction",
+  "relatednessSelf",
+  "relatednessOther",
+  "autonomy_Int",
+  "autonomy_NoInt",
+  "competence_Int",
+  "competence_NoInt",
+  varNamS1PCA[grepl('^MDMQ', varNamS1PCA)],
+  varNamS2PCA[grepl('^ProSo|^AntiSo', varNamS2PCA)],
+  varNamS3PCA[grepl(
+    '^ProSo|^AntiSo|^agency|^autoFrust|^autoSat|^relatFrust|^relatSat|^compFrust|^compSat|^lonely[0-9]|^emotRegPos|^emotRegNeg',
+    varNamS3PCA
+  )]
+)
+varNamCore <- c(
+  "PID",
+  "TID",
+  "TIDnum"
+)
+varNamNewAll <- c(
+  "relatedness",
+  "autonomy",
+  "competence"
+)
+varNamNewS1 <- c(
+  "relatedness",
+  "autonomy",
+  "competence",
+  "alertness", 
+  "calmness", 
+  "valence"
+)
+varNamNewS2 <- c(
+  "relatedness",
+  "autonomy",
+  "competence",
+  "ProSo", 
+  "AntiSo"
+)
+varNamNewS3 <- c(
+  "relatedness",
+  "autonomy",
+  "competence",
+  "ProSo", 
+  "AntiSo",
+  "agency",
+  "autoFrust",
+  "autoSat",
+  "relatFrust",
+  "relatSat",
+  "compFrust",
+  "compSat",
+  "lonely",
+  "emotRegPos",
+  "emotRegNeg"
+)
+
+varNamNewCat <- c(
+  "closeness_Calc",
+  "gender_Calc",
+  "ethnicity_Calc",
+  "relationship_Calc"
+)
+
+varNamIntDep <- c(
+  varNamS123PCA[grepl('^InteractionContext|AttitudesPartner|KeyNeedDueToPartner|^quality', varNamS123PCA)]
+)
+
+varNamIndiceItemsS1 <- varNames %>%
+  filter(
+    aux == -1,
+    studyS1 == "S1"
+  ) %>%
+  select(varNam) %>%
+  pull %>%
+  append(., gsub(".pre|.post|_calc", "", varNamIndicesS1)) %>%
+  unique
+
+varNamS123MI <- c(varNamCore, varNamNewAll, varNamS123Aux)
+varNamS1MI <- c(varNamCore, varNamIndicesS1, varNamS1Aux[!varNamS1Aux %in% varNamIndiceItemsS1]) #
+varNamS2MI <- c(varNamCore, varNamNewS2, varNamS2Aux)
+varNamS3MI <- c(varNamCore, varNamNewS3, varNamS3Aux)
+
+varNamS123PCA <- c(varNamCore, varNamS123PCA[!varNamS123PCA %in% varNamOut])
+varNamS1PCA <- c(varNamCore, varNamNewS1, varNamS1PCA[!varNamS1PCA %in% varNamOut])
+varNamS2PCA <- c(varNamCore, varNamNewS2, varNamS2PCA[!varNamS2PCA %in% varNamOut])
+varNamS3PCA <- c(varNamCore, varNamNewS3, varNamS3PCA[!varNamS3PCA %in% varNamOut])
+
+varNamS123MIPsbl <- c(
+  paste(varNamS123MI, rep(".pre", length(varNamS123MI)), sep = ""),
+  varNamS123MI,
+  paste(varNamS123MI, rep(".post", length(varNamS123MI)), sep = "")
+)
+
+varNamS123MiRed <- Reduce(
+  intersect,
+  list(
+    dtS1Red %>% select(PID, TID, TIDnum, any_of(varNamS123MIPsbl)) %>% names,
+    dtS2Red %>% select(PID, TID, TIDnum, any_of(varNamS123MIPsbl)) %>% names,
+    dtS3Red %>% select(PID, TID, TIDnum, any_of(varNamS123MIPsbl)) %>% names
+  )
+)
+
+idVars <- c("ID", "PID", "TID", "TIDnum", "date", "week", "study")
+```
+
+```{r variable names for all analyses}
+# ID Variables (just to re-iterate)
+idVars <- idVars
+
+# Common variables across studies 
+varNamS123 <- varNamS123PCA[!varNamS123PCA %in% idVars]
+
+# Variable Groups
+# varNames %>%
+#   filter(pca != 0) %>%
+#   mutate(contactSpecific = recode(.$contactSpecific, 
+#                          `-1`="No Interaction Only",
+#                          `0`="unspecific",
+#                          `1`="Interaction Only")) %>%
+#   crosstable::crosstable(., varGroup, by=contactSpecific) %>%
+#   select(-c(.id, label)) %>%
+#   kbl(.,
+#       escape = FALSE,
+#       booktabs = T,
+#       align = c("l", "r", "c"),
+#       digits=2,
+#       caption = "Full Analysis: Variable Groups by Interaction Types") %>%
+#   kable_classic(
+#     full_width = F,
+#     lightable_options = "hover",
+#     html_font = "Cambria"
+#   )
+# 
+# varNames %>%
+#   filter(
+#     pca != 0
+#   ) %>%
+#   mutate(contactSpecific = recode(.$contactSpecific, 
+#                          `-1`="No Interaction Only",
+#                          `0`="unspecific",
+#                          `1`="Interaction Only")) %>%
+#   select(varNam, varGroup, contactSpecific) %>%
+#   group_by(varGroup, varNam, contactSpecific) %>%
+#   summarise(n = n()) %>%
+#   pivot_wider(names_from = c("varGroup", "varNam"), values_from = n, names_sep=" - ") %>%
+#   ungroup %>%
+#   t %>%
+#   as.data.frame %>%
+#   janitor::row_to_names(1) %>%
+#   replace(is.na(.), 0) %>%
+#   tibble::rownames_to_column(., var = "variable") %>%
+#   separate(variable, c("concept", "variable"), " - ") %>%
+#   arrange(concept, unspecific, `Interaction Only`) %>%
+#   mutate_all(~recode(.x, `0`="", ` 1`="✓")) %>%
+#   kbl(.,
+#       escape = FALSE,
+#       booktabs = T,
+#       align = c("l", "l", rep("c", ncol(.)-2)),
+#       digits=2,
+#       caption = "All Possible Variables by Interaction Types") %>%
+#   kable_classic(
+#     full_width = F,
+#     lightable_options = "hover",
+#     html_font = "Cambria"
+#   ) %>%
+#   scroll_box(width = "100%", height = "500px")
+
+# Non-Interaction Specific Variables
+varNamS123NoInt <- varNames %>%
+  filter(
+    varNam %in% varNamS123PCA,
+    contactSpecific == 0
+  ) %>%
+  select(varNam) %>%
+  pull
+
+# Interaction Specific Variables
+varNamS123Int <- varNames %>%
+  filter(
+    varNam %in% varNamS123PCA,
+    contactSpecific == 1
+  ) %>%
+  select(varNam) %>%
+  pull
+
+# S1 variables
+varNamS1Clust <- varNamS1PCA[!varNamS1PCA %in% idVars]
+
+# S1 Non-Interaction Specific Variables
+varNamS1NoInt <- varNames %>%
+  filter(
+    varNam %in% varNamS1Clust,
+    contactSpecific == 0
+  ) %>%
+  select(varNam) %>%
+  pull
+
+# S1 Interaction Specific Variables
+varNamS1Int <- varNames %>%
+  filter(
+    varNam %in% varNamS1Clust,
+    contactSpecific == 1
+  ) %>%
+  select(varNam) %>%
+  pull
+
+
+# S2 variables
+varNamS2Clust <- varNamS2PCA[!varNamS2PCA %in% idVars]
+
+# S2 Non-Interaction Specific Variables
+varNamS2NoInt <- varNames %>%
+  filter(
+    varNam %in% varNamS2Clust,
+    contactSpecific == 0
+  ) %>%
+  select(varNam) %>%
+  pull
+
+# S2 Interaction Specific Variables
+varNamS2Int <- varNames %>%
+  filter(
+    varNam %in% varNamS2Clust,
+    contactSpecific == 1
+  ) %>%
+  select(varNam) %>%
+  pull
+
+# S3 variables
+varNamS3Clust <- varNamS3PCA[!varNamS3PCA %in% idVars]
+
+# S3 Non-Interaction Specific Variables
+varNamS3NoInt <- varNames %>%
+  filter(
+    varNam %in% varNamS3Clust,
+    contactSpecific == 0
+  ) %>%
+  select(varNam) %>%
+  pull
+
+# S3 Interaction Specific Variables
+varNamS3Int <- varNames %>%
+  filter(
+    varNam %in% varNamS3Clust,
+    contactSpecific == 1
+  ) %>%
+  select(varNam) %>%
+  pull
+```
+
+```{r variable names by response type and study}
+varNames %>%
+  filter(
+    pca != 0,
+    varNam %in% c(varNamS123PCA, varNamS1PCA, varNamS2PCA, varNamS3PCA)
+  ) %>%
+  mutate(
+    contactSpecific = recode(
+      .$contactSpecific,
+      `-1` = "No Interaction Only",
+      `0` = "unspecific",
+      `1` = "Interaction Only"
+    ),
+    study1 = ifelse(!is.na(studyS1), 1, 0),
+    study2 = ifelse(!is.na(studyS2), 1, 0),
+    study3 = ifelse(!is.na(studyS3), 1, 0)
+  ) %>% 
+  select(varNam, varGroup, contactSpecific, study1, study2, study3) %>%
+  group_by(varGroup, varNam, contactSpecific, study1, study2, study3) %>%
+  summarise(n = n()) %>%
+  pivot_wider(names_from = c("varGroup", "varNam", "study1", "study2", "study3"), values_from = n, names_sep=" - ") %>%
+  ungroup %>%
+  t %>%
+  as.data.frame %>%
+  janitor::row_to_names(1) %>%
+  replace(is.na(.), 0) %>%
+  tibble::rownames_to_column(., var = "variable") %>%
+  separate(variable, c("concept", "variable", "study1", "study2", "study3"), " - ") %>%
+  mutate(across(c(study1, study2, study3), as.numeric)) %>%
+  arrange(concept, unspecific, `Interaction Only`) %>% 
+  mutate_all(~recode(.x, `0`="", ` 1`="✓")) %>%
+  relocate(starts_with("study"), .after = last_col()) %>%
+  rename_with(., ~ gsub("study", "Study ", .x, fixed = TRUE)) %>%
+  kbl(.,
+      escape = FALSE,
+      booktabs = T,
+      align = c("l", "l", rep("c", ncol(.)-2)),
+      digits=2,
+      caption = "Variables by Interaction Types and Study Availability") %>%
+  add_header_above(c(" " = 2, "Contact Type" = 2, "Study Availability" = 3)) %>%
+  kable_classic(
+    full_width = F,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  )
+```
+
+```{r missingness filtering}
+missInfo <- function(full = NA, reduced = NA){
+  missTab <- data.frame(
+    nFull = nrow(full),
+    nRed = nrow(reduced),
+    pptFull = length(unique(full$PID)),
+    pptRed = length(unique(reduced$PID)),
+    timeFull = length(unique(full$TID)),
+    timeRed = length(unique(reduced$TID))
+  ) %>%
+    mutate(
+      nDif = nFull-nRed,
+      nDifPerc = nDif/nFull*100,
+      pptDif = pptFull-pptRed,
+      pptDifPerc = pptDif/pptFull*100,
+      timeDif = timeFull-timeRed,
+      timeDifPerc = timeDif/timeFull*100
+    ) %>%
+    select(
+      nFull, nRed, nDif, nDifPerc,
+      pptFull, pptRed, pptDif, pptDifPerc,
+      timeFull, timeRed, timeDif, timeDifPerc
+    )
+    missTab
+}
+
+missS1 <- missInfo(full = dtS1$full, reduced = dtS1Red)
+missS2 <- missInfo(full = dtS2$full, reduced = dtS2Red)
+missS3 <- missInfo(full = dtS3$full, reduced = dtS3Red)
+
+rbind(
+  missS1,
+  missS2,
+  missS3
+) %>%
+  mutate(study = c(1, 2, 3)) %>%
+  select(study, everything()) %>%
+  kbl(.,
+      escape = FALSE,
+      booktabs = TRUE,
+      align = "c", #c("l", rep("c", ncol(.)-1)),
+      col.names = c("Study", rep(c("Full","Reduced","$\\Delta$", "%"), 3)),
+      digits=2,
+      caption = "Missingness Info by Study") %>%
+  add_header_above(c(" " = 1, "Measurements" = 4, "Participants" = 4, "Timepoints" = 4)) %>%
+  kable_classic(
+    full_width = F,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  )
+```
+
+\subsection{Data}
+
+To illustrate the 
+
+\subsubsection{Participants}
+
+\subsubsection{Timepoints}
+
+\subsubsection{Variables}
+
+
+
+\subsection{Procedure}
+
+feature engineering: feature extraction + feature selection 
+
+\subsubsection{Feature-Extraction}
+
+use domain knowledge to extract new variables from raw data (summarize)
+
+options: tsfresh \citep[][]{christ2018}, spikes \citep[][]{caro-martin2018}
+
+Our selection: density, inertia, instability, diversity \citep[][]{dejonckheere2019, kuppens2017}
+
+\begin{itemize}
+  \item 
+\end{itemize}
+
+\subsubsection{Feature Selection}
+
+select most consistent, relevant, and non-redundant features.
+
+\textit{k} features means $2^k – 1$ possible models
+
+maximize relevance and minimize redundancy
+
+"However, most of the existing UFS methods primarily focus on the significance of features in maintaining the data structure while ignoring the redundancy among features. Moreover, the determination of the proper number of features is another challenge."
+
+\begin{itemize}
+  \item feature selection
+  \begin{itemize}
+    \item filter: evaluate individual features' impact / importance / relevance. Univariate (ranking-based) or multivariate (preferred bc. can handle redundant and irrelevant features)
+    \begin{itemize}
+      \item unvariate, often based on information or spectral analysis (univariate inclusion test \citep[i.e., alpha-corrected t-tests][]{christ2018})
+    \end{itemize}
+    \item wrapper: search problem --- compare different models based on evaluation criterion (i.e., model performance; e.g., $R^2$, accuracy, ...). "high computational cost, and they are limited to be used in conjunction with a particular clustering algorithm."
+    \begin{itemize}
+      \item Exhaustive Feature Selection (i.e., brute force)
+      \item forward selection (e.g., greedy Forward Search \citep[][]{wang2006})
+      \item backward elimination
+      \item Bi-directional elimination (Stepwise Selection)
+    \end{itemize}
+    \item hybrid: first filter then wrapper
+    \item [embedded: feature selection as part of the model construction process. E.g., LASSO Regularization L1, or Random Forest Importance] MOSTLY FOR SUPERVISED / LABELED DATA (e.g., regressions)
+  \end{itemize}
+  \item dimension reduction
+\end{itemize}
+
+
+
+
+
+random forest search \citep[][]{}
+
+
+
+
+
+
+```{r}
+
+```
