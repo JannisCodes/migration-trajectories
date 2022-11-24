@@ -298,15 +298,30 @@ Many of the common time-series clustering algorithms used today have been develo
 \section{Feature-based Time Series Clustering}
 
 \subsection{data preparation?}
+data cleaning + importantly, comparable time series:
+\begin{itemize}[noitemsep]
+    \item time-frame
+    \item response scale (e.g., standardize within clusters)
+    \item 
+\end{itemize}
 
 \subsection{variable selection}
+field- and concept specific selection of input variables. 
 
 \subsection{feature extraction}
+aim: 
+hundreds of possible features to describe psychological time series. One approach to choosing relevant features would be to extract a large number of features and then assess which features are most effective at capturing differences in the time series. However, such an approach is not always advisable for psychological time series. For one, features should reduce the data dimensionality --- it would thus not necessarily be advisable to describe 60 ESM measurements with 180 time series features. More importantly, however, careful feature extraction can be crucial in the interpretability and explainability of the results. This is particularly the case when features have a conceptual/psychological meaning. Taking the concept of well-being as an example, psychologists might be interested in whether certain participants tend to have higher well-being in general (i.e., mean) or whether some participants fluctuate between extremely high and low well-being (i.e., variance). But psychologists might not necessarily be interested in the exact time point after which 50\% of the summed well-being values lie (i.e., relative mass quantile index) or how much different sine wave patterns within the well-being data correlate with one another (i.e., cross power spectral density). We would, thus, strongly advocate for a careful selection of time series features that are meaningful to the field and concepts.
+
+Fortunately, past conceptual and empirical efforts on 
+
+\citep[variability, inertia, instability, diversity;][]{dejonckheere2019, kuppens2017}
 
 \subsection{dimensionality reduction}
 
 \subsection{clustering}
 
+
+\section{Empirical Implementation/Illustration}
 % Methods and Results from RMarkdown render
 \input{methods-and-results}
 
