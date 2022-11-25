@@ -297,6 +297,8 @@ Many of the common time-series clustering algorithms used today have been develo
 
 \section{Feature-based Time Series Clustering}
 
+\fgrref{fig:TSCFlow}
+
 \subsection{Variable selection}
 field- and concept specific selection of input variables. Diverse 
 
@@ -311,7 +313,7 @@ data cleaning + importantly, comparable time series:
 aim: 
 hundreds of possible features to describe psychological time series. One approach to choosing relevant features would be to extract a large number of features and then assess which features are most effective at capturing differences in the time series. However, such an approach is not always advisable for psychological time series. For one, features should reduce the data dimensionality --- it would thus not necessarily be advisable to describe 60 ESM measurements with 180 time series features. More importantly, however, careful feature extraction can be crucial in the interpretability and explainability of the results. This is particularly the case when features have a conceptual/psychological meaning. Taking the concept of well-being as an example, psychologists might be interested in whether certain participants tend to have higher well-being in general (i.e., mean) or whether some participants fluctuate between extremely high and low well-being (i.e., variance). But psychologists might not necessarily be interested in the exact time point after which 50\% of the summed well-being values lie (i.e., relative mass quantile index) or how much different sine wave patterns within the well-being data correlate with one another (i.e., cross power spectral density). We would, thus, strongly advocate for a careful selection of time series features that are meaningful to the field and concepts.
 
-Fortunately, past conceptual and empirical efforts offer valuable discussions of common time series features in psychological research. While the final selection of features should always be driven by the research questions and field-specific conventions, we can build a practical toolbox of meaningful time series features for psychological data. In particular, we propose to focus on six features based on common psychological research questions and recent works on affect dynamics \citep[e.g.,][]{dejonckheere2019, kuppens2017}. An overview of the features, their substantive interpretations and mathematical operationalizations is available in \tblref{tab:esmFeatures}.
+Fortunately, past conceptual and empirical efforts offer valuable discussions of common time series features in psychological research. While the final selection of features should always be driven by the research questions and field-specific conventions, we can build a practical toolbox of meaningful time series features for psychological data. In particular, we propose to focus on six features based on common psychological research questions and recent works on affect dynamics \citep[e.g.,][]{dejonckheere2019, kuppens2017}. An overview of the proposed features, their substantive interpretations, and mathematical operationalizations is available in \tblref{tab:esmFeatures}.
 
 The first two features are a person's \textit{central tendency} and \textit{variability}. Familiar statistics from the probability theory, the two features sit at the heart of many fundamental psychological questions. Are some people happier than others (i.e., difference in central tendency), and are people settled in their attitudes towards migrants or do they fluctuate over time (i.e., difference in variability)? Mathematically, both features have parametric and robust options to choose from (e.g., parametric: mean and standard deviation; robust: median and median absolute deviation). 
 
@@ -326,7 +328,7 @@ This selection of the proposed six time series features is in no way exhaustive 
 \subsection{Feature reduction}
 Once researchers researchers have 
 
-100 participants * 10 variables * 60 measurements
+100 participants * 10 variables * 60 measurements (for an example see \fgrref{fig:TSCFlowN})
 
 \tblref{tab:featureReduction}
 
@@ -413,7 +415,7 @@ little data has thus far investigated the development of migration experiences a
 
 % Figures
 
-\begin{figure}
+\begin{figure}[hbtp]
   \caption{Scopus ESM Development}
   \label{fig:ScopusEsm}
   \centering\includegraphics[width=\textwidth]{figures/Scopus-ESM-Development.png}
@@ -421,13 +423,21 @@ little data has thus far investigated the development of migration experiences a
   Search Terms: `( "ecological momentary assessment"  OR  "experience sampling"  OR  "intensive longitudinal")' in Title, Abstract, or Keyword.}
 \end{figure}
 
-\begin{figure}
+\begin{figure*}[hbtp]
   \caption{Flowchart Feature-Based Time Series Clustering in Psychology}
   \label{fig:TSCFlow}
   \centering\includegraphics[width=\textwidth]{figures/TS Cluster Flow/TimeSeriesClusterFlowSelection.pdf}
   \caption*{Note: \\
   Choices selected for illustration in this manuscript are marked in bold.}
-\end{figure}
+\end{figure*}
+
+\begin{figure*}[hbtp]
+  \caption{Exemplary Flowchart of Data Points in Feature-Based Time Series Clustering}
+  \label{fig:TSCFlowN}
+  \centering\includegraphics[width=\textwidth]{figures/TS Cluster Flow/tsClustFlowN.pdf}
+  \caption*{Note: \\
+  The presented number of participants, variables, and measurement occasions are somewhat arbitrary but generally represent common sample sizes found within the literature. Also the number of extracted clusters is presented for illustrative purposes only}
+\end{figure*}
 
 \printbibliography
 
