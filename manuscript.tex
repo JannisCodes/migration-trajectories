@@ -297,26 +297,34 @@ Many of the common time-series clustering algorithms used today have been develo
 
 \section{Feature-based Time Series Clustering}
 
-\subsection{data preparation?}
+\subsection{Variable selection}
+field- and concept specific selection of input variables. Diverse 
+
+\subsection{Data preparation?}
 data cleaning + importantly, comparable time series:
 \begin{itemize}[noitemsep]
     \item time-frame
     \item response scale (e.g., standardize within clusters)
-    \item 
 \end{itemize}
 
-\subsection{variable selection}
-field- and concept specific selection of input variables. 
-
-\subsection{feature extraction}
+\subsection{Feature extraction}
 aim: 
 hundreds of possible features to describe psychological time series. One approach to choosing relevant features would be to extract a large number of features and then assess which features are most effective at capturing differences in the time series. However, such an approach is not always advisable for psychological time series. For one, features should reduce the data dimensionality --- it would thus not necessarily be advisable to describe 60 ESM measurements with 180 time series features. More importantly, however, careful feature extraction can be crucial in the interpretability and explainability of the results. This is particularly the case when features have a conceptual/psychological meaning. Taking the concept of well-being as an example, psychologists might be interested in whether certain participants tend to have higher well-being in general (i.e., mean) or whether some participants fluctuate between extremely high and low well-being (i.e., variance). But psychologists might not necessarily be interested in the exact time point after which 50\% of the summed well-being values lie (i.e., relative mass quantile index) or how much different sine wave patterns within the well-being data correlate with one another (i.e., cross power spectral density). We would, thus, strongly advocate for a careful selection of time series features that are meaningful to the field and concepts.
 
-Fortunately, past conceptual and empirical efforts on 
+Fortunately, past conceptual and empirical efforts offer valuable discussions of common time series features in psychological research. While the final selection of features should always be driven by the research questions and field-specific conventions, we can build a practical toolbox of meaningful time series features for psychological data. In particular, we propose to focus on six features based on common psychological research questions and recent works on affect dynamics \citep[e.g.,][]{dejonckheere2019, kuppens2017}. An overview of the features, their substantive interpretations and mathematical operationalizations is available in \tblref{tab:esmFeatures}.
 
-\citep[variability, inertia, instability, diversity;][]{dejonckheere2019, kuppens2017}
+The first two features are a person's \textit{central tendency} and \textit{variability}. Familiar statistics from the probability theory, the two features sit at the heart of many fundamental psychological questions. Are some people happier than others (i.e., difference in central tendency), and are people settled in their attitudes towards migrants or do they fluctuate over time (i.e., difference in variability)? Mathematically, both features have parametric and robust options to choose from (e.g., parametric: mean and standard deviation; robust: median and median absolute deviation). 
 
-\subsection{dimensionality reduction}
+The third and fourth feature describe the structure of the variability within the time series. In particular, \textit{(in)stability} captures the average change between two consecutive measurements. Do changes tend to be slow and gradual or fast and abrupt? Mathematically, (in)stability measurements often look at the average change between two consecutive measurement. \textit{Inertia} describes how much a measurement carries over to future measurements. There are two main ways in which experiences tend to be connected to future experiences --- resistance to change and seasonality. Both forms of inertia relate to different types of research questions. Do patients stay in a depressed mood for several measurements (i.e., stability-inertia) and do participants drink more alcohol on Fridays (i.e., periodicity-inertia)? Both forms of inertia are often measured using autocorrelations with the either a lag-1 (stability-inertia) or the lag of the seasonality (e.g., seven days). Periodicity-inertia can additionally be captured using wave patterns (e.g., fourier or wavelet transformation).
+
+The final two features are linear and nonlinear trends. \textit{Linear trends} are a common research interest for longitudinal data. Do patient symptoms improve or does worker productivity decline, are familiar types of research questions. Mathematically, such linear trends are commonly captured using (piecewise) linear regression coefficients. \textit{Nonlinear trends} are important in two regards. Firstly nonlinearity as a deviation from linear trends and secondly, the shape and structure of the nonlinear trend. Questions like ``Is the development of anxiety a nonlinear process?'' are mathematically captured using nonlinearity parameters such the bicoherence metrics \citep{cuddy2009}. The structure of nonlinear trends is often mathematically captured using polinomial coefficients or more broadly by how wiggly the line is (e.g., estimated degrees of freedom of GAM spline models; similar to number of spikes \citealp[]{caro-martin2018}). 
+
+This selection of the proposed six time series features is in no way exhaustive or imperative. Both using a purely data-driven approach or selecting other aspects to summarize the time series are legitimate options. The list seeks to offer a practical toolbox of features that are common and meaningful to psychological research questions and -practice.
+
+\input{tables/esmPsychFeatures}
+
+\subsection{Feature reduction}
+
 
 \subsection{clustering}
 
