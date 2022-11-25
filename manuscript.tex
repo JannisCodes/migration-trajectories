@@ -299,10 +299,9 @@ Many of the common time-series clustering algorithms used today have been develo
 
 \fgrref{fig:TSCFlow}
 
-\subsection{Variable selection}
+\subsection{Input Variable}
 field- and concept specific selection of input variables. Diverse 
 
-\subsection{Data preparation?}
 data cleaning + importantly, comparable time series:
 \begin{itemize}[noitemsep]
     \item time-frame
@@ -326,15 +325,16 @@ This selection of the proposed six time series features is in no way exhaustive 
 \input{tables/esmPsychFeatures}
 
 \subsection{Feature reduction}
-Once researchers researchers have 
+Once a meaningful selection of time series features has been extracted for each of variable and participant, the total number of data points usually remains too large for most clustering algorithms. As an example, a relative common sample size of 100 participants and 10 variables of interest, where 8 time series features are extracted, still consists of 80 features per participant (a total of 8,000 data points in this hypothetical example). We offer an illustration of the compounding numbers of data points in \fgrref{fig:TSCFlowN}. The difficulty of working with such large number of dimensions is sometimes termed the `dimensionality curse' \citep[e.g.,][]{altman2018}. To deal with this dimensionality issue, two main approaches have been proposed --- feature selection and feature projection (a full overview of the approaches, methods, and common algorithms is available in \tblref{tab:featureReduction}). 
 
-100 participants * 10 variables * 60 measurements (for an example see \fgrref{fig:TSCFlowN})
+Feature selections seeks to create a subset of the most important features. The many available approaches differ in how they seek to determine the importance of the individual features. Generally speaking, selection methods can be categorized as `filter', `wrapper', or `hybrid' methods. The filter methods, broadly speaking determine important features by identify irrelevant features (e.g., because features do not capture much information), and identify redundant features (e.g., because features capture the same information). Wrapper methods on the other hand avoid the feature-based evaluation and focus on the performance of the later model to identify the most important features. A wrapper, thus, compares the performance of models with different feature combinations. Traditional examples of wrappers are forward selection or backward elimination procedures. Because filter methods might not always perform well and wrapper methods are computationally intensive, hybrid methods seek to combine the two methods and find a balance between computational effort (i.e., efficiency) and performance (i.e., effectiveness). As an example, some of the common methods use a filter step to reduce the size of features considered in a later wrapper step.
 
-\tblref{tab:featureReduction}
+The second general approach to the dimensionality curse have been the much more general feature projection methods. Projections methods are relatively common in psychological research --- particularly, factor- and principal component analyses. Generally speaking, projection methods seek to 
+transform the many features in such a way that a much smaller number of new variables can accurately capture the variance and structure of the original features (i.e., the data is projected to a lower dimensional space). Commonly, this is achieved using linear transformations (e.g., principal component analysis), or more complex nonlinear transformations (e.g., t-SNE). Generally speaking, feature selection procedures have the benefit that they retain the interpretable feature labels directly and immediately indicate which features were most informative in the sample. Feature projection methods, on the other had, tend to be more generalized and are more readily available.
 
 \input{tables/FeatureReduction}
 
-\subsection{clustering}
+\subsection{Clustering}
 
 
 \section{Empirical Implementation/Illustration}
