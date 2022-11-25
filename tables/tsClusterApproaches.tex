@@ -1,70 +1,86 @@
 %\begin{table}%[hbt]
 \begin{sidewaystable}
     \centering
-    \caption{Examples of Feature Reduction Approaches and Methods.}
-    \label{tab:featureReduction} 
+    \caption{Common Clustering Approaches.}
+    \label{tab:clusterApproaches} 
     \begin{tabular}{
-    >{\raggedright\arraybackslash}p{0.08\linewidth} 
-    >{\raggedright\arraybackslash}p{0.08\linewidth} 
-    >{\raggedright\arraybackslash}p{0.54\linewidth} 
+    >{\raggedright\arraybackslash}p{0.15\linewidth} 
+    >{\raggedright\arraybackslash}p{0.30\linewidth} 
+    >{\raggedright\arraybackslash}p{0.25\linewidth} 
     >{\raggedright\arraybackslash}p{0.25\linewidth}
     }
         \hline 
-        Approach & Method & Intuitive Description & Algorithm Examples \\ 
+        Approach & Description & Characteristics & Examples \\ 
         \hline \\ [-0.5em]
         
-        Selection \linebreak & 
-        filter \linebreak & 
-        Features are selected individually or jointly based selection criteria. One common selection criteria is the amount of information and (unique) variance a feature captures. Univariate methodologies are able identify irrelevant features (i.e., because features do not capture much information), multivariate methods additionally allow to remove redundant features (i.e., because features capture the same information). \linebreak &
+        centroid-based \linebreak & 
+        efficient, effective, and simple; sensitive to initial conditions and outliers  \linebreak &
         \vspace{-1em}
         \begin{itemize}[nosep,leftmargin=*,label={--}]
-            \item univariate filter (e.g., Laplacian Score)
-            \item multivariate filter (e.g., variance-covariance)
-        \end{itemize}
-         \linebreak \\ 
+            \item[\scriptsize\faPlusCircle] simple and efficient
+            \item[\scriptsize\faPlusCircle] no assumptions
+            \item[\scriptsize\faMinusCircle] sensitive to initial conditions and outliers
+        \end{itemize}\linebreak & 
+        \vspace{-1em}
+        \begin{itemize}[nosep,leftmargin=*,label={--}]
+            \item k-means
+            \item fuzzy c-means
+        \end{itemize}\linebreak \\ 
         
-        \linebreak & 
-        Wrapper \linebreak & 
-        Wrapper methodologies run models with different feature combinations and compare performance. Because the selection process is essentially a search problem this method is computationally intensive. Traditionally wrappers have used forward selections or backwards eliminations but recently alternative approaches have been proposed based such as ant colony and swarm intelligence paradigms. \linebreak &
+        distribution-based \linebreak & 
+        description 2 \linebreak &
         \vspace{-1em}
         \begin{itemize}[nosep,leftmargin=*,label={--}]
-            \item sequential (e.g., forward selection)
-            \item bio-inspired (e.g., ELSA)
-            \item iterative (e.g., feature salience)
-        \end{itemize}
-         \linebreak \\ 
+            \item[\scriptsize\faPlusCircle] probabilistic
+            \item[\scriptsize\faMinusCircle] distributions sensitive
+        \end{itemize}\linebreak & 
+        \vspace{-1em}
+        \begin{itemize}[nosep,leftmargin=*,label={--}]
+            \item Gaussian mixture models
+            \item negative binomial model-based
+        \end{itemize}\linebreak\\ 
         
-        \linebreak & 
-        hybrid \linebreak & 
-        Hybrid selection methodological combine filter and wrapper methodologies to avoid the shortcomings of the individual methods. An initial filter step reduces computational effort (efficiency) and the wrapper ensures high performance (effectiveness). \linebreak &
+        density-based \linebreak & 
+        description 3 \linebreak &
         \vspace{-1em}
         \begin{itemize}[nosep,leftmargin=*,label={--}]
-            \item filter + wrapper (e.g., Calinski-Harabasz Index)
-        \end{itemize}
-        \linebreak \\
+            \item[\scriptsize\faPlusCircle] no shape assumption
+            \item[\scriptsize\faPlusCircle] do not assign outliers 
+            \item[\scriptsize\faMinusCircle] sensitive to high dimensionality
+        \end{itemize}\linebreak & 
+        \vspace{-1em}
+        \begin{itemize}[nosep,leftmargin=*,label={--}]
+            \item DBSCAN
+            \item OPTICS
+        \end{itemize}\linebreak\\ 
 
-        Projection \linebreak & 
-        linear \linebreak & 
-        Linear dimensionality reduction methodologies use linear transformations of the original data to stretch and shift the data in such a way that the data can be `projected' to a lower dimensional space without loosing too much information. These methods are well-established, tend to be fast, and usually do not need much conceptual input from the user. \linebreak &
+        connectivity-based \linebreak & 
+        Often also called hierarchical clustering. \linebreak &
         \vspace{-1em}
         \begin{itemize}[nosep,leftmargin=*,label={--}]
-            \item Principal Component Analysis (PCA)
-            \item Factor Analysis (FA)
-            \item Linear Discriminant Analysis (LDA)
-        \end{itemize}
-         \linebreak \\
+            \item[\scriptsize\faPlusCircle] flexible number of clusters
+            \item[\scriptsize\faPlusCircle] visual inspection (dendrogram) 
+            \item[\scriptsize\faMinusCircle] small number of cases
+            \item[\scriptsize\faMinusCircle] no reversal of assignments
+        \end{itemize}\linebreak & 
+        \vspace{-1em}
+        \begin{itemize}[nosep,leftmargin=*,label={--}]
+            \item Ward hierarchical
+            \item agnes clustering
+        \end{itemize}\linebreak \\ 
         
-        \linebreak & 
-        nonlinear \linebreak & 
-        Nonlinear dimensionality reduction methods also seek to map high-dimensional data to a lower dimensional space. However, nonlinear methods have been developed to preserve the local and global structure of more complex multidimensional patterns.
-        \linebreak &
+        hybrid \linebreak & 
+        description 5 \linebreak &
         \vspace{-1em}
         \begin{itemize}[nosep,leftmargin=*,label={--}]
-            \item t-distributed Stochastic Neighbor Embedding (t-SNE)
-            \item Multidimensional Scaling (MDS)
-            \item Isometric mapping (Isomap)
-        \end{itemize}
-        \linebreak \\
+            \item[\scriptsize\faPlusCircle] avoid individual shortcomings
+            \item[\scriptsize\faMinusCircle] less readily available
+        \end{itemize}\linebreak & 
+        \vspace{-1em}
+        \begin{itemize}[nosep,leftmargin=*,label={--}]
+            \item GMM + k-means centroids as initial values
+            \item hybridHclust
+        \end{itemize}\linebreak\\ 
         
         \hline \\ [-0.75em]
         \multicolumn{4}{p{\linewidth}}{\footnotesize \textit{Note.} The presented dimensionality reduction methods and -approaches are neither exhaustive nor necessary for feature-based clustering. Notable additional approaches are `embedded selection methods' that filter as part of the model estimation procedure (e.g., mixture models) and `network-based projection methods' that use neural networks to reduce dimensions (e.g., autoencoders).}
