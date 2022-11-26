@@ -308,16 +308,14 @@ Many of the common time-series clustering algorithms used today have been develo
 
 \section{Feature-based Time Series Clustering}
 
-\fgrref{fig:TSCFlow}
+intro-paragraph + \fgrref{fig:TSCFlow}
 
 \subsection{Input variables}
-field- and concept specific selection of input variables. Diverse 
+Time series clustering starts with the selection and preparation of the variables of interest. While the selection will necessarily be field- and concept-specific, there are a few conceptual and methodological issues that should be considered. Conceptually, the included variables should adequately capture the concept of interest and should be meaningful to the understanding of the time series. There are, for example, calls that emotion dynamics should be assessed with a repertoire of positive and negative emotions \citep[e.g.,][]{dejonckheere2019}, migration experiences are fully captured with affect, behavior, cognition, and desire measurements \citep[e.g.,][]{Kreienkamp2022d}, and many health developments are commonly captured within the biopsychosocial domains \citep[e.g.,][]{suls2004}. At the same time, however, the added number of variables can become a methodological concern. Not only can redundant and irrelevant variables diminish the quality of the analyses, but with intensive longitudinal data the number of data points compounds across participants, measurement occasions, and variables so that additional variables can make many of the following steps substantially more difficult (also see \fgrref{fig:TSCFlowN}). 
 
-data cleaning + importantly, comparable time series:
-\begin{itemize}[noitemsep]
-    \item time-frame
-    \item response scale (e.g., standardize within clusters)
-\end{itemize}
+Once the important variables have been selected, the data needs to be prepared for the analysis steps. Importantly, this not only means validating and cleaning the data (e.g., re-coding, removing duplicate or unwanted measurements) but also making the time series comparable. Two important steps are making the time-frames and response scales comparable across participants. Extracting features that describe the development of a month for one participant but 90 days for another participant might not be comparable for some psychological phenomena. This comparability is important on a conceptual level but the difference in data availability might also influence the clustering steps, where the participant with the shorter measurement period would, for example, have a larger number of missing values. It is thus generally advised to reduce the data to a common time frame. Once the time frames are comparable, also the responses should be comparable within and between participants. \hl{It is thus usually advised to standardize all variables for time series clustering.} 
+
+\Question{ \textit{Look up how to center/standardize (within- vs. between) and when (prior to extraction vs. prior to clustering)!}}
 
 \subsection{Feature extraction}
 aim: 
@@ -345,13 +343,11 @@ The second general approach to the dimensionality curse has been feature project
 \input{tables/FeatureReduction}
 
 \subsection{Feature clustering}
-For feature-based time-series clustering, the main aim is to organize participants into groups so that the features of participants within a group are as similar as possible, while the features of people in different groups are as different as possible. The crux of clustering is, thus, to have clearly defined and effective measurements of (dis)similarity. Most of the clustering algorithms used today use some form of distance measurement to optimize group assignment (or similarity measurement for qualitative features). 
+For feature-based time-series clustering, the main aim is to organize participants into groups so that the features of participants within a group are as similar as possible, while the features of people in different groups are as different as possible. The crux of clustering is, thus, to have clearly defined and effective measurements of (dis)similarity. Most of the clustering algorithms used today use some form of distance measurement to optimize group assignment (or similarity measurement for qualitative features). While others have produced excellent overviews of the many clustering approaches \citep[e.g.,][]{xu2015}, we will briefly introduce some of the more readily available approaches suitable for most time series feature data. The well-established and readily available clustering approaches can, broadly speaking, be categorized as based on (1) centroids, (2) distributions, (3) density, (4) hierarchies, or (5) a combination thereof (also see \tblref{tab:clusterApproaches}). 
 
+Each of these approaches can be a valuable clustering approach for time series feature data and users will usually have to make an informed decision based on the structure of their data as well as an appropriate weighing of accuracy and efficiency. As an example, under ideal conditions, all approaches are likely to suggest very similar clusters. However, as an example, when the shape of clusters becomes more complex in a multi-dimensional space, density-based or hierarchy-based approaches that allow for more bottom-up clustering are likely to be more accurate. Yet, with higher numbers of participants and features, both density- and hierarchy-based approaches may perform less well and the more efficient centroid-based methods might be more effective. Similarly, several of the proposed time series features are statics that are generated from Gaussian distributions and a distribution-based algorithm might be ideally suited to separate such distributions. Yet, in cases where mis-specifications are costly, a method with fewer assumptions might be more advisable. 
 
-
-For a more comprehensive overview see \citet{xu2015}
-
-\tblref{tab:clusterApproaches}
+There is thus, unfortunately, no one-size fits all solution to clustering. On the bright side, however, the thriving methodological developments in the clustering literature offer a wide variety of options that offer options even for extremely large and complex data sets. We provide a short intuitive explanation for common approaches, together with some of their characteristics and example algorithms in \tblref{tab:clusterApproaches}. For our own illustration, we have chosen that centroid-based k-means clustering. While k-means comes at the expense of high accuracy with more complex cluster shapes, we specifically chose k-means because it is an extremely efficient method that works well with large participant- and feature numbers without making too many restrictive assumptions about the shape of the data. K-means is also well-established within the research community and has been readily implemented in many statistical software packages. Additionally, many of the feature selection methods have specifically been designed for the well-established k-means algorithm. As such, the k-means offers a good starting point for many psychological researchers and the method should be generalizable across a relatively wide variety of projects.
 
 \input{tables/clusterApproaches}
 
