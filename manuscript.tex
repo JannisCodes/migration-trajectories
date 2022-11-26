@@ -245,13 +245,16 @@ Abstract to be written.
 }
 
 \begin{mdframed}[style=mdfbox]
-\noindent\center\textit{Argument Structure Introduction}:
-\begin{itemize}[noitemsep]
-    \item\ [Relevance]: increase in number and variety of ESM data
-    \item\ [Problem]: no descriptive / understand structure analyses
-    \item\ [Proposal]: feature based clusterting = flexible +  transparent
-    \item\ [Section]: new type of ESM data and issues for analysis:
-    \begin{itemize}[noitemsep]
+\noindent\center\textit{Structure}:
+\begin{itemize}[nosep]
+    \item introduction
+    \begin{itemize}[nosep]
+        \item\ [Relevance]: increase in number and variety of ESM data
+        \item\ [Problem]: no descriptive / understand structure analyses
+        \item\ [Proposal]: feature based clusterting = flexible +  transparent
+    \end{itemize}
+    \item Modern ESM data: new type of data and issues for analysis:
+    \begin{itemize}[nosep]
         \item incomplete data (complete data models vs. structural missingness)
         \item non-equidistant
         \item non-stationary
@@ -259,13 +262,21 @@ Abstract to be written.
         \item interest in multivariate developments
         \item dimensionality curse
     \end{itemize}
-    \item\ [Section]: time-series clustering
-    \begin{itemize}[noitemsep]
+    \item Time series clustering
+    \begin{itemize}[nosep]
         \item shape-based
         \item model-based
         \item \textbf{feature-based}
     \end{itemize}
-    \item\ [Section]: The present Research
+    \item Feature-Based Clustering
+    \begin{itemize}[nosep]
+        \item Input variables
+        \item feature extraction
+        \item feature reduction
+        \item feature clustering
+    \end{itemize}
+    \item Empirical Illustration
+    \item Discussion
 \end{itemize}
 \end{mdframed}
 
@@ -290,16 +301,16 @@ The push for more contextualized models also presents new issues with missing da
 
 Finally, both the push for more multivariate conceptualizations and contextualized measurements have highlighted issues with how temporal developments are conceptualized. Firstly, researchers are increasingly interested in how mean levels of variables change over time (i.e., non-stationary), such trend data is often assumed to be non-linear, and with the increased focus on more diverse conceptualizations researchers are interested in relationships between variables that change on fundamentally different time scales. Many of the commonly used analyses for ESM data are stationary lagged regression models that assume stable means and variances over time (incl., vector autoregressive models, dynamic structural equation models, autoregressive integrated moving average models, and cross-lagged panel analyses) or basic trajectory models (e.g., mixed effects models, spline regression models, and latent growth curve modeling). And even fewer analysis techniques allow for substantially different time scales between variables. A modern descriptive and exploratory methodology should thus be able to flexibly capture and comparable non-stationary and non-linear trends, also across different time scales.
 
-\section{Clustering}
+\section{Time Series Clustering}
 One promising approach to describing and exploring time-series data has been the idea of structuring the data using clustering analyses. Clustering seeks to organize data into groups that are maximally different from one another while minimizing differences within the groups. Time-series clustering has been extremely common in other fields, including analyses of astronomical, meteorological, and aviation pathways, biological and medical developments, or energy and finance patterns \citep{Aghabozorgi2015}. But also for psychological data time-series clustering is not entirely novel \citep[e.g.,][]{ernst2021}. However, most clustering introduced for psychological data has faced the dimensionality, -missingness, and time scale issues described above.
 
-Many of the common time-series clustering algorithms used today have been developed within the machine learning literature and have commonly been separated into three different approaches: (1) shape-based, (2) model-based, and (3) feature-based clustering \citep{hautamaki2008, liao2005}. Shape-based clustering analyses use the raw time series and seeks to match time series by non-linearly stretching and contracting the time axes. The other two approaches do not use the the raw time series directly but convert the data first. The model-based clustering has been the most-commonly used method within the psychological literature and clusters the parameters of a parametric model fitted for each participant \citep[e.g.,][]{ernst2021}. The flexibility of such clustering is restricted to the assumptions of the model used, so that stationary models, for example, do not capture non-stationary data well. Finally, feature-based clustering analyses are the most flexible, as they allow users to summarize the time series data with a wide variety of features that capture the data characteristics of interest. The participants are then clustered on basis of the extracted features. To showcase the flexibility of this approach, a commonly used software package for this approach allows users to extract a total of 794 time series features \citep[][]{christ2018}. Time series features can be chosen by the user based on their research question and can, for example, include the mean and standard deviation of a time-series, but also linear and non-linear trends, inertia related features such as auto-correlations, or the stability of the time series (e.g., mean absolute change). Given the flexibility of feature-based approach, users should be able to apply the analysis across multivariate data, feature extraction should mitigate issues of non-equidistant and structurally missing data, and the features can capture and compare across non-linear trends at different time scales.
+Many of the common time-series clustering algorithms used today have been developed within the machine learning literature and have commonly been separated into three different approaches: (1) shape-based, (2) model-based, and (3) feature-based clustering \citep{hautamaki2008, liao2005}. Shape-based clustering analyses use the raw time series and seek to match time series by non-linearly stretching and contracting the time axes. The other two approaches do not use the raw time series directly but convert the data first. The model-based clustering has been the most commonly used method within the psychological literature and clusters the parameters of a parametric model fitted for each participant \citep[e.g.,][]{ernst2021}. The flexibility of such clustering is restricted to the assumptions of the model used, so that stationary models, for example, do not capture non-stationary data well. Finally, feature-based clustering analyses are the most flexible, as they allow users to summarize the time series data with a wide variety of features that capture the data characteristics of interest. The participants are then clustered on basis of the extracted features. To showcase the flexibility of this approach, a commonly used software package for this approach allows users to extract a total of 794 time series features \citep[][]{christ2018}. Time series features can be chosen by the user based on their research question and can, for example, include the mean and standard deviation of a time series, but also linear and non-linear trends, inertia-related features such as auto-correlations, or the stability of the time series (e.g., mean absolute change). Given the flexibility of the feature-based approach, users should be able to apply the analysis across multivariate data, feature extraction should mitigate issues of non-equidistant and structurally missing data, and the features can capture and compare across non-linear trends at different time scales.
 
 \section{Feature-based Time Series Clustering}
 
 \fgrref{fig:TSCFlow}
 
-\subsection{Input Variable}
+\subsection{Input variables}
 field- and concept specific selection of input variables. Diverse 
 
 data cleaning + importantly, comparable time series:
@@ -316,27 +327,33 @@ Fortunately, past conceptual and empirical efforts offer valuable discussions of
 
 The first two features are a person's \textit{central tendency} and \textit{variability}. Familiar statistics from the probability theory, the two features sit at the heart of many fundamental psychological questions. Are some people happier than others (i.e., difference in central tendency), and are people settled in their attitudes towards migrants or do they fluctuate over time (i.e., difference in variability)? Mathematically, both features have parametric and robust options to choose from (e.g., parametric: mean and standard deviation; robust: median and median absolute deviation). 
 
-The third and fourth feature describe the structure of the variability within the time series. In particular, \textit{(in)stability} captures the average change between two consecutive measurements. Do changes tend to be slow and gradual or fast and abrupt? Mathematically, (in)stability measurements often look at the average change between two consecutive measurement. \textit{Inertia} describes how much a measurement carries over to future measurements. There are two main ways in which experiences tend to be connected to future experiences --- resistance to change and seasonality. Both forms of inertia relate to different types of research questions. Do patients stay in a depressed mood for several measurements (i.e., stability-inertia) and do participants drink more alcohol on Fridays (i.e., periodicity-inertia)? Both forms of inertia are often measured using autocorrelations with the either a lag-1 (stability-inertia) or the lag of the seasonality (e.g., seven days). Periodicity-inertia can additionally be captured using wave patterns (e.g., fourier or wavelet transformation).
+The third and fourth features describe the structure of the variability within the time series. In particular, \textit{(in)stability} captures the average change between two consecutive measurements. Do changes tend to be slow and gradual or fast and abrupt? Mathematically, (in)stability measurements often look at the average change between two consecutive measurements. \textit{Inertia} describes how much a measurement carries over to future measurements. There are two main ways in which experiences tend to be connected to future experiences --- resistance to change and seasonality. Both forms of inertia relate to different types of research questions. Do patients stay in a depressed mood for several measurements (i.e., stability-inertia), and do participants drink more alcohol on Fridays (i.e., periodicity-inertia)? Both forms of inertia are often measured using autocorrelations with either a lag-1 (stability-inertia) or the lag of the seasonality (e.g., seven days). Periodicity-inertia can additionally be captured using wave patterns (e.g., fourier or wavelet transformation).
 
-The final two features are linear and nonlinear trends. \textit{Linear trends} are a common research interest for longitudinal data. Do patient symptoms improve or does worker productivity decline, are familiar types of research questions. Mathematically, such linear trends are commonly captured using (piecewise) linear regression coefficients. \textit{Nonlinear trends} are important in two regards. Firstly nonlinearity as a deviation from linear trends and secondly, the shape and structure of the nonlinear trend. Questions like ``Is the development of anxiety a nonlinear process?'' are mathematically captured using nonlinearity parameters such the bicoherence metrics \citep{cuddy2009}. The structure of nonlinear trends is often mathematically captured using polinomial coefficients or more broadly by how wiggly the line is (e.g., estimated degrees of freedom of GAM spline models; similar to number of spikes \citealp[]{caro-martin2018}). 
+The final two features are linear and nonlinear trends. \textit{Linear trends} are a common research interest for longitudinal data. Do patient symptoms improve or does worker productivity decline, are familiar types of research questions. Mathematically, such linear trends are commonly captured using (piecewise) linear regression coefficients. \textit{Nonlinear trends} are important in two regards. Firstly nonlinearity is a deviation from linear trends and secondly, the shape and structure of the nonlinear trend. Questions like ``Is the development of anxiety a nonlinear process?'' are mathematically captured using nonlinearity parameters such the bicoherence metrics \citep{cuddy2009}. The structure of nonlinear trends is often mathematically captured using polynomial coefficients or more broadly by how wiggly the line is (e.g., estimated degrees of freedom of GAM spline models; similar to the number of spikes \citealp[]{caro-martin2018}). 
 
-This selection of the proposed six time series features is in no way exhaustive or imperative. Both using a purely data-driven approach or selecting other aspects to summarize the time series are legitimate options. The list seeks to offer a practical toolbox of features that are common and meaningful to psychological research questions and -practice.
+This selection of the proposed six time-series features is in no way exhaustive or imperative. Both using a purely data-driven approach or selecting other aspects to summarize the time series are legitimate options. The list seeks to offer a practical toolbox of features that are common and meaningful to psychological research questions and -practice.
 
 \input{tables/esmPsychFeatures}
 
 \subsection{Feature reduction}
-Once a meaningful selection of time series features has been extracted for each of variable and participant, the total number of data points usually remains too large for most clustering algorithms. As an example, a relative common sample size of 100 participants and 10 variables of interest, where 8 time series features are extracted, still consists of 80 features per participant (a total of 8,000 data points in this hypothetical example). We offer an illustration of the compounding numbers of data points in \fgrref{fig:TSCFlowN}. The difficulty of working with such large number of dimensions is sometimes termed the `dimensionality curse' \citep[e.g.,][]{altman2018}. To deal with this dimensionality issue, two main approaches have been proposed --- feature selection and feature projection (a full overview of the approaches, methods, and common algorithms is available in \tblref{tab:featureReduction}). 
+Once a meaningful selection of time series features has been extracted for each variable and participant, the total number of data points usually remains too large for most clustering algorithms. As an example, a relatively common sample size of 100 participants and 10 variables of interest, where 8 time series features are extracted, still consists of 80 features per participant (a total of 8,000 data points in this hypothetical example). We offer an illustration of the compounding numbers of data points in \fgrref{fig:TSCFlowN}. The difficulty of working with such a large number of dimensions is sometimes termed the `dimensionality curse' \citep[e.g.,][]{altman2018}. To deal with this dimensionality issue, two main approaches have been proposed --- feature selection and feature projection (a full overview of the approaches, methods, and common algorithms is available in \tblref{tab:featureReduction}). 
 
-Feature selections seeks to create a subset of the most important features. The many available approaches differ in how they seek to determine the importance of the individual features. Generally speaking, selection methods can be categorized as `filter', `wrapper', or `hybrid' methods. The filter methods, broadly speaking determine important features by identify irrelevant features (e.g., because features do not capture much information), and identify redundant features (e.g., because features capture the same information). Wrapper methods on the other hand avoid the feature-based evaluation and focus on the performance of the later model to identify the most important features. A wrapper, thus, compares the performance of models with different feature combinations. Traditional examples of wrappers are forward selection or backward elimination procedures. Because filter methods might not always perform well and wrapper methods are computationally intensive, hybrid methods seek to combine the two methods and find a balance between computational effort (i.e., efficiency) and performance (i.e., effectiveness). As an example, some of the common methods use a filter step to reduce the size of features considered in a later wrapper step.
+Feature selections seek to create a subset of the most important features. The many available approaches differ in how they seek to determine the importance of the individual features. Generally speaking, selection methods can be categorized as `filter', `wrapper', or `hybrid' methods. The filter methods, broadly speaking determine important features by identifying irrelevant features (e.g., because features do not capture much information), and identifying redundant features (e.g., because features capture the same information). Wrapper methods on the other hand avoid the feature-based evaluation and focus on the performance of the later model to identify the most important features. A wrapper, thus, compares the performance of models with different feature combinations. Traditional examples of wrappers are forward selection or backward elimination procedures. Because filter methods might not always perform well and wrapper methods are computationally intensive, hybrid methods seek to combine the two methods and find a balance between computational effort (i.e., efficiency) and performance (i.e., effectiveness). As an example, some of the common methods use a filter step to reduce the size of features considered in a later wrapper step.
 
-The second general approach to the dimensionality curse have been the much more general feature projection methods. Projections methods are relatively common in psychological research --- particularly, factor- and principal component analyses. Generally speaking, projection methods seek to 
-transform the many features in such a way that a much smaller number of new variables can accurately capture the variance and structure of the original features (i.e., the data is projected to a lower dimensional space). Commonly, this is achieved using linear transformations (e.g., principal component analysis), or more complex nonlinear transformations (e.g., t-SNE). Generally speaking, feature selection procedures have the benefit that they retain the interpretable feature labels directly and immediately indicate which features were most informative in the sample. Feature projection methods, on the other had, tend to be more generalized and are more readily available.
+The second general approach to the dimensionality curse has been feature projection. Projections methods are relatively common in psychological research --- particularly, factor- and principal component analyses. Generally speaking, projection methods seek to transform the many features in such a way that a much smaller number of new variables can accurately capture the variance and structure of the original features (i.e., the data is projected to a lower dimensional space). Commonly, this is achieved using linear transformations (e.g., principal component analysis), or more complex nonlinear transformations (e.g., t-SNE). Generally speaking, feature selection procedures have the benefit that they retain the interpretable feature labels directly and immediately indicate which features were most informative in the sample. Feature projection methods, on the other hand, tend to be more generalized and are more readily available.
 
 \input{tables/FeatureReduction}
 
-\subsection{Clustering}
+\subsection{Feature clustering}
+For feature-based time-series clustering, the main aim is to organize participants into groups so that the features of participants within a group are as similar as possible, while the features of people in different groups are as different as possible. The crux of clustering is, thus, to have clearly defined and effective measurements of (dis)similarity. Most of the clustering algorithms used today use some form of distance measurement to optimize group assignment (or similarity measurement for qualitative features). 
 
-\input{tables/tsClusterApproaches}
+
+
+For a more comprehensive overview see \citet{xu2015}
+
+\tblref{tab:clusterApproaches}
+
+\input{tables/clusterApproaches}
 
 \section{Empirical Implementation/Illustration}
 % Methods and Results from RMarkdown render

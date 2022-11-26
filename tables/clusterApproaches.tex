@@ -1,0 +1,115 @@
+%\begin{table}%[hbt]
+\begin{sidewaystable}
+    \centering
+    \caption{Common Clustering Approaches.}
+    \label{tab:clusterApproaches} 
+    \begin{tabular}{
+    >{\raggedright\arraybackslash}p{0.15\linewidth} 
+    >{\raggedright\arraybackslash}p{0.40\linewidth} 
+    >{\raggedright\arraybackslash}p{0.28\linewidth} 
+    >{\raggedright\arraybackslash}p{0.12\linewidth}
+    }
+        \hline 
+        Approach & Description & Characteristics & Examples \\ 
+        \hline \\ [-0.5em]
+        
+        centroid-based \linebreak & 
+        Chooses a pre-defined number of potential cluster centers in the feature space and assigns participants to closest center. Then, iteratively, moves the centers until a convergence criterion is met (e.g., all distances to centers minimized).
+        \linebreak &
+        \vspace{-1em}
+        \begin{itemize}[nosep,leftmargin=*,label={--}]
+            \item[\scriptsize\faPlusCircle] simple and efficient
+            \item[\scriptsize\faPlusCircle] no assumptions
+            \item[\scriptsize\faPlusCircle] well implemented
+            \item[\scriptsize\faMinusCircle] may struggle with complex shapes
+            \item[\scriptsize\faMinusCircle] sensitive to initial values and outliers
+            %\item[\scriptsize\faMinusCircle] not suitable for non-convex data, relatively sensitive to the outliers, easily drawn into local optimal, the number of clusters needed to be preset, and the clustering result sensitive to the number of clusters \citep{xu2015}.
+        \end{itemize}\linebreak & 
+        \vspace{-1em}
+        \begin{itemize}[nosep,leftmargin=*,label={--}]
+            \item k-means
+            %\item fuzzy c-means
+            %\item CLARA
+            \item PAM
+        \end{itemize}\linebreak \\ 
+        
+        distribution-based \linebreak & 
+        Assumes that the data points belong to one of several specific distributions (e.g., Gaussian distributions). Data points that fit to a distribution-based expectation are given higher probability of belonging to that distribution. We can then iteratively check with which model parameters the data points best fit within given number of distributions.
+        \linebreak &
+        \vspace{-1em}
+        \begin{itemize}[nosep,leftmargin=*,label={--}]
+            \item[\scriptsize\faPlusCircle] probabilistic
+            \item[\scriptsize\faPlusCircle] well supported
+            \item[\scriptsize\faMinusCircle] time intensive
+            \item[\scriptsize\faMinusCircle] distribution and parameter sensitive
+        \end{itemize}\linebreak & 
+        \vspace{-1em}
+        \begin{itemize}[nosep,leftmargin=*,label={--}]
+            \item GMM
+            %\item negative binomial model-based
+            \item DBCLASD
+        \end{itemize}\linebreak\\ 
+        
+        density-based \linebreak & 
+        Regions where several data points are relatively close together (i.e., high density) are assumed to be a cluster. Based on what is considered a dense region (e.g., radius of a region and minimum number of points the radius), points can be either be assigned to one of the clusters or be considered too far away from a dense region. \linebreak &
+        \vspace{-1em}
+        \begin{itemize}[nosep,leftmargin=*,label={--}]
+            \item[\scriptsize\faPlusCircle] efficient
+            \item[\scriptsize\faPlusCircle] no shape assumption
+            \item[\scriptsize\faPlusCircle] do not assign outliers 
+            \item[\scriptsize\faMinusCircle] may struggle with uneven densities
+            \item[\scriptsize\faMinusCircle] sensitive to high dimensionality
+        \end{itemize}\linebreak & 
+        \vspace{-1em}
+        \begin{itemize}[nosep,leftmargin=*,label={--}]
+            \item DBSCAN
+            \item OPTICS
+        \end{itemize}\linebreak\\ 
+
+        %graph-based \linebreak & 
+        %``realized on the graph where the node is regarded as the data point and the edge is regarded as the relationship among data points'' \citep{xu2015} \linebreak &
+        %\vspace{-1em}
+        %\begin{itemize}[nosep,leftmargin=*,label={--}]
+        %    \item[\scriptsize\faPlusCircle] efficient and accurate
+        %    \item[\scriptsize\faPlusCircle] no shape assumption
+        %    \item[\scriptsize\faMinusCircle] sensitive to graph complexity
+        %\end{itemize}\linebreak & 
+        %\vspace{-1em}
+        %\begin{itemize}[nosep,leftmargin=*,label={--}]
+        %    \item MST-based
+        %    \item CLICK
+        %\end{itemize}\linebreak\\ 
+
+        hierarchy-based \linebreak & 
+        Builds a hierarchy of cluster by step-wise combining the closest two clusters (bottom-up; agglomerative) or top down dividing the data into smaller clusters that maximize distances (top-down; divisive).
+        \linebreak &
+        \vspace{-1em}
+        \begin{itemize}[nosep,leftmargin=*,label={--}]
+            \item[\scriptsize\faPlusCircle] flexible number of clusters
+            \item[\scriptsize\faPlusCircle] no shape assumption 
+            \item[\scriptsize\faMinusCircle] small number of cases
+            \item[\scriptsize\faMinusCircle] no reversal of assignments
+        \end{itemize}\linebreak & 
+        \vspace{-1em}
+        \begin{itemize}[nosep,leftmargin=*,label={--}]
+            \item Chameleon
+            \item CURE
+        \end{itemize}\linebreak \\ 
+        
+        hybrid \linebreak & 
+        Usually combines different approaches, which combine the strength of the complementary approaches. Oftentimes the combination also increases efficiency. \linebreak &
+        \vspace{-1em}
+        \begin{itemize}[nosep,leftmargin=*,label={--}]
+            \item[\scriptsize\faPlusCircle] avoids individual shortcomings
+            \item[\scriptsize\faMinusCircle] less readily available
+        \end{itemize}\linebreak & 
+        \vspace{-1em}
+        \begin{itemize}[nosep,leftmargin=*,label={--}]
+            \item DD-means
+            \item hybridHclust
+        \end{itemize}\linebreak\\ 
+        
+        \hline \\ [-0.75em]
+        \multicolumn{4}{p{\linewidth}}{\footnotesize \textit{Note.} The presented clustering approaches and algorithms are neither exhaustive nor necessary for feature-based clustering. Notably, recently innovations have been made based on graph-, fractal-, swarm, and quantum theory \citep[for a more in-depth review see][]{xu2015}.}
+    \end{tabular}
+\end{sidewaystable}
