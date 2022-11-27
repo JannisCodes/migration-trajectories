@@ -2843,7 +2843,7 @@ fviz_cluster(res.fpc, scaled_data, geom = "point", ggtheme = theme_Publication()
 
 ```
 
-## Clustering
+## Feature Clustering
 
 Cluster analyses have been a staple within a variety of sciences for the better part of a century. It's applications are wide and because most procedures fall under the "unsupervised learning" umbrella the methodological developments are fast-paced and new methods or refinements are published constantly. Among the many options available four types are found most commonly within the modern literature on clustering analyses:
 

@@ -93,6 +93,17 @@ matching imputation using the MICE library.
 
 \subsubsection{Feature reduction}
 
+For the feature reduction, we chose the very general
+\textit{principal component analysis} (PCA). While some of the more
+tailor-made feature selection algorithms can be more accurate and
+meaningful in reducing the feature dimensionality, PCAs are
+well-established and can broadly be applied in an automatize manner.
+80\% rule of thumb
+
+we select the first 27 principal components because they explain 80\% of
+the variance in the original 72 features (reducing the dimensions by
+62.50\%).
+
 \subsubsection{Feature clustering}
 
 feature engineering: feature extraction + feature selection

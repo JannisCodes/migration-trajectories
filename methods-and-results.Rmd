@@ -698,25 +698,23 @@ For the features, we selected and extracted one of each of the features proposed
 After the feature extraction, we found that about `r format(round(pMissFull$pmiss %>% filter(set == "All") %>% select(pMissTotal) %>% pull, 2), nsmall=2)`\% of the extracted features are missing across participants across the `r ncol(featFull$features %>% select(-ends_with(featureExclusion)))-1` features per participant. This might, for example, happen if participants do not have two subsequent measurements with outgroup interactions, so that an autocorrelation with lag-1 cannot be calculated for the contact-specific variables. The small number of missing values indicates that the feature-based approach indeed largely avoids the structural missingness issue. The few missing values can however be an issue for some feature reduction or feature clustering algorithms. We, thus, impute the missing feature values with a single predictive mean matching imputation using the MICE library. 
 
 \subsubsection{Feature reduction}
-```{r pca, include=FALSE}
-scaled_data <- featFullImp$featuresImpZMat %>% select(-ends_with(featureExclusion))
+```{r pca, include=FALSE} 
+scaled_data <- featFullImp$featuresImpZMat %>% select(-ends_with(featureExclusion)) 
 
-
-Rdimtools::do.udfs(scaled_data, k = 5)
-
-
-res.pca <- prcomp(scaled_data, scale = FALSE)
-fviz_eig(res.pca, addlabels = TRUE)
+res.pca <- prcomp(scaled_data, scale. = FALSE)
 summary(res.pca)
-  
-var <- get_pca_var(res.pca)
-corrplot::corrplot(var$contrib[,1:10], is.corr=FALSE) 
-fviz_contrib(res.pca, choice = "var", axes = 1, top = 50)
-fviz_contrib(res.pca, choice = "var", axes = 2, top = 50)
 
-res.desc <- FactoMineR::dimdesc(res.pca, axes = c(1,2), proba = 0.05)
-# Description of dimension 1
-res.desc$Dim.1
+res.varExplained <- data.frame(
+  Explained_Variance = cumsum(summary(res.pca)[["importance"]]['Proportion of Variance',]),
+  Components = seq(1, length(cumsum(summary(res.pca)[["importance"]]['Proportion of Variance',])), 1)
+)
+fviz_eig(res.pca, addlabels = TRUE)
+ggplot(data = res.varExplained, aes(x = Components, y = Explained_Variance)) +
+  geom_point() +
+  geom_line() +
+  theme_Publication()
+
+pca_cutoff <- min(which(cumsum(summary(res.pca)[["importance"]]['Proportion of Variance',]) >= 0.8))
 
 plot_ly(
   res.pca$rotation %>% as.data.frame,
@@ -741,13 +739,40 @@ plot_ly(
 ) %>%
   layout(title = 'Participants in reduced space')
 
-pca.out <- as.data.frame(res.pca$x[,1:3])
-
+pca.out <- as.data.frame(res.pca$x[,1:pca_cutoff])
 ```
 
-For the 
+
+For the feature reduction, we chose the very general \textit{principal component analysis} (PCA). While some of the more tailor-made feature selection algorithms can be more accurate and meaningful in reducing the feature dimensionality, PCAs are well-established and can broadly be applied in an automatize manner. 80% rule of thumb
+
+we select the first `r pca_cutoff` principal components because they explain 80\% of the variance in the original `r ncol(scaled_data)` features (reducing the dimensions by `r format(round((1-pca_cutoff/ncol(scaled_data))*100, 2), nsmall=2)`\%).
+
 
 \subsubsection{Feature clustering}
+```{r featureClustering, include=FALSE}
+# load libraries
+library(factoextra)
+library(NbClust)
+
+# prep data
+scaled_data <- pca.out %>% scale
+
+# Elbow method
+fviz_nbclust(scaled_data, kmeans, method = "wss") +
+  geom_vline(xintercept = 2, linetype = 2)+
+  labs(subtitle = "Elbow method")
+# Silhouette method
+fviz_nbclust(scaled_data, kmeans, method = "silhouette")+
+  labs(subtitle = "Silhouette method")
+# Gap statistic [takes for ever]
+# nboot = 50 to keep the function speedy.
+# recommended value: nboot= 500 for your analysis.
+# Use verbose = FALSE to hide computing progression.
+# set.seed(123)
+# fviz_nbclust(scaled_data, kmeans, nstart = 100,  method = "gap_stat", nboot = 500)+
+#   labs(subtitle = "Gap statistic method")
+```
+
 
 feature engineering: feature extraction + feature selection 
 
