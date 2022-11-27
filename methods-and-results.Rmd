@@ -664,8 +664,8 @@ allMlCor %>%
     )
   ) %>%
   kable_styling(latex_options = "scale_down") %>%
-  gsub("\\begin{table}", "\\begin{table}\n\\begin{minipage}[t][\\textheight][t]{\\textwidth}", ., fixed = TRUE) %>% # fix table position
-  gsub("\\end{table}", "\\end{minipage}\n\\end{table}", ., fixed = TRUE) %>% # fix table position
+  gsub("\\begin{table}", "\\begin{sidewaystable}\n\\centering", ., fixed = TRUE) %>%
+  gsub("\\end{table}", "\\end{sidewaystable}", ., fixed = TRUE) %>%
   save_kable("Tables/descrWide.tex")
 
 ```
