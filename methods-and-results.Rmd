@@ -774,13 +774,7 @@ fviz_nbclust(scaled_data, kmeans, method = "silhouette")+
 ```
 
 
-feature engineering: feature extraction + feature selection 
 
-use domain knowledge to extract new variables from raw data (summarize)
-
-options: tsfresh \citep[][]{christ2018}
-
-\textit{k} features means $2^k – 1$ possible models
 
 maximize relevance and minimize redundancy
 
