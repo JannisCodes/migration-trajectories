@@ -2740,32 +2740,11 @@ pMissS3$pMissPlot
 ```
 
 
-## Feature Selection
+## Feature Reduction
 
-<div class="alert alert-warning alert-dismissible fade in" role="alert">
-  <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
-  <i class="fas fa-exclamation-triangle"></i> <b>Note: </b><br/>
-  Here we might have to make a selection of the features we extract because some of the clustering algorithms might not be able to deal with the many different features. See below
-</div>
+To avoid the dimensionality curse we reduce the extracted features using a principal component analysis.
 
-
-Feature selection types:
-
--   manual feature and variable selection
--   wrapper: procedures that add and/or remove predictors to find the optimal combination that maximizes model performance.
--   filter: relevance of the predictors outside of the predictive models and subsequently model only the predictors that pass some criterion.
--   dimension reduction for clustering. No selection more compression of redundant variance. 
-
-```{r manual feature selection}
-
-
-```
-
-```{r automated feature selection}
-
-
-```
-
+MORE INFO NEEDED
 
 ```{r dimension reduction}
 raw_data <- featData
@@ -2890,13 +2869,7 @@ Cluster analyses have been a staple within a variety of sciences for the better 
 
 Each clustering procedures comes with their own sets of advantages and disadvantages. We will focus mainly on the k-means procedure because it has the least assumptions and is fast even with large data sets. Additionally, the methods are well-established and the results are easy to interpret. As such, the procedure should be applicable to most users within the social sciences and for ESM feature data specifically. We offer Gaussian mixture modeling and a common density-based approach as supplementary analyses. 
 
-### Main Anlaysis: Across Studies
-
-The main clustering procedure, uses the features calculated for the relevant variables across all three studies.
-
-#### Centroid-based
-
-For our main method, we use the centroid-based k-means clustering. The procedure needs the researcher to make a selection on the optimal number of clusters in order to run the main algorithm. We use the Elbow and the Silhouette method, which both suggest two clusters to be the optimal solution.
+The main clustering procedure, uses the features calculated for the relevant variables across all three studies. For our main method, we use the centroid-based k-means clustering. The procedure needs the researcher to make a selection on the optimal number of clusters in order to run the main algorithm. We use the Elbow and the Silhouette method, which both suggest two clusters to be the optimal solution.
 
 ```{r kmeans determin k}
 
@@ -3049,188 +3022,188 @@ data.frame(ID = as.numeric(names(kmeansOut$cluster)), cluster = kmeansOut$cluste
   theme_Publication()
 ```
 
-#### Distribution-based
-
-For the distribution-based clustering we use the commonly used Gaussian mixture modeling (GMM) procedure. This procedure assumes  independent Gaussian distributions for each each cluster. These distributions are substantially better at identifying clusters if the data comes from multivariate Gaussian distributions (i.e., ellipses in a two dimensional space). 
-
-We again begin by determining the optimal number of clusters. For GMMs this is done using common information criteria, such as the BIC.
-
-<div class="alert alert-warning alert-dismissible fade in" role="alert">
-  <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
-  <i class="fas fa-exclamation-triangle"></i> <b>Note: </b><br/>
-  This is where we run into trouble. These plots are relatively uncommon and according to the internet this is most likely a problem of too many (non-distinguishing or highly correlated) features. A good paper on this is <a href="https://proceedings.neurips.cc/paper/2002/file/e58aea67b01fa747687f038dfde066f6-Paper.pdf">Law et al. (2002)</a>.
-</div>
-
-```{r gaussian mixture model}
-library(mclust)
-
-scaled_data <- featFullImp$featuresImpZMat %>% select(-ends_with(featureExclusion))
-
-# scaled_data <- featS1Imp$featuresImpZMat  %>% #select(starts_with(varNamS123Int))
-#   select(-any_of(names(which(colSums(is.na(.)) > 0))))
 
 
-BIC <- mclustBIC(scaled_data)
-plot(BIC)
-summary(BIC)
-mod1 <- Mclust(scaled_data)
-summary(mod1, parameters = FALSE)
+<!-- #### Distribution-based -->
+
+<!-- For the distribution-based clustering we use the commonly used Gaussian mixture modeling (GMM) procedure. This procedure assumes  independent Gaussian distributions for each each cluster. These distributions are substantially better at identifying clusters if the data comes from multivariate Gaussian distributions (i.e., ellipses in a two dimensional space).  -->
+
+<!-- We again begin by determining the optimal number of clusters. For GMMs this is done using common information criteria, such as the BIC. -->
+
+<!-- <div class="alert alert-warning alert-dismissible fade in" role="alert"> -->
+<!--   <a class="close" data-dismiss="alert" aria-label="close">&times;</a> -->
+<!--   <i class="fas fa-exclamation-triangle"></i> <b>Note: </b><br/> -->
+<!--   This is where we run into trouble. These plots are relatively uncommon and according to the internet this is most likely a problem of too many (non-distinguishing or highly correlated) features. A good paper on this is <a href="https://proceedings.neurips.cc/paper/2002/file/e58aea67b01fa747687f038dfde066f6-Paper.pdf">Law et al. (2002)</a>. -->
+<!-- </div> -->
+
+<!-- ```{r gaussian mixture model} -->
+<!-- library(mclust) -->
+
+<!-- scaled_data <- featFullImp$featuresImpZMat %>% select(-ends_with(featureExclusion)) -->
+
+<!-- # scaled_data <- featS1Imp$featuresImpZMat  %>% #select(starts_with(varNamS123Int)) -->
+<!-- #   select(-any_of(names(which(colSums(is.na(.)) > 0)))) -->
 
 
-# multivariate <- densityMclust(scaled_data, plot=FALSE)
-# summary(multivariate)            
-# plot(multivariate, what = "BIC")
-  
-# merge(featOutZRowNam, as.data.frame(mod1$classification), by="row.names") %>% View
+<!-- BIC <- mclustBIC(scaled_data) -->
+<!-- plot(BIC) -->
+<!-- summary(BIC) -->
+<!-- mod1 <- Mclust(scaled_data) -->
+<!-- summary(mod1, parameters = FALSE) -->
 
 
-#table(class, mod1$classification)
+<!-- # multivariate <- densityMclust(scaled_data, plot=FALSE) -->
+<!-- # summary(multivariate)             -->
+<!-- # plot(multivariate, what = "BIC") -->
 
-#mod1dr <- MclustDR(mod1)
-#summary(mod1dr, parameters = FALSE)
-#plot(mod1dr, what = "classification")
-```
-
-<div class="alert alert-warning alert-dismissible fade in" role="alert">
-  <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
-  <i class="fas fa-exclamation-triangle"></i> <b>Note: </b><br/>
-  The feature selection issue is further highlighted when we do the GMMs by feature. Where we find a reasonable number of clusters for each feature. 
-</div>
-
-```{r MClust feature specific cluster numbers}
-scaled_data <- featFullImp$featuresImpZMat %>% select(-ends_with(featureExclusion))
-nMClust <- list()
-for(f in unique(gsub("^.*?\\_", "", names(scaled_data)))){
-  scaled_data <- featFullImp$featuresImpZMat %>% select(ends_with(f))
-  mod1 <- Mclust(scaled_data)
-  #summary(mod1, parameters = FALSE)
-  nMClust[[f]] <- mod1$G
-}
-
-nMClust %>%
-  unlist %>%
-  data.frame(feature=names(.), G=., row.names=NULL) %>%
-  kbl(.,
-      escape = FALSE,
-      booktabs = T,
-      align = c("l", "c"),
-      digits=2,
-      col.names = c(
-        "Feature",
-        "Number of Clusters"
-      ),
-      caption = "Number of MClust Clusters if separated by Feature") %>%
-  kable_classic(
-    full_width = F,
-    lightable_options = "hover",
-    html_font = "Cambria"
-  )
-
-```
+<!-- # merge(featOutZRowNam, as.data.frame(mod1$classification), by="row.names") %>% View -->
 
 
-#### Density-based
+<!-- #table(class, mod1$classification) -->
 
-For the density-based cluster analysis we focus on the *DBSCAN* algorithm ('Density-Based Spatial Clustering of Applications with Noise') as well as its extension the *OPTICS* procedure ('Ordering Points To Identify the Clustering Structure'). This procedure is more bottom up than the previous two approaches. Instead of providing the number of clusters, a cluster is specified if a minimum number of other points (the MinPts parameter) are within a given radius (the epsilon parameter). Together these two parameters determine a density at which a group of data points are considered a cluster. While this description is grossly oversimplified, it highlights one of the advantages of the procedures, namely that dense regions can expand to be any shape in the d-dimensional space.
+<!-- #mod1dr <- MclustDR(mod1) -->
+<!-- #summary(mod1dr, parameters = FALSE) -->
+<!-- #plot(mod1dr, what = "classification") -->
+<!-- ``` -->
 
-<div class="alert alert-warning alert-dismissible fade in" role="alert">
-  <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
-  <i class="fas fa-exclamation-triangle"></i> <b>Note: </b><br/>
-  Same feature selection issue as above. 
-</div>
+<!-- <div class="alert alert-warning alert-dismissible fade in" role="alert"> -->
+<!--   <a class="close" data-dismiss="alert" aria-label="close">&times;</a> -->
+<!--   <i class="fas fa-exclamation-triangle"></i> <b>Note: </b><br/> -->
+<!--   The feature selection issue is further highlighted when we do the GMMs by feature. Where we find a reasonable number of clusters for each feature.  -->
+<!-- </div> -->
 
-```{r dbscan}
-library(dbscan)
-library(fpc)
+<!-- ```{r MClust feature specific cluster numbers} -->
+<!-- scaled_data <- featFullImp$featuresImpZMat %>% select(-ends_with(featureExclusion)) -->
+<!-- nMClust <- list() -->
+<!-- for(f in unique(gsub("^.*?\\_", "", names(scaled_data)))){ -->
+<!--   scaled_data <- featFullImp$featuresImpZMat %>% select(ends_with(f)) -->
+<!--   mod1 <- Mclust(scaled_data) -->
+<!--   #summary(mod1, parameters = FALSE) -->
+<!--   nMClust[[f]] <- mod1$G -->
+<!-- } -->
 
-#scaled_data <- featFullImp$featuresImpZMat %>% select(starts_with(varNamS123Int))
-scaled_data <- featFullImp$featuresImpZMat %>% select(-ends_with(featureExclusion))  # %>% select(starts_with(varNamS123NoInt))#%>%
-  #select(-any_of(names(which(colSums(is.na(scaled_data)) > 0))))
-  
-#is.na(scaled_data) %>% table
+<!-- nMClust %>% -->
+<!--   unlist %>% -->
+<!--   data.frame(feature=names(.), G=., row.names=NULL) %>% -->
+<!--   kbl(., -->
+<!--       escape = FALSE, -->
+<!--       booktabs = T, -->
+<!--       align = c("l", "c"), -->
+<!--       digits=2, -->
+<!--       col.names = c( -->
+<!--         "Feature", -->
+<!--         "Number of Clusters" -->
+<!--       ), -->
+<!--       caption = "Number of MClust Clusters if separated by Feature") %>% -->
+<!--   kable_classic( -->
+<!--     full_width = F, -->
+<!--     lightable_options = "hover", -->
+<!--     html_font = "Cambria" -->
+<!--   ) -->
 
-# to plot the eps values
-eps_plot = kNNdistplot(scaled_data, k=3)
-# to draw an optimum line
-eps_plot %>% abline(h = 11, lty = 2)
-
-
-potentialMinPts <- round(SciViews::ln(nrow(scaled_data)))
-eps <- 11
-minPts <- 2
-
-res.fpc <- fpc::dbscan(scaled_data, eps=eps, MinPts=minPts, scale=FALSE, showplot=0)
-res.db <- dbscan::dbscan(scaled_data, eps=eps, minPts=minPts)
-
-resEqual.check <- all(res.fpc$cluster == res.db$cluster)
-nClustDBSCAN <- length(unique(res.fpc$cluster))-1
-
-fviz_cluster(res.fpc, scaled_data, geom = "point", ggtheme = theme_Publication())
-#hullplot(scaled_data, res.fpc)
-
-```
-
-
-<div class="alert alert-warning alert-dismissible fade in" role="alert">
-  <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
-  <i class="fas fa-exclamation-triangle"></i> <b>Note: </b><br/>
-  And again the number of clusters is reasonable if we consider the features separately: 
-</div>
-
-```{r dbscan feature specific cluister numbers}
-scaled_data <- featFullImp$featuresImpZMat %>% select(-ends_with(featureExclusion))
-minPts <- 3
-xi <- 0.04 #0.05
-nDbscan <- list()
-for(f in unique(gsub("^.*?\\_", "", names(scaled_data)))){
-  scaled_data <- featFullImp$featuresImpZMat %>% select(ends_with(f))
-  #res.fpc <- dbscan::dbscan(scaled_data, eps=eps_cl, MinPts=minPts)
-  
-  res.optics <- dbscan::optics(scaled_data, minPts = 3)
-  
-  #plot(res.optics, col = "grey")
-  #dend <- as.dendrogram(res.optics)
-  #plot(dend, ylab = "Reachability dist.", leaflab = "none")
-  #extractDBSCAN(res.optics, eps_cl = 19.12)
-  
-  res <- extractXi(res.optics, xi = xi)
-  res$clusters_xi
-  #plot(res)
-  #hullplot(scaled_data, res)
-  
-  #summary(res.optics, parameters = FALSE)
-  nDbscan[[f]] <- nrow(res$clusters_xi)
-}
-
-nDbscan %>%
-  unlist %>%
-  data.frame(feature=names(.), G=., row.names=NULL) %>%
-  kbl(.,
-      escape = FALSE,
-      booktabs = T,
-      align = c("l", "c"),
-      digits=2,
-      col.names = c(
-        "Feature",
-        "Number of Clusters"
-      ),
-      caption = "Number of OPTICS Clusters if separated by Feature") %>%
-  kable_classic(
-    full_width = F,
-    lightable_options = "hover",
-    html_font = "Cambria"
-  )
-```
+<!-- ``` -->
 
 
-### Follow-up: By Response Type
+<!-- #### Density-based -->
 
-_**currently removed for faster render until feature selection issue is resolved**_
+<!-- For the density-based cluster analysis we focus on the *DBSCAN* algorithm ('Density-Based Spatial Clustering of Applications with Noise') as well as its extension the *OPTICS* procedure ('Ordering Points To Identify the Clustering Structure'). This procedure is more bottom up than the previous two approaches. Instead of providing the number of clusters, a cluster is specified if a minimum number of other points (the MinPts parameter) are within a given radius (the epsilon parameter). Together these two parameters determine a density at which a group of data points are considered a cluster. While this description is grossly oversimplified, it highlights one of the advantages of the procedures, namely that dense regions can expand to be any shape in the d-dimensional space. -->
+
+<!-- <div class="alert alert-warning alert-dismissible fade in" role="alert"> -->
+<!--   <a class="close" data-dismiss="alert" aria-label="close">&times;</a> -->
+<!--   <i class="fas fa-exclamation-triangle"></i> <b>Note: </b><br/> -->
+<!--   Same feature selection issue as above.  -->
+<!-- </div> -->
+
+<!-- ```{r dbscan} -->
+<!-- library(dbscan) -->
+<!-- library(fpc) -->
+
+<!-- #scaled_data <- featFullImp$featuresImpZMat %>% select(starts_with(varNamS123Int)) -->
+<!-- scaled_data <- featFullImp$featuresImpZMat %>% select(-ends_with(featureExclusion))  # %>% select(starts_with(varNamS123NoInt))#%>% -->
+<!--   #select(-any_of(names(which(colSums(is.na(scaled_data)) > 0)))) -->
+
+<!-- #is.na(scaled_data) %>% table -->
+
+<!-- # to plot the eps values -->
+<!-- eps_plot = kNNdistplot(scaled_data, k=3) -->
+<!-- # to draw an optimum line -->
+<!-- eps_plot %>% abline(h = 11, lty = 2) -->
 
 
-### Follow-up: By Study
+<!-- potentialMinPts <- round(SciViews::ln(nrow(scaled_data))) -->
+<!-- eps <- 11 -->
+<!-- minPts <- 2 -->
 
-_**currently removed for faster render until feature selection issue is resolved**_
+<!-- res.fpc <- fpc::dbscan(scaled_data, eps=eps, MinPts=minPts, scale=FALSE, showplot=0) -->
+<!-- res.db <- dbscan::dbscan(scaled_data, eps=eps, minPts=minPts) -->
+
+<!-- resEqual.check <- all(res.fpc$cluster == res.db$cluster) -->
+<!-- nClustDBSCAN <- length(unique(res.fpc$cluster))-1 -->
+
+<!-- fviz_cluster(res.fpc, scaled_data, geom = "point", ggtheme = theme_Publication()) -->
+<!-- #hullplot(scaled_data, res.fpc) -->
+
+<!-- ``` -->
+
+
+<!-- <div class="alert alert-warning alert-dismissible fade in" role="alert"> -->
+<!--   <a class="close" data-dismiss="alert" aria-label="close">&times;</a> -->
+<!--   <i class="fas fa-exclamation-triangle"></i> <b>Note: </b><br/> -->
+<!--   And again the number of clusters is reasonable if we consider the features separately:  -->
+<!-- </div> -->
+
+<!-- ```{r dbscan feature specific cluister numbers} -->
+<!-- scaled_data <- featFullImp$featuresImpZMat %>% select(-ends_with(featureExclusion)) -->
+<!-- minPts <- 3 -->
+<!-- xi <- 0.04 #0.05 -->
+<!-- nDbscan <- list() -->
+<!-- for(f in unique(gsub("^.*?\\_", "", names(scaled_data)))){ -->
+<!--   scaled_data <- featFullImp$featuresImpZMat %>% select(ends_with(f)) -->
+<!--   #res.fpc <- dbscan::dbscan(scaled_data, eps=eps_cl, MinPts=minPts) -->
+
+<!--   res.optics <- dbscan::optics(scaled_data, minPts = 3) -->
+
+<!--   #plot(res.optics, col = "grey") -->
+<!--   #dend <- as.dendrogram(res.optics) -->
+<!--   #plot(dend, ylab = "Reachability dist.", leaflab = "none") -->
+<!--   #extractDBSCAN(res.optics, eps_cl = 19.12) -->
+
+<!--   res <- extractXi(res.optics, xi = xi) -->
+<!--   res$clusters_xi -->
+<!--   #plot(res) -->
+<!--   #hullplot(scaled_data, res) -->
+
+<!--   #summary(res.optics, parameters = FALSE) -->
+<!--   nDbscan[[f]] <- nrow(res$clusters_xi) -->
+<!-- } -->
+
+<!-- nDbscan %>% -->
+<!--   unlist %>% -->
+<!--   data.frame(feature=names(.), G=., row.names=NULL) %>% -->
+<!--   kbl(., -->
+<!--       escape = FALSE, -->
+<!--       booktabs = T, -->
+<!--       align = c("l", "c"), -->
+<!--       digits=2, -->
+<!--       col.names = c( -->
+<!--         "Feature", -->
+<!--         "Number of Clusters" -->
+<!--       ), -->
+<!--       caption = "Number of OPTICS Clusters if separated by Feature") %>% -->
+<!--   kable_classic( -->
+<!--     full_width = F, -->
+<!--     lightable_options = "hover", -->
+<!--     html_font = "Cambria" -->
+<!--   ) -->
+<!-- ``` -->
+
+
+<!-- ### Follow-up: By Response Type -->
+<!-- Potential future project -->
+
+
+<!-- ### Follow-up: By Study -->
+<!-- Potential future project -->
 
 
 # **Software Information**

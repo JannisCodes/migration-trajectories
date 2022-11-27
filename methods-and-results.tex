@@ -53,7 +53,23 @@ information, descriptives, and correlations are available in
 
 \subsection{Analysis and Results}
 
+To perform the main analysis on our selected variables, we follow the
+three extract--reduce--cluster steps in sequential order. For each of
+the steps fully reproducible and annotated code is available in Online
+Supplemental A as well as in the accompanying OSF- and GitHub
+repositories (REFERENCES). This includes a function that automatically
+extracts and prepares all of the time series features presented in
+\tblref{tab:esmFeatures} (see the \texttt{featureExtractor} function in
+our GitHub repository).
+
 \subsubsection{Feature extraction}
+
+For the
+
+For the full dataset across the three studies, we find that about 1.66\%
+of the extracted features are missing across the 145 features per
+participant. These missing features are imputed with a single predictive
+mean matching imputation using the MICE library.
 
 \subsubsection{Feature reduction}
 
