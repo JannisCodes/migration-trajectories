@@ -57,19 +57,39 @@ To perform the main analysis on our selected variables, we follow the
 three extract--reduce--cluster steps in sequential order. For each of
 the steps fully reproducible and annotated code is available in Online
 Supplemental A as well as in the accompanying OSF- and GitHub
-repositories (REFERENCES). This includes a function that automatically
-extracts and prepares all of the time series features presented in
-\tblref{tab:esmFeatures} (see the \texttt{featureExtractor} function in
-our GitHub repository).
+repositories (REFERENCES).
 
 \subsubsection{Feature extraction}
 
-For the
+For the features, we selected and extracted one of each of the features
+proposed in \tblref{tab:esmFeatures}. We particularly chose the more
+robust median and median absolute deviation (MAD) for central tendency
+and variability. Within the variability structure, we chose the slightly
+more intuitive mean absolute change (MAC) for stability and stayed with
+the common lag--1 autocorrelation for inertia. For the trend summaries,
+we chose the overall linear regression slope to describe the linear
+trend and we summarized the nonlinear trend with the estimated degrees
+of freedom of an empty GAM spline model (edf) --- the edf summarizes the
+\textit{wiggliness} of the spline trend line. We chose these features in
+particular because we consider them to be the most broadly applicable
+features. We also extracted the participant's number of completed ESM
+measurements to ensure that the clusters are comparable in that regard.
+We include a function that automatically extracts and prepares all
+features we extracted as well as a large selection of the time series
+feature operationalizations presented in \tblref{tab:esmFeatures} in our
+GitHub repository (see the \texttt{featureExtractor} function).
 
-For the full dataset across the three studies, we find that about 1.66\%
-of the extracted features are missing across the 145 features per
-participant. These missing features are imputed with a single predictive
-mean matching imputation using the MICE library.
+After the feature extraction, we found that about 1.40\% of the
+extracted features are missing across participants across the 72
+features per participant. This might, for example, happen if
+participants do not have two subsequent measurements with outgroup
+interactions, so that an autocorrelation with lag-1 cannot be calculated
+for the contact-specific variables. The small number of missing values
+indicates that the feature-based approach indeed largely avoids the
+structural missingness issue. The few missing values can however be an
+issue for some feature reduction or feature clustering algorithms. We,
+thus, impute the missing feature values with a single predictive mean
+matching imputation using the MICE library.
 
 \subsubsection{Feature reduction}
 
