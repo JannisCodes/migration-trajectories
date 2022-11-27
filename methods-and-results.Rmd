@@ -124,6 +124,9 @@ load("data/s123Full.RData")
 
 # import reduced datasets
 load("data/s123Red.RData")
+
+# import pre-calculated features for faster renders
+load("data/features/featOut.RData")
 ```
 
 
@@ -336,61 +339,6 @@ idVars <- idVars
 # Common variables across studies 
 varNamS123 <- varNamS123PCA[!varNamS123PCA %in% idVars]
 
-# Variable Groups
-# varNames %>%
-#   filter(pca != 0) %>%
-#   mutate(contactSpecific = recode(.$contactSpecific, 
-#                          `-1`="No Interaction Only",
-#                          `0`="unspecific",
-#                          `1`="Interaction Only")) %>%
-#   crosstable::crosstable(., varGroup, by=contactSpecific) %>%
-#   select(-c(.id, label)) %>%
-#   kbl(.,
-#       escape = FALSE,
-#       booktabs = T,
-#       align = c("l", "r", "c"),
-#       digits=2,
-#       caption = "Full Analysis: Variable Groups by Interaction Types") %>%
-#   kable_classic(
-#     full_width = F,
-#     lightable_options = "hover",
-#     html_font = "Cambria"
-#   )
-# 
-# varNames %>%
-#   filter(
-#     pca != 0
-#   ) %>%
-#   mutate(contactSpecific = recode(.$contactSpecific, 
-#                          `-1`="No Interaction Only",
-#                          `0`="unspecific",
-#                          `1`="Interaction Only")) %>%
-#   select(varNam, varGroup, contactSpecific) %>%
-#   group_by(varGroup, varNam, contactSpecific) %>%
-#   summarise(n = n()) %>%
-#   pivot_wider(names_from = c("varGroup", "varNam"), values_from = n, names_sep=" - ") %>%
-#   ungroup %>%
-#   t %>%
-#   as.data.frame %>%
-#   janitor::row_to_names(1) %>%
-#   replace(is.na(.), 0) %>%
-#   tibble::rownames_to_column(., var = "variable") %>%
-#   separate(variable, c("concept", "variable"), " - ") %>%
-#   arrange(concept, unspecific, `Interaction Only`) %>%
-#   mutate_all(~recode(.x, `0`="", ` 1`="✓")) %>%
-#   kbl(.,
-#       escape = FALSE,
-#       booktabs = T,
-#       align = c("l", "l", rep("c", ncol(.)-2)),
-#       digits=2,
-#       caption = "All Possible Variables by Interaction Types") %>%
-#   kable_classic(
-#     full_width = F,
-#     lightable_options = "hover",
-#     html_font = "Cambria"
-#   ) %>%
-#   scroll_box(width = "100%", height = "500px")
-
 # Non-Interaction Specific Variables
 varNamS123NoInt <- varNames %>%
   filter(
@@ -551,6 +499,7 @@ varNames %>%
   tibble::rownames_to_column(., var = "variable") %>%
   separate(variable, c("concept", "variable", "study1", "study2", "study3"), " - ") %>%
   mutate(across(c(study1, study2, study3), as.numeric)) %>%
+  #select(-study1, -study2, -study3) %>%
   arrange(concept, unspecific, `Interaction Only`) %>% 
   mutate_all(~recode(.x, `0`="", ` 1`="✓")) %>%
   relocate(starts_with("study"), .after = last_col()) %>%
@@ -631,9 +580,98 @@ We used a data set following migration experiences collected by \citet[][]{Kreie
 The original studies included `r sum(missS123$pptFull)` participants ($N_{S1}=$ `r missS123$pptFull[missS123$study==1]`, $N_{S2}=$ `r missS123$pptFull[missS123$study==2]`, $N_{S3}=$ `r missS123$pptFull[missS123$study==3]`) with a total of `r format(sum(missS123$nFull), big.mark=",")` measurements. The studies differed substantially in the maximum length of participation ($\text{max}(t_{S1})=$ `r missS123$timeFull[missS123$study==1]`, $\text{max}(t_{S2})=$ `r missS123$timeFull[missS123$study==2]`, $\text{max}(t_{S3})=$ `r missS123$timeFull[missS123$study==3]`). This was likely due to the option to continue participation without compensation in the later two studies. To make the three studies comparable in participation and time frames, we iteratively removed all measurement occasions and participants that had more than 45\% missingness \citep[which was in line with the general rcecommendation for data that might still need to rely on imputations for later model testing][]{Madley-Dowd2019}. This procedure let to a final sample of `r sum(missS123$pptRed)` participants, who jointly produced `r format(sum(missS123$nRed), big.mark=",")` measurements. Importantly, both the participant repsonse-patterns and the time frame were now a lot more comparable ($\text{max}(t_{S1})=$ `r missS123$timeRed[missS123$study==1]`, $\text{max}(t_{S2})=$ `r missS123$timeRed[missS123$study==2]`, $\text{max}(t_{S3})=$ `r missS123$timeRed[missS123$study==3]`). For a full overview of the data reduction procedure and study-specific exclusions see Online Supplemental Material A.
 
 \subsubsection{Variables}
-Included 12 variables that were available across all three studies and captured information about the participant's interactions, as well as cognitive-, emotional-, and motivational self in relationship with the majority group. We chose these two aspects in particular because (1) the interaction-specific information exemplified the structural missingness issue of modern ESM data and (2) the motivational, cognitive, and emotional experience offered a diverse conceptualization of migration experience (beyond behavioral measurements) that is becoming more common in the literature \citep[][]{Kreienkamp2022d}. Full methodological details are available in Online Supplemental Material A, but basic item information, descriptives, and correlations are available in \tblref{tab:??}.
+Included 12 variables that were available across all three studies and captured information about the participant's interactions, as well as cognitive-, emotional-, and motivational self in relationship with the majority group. We chose these two aspects in particular because (1) the interaction-specific information exemplified the structural missingness issue of modern ESM data and (2) the motivational, emotional, and cognitive experience offered a diverse conceptualization of migration experience (beyond behavioral measurements) that is becoming more common in the literature \citep[][]{Kreienkamp2022d}. Full methodological details are available in Online Supplemental Material A, but basic item information, descriptives, and correlations are available in \tblref{tab:descrWide}.
+
+```{r descrWide, include=FALSE}
+dtAll <- rbind(
+  dtS1Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S1") %>%
+    mutate(across(!TID & !study, as.numeric)),
+  dtS2Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S2"),
+  dtS3Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S3")
+) %>%
+  group_by(study, PID) %>%
+  mutate(ID = cur_group_id()) %>%
+  ungroup %>%
+  mutate(date = as.Date(gsub(" .*", "", TID)),
+         week = strftime(date, format = "%Y-W%V")) %>%
+  select(ID,
+         PID,
+         study,
+         date,
+         week,
+         TIDnum,
+         any_of(varNamS123PCA)) %>%
+  arrange(ID, TIDnum) %>%
+  select_if(~ sum(!is.na(.)) > 1) %>% # only include variables that have any data (i.e., not all NA)
+  as.data.frame
+
+allMlCor <-
+  MlCorMat(
+    data = dtAll,
+    id = "ID",
+    selection = c(
+      "InteractionContextAccidental", 
+      "InteractionContextvoluntary", 
+      "InteractionContextCooperative",
+      "InteractionContextRepresentativeNL",
+      "qualityMeaning",
+      "qualityOverall", 
+      "KeyNeedFulfillment", 
+      "KeyNeedDueToPartner", 
+      "AttitudesPartner",
+      "DaytimeNeedFulfillment",
+      "AttitudesDutch",
+      "exWB"
+    ),
+    labels = c(
+      "Interaction Accidental", 
+      "Interaction Voluntary", 
+      "Interaction Cooperative",
+      "Interaction Representative NL",
+      "Quality Meaningful",
+      "Quality Overall", 
+      "Core Need", 
+      "Core Need Due to Partner", 
+      "Attitudes Partner",
+      "Daytime Core Need",
+      "Attitudes Dutch",
+      "Well-being"
+    )
+  )
+
+# Sample Descriptives Table --- wider version
+allMlCor %>%
+  t %>%
+  kbl(.,
+      format = "latex",
+      caption = "Correlation Table and Descriptive Statistics",
+      booktabs = TRUE,
+      align = c("l", rep("c", ncol(.) - 1))) %>%
+  kable_classic() %>%
+  add_header_above(
+    .,
+    c(
+      "",
+      "Correlations" = ncol(allMlCor),
+      "Descriptives" = nrow(allMlCor) - ncol(allMlCor)
+    )
+  ) %>%
+  footnote(
+    general = c(
+      "Upper triangle: Between-person correlations;",
+      "Lower triangle: Within-person correlations;",
+      "*** p < .001, ** p < .01,  * p < .05"
+    )
+  ) %>%
+  kable_styling(latex_options = "scale_down") %>%
+  gsub("\\begin{table}", "\\begin{table}\n\\begin{minipage}[t][\\textheight][t]{\\textwidth}", ., fixed = TRUE) %>% # fix table position
+  gsub("\\end{table}", "\\end{minipage}\n\\end{table}", ., fixed = TRUE) %>% # fix table position
+  save_kable("Tables/descrWide.tex")
+
+```
 
 \subsection{Analysis and Results}
+
 
 \subsubsection{Feature extraction}
 
