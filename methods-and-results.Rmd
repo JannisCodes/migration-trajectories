@@ -551,13 +551,15 @@ missS1 <- missInfo(full = dtS1$full, reduced = dtS1Red)
 missS2 <- missInfo(full = dtS2$full, reduced = dtS2Red)
 missS3 <- missInfo(full = dtS3$full, reduced = dtS3Red)
 
-rbind(
+missS123 <- rbind(
   missS1,
   missS2,
   missS3
 ) %>%
   mutate(study = c(1, 2, 3)) %>%
-  select(study, everything()) %>%
+  select(study, everything())
+
+missS123 %>%
   kbl(.,
       escape = FALSE,
       booktabs = TRUE,
@@ -573,14 +575,13 @@ rbind(
   )
 ```
 
-Something about the migration experience literature should go here as part of the illustration intro ...
 
 \subsection{Data}
-We used a data set following migration experiences collected by \citet[][]{Kreienkamp2022b}. The data set consisted of three individual studies that followed migrants who had recently arrived in the Netherlands in their daily interactions with the Dutch majority group. After a general migration-focused pre-questionnaire, participants were invited twice per day to report on their (potential) interactions with majority group members for at least 30 days. The short ESM surveys were sent out at around lunch (12pm) and dinner time (7pm). After the 30 day study period participants filled in a post-questionnaire that mirrored the pre-questionnaire. Participants received either monetary compensation or partial course credits based on the number of surveys they completed. For our empirical example we focused on the variables that were collected during the ESM surveys and were available for all three studies. Full methodological details are available in the article by \citet[][]{Kreienkamp2022b}.
+We used a data set following migration experiences collected by \citet[][]{Kreienkamp2022b}. The data set consists of three studies that followed migrants who had recently arrived in the Netherlands in their daily interactions with the Dutch majority group members. After a general migration-focused pre-questionnaire, participants were invited twice per day to report on their (potential) interactions with majority group members for at least 30 days. The short ESM surveys were sent out at around lunch (12pm) and dinner time (7pm). After the 30 day study period participants filled in a post-questionnaire that mirrored the pre-questionnaire. Participants received either monetary compensation or partial course credits based on the number of surveys they completed. For our empirical example we focus on the variables that were collected during the ESM surveys and were available in all three studies. Full methodological details are available in the empirical article by \citet[][]{Kreienkamp2022b}.
 
-\subsubsection{Sample and time frame (?)}
+\subsubsection{Sample}
+The original studies included `r sum(missS123$pptFull)` participants ($N_{S1}=$`r missS123$pptFull[missS123$study==1]`, $N_{S2}=$`r missS123$pptFull[missS123$study==2]`, $N_{S3}=$`r missS123$pptFull[missS123$study==3]`) with a total `r format(sum(missS123$nFull), big.mark=",")` measurements. The studies differed substantially in the maximum length of participation ($N_{t:S1}=$`r missS123$timeFull[missS123$study==1]`, $N_{t:S2}=$`r missS123$timeFull[missS123$study==2]`, $N_{t:S3}=$`r missS123$timeFull[missS123$study==3]`). 
 
-filter criteria
 \citep[proportion of missing data and imputations:][]{Madley-Dowd2019}
 
 Total N t.
