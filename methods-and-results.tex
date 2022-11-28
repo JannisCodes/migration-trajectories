@@ -154,10 +154,10 @@ phenomenon of interest.
 
 \subsubsection{Feature clustering}
 
-\Question{\textcolor}{cyan}{It is good practice to standardize the input of the k-means algorithm. However, I think that does not make sense for PCs because the PCA is based on the idea of decomposing variances (and capturing the most variance in PC1, ...). If I actually standardize the PC-score, we get really weird k-means results. The only discussion of this I could find was a tutorial that DID NOT standardize the PCs: \url{https://medium.com/more-python-less-problems/principal-component-analysis-and-k-means-clustering-to-visualize-a-high-dimensional-dataset-577b2a7a5fe2} 
+\Question{\textcolor{cyan}{It is good practice to standardize the input of the k-means algorithm. However, I think that does not make sense for PCs because the PCA is based on the idea of decomposing variances (and capturing the most variance in PC1, ...). If I actually standardize the PC-score, we get really weird k-means results. The only discussion of this I could find was a tutorial that DID NOT standardize the PCs: \url{https://medium.com/more-python-less-problems/principal-component-analysis-and-k-means-clustering-to-visualize-a-high-dimensional-dataset-577b2a7a5fe2} 
 I had originally written: 
 "To ensure that the clustering is weighing the principal components equally (as opposed to their variance), we standardize the particpants' PC-scores." 
-but I went back to the 'raw' PC-scores now. But we should discuss this.}\}
+but I went back to the 'raw' PC-scores now. But we should discuss this.}}
 
 For our illustration of the feature clustering procedure, we use the
 generalizable and efficient centroid-based k-means clustering. The
