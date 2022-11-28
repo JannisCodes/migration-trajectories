@@ -2920,6 +2920,8 @@ fviz_cluster(kmeansOut, geom = "point", data = scaled_data, ggtheme = theme_Publ
 
 We then inspect the cluster-averages of all feature for each variable. We (1) see that for some variables the features are generally stronger in separating the clusters (e.g., how cooperative an interaction was) than for other variables (e.g., Attitudes towards the Dutch). Additionally, we see that (2) some within the variables some features are better at distinguishing clusters (e.g., mean and median of well-being) than others (e.g., sd and rmssd of well-being).
 
+IMPORTANT FIX: https://stackoverflow.com/questions/66448838/add-an-interactive-button-to-switch-which-variable-is-mapped-to-fill-in-ggplotly
+
 ```{r features for each variable}
 data.frame(ID = as.numeric(names(kmeansOut$cluster)), cluster = kmeansOut$cluster) %>%
   merge(., z_data) %>%

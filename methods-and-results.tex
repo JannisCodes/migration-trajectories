@@ -123,7 +123,9 @@ common rule of thumb is to use the principal components that jointly
 explain 70--90\% of the original variance (i.e., cumulative percentage
 explained variance). For our illustration we we select the first 27
 principal components that explain 80\% of the variance in the original
-72 features (reducing the dimensionality by 62.50\%).
+72 features (reducing the dimensionality by 62.50\%). For the extracted
+principal components we save the 72 PC-scores for each participant
+(i.e., the participants' coordinates in the reduced dimensional space).
 
 We would like to comment on two practical matters when using principal
 components --- the amount of dimensionality reduction and the
@@ -152,4 +154,70 @@ phenomenon of interest.
 
 \subsubsection{Feature clustering}
 
-maximize relevance and minimize redundancy
+\Question{It is good practice to standardize the input of the k-means algorithm. However, I think that does not make sense for PCs because the PCA is based on the idea of decomposing variances (and capturing the most variance in PC1, ...). If I actually standardize the PC-score, we get really weird k-means results. The only discussion of this I could find was a tutorial that DID NOT standardize the PCs: https://medium.com/more-python-less-problems/principal-component-analysis-and-k-means-clustering-to-visualize-a-high-dimensional-dataset-577b2a7a5fe2 
+I had originally written: 
+"To ensure that the clustering is weighing the principal components equally (as opposed to their variance), we standardize the particpants' PC-scores." 
+but I went back to the 'raw' PC-scores now. But we should discuss this.}
+
+For our illustration of the feature clustering procedure, we use the
+generalizable and efficient centroid-based k-means clustering. The
+procedure needs the user to make a selection on the optimal number of
+clusters in order to run the main algorithm. We use the Elbow and the
+Silhouette method, which both suggest two clusters to be the optimal
+solution (see \fgrref{fig:??}). We then entered the participants'
+PC-scores into the k-means algorithm. We used the recommended Hartigan
+and Wong algorithm \citep{hartigan1979} with 100 random initial centroid
+positions to avoid convergence to a sub-optimal solution (i.e., local
+minima). The k-means analysis assigned 80 participants to cluster 1 and
+76 participants to cluster 2.
+
+In order to interpret the two clusters, we compared the two clusters in
+their features as well as in their raw time series. We first inspect the
+clusters with a focus on the included variables (see \fgrref{fig:??}).
+We (1) see that for some variables the features are generally stronger
+in separating the clusters (e.g., how cooperative an interaction was)
+than for other variables (e.g., Attitudes towards the Dutch).
+Additionally, we see that (2) within the variables some features are
+better at distinguishing clusters (e.g., median of well-being) than
+others (e.g., MAC of well-being). We then inspect the clusters with a
+focus on the features (see \fgrref{fig:??}). While this is the same data
+as in the plot above, we can see more clearly that some features are
+better at distinguishing the clusters across variables (e.g., mean and
+median) than others (e.g., auto correlations). This offers some
+information on which features were are most important in understanding
+the two extracted groups.
+
+We can then combine the two focus approaches to assess the developments
+between the two groups more holistically (see \fgrref{fig:??}).
+Immediately striking are the mean differences, where participants in the
+cluster that had more meaningful and fulfilling outgroup interactions
+also consistently reported more voluntary and cooperative interactions
+but less accidental and involuntary interactions. The same cluster also
+reported an increase in need fulfilling interaction over the 30 day
+period and an increase in interactions that were representative of the
+outgroup. Whereas the other cluster showed a decrease in voluntary,
+cooperative, and positive interactions over the 30 days. The
+`deterioration' cluster also saw a decrease in general need fulfillment
+and experienced well-being over the 30 days (see \fgrref{fig:??}). We
+also see that while interaction representativeness, outgroup attitudes,
+well-being are relatively stable for both clusters, the deteriorating
+cluster also showed substantially higher variablity and instability over
+time.
+
+\Question{Talk about early warning signals here? I.e., divergences in means over time could be invesitigated with targeted studies.}
+
+We can also assess the clusters across any other person-level variable.
+This out-of-feature comparison allows us to check for data artifacts, as
+well as check whether the developmental clusters are associated with
+important social markers and individual differences. To illustrate
+artifact checks, we added the number of measurements into the comparison
+and find that the participants with more negative experiences on average
+completed more ESM surveys and reported on more intergroup interactions
+than the cluster with the more positive interactions. While this
+difference could indicate that the clusters might not entirely be
+comparable in the response patterns, we can find some relief in our data
+exclusion procedures during which we ensured that the general time frame
+and completion rates were not too dissimilar. To illustrate the
+assessment of individual differences, we added a common acculturation
+measurement that was completed in the pre- and post-questionnaire
+\hl{(VIA) as well as ... . We can see that TBA [...].}
