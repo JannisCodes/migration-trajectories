@@ -810,6 +810,22 @@ We can also assess the clusters across any other person-level variable. This out
 
 
 ```{r average feature by cluster, include=FALSE}
+variableLab <- c(
+  "AttitudesDutch" = "Outgroup Attitude",
+  "AttitudesPartner" = "Int: Partner Attitude",
+  "DaytimeNeedFulfillment" = "Need Fulfillment",
+  "exWB" = "Well-Being",
+  "InteractionContextAccidental" = "Int: Accidental",
+  "InteractionContextCooperative" = "Int: Cooperative",
+  "InteractionContextRepresentativeNL" = "Int: Representative",
+  "InteractionContextvoluntary" = "Int: Voluntary",
+  "KeyNeedDueToPartner" = "Int: Need Fulfillment Partner",
+  "KeyNeedFulfillment" = "Int: Need Fulfillment",
+  "qualityMeaning" = "Int: Meaningful",
+  "qualityOverall" = "Int: Quality"
+) %>% enframe(., name = "variable", value = "label")
+
+
 featCluster <- data.frame(ID = as.numeric(names(kmeansOut$cluster)), cluster = kmeansOut$cluster) %>%
   merge(., z_data) %>%
   group_by(cluster) %>%
@@ -822,21 +838,34 @@ featCluster <- data.frame(ID = as.numeric(names(kmeansOut$cluster)), cluster = k
     names_pattern = "(.*)_(.*)"
   ) %>% 
   mutate(
-    lab = variable,
-    variable = gsub("\\_.*", "", lab),
-    feature = gsub("^.*?\\_", "", lab)
+    nam = variable,
+    variable = gsub("\\_.*", "", nam),
+    feature = gsub("^.*?\\_", "", nam)
   ) %>% 
+  merge(., variableLab) %>%
   select(
     cluster,
-    lab,
+    nam,
     variable,
+    label,
     feature,
     everything()
   )
+
+rawCluster <- data.frame(ID = as.numeric(names(kmeansOut$cluster)), cluster = kmeansOut$cluster) %>%
+  merge(., raw_data) %>%
+  select(
+    ID,
+    TIDnum,
+    cluster,
+    any_of(varNamS123)
+  ) %>%
+  reshape2::melt(id.vars = c("cluster", "ID","TIDnum")) %>% 
+  merge(., variableLab)
 ```
 
 ```{r clusterVariableGrid, include=FALSE}
-featCluster %>% 
+clusterVariableGrid <- featCluster %>% 
   ggplot(., aes(x = feature, y = mean, group = cluster, color = as.factor(cluster))) +
   geom_point() +
   geom_line() +
@@ -847,13 +876,14 @@ featCluster %>%
     y = "Standardized Mean",
     color = "Cluster"
   ) +
-  facet_wrap(~ variable) +
+  facet_wrap(~ label) +
   theme_Publication()
+clusterVariableGrid
 ```
 
 ```{r clusterFeatureGrid, include=FALSE}
-featCluster %>% 
-  ggplot(., aes(x = variable, y = mean, group = cluster, color = as.factor(cluster))) +
+clusterFeatureGrid <- featCluster %>% 
+  ggplot(., aes(x = label, y = mean, group = cluster, color = as.factor(cluster))) +
   geom_point() +
   geom_line() +
   #geom_ribbon(aes(ymin = mean-se, ymax = mean+se), alpha = 0.2) +
@@ -864,51 +894,64 @@ featCluster %>%
     y = "Standardized Mean",
     color = "Cluster"
   ) +
-  facet_wrap(~ feature) +
+  facet_wrap(~ feature, ncol=4) +
   theme_Publication()
+clusterFeatureGrid
 ```
 
+```{r clusterFeatVarComb, include=FALSE}
+clusterFeatVarComb <- ggpubr::ggarrange(
+  clusterVariableGrid + theme(axis.title.x = element_blank()),
+  clusterFeatureGrid,
+  ncol = 1,
+  labels = c("(A) Variable Focus", "(B) Feature Focus"),
+  common.legend = TRUE,
+  legend = "bottom",
+  align = "v"
+) 
+ggsave("Figures/clusterFeatVarComb.pdf", clusterFeatVarComb, width = 12, height = 10)
+```
+
+
 ```{r clusterTS, include=FALSE}
-data.frame(ID = as.numeric(names(kmeansOut$cluster)), cluster = kmeansOut$cluster) %>%
-  merge(., raw_data) %>%
-  select(
-    ID,
-    TIDnum,
-    cluster,
-    any_of(varNamS123)
-  ) %>%
-  reshape2::melt(id.vars = c("cluster", "ID","TIDnum")) %>% 
+clusterTS <- rawCluster %>% 
   ggplot(., aes(x=TIDnum, y=value, group=cluster, color=as.factor(cluster))) +
   geom_line(aes(x=TIDnum, y=value, group=ID, color=as.factor(cluster)), alpha=0.05) +
   stat_summary(fun=mean, geom="line") +
-  facet_wrap(~ variable, scales = "free_y") +
+  facet_wrap(~ label, scales = "free_y") +
   labs(
     x = "Time ID",
     y = "Response (Mean Cluster Response Bold)",
     color = "Cluster"
   ) +
   theme_Publication() 
+clusterTS
 ```
 
 ```{r clusterTSTrend, include=FALSE}
-data.frame(ID = as.numeric(names(kmeansOut$cluster)), cluster = kmeansOut$cluster) %>%
-  merge(., raw_data) %>%
-  select(
-    ID,
-    TIDnum,
-    cluster,
-    any_of(varNamS123)
-  ) %>%
-  reshape2::melt(id.vars = c("cluster", "ID","TIDnum")) %>% 
+clusterTSTrend <- rawCluster %>% 
   ggplot(., aes(x=TIDnum, y=value, group=cluster, color=as.factor(cluster))) +
   geom_line(aes(x=TIDnum, y=value, group=ID, color=as.factor(cluster)), alpha=0.05) +
   geom_smooth(aes(group=cluster)) +
   #stat_summary(fun=mean, geom="line") +
-  facet_wrap(~ variable, scales = "free_y") +
+  facet_wrap(~ label, scales = "free_y") +
   labs(
     x = "Time ID",
     y = "Response (Mean Cluster Response Bold)",
     color = "Cluster"
   ) +
   theme_Publication()
+clusterTSTrend
+```
+
+```{r clusterTsComb, include=FALSE}
+clusterTsComb <- ggpubr::ggarrange(
+  clusterTS + theme(axis.title.x = element_blank()),
+  clusterTSTrend,
+  ncol = 1,
+  labels = c("(A) Timepoint Means", "(B) Average Spline Trends"),
+  common.legend = TRUE,
+  legend = "bottom"
+)
+ggsave("Figures/clusterTsComb.pdf", clusterTsComb, width = 12, height = 10)
 ```
