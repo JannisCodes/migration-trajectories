@@ -38,24 +38,24 @@ A.
 
 \subsubsection{Variables}
 
-Included 12 variables that were available across all three studies and
-captured information about the participant's interactions, as well as
-cognitive-, emotional-, and motivational self in relationship with the
-majority group. We chose these two aspects in particular because (1) the
-interaction-specific information exemplified the structural missingness
-issue of modern ESM data and (2) the motivational, emotional, and
-cognitive experience offered a diverse conceptualization of migration
-experience (beyond behavioral measurements) that is becoming more common
-in the literature \citep[][]{Kreienkamp2022d}. Full methodological
-details are available in Online Supplemental Material A, but basic item
-information, descriptives, and correlations are available in
-\tblref{tab:descrWide}.
+We included 12 variables that were available across all three studies
+and captured information about the participant's interactions, as well
+as cognitive-, emotional-, and motivational self in relationship with
+the majority group. We chose these two aspects in particular because (1)
+the interaction-specific information exemplified the structural
+missingness issue of modern ESM data and (2) the motivational,
+emotional, and cognitive experience offered a diverse conceptualization
+of migration experience (beyond behavioral measurements) that is
+becoming more common in the literature \citep[][]{Kreienkamp2022d}. Full
+methodological details are available in Online Supplemental Material A,
+but basic item information, descriptives, and correlations are available
+in \tblref{tab:descrWide}.
 
 \subsection{Analysis and Results}
 
-To perform the main analysis on our selected variables, we follow the
-three extract--reduce--cluster steps in sequential order. For each of
-the steps fully reproducible and annotated code is available in Online
+To perform the main analysis on our selected variables, we showcase the
+extract--reduce--cluster steps in sequential order. For each of the
+steps fully reproducible and annotated code is available in Online
 Supplemental A as well as in the accompanying OSF- and GitHub
 repositories (REFERENCES).
 
@@ -74,26 +74,26 @@ of freedom of an empty GAM spline model (edf) --- the edf summarizes the
 particular because we consider them to be the most broadly applicable
 features. We also extracted the participant's number of completed ESM
 measurements to ensure that the clusters are comparable in that regard.
-We include a function that automatically extracts and prepares all
-features we extracted as well as a large selection of the time series
-feature operationalizations presented in \tblref{tab:esmFeatures} in our
-GitHub repository (see the \texttt{featureExtractor} function).
+We provide an R-function that automatically extracts and prepares a
+large selection of the time series feature operationalizations presented
+in \tblref{tab:esmFeatures} in our GitHub repository (see the
+\texttt{featureExtractor} function).
 
 After the feature extraction, we found that about 1.40\% of the
-extracted features are missing across participants across the 72
-features per participant. This might, for example, happen if
-participants do not have two subsequent measurements with outgroup
-interactions, so that an autocorrelation with lag-1 cannot be calculated
-for the contact-specific variables. The small number of missing values
-indicates that the feature-based approach indeed largely avoids the
-structural missingness issue. The few missing values can however be an
-issue for some feature reduction or feature clustering algorithms. We,
-thus, impute the missing feature values with a single predictive mean
-matching imputation using the MICE library.
+extracted features are missing across the 72 features per participant.
+This might, for example, happen if participants do not have two
+subsequent measurements with outgroup interactions, so that an
+autocorrelation with lag-1 cannot be calculated for the contact-specific
+variables. The small number of missing values indicates that the
+feature-based approach indeed largely avoids the structural missingness
+issue. The few missing values can, however, be an issue for some feature
+reduction or feature clustering algorithms. We, thus, impute the missing
+feature values with a single predictive mean matching imputation using
+the MICE library.
 
 \subsubsection{Feature reduction}
 
-For the feature reduction, we chose the very general
+For the feature reduction, we chose the common
 \textit{principal component analysis} (PCA). Some of the more
 tailor-made feature selection algorithms can be more accurate in
 reducing the feature dimensionality and might retain feature importance
@@ -114,43 +114,43 @@ of the original data (e.g., by finding a vector that maximizes the sum
 of squared distances). The following components will then use the same
 method to iteratively explain the most of the remaining variance while
 also ensuring that the components are linearly uncorrelated. In
-practice, this means that the PCA decomposes the 72 features into 72
+practice, this meant that the PCA decomposed the 72 features into 72
 principal components but now (because of the uncorrelated linear
 transformations) the first few principal components will capture a
 majority of the variance. We can then decide how much information (i.e.,
 variance) we are willing to sacrifice for a reduced dimensionality. A
 common rule of thumb is to use the principal components that jointly
 explain 70--90\% of the original variance (i.e., cumulative percentage
-explained variance). For our illustration we we select the first 27
+explained variance). For our illustration we select the first 27
 principal components that explain 80\% of the variance in the original
 72 features (reducing the dimensionality by 62.50\%). For the extracted
-principal components we save the 72 PC-scores for each participant
+principal components we save the 27 PC-scores for each participant
 (i.e., the participants' coordinates in the reduced dimensional space).
 
 We would like to comment on two practical matters when using principal
 components --- the amount of dimensionality reduction and the
 interpretation of the principal components. As for the expected
 dimensionality reduction, given its methodology, PCAs tend to `work
-better' with (highly) correlated variables. Thus, with a set of very
-homogeneous variables and features users will need less principal
-components to explain a large amount of variance, while a more diverse
-set of variables and features will tend to require more principal
-components to capture the same amount of variance. While our 27
-principal components is still a relatively high number of variables this
-is not surprising as we chose a diverse conceptualization and a diverse
-set of time series features. As for the interpretability, PCA allows
-users to extract information on the meaning of the principal components.
-In particular, because the principal components are linear combination
-of original features, users can extract the relative importance of each
-feature for the extracted principal components (i.e., the eigenvectors).
-While this can be useful in understanding the variance in the original
-data or help with manual feature selection, we use the PCA purely to
-reduce the dimensionality for the clustering step. Instead of relying on
-the principal components, we use the original features of interest to
-interpret the later extracted clusters. We particularly advocate for
-such an approach if the original features were chosen for their
-psychological meaning in understanding the time series and broader
-phenomenon of interest.
+better' at reducing dimensions with (highly) correlated variables. Thus,
+with a set of very homogeneous variables and features users will need
+less principal components to explain a large amount of variance, while a
+more diverse set of variables and features will tend to require more
+principal components to capture the same amount of variance. Our 27
+principal components are still a relatively high number of variables but
+this is not surprising as we chose a diverse conceptualization and a
+diverse set of time series features. As for the interpretability, PCA
+allows users to extract information on the meaning of the principal
+components. In particular, because the principal components are linear
+combination of original features, users can extract the relative
+importance of each feature for the extracted principal components (i.e.,
+the eigenvectors). While this can be useful in understanding the
+variance in the original data or help with manual feature selection, we
+use the PCA purely to reduce the dimensionality for the clustering step.
+Instead of relying on the principal components, we use the original
+features of interest to interpret the later extracted clusters. We
+particularly advocate for such an approach if the original features were
+chosen for their psychological meaning in understanding the time series
+and broader phenomenon of interest.
 
 \subsubsection{Feature clustering}
 
@@ -171,47 +171,46 @@ positions to avoid convergence to a sub-optimal solution (i.e., local
 minima). The k-means analysis assigned 80 participants to cluster 1 and
 76 participants to cluster 2.
 
-In order to interpret the two clusters, we compared the two clusters in
+In order to interpret the two clusters, we compare the two clusters in
 their features as well as in their raw time series. We first inspect the
 clusters with a focus on the included variables (see \fgrref{fig:??}).
 We (1) see that for some variables the features are generally stronger
-in separating the clusters (e.g., how cooperative an interaction was)
-than for other variables (e.g., Attitudes towards the Dutch).
-Additionally, we see that (2) within the variables some features are
-better at distinguishing clusters (e.g., median of well-being) than
-others (e.g., MAC of well-being). We then inspect the clusters with a
-focus on the features (see \fgrref{fig:??}). While this is the same data
-as in the plot above, we can see more clearly that some features are
-better at distinguishing the clusters across variables (e.g., mean and
-median) than others (e.g., auto correlations). This offers some
-information on which features were are most important in understanding
-the two extracted groups.
+in separating the clusters (e.g., `how cooperative an interaction was'
+compared to `attitudes towards the Dutch'). Additionally, we see that
+(2) within the variables some features are better at distinguishing
+clusters (e.g., median of well-being vs.~MAC of well-being). We then
+inspect the clusters with a focus on the features (see \fgrref{fig:??}).
+While this is the same data as for the variable focus, we can see more
+clearly that some features are better at distinguishing the clusters
+across variables (e.g., mean and median compared to auto correlations).
+This offers some information on which features were are most important
+in understanding the two extracted groups.
 
 We can then combine the two focus approaches to assess the developments
 between the two groups more holistically (see \fgrref{fig:??}).
 Immediately striking are the mean differences, where participants in the
-cluster that had more meaningful and fulfilling outgroup interactions
+second cluster had more meaningful and fulfilling outgroup interactions
 also consistently reported more voluntary and cooperative interactions
 but less accidental and involuntary interactions. The same cluster also
 reported an increase in need fulfilling interaction over the 30 day
 period and an increase in interactions that were representative of the
 outgroup. Whereas the other cluster showed a decrease in voluntary,
-cooperative, and positive interactions over the 30 days. The
+cooperative, and positive interactions over the 30 days. This
 `deterioration' cluster also saw a decrease in general need fulfillment
 and experienced well-being over the 30 days (see \fgrref{fig:??}). We
 also see that while interaction representativeness, outgroup attitudes,
 well-being are relatively stable for both clusters, the deteriorating
 cluster also showed substantially higher variablity and instability over
-time.
+time (also see \fgrref{fig:??}).
 
-\Question{\textcolor{cyan}{Talk about early warning signals here? I.e., divergences in means over time could be invesitigated with targeted studies.}}
+\Question{\textcolor{cyan}{Talk about early warning signals here? E.g., divergences in means over time could be invesitigated with targeted studies.}}
 
 We can also assess the clusters across any other person-level variable.
 This out-of-feature comparison allows us to check for data artifacts, as
 well as check whether the developmental clusters are associated with
 important social markers and individual differences. To illustrate
 artifact checks, we added the number of measurements into the comparison
-and find that the participants with more negative experiences on average
+and find that the participants in the detereoration cluster on average
 completed more ESM surveys and reported on more intergroup interactions
 than the cluster with the more positive interactions. While this
 difference could indicate that the clusters might not entirely be
