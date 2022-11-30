@@ -584,6 +584,21 @@ The original studies included `r sum(missS123$pptFull)` participants ($N_{S1}=$ 
 We included 12 variables that were available across all three studies and captured information about the participant's interactions, as well as cognitive-, emotional-, and motivational self in relationship with the majority group. We chose these two aspects in particular because (1) the interaction-specific information exemplified the structural missingness issue of modern ESM data and (2) the motivational, emotional, and cognitive experience offered a diverse conceptualization of migration experience (beyond behavioral measurements) that is becoming more common in the literature \citep[][]{Kreienkamp2022d}. Full methodological details are available in Online Supplemental Material A, but basic item information, descriptives, and correlations are available in \tblref{tab:descrWide}.
 
 ```{r descrWide, include=FALSE}
+variableLab <- c(
+  "AttitudesDutch" = "Outgroup Attitude",
+  "AttitudesPartner" = "Int: Partner Attitude",
+  "DaytimeNeedFulfillment" = "Need Fulfillment",
+  "exWB" = "Well-Being",
+  "InteractionContextAccidental" = "Int: Accidental",
+  "InteractionContextCooperative" = "Int: Cooperative",
+  "InteractionContextRepresentativeNL" = "Int: Representative",
+  "InteractionContextvoluntary" = "Int: Voluntary",
+  "KeyNeedDueToPartner" = "Int: Need Fulfillment Partner",
+  "KeyNeedFulfillment" = "Int: Need Fulfillment",
+  "qualityMeaning" = "Int: Meaningful",
+  "qualityOverall" = "Int: Quality"
+) %>% enframe(., name = "variable", value = "label")
+
 dtAll <- rbind(
   dtS1Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S1") %>%
     mutate(across(!TID & !study, as.numeric)),
@@ -625,17 +640,17 @@ allMlCor <-
       "exWB"
     ),
     labels = c(
-      "Interaction Accidental", 
-      "Interaction Voluntary", 
-      "Interaction Cooperative",
-      "Interaction Representative NL",
-      "Quality Meaningful",
-      "Quality Overall", 
+      "Int: Accidental", 
+      "Int: Voluntary", 
+      "Int: Cooperative",
+      "Int: Representative",
+      "Int: Meaningful",
+      "Int: Quality", 
       "Core Need", 
       "Core Need Due to Partner", 
-      "Attitudes Partner",
+      "Attitude Partner",
       "Daytime Core Need",
-      "Attitudes Dutch",
+      "Outgroup Attitude",
       "Well-being"
     )
   )
