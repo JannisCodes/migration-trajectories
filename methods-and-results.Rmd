@@ -694,16 +694,23 @@ allMlCor %>%
       format = "latex",
       caption = "Correlation Table and Descriptive Statistics",
       booktabs = TRUE,
-      align = c("l", rep("c", ncol(.) - 1))) %>%
+      align = c("l", rep("c", ncol(.) - 1)),
+      col.names = c(
+        #"",
+        "Int: \n Accidental", 
+        "Int: \\newline Voluntary", 
+        "Int: \n Cooperative",
+        "Int: \n Representative",
+        "Int: \n Meaningful",
+        "Int: \n Quality", 
+        "Core Need", 
+        "Core Need \n Due to Partner", 
+        "Attitude \n Partner",
+        "Daytime \n Core Need",
+        "Outgroup \n Attitude",
+        "Well-being"
+      )) %>%
   kable_classic() %>%
-  # add_header_above(
-  #   .,
-  #   c(
-  #     "",
-  #     "Correlations" = ncol(allMlCor),
-  #     "Descriptives" = nrow(allMlCor) - ncol(allMlCor)
-  #   )
-  # ) %>%
   pack_rows("Correlations", 1, ncol(allMlCor)) %>%
   pack_rows("Descriptives", ncol(allMlCor)+1, nrow(allMlCor)) %>%
   footnote(
@@ -716,7 +723,7 @@ allMlCor %>%
   kable_styling(latex_options = "scale_down") %>%
   gsub("\\begin{table}", "\\begin{sidewaystable}\n\\centering", ., fixed = TRUE) %>%
   gsub("\\end{table}", "\\end{sidewaystable}", ., fixed = TRUE) %>%
-  save_kable("Tables/descrWide.tex")
+  save_kable("Tables/descrLong.tex")
 ```
 
 
