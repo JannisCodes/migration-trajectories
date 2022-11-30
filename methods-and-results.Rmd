@@ -698,17 +698,17 @@ allMlCor %>%
       escape = FALSE,
       col.names = c(
         #"",
-        "Int: \\newline Accidental", 
-        "Int: \\newline Voluntary", 
-        "Int: \\newline Cooperative",
-        "Int: \\newline Representative",
-        "Int: \\newline Meaningful",
-        "Int: \\newline Quality", 
+        "\\makecell{Int: \\\\ Accidental}",
+        "\\makecell{Int: \\\\ Voluntary}", 
+        "\\makecell{Int: \\\\ Cooperative}",
+        "\\makecell{Int: \\\\ Representative}",
+        "\\makecell{Int: \\\\ Meaningful}",
+        "\\makecell{Int: \\\\ Quality}", 
         "Core Need", 
-        "Core Need \\newline Due to Partner", 
-        "Attitude \\newline Partner",
-        "Daytime \\newline Core Need",
-        "Outgroup \\newline Attitude",
+        "\\makecell{Core Need \\\\ Due to Partner}", 
+        "\\makecell{Attitude \\\\ Partner}",
+        "\\makecell{Daytime \\\\ Core Need}",
+        "\\makecell{Outgroup \\\\ Attitude}",
         "Well-being"
       )) %>%
   kable_classic() %>%
