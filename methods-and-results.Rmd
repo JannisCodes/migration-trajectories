@@ -684,8 +684,41 @@ allMlCor %>%
   gsub("\\begin{table}", "\\begin{sidewaystable}\n\\centering", ., fixed = TRUE) %>%
   gsub("\\end{table}", "\\end{sidewaystable}", ., fixed = TRUE) %>%
   save_kable("Tables/descrWide.tex")
-
 ```
+
+```{r descrLong, include=FALSE}
+# Sample Descriptives Table --- longer version
+allMlCor %>%
+  as.data.frame %>%
+  kbl(.,
+      format = "latex",
+      caption = "Correlation Table and Descriptive Statistics",
+      booktabs = TRUE,
+      align = c("l", rep("c", ncol(.) - 1))) %>%
+  kable_classic() %>%
+  # add_header_above(
+  #   .,
+  #   c(
+  #     "",
+  #     "Correlations" = ncol(allMlCor),
+  #     "Descriptives" = nrow(allMlCor) - ncol(allMlCor)
+  #   )
+  # ) %>%
+  pack_rows("Correlations", 1, ncol(allMlCor)) %>%
+  pack_rows("Descriptives", ncol(allMlCor)+1, nrow(allMlCor)) %>%
+  footnote(
+    general = c(
+      "Upper triangle: Between-person correlations;",
+      "Lower triangle: Within-person correlations;",
+      "*** p < .001, ** p < .01,  * p < .05"
+    )
+  ) %>%
+  kable_styling(latex_options = "scale_down") %>%
+  gsub("\\begin{table}", "\\begin{sidewaystable}\n\\centering", ., fixed = TRUE) %>%
+  gsub("\\end{table}", "\\end{sidewaystable}", ., fixed = TRUE) %>%
+  save_kable("Tables/descrWide.tex")
+```
+
 
 \subsection{Analysis and Results}
 To perform the main analysis on our selected variables, we showcase the extract--reduce--cluster steps in sequential order. For each of the steps fully reproducible and annotated code is available in Online Supplemental A as well as in the accompanying OSF- and GitHub repositories (REFERENCES). 
