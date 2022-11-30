@@ -909,7 +909,7 @@ clusterFeatVarComb <- ggpubr::ggarrange(
   legend = "bottom",
   align = "v"
 ) 
-ggsave("Figures/clusterFeatVarComb.pdf", clusterFeatVarComb, width = 12, height = 10)
+ggsave("Figures/clusterFeatVarComb.pdf", clusterFeatVarComb, width = 12, height = 12)
 ```
 
 
@@ -953,5 +953,5 @@ clusterTsComb <- ggpubr::ggarrange(
   common.legend = TRUE,
   legend = "bottom"
 )
-ggsave("Figures/clusterTsComb.pdf", clusterTsComb, width = 12, height = 10)
+ggsave("Figures/clusterTsComb.pdf", clusterTsComb, width = 12, height = 12)
 ```
