@@ -865,6 +865,7 @@ We can also assess the clusters across any other person-level variable. This out
 
 
 ```{r average feature by cluster, include=FALSE}
+# CLUSTER VARIABLE LABELS
 variableLab <- c(
   "AttitudesDutch" = "Outgroup Attitude",
   "AttitudesPartner" = "Int: Partner Attitude",
@@ -880,11 +881,120 @@ variableLab <- c(
   "qualityOverall" = "Int: Quality"
 ) %>% enframe(., name = "variable", value = "label")
 
+# ADD VALIDATION VARS:
+validationNam <- c(
+  "gender.pre",
+  "IntGrAnx01.pre",
+  "IntGrAnx02.pre",
+  "IntGrAnx03.pre",
+  "IntGrAnx04.pre",
+  "IntGrAnx05.pre",
+  "IntGrAnx06.pre",
+  "IntGrAnx07R.pre",
+  "IntGrAnx08R.pre",
+  "IntGrAnx09R.pre",
+  "IntGrAnx10R.pre",
+  "IntGrAnx11R.pre",
+  "IntGrAnx12R.pre",
+  "SWL01.pre",
+  "SWL02.pre",
+  "SWL03.pre",
+  "SWL04.pre",
+  "SWL05.pre",
+  "EvDayDiscr01.post",
+  "EvDayDiscr02.post",
+  "EvDayDiscr03.post",
+  "EvDayDiscr04.post",
+  "EvDayDiscr05.post",
+  "EvDayDiscr06.post",
+  "EvDayDiscr07.post",
+  "EvDayDiscr08.post",
+  "EvDayDiscr09.post"
+)
+
+# EXTRACT OUT-OF-CLUSTER VALIDATION VARIABLES
+validation <- rbind(
+  dtS1Red %>% select(any_of(idVars), any_of(validationNam)) %>% mutate(study = "S1", gender.pre = (gender.pre-2)*-1),
+  dtS2Red %>% select(any_of(idVars), any_of(validationNam)) %>% mutate(study = "S2"),
+  dtS3Red %>% select(any_of(idVars), any_of(validationNam)) %>% mutate(study = "S3")
+) %>% 
+  group_by(study, PID) %>%
+  mutate(ID = cur_group_id()) %>%
+  ungroup %>%
+  group_by(study, ID) %>%
+  summarise(
+    gender = gender.pre,
+    IntGrAnx.pre = rowMeans(across(starts_with("IntGrAnx")), na.rm = TRUE),
+    SWL.pre = rowMeans(across(starts_with("SWL")), na.rm = TRUE),
+    EvDayDiscr.post = rowMeans(across(starts_with("EvDayDiscr")), na.rm = TRUE)
+  ) %>%
+  ungroup %>%
+  distinct %>% 
+  mutate(
+    gender.z = scale(gender, scale = TRUE),
+    IntGrAnx.pre.z = scale(IntGrAnx.pre, scale = TRUE),
+    SWL.pre.z = scale(SWL.pre, scale = TRUE),
+    EvDayDiscr.post.z = scale(EvDayDiscr.post, scale = TRUE)
+  ) %>%
+  select(
+    ID,
+    #gender.z,
+    #IntGrAnx.pre.z,
+    #SWL.pre.z,
+    EvDayDiscr.post.z
+  )
+
+val <- validation %>% select(-ID) %>% names
+validationFeature <- validation
+for(feature in variableLab$variable) {
+  validationFeature <- validationFeature %>% bind_cols(., select(., setNames(val, paste(feature, val, sep = "_"))))
+}
+validationFeature <- validationFeature %>% select(-any_of(val))
+# For checking
+# validation <- rbind(
+#   dtS1Red %>% select(any_of(idVars),any_of(validationNam)) %>% mutate(study = "S1"),
+#   dtS2Red %>% select(any_of(idVars),any_of(validationNam)) %>% mutate(study = "S2"),
+#   dtS3Red %>% select(any_of(idVars),any_of(validationNam)) %>% mutate(study = "S3")
+# ) %>%
+#   mutate(
+#     IntGrAnx.pre = rowMeans(across(starts_with("IntGrAnx"))),
+#     SWL.pre = rowMeans(across(starts_with("SWL")))
+#   ) %>% 
+#   group_by(study, PID) %>%
+#   mutate(ID = cur_group_id()) %>%
+#   ungroup
+
+# CLUSTER VARIABLE LABELS
+variableLab <- c(
+  "AttitudesDutch" = "Outgroup Attitude",
+  "AttitudesPartner" = "Int: Partner Attitude",
+  "DaytimeNeedFulfillment" = "Need Fulfillment",
+  "exWB" = "Well-Being",
+  "InteractionContextAccidental" = "Int: Accidental",
+  "InteractionContextCooperative" = "Int: Cooperative",
+  "InteractionContextRepresentativeNL" = "Int: Representative",
+  "InteractionContextvoluntary" = "Int: Voluntary",
+  "KeyNeedDueToPartner" = "Int: Need Fulfillment Partner",
+  "KeyNeedFulfillment" = "Int: Need Fulfillment",
+  "qualityMeaning" = "Int: Meaningful",
+  "qualityOverall" = "Int: Quality"
+) %>% enframe(., name = "variable", value = "label")
+validationLab <- c(
+  "gender.z" = "Val: Gender",
+  "SWL.pre.z" = "Val: Sat. with life",
+  "IntGrAnx.pre.z" = "Val: Intergroup Anxiety",
+  "EvDayDiscr.post.z" = " Discrimination"
+) %>% enframe(., name = "variable", value = "label")
+
+data.frame(ID = as.numeric(names(kmeansOut$cluster)), cluster = kmeansOut$cluster) %>%
+  merge(., validation) %>%
+  group_by(cluster) %>%
+  summarise(across(everything(), list(mean = mean, se = se), na.rm=TRUE))
 
 featCluster <- data.frame(ID = as.numeric(names(kmeansOut$cluster)), cluster = kmeansOut$cluster) %>%
   merge(., z_data) %>%
   group_by(cluster) %>%
-  summarise(across(everything(), list(mean = mean, se = se))) %>%
+  summarise(across(everything(), list(mean = mean, se = se), na.rm=TRUE)) %>%
   ungroup %>% 
   select(-starts_with("ID")) %>%
   pivot_longer(
@@ -898,6 +1008,39 @@ featCluster <- data.frame(ID = as.numeric(names(kmeansOut$cluster)), cluster = k
     feature = gsub("^.*?\\_", "", nam)
   ) %>% 
   merge(., variableLab) %>%
+  select(
+    cluster,
+    nam,
+    variable,
+    label,
+    feature,
+    everything()
+  )
+
+featClusterVal <- data.frame(ID = as.numeric(names(kmeansOut$cluster)), cluster = kmeansOut$cluster) %>%
+  merge(., z_data) %>%
+  merge(., validationFeature) %>%
+  group_by(cluster) %>%
+  summarise(across(everything(), list(mean = mean, se = se), na.rm=TRUE)) %>%
+  ungroup %>% 
+  select(-starts_with("ID")) %>%
+  pivot_longer(
+    cols = -c(cluster),
+    names_to = c("variable", ".value"),
+    names_pattern = "(.*)_(.*)"
+  ) %>% 
+  mutate(
+    nam = variable,
+    variable = gsub("\\_.*", "", nam),
+    feature = gsub("^.*?\\_", "", nam)
+  ) %>% 
+  merge(., variableLab) %>% 
+  mutate(feature = stri_replace_all_regex(
+    feature,
+    pattern=validationLab$variable,
+    replacement=validationLab$label,
+    vectorize=FALSE
+  )) %>% 
   select(
     cluster,
     nam,
@@ -937,7 +1080,7 @@ clusterVariableGrid
 ```
 
 ```{r clusterFeatureGrid, include=FALSE}
-clusterFeatureGrid <- featCluster %>% 
+clusterFeatureGrid <- featClusterVal %>% 
   ggplot(., aes(x = label, y = mean, group = cluster, color = as.factor(cluster))) +
   geom_point() +
   geom_line() +
@@ -949,9 +1092,10 @@ clusterFeatureGrid <- featCluster %>%
     y = "Standardized Mean",
     color = "Cluster"
   ) +
-  facet_wrap(~ feature, ncol=4) +
+  facet_wrap(~ factor(feature, levels = unique(featClusterVal$feature)), ncol=4) +
   theme_Publication()
 clusterFeatureGrid
+
 ```
 
 ```{r clusterFeatVarComb, include=FALSE}
