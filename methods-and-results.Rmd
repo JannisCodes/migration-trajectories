@@ -861,8 +861,7 @@ We can then combine the two focus approaches to assess the developments between 
 
 \Question{\textcolor{cyan}{Talk about early warning signals here? E.g., divergences in means over time could be invesitigated with targeted studies.}}
 
-We can also assess the clusters across any other person-level variable. This out-of-feature comparison allows us to check for data artifacts, as well as check whether the developmental clusters are associated with important social markers and individual differences. To illustrate artifact checks, we added the number of measurements into the comparison and find that the participants in the detereoration cluster on average completed more ESM surveys and reported on more intergroup interactions than the cluster with the more positive interactions. While this difference could indicate that the clusters might not entirely be comparable in the response patterns, we can find some relief in our data exclusion procedures during which we ensured that the general time frame and completion rates were not too dissimilar. To illustrate the assessment of individual differences, we added a common acculturation measurement that was completed in the pre- and post-questionnaire \hl{(VIA) as well as ... . We can see that TBA [...].}
-
+We can also assess the clusters across any other person-level variable. This out-of-feature comparison allows us to check for data artifacts, as well as check whether the developmental clusters are associated with important social markers and individual differences. To illustrate artifact checks, we added the number of measurements into the comparison and find that the participants in the detereoration cluster on average completed more ESM surveys and reported on more intergroup interactions than the cluster with the more positive interactions (see \fgrref[B]{fig:clusterTs}). While this difference could indicate that the clusters might not entirely be comparable in the response patterns, we can find some relief in our data exclusion procedures during which we ensured that the general time frame and completion rates were not too dissimilar. To illustrate the utility of individual differences, we compare the two samples in terms of the participants' self-reported discrimination experiences in the Netherlands (measured during the post-measurement). \fgrref[B]{fig:clusterTs} illustrates that participants in the deteriorating cluster reported substantially higher levels of everyday discrimination. Thus, both intensive longitudinal and cross-sectional variables that were not included in the original clustering step can be used to explore and understand the cluster differences in more detail.
 
 ```{r average feature by cluster, include=FALSE}
 # CLUSTER VARIABLE LABELS
@@ -943,26 +942,13 @@ validation <- rbind(
     #SWL.pre.z,
     EvDayDiscr.post.z
   )
-
 val <- validation %>% select(-ID) %>% names
 validationFeature <- validation
 for(feature in variableLab$variable) {
   validationFeature <- validationFeature %>% bind_cols(., select(., setNames(val, paste(feature, val, sep = "_"))))
 }
 validationFeature <- validationFeature %>% select(-any_of(val))
-# For checking
-# validation <- rbind(
-#   dtS1Red %>% select(any_of(idVars),any_of(validationNam)) %>% mutate(study = "S1"),
-#   dtS2Red %>% select(any_of(idVars),any_of(validationNam)) %>% mutate(study = "S2"),
-#   dtS3Red %>% select(any_of(idVars),any_of(validationNam)) %>% mutate(study = "S3")
-# ) %>%
-#   mutate(
-#     IntGrAnx.pre = rowMeans(across(starts_with("IntGrAnx"))),
-#     SWL.pre = rowMeans(across(starts_with("SWL")))
-#   ) %>% 
-#   group_by(study, PID) %>%
-#   mutate(ID = cur_group_id()) %>%
-#   ungroup
+
 
 # CLUSTER VARIABLE LABELS
 variableLab <- c(
@@ -985,11 +971,6 @@ validationLab <- c(
   "IntGrAnx.pre.z" = "Val: Intergroup Anxiety",
   "EvDayDiscr.post.z" = " Discrimination"
 ) %>% enframe(., name = "variable", value = "label")
-
-data.frame(ID = as.numeric(names(kmeansOut$cluster)), cluster = kmeansOut$cluster) %>%
-  merge(., validation) %>%
-  group_by(cluster) %>%
-  summarise(across(everything(), list(mean = mean, se = se), na.rm=TRUE))
 
 featCluster <- data.frame(ID = as.numeric(names(kmeansOut$cluster)), cluster = kmeansOut$cluster) %>%
   merge(., z_data) %>%
@@ -1095,7 +1076,6 @@ clusterFeatureGrid <- featClusterVal %>%
   facet_wrap(~ factor(feature, levels = unique(featClusterVal$feature)), ncol=4) +
   theme_Publication()
 clusterFeatureGrid
-
 ```
 
 ```{r clusterFeatVarComb, include=FALSE}
