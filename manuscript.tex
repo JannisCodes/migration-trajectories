@@ -98,6 +98,9 @@ breaklinks=true,
 \newlength{\badgeheight}
 \setlength{\badgeheight}{1em}
 
+% prevent multipage footnotes
+\interfootnotelinepenalty=10000
+
 % language settings
 \DeclareLanguageMapping{american}{american-apa}
 
@@ -105,8 +108,8 @@ breaklinks=true,
 \addbibresource{referencesZotero.bib}
 
 % Title and header
-\title{Describe and Explore: Using feature-based time-series clustering to understand modern intensive longitudinal data (Working Title)}
-\shorttitle{Migration Experience Trajectories}
+\title{Describe and Explore: Using feature-based time series clustering to understand modern intensive longitudinal data}
+\shorttitle{feature-based time series clustering}
 
 % Authors
 \author[*,1,3]{Jannis Kreienkamp}
@@ -119,7 +122,7 @@ breaklinks=true,
 
 \affil[1]{University of Groningen, Department of Psychology}
 \affil[2]{Hiroshima University, Graduate School of Advanced Science and Engineering}
-\affil[3]{Author order TBD (currently in first name alphabetical order)}
+\affil[3]{Author order TBD}
 
 \authornote{   
    \addORCIDlink{* Jannis Kreienkamp}{0000-0002-1831-5604}\\
@@ -138,20 +141,17 @@ Correspondence concerning this article should be addressed to Jannis Kreienkamp,
 
 % Abstract
 \abstract{
-Abstract to be written.
-
-\noindent\textbf{Public significance statement}: To be written.
+Psychological time series data has not only become more common but also more diverse and complex. Researchers and practitioners are more and more interested in non-stationary developmental patterns of multivariate concepts, across different time scales, while contextualized measurements bring about issues of non-imputable missingness. At the same time, clustering analyses offer the potential of reducing these complexities to important and meaningful patterns. Such procedures could aid researchers and practitioners in describing and exploring patterns across participants and could promote the creation of more embedded theories and interventions. In this manuscript, we propose feature-based time series clustering as a flexible, transparent, and well-grounded clustering approach that addresses the growing dimensionality, missingness, and time scale challenges. We introduce the individual feature extraction, -reduction, and -clustering steps and illustrate their utility with an empirical example. We show that time series features such as means, autocorrelations, and linear trends are not only familiar to psychological researchers but are also conceptually meaningful in interpreting time series clusters. Beyond the conceptual and methodological introduction, we also provide practical algorithm overviews and readily available code for data preparation, analysis, and interpretation.
 
 }
 
 \keywords{
-    TBD\\
+    time series analysis, feature-based clustering, intensive longitudinal data, ESM\\
     \vspace{1em}
-    \textit{Open Science Practices [?]:}
-    \noindent \href{https://osf.io}{\includegraphics[height=\badgeheight]{assets/open-badges-small/registration-color.png}} Preregistration, 
+    \textit{Open Science Practices:}
     \href{https://osf.io}{\includegraphics[height=\badgeheight]{assets/open-badges-small/material-color.png}} Open Materials, 
-    \href{https://osf.io}{\includegraphics[height=\badgeheight]{assets/open-badges-small/data-color.png}} Open Data, \break
-    \href{https://osf.io}{\includegraphics[height=\badgeheight]{assets/open-badges-small/code-color.png}} Open Code, 
+    \href{https://osf.io}{\includegraphics[height=\badgeheight]{assets/open-badges-small/data-color.png}} Open Data,
+    \href{https://osf.io}{\includegraphics[height=\badgeheight]{assets/open-badges-small/code-color.png}} Open Code, \break
     \href{https://osf.io}{\includegraphics[height=\badgeheight]{assets/open-badges-small/supplements-color.png}} Open Supplements
 }
 
@@ -292,26 +292,24 @@ This move toward a broader application of the experience-sampling method, howeve
 While generally speaking analytical methods for ESM data have become more readily available \citep[e.g.,][]{ODonnell2021}, flexible descriptive and exploratory analyses have largely been neglected and remain crucially understudied within the experience sampling literature. 
 
 % Problem Illustration Paragraph
-Importantly, the understudied `describe and explore' analyses are not only important for contextualizing inferential model tests, but are powerful methods for theoretical and applied users in their own regard. Extensive longitudinal data sets come with new forms of heterogeneity, where researchers have to consider differences across large numbers of participants, time points, and variables. Data-driven models not only describe and summarize this complex data but can help us understand the data by uncovering patterns that might not be detectable otherwise. As an example, understanding how people differ in their trajectories can be crucial in understanding adaptive and maladaptive patterns. By identifying and contextualizing distinct trajectories, we might for example determine which situation- or person-specific differences discern positive from negative developments. Outcomes from such an approach might inform both practical early-warning signals as well as academic theory-building efforts. There is, thus, a clear need to assess the utility of data-driven/bottom-up analysis procedures that are flexible enough to address the growing variety of intensive longitudinal psychological data. 
+Importantly, the understudied `describe and explore' analyses are not only important for contextualizing inferential model tests, but are powerful methods for theoretical and applied users in their own regard. Extensive longitudinal data sets come with new forms of heterogeneity, where researchers have to consider differences across large numbers of participants, time points, and variables. Data-driven models not only describe and summarize this complex data but can help us understand the data by uncovering patterns that might not be detectable otherwise. As an example, understanding how people differ in their trajectories can be crucial in understanding adaptive and maladaptive patterns. By identifying and contextualizing distinct trajectories, we might for example determine which situation- or person-specific differences discern positive from negative developments. Outcomes from such an approach might inform both practical early-warning signals as well as academic theory-building efforts. There is, thus, a clear need to assess the utility of data-driven analysis procedures that are flexible enough to address the growing variety of intensive longitudinal psychological data. 
 
 % Aim / Solution / Proposal Paragraph:
 In this article, we propose to look at recent developments within the wider time-series clustering literature to identify an exploratory data analysis that is flexible enough to apply to the growing variety of ESM data. In particular, we propose that feature-based clustering is ideally suited because it offers a flexible variety of validated and intuitive components while also allowing for adequate control by the researcher. To showcase the utility of this technique, we apply feature-based clustering to a set of three ESM studies with complex conceptualizations and missingness patterns. 
 
 \section{Modern ESM Data}
-\centerline{<--- \textit{still horrible, probably restructure section} --->}
+Two important developments within the psychological sciences have been a shift towards more comprehensive assessments of psychological phenomena and a growing contextualization of intensive longitudinal real-life data. Multivariate experience-sampling approaches allow researchers to test theories more exhaustively and help build a more embedded understanding of human experience processes. However, such data also deviates from past intensive longitudinal data sets that have focused on psychological states that are more homogeneous in their developmental characteristics. It, thus, makes sense to briefly consider which challenges modern ESM data introduce and what qualities a present-day clustering analysis should possess. We particularly highlight issues of dimensionality, missingness, and time scales within contemporary ESM data. 
 
-Two important developments within the psychological sciences have been (1) a shift towards more comprehensive assessments of psychological phenomena and (2) a growing focus on intensive longitudinal real-life data. Multivariate experience-sampling approaches allow researchers to test theories more exhaustively and help build a more embedded understanding of human experience processes. However, such data also deviates from past intensive longitudinal data sets that have focused on psychological states that are more homogeneous in their developmental characteristics. In particular, the new applications of ESM tend to bring new challenges for data dimensionality, -missingness, and time scales. 
+Concerning dimensionality issues, especially more abstract psychological experiences often need a wider variety of measurements to be captured adequately. Today, few clinical conditions are captured with a single symptom measure, emotions are rarely assessed in isolation, and socio-cultural experiences are now widely considered to be multimodal. This also means that modern analysis techniques increasingly need be able to accommodate an increased focus on multivariate developments. The recent rise in psychological network models has highlighted this need for more multivariate outcome measurements \citep[e.g.,][]{decancq2013}. Beyond the capability to assess multivariate developments, an increased number of variables also heightens the computational load for model estimations and, especially when the number of variables and measurements compounds, models may not converge --- an issue sometimes referred to as the dimensionality curse. A modern descriptive and exploratory analysis technique should consequently be able to summarize and structure multivariate phenomena without running into computational load issues.
 
-Concerning dimensionality issues, especially more abstract psychological experiences often need a wider variety of measurements to be captured adequately. Today, few clinical conditions are captured with a single symptom measure, emotions are rarely assessed in isolation, and socio-cultural experiences are now widely considered to be multimodal. This also means that modern analysis techniques increasingly need be able to accommodate an increased focus on multivariate developments. The recent rise in psychological network models has highlighted this need for more multivariate outcome measurements \citep[e.g.,][]{decancq2013}. Additionally, the increased number of variables also heightens the computational load for model estimations and, especially when the number of variables and measurements compounds, models may not converge --- an issue sometimes referred to as the dimensionality curse. A modern descriptive and exploratory analysis technique should consequently be able to summarize and structure multivariate phenomena without running into computational load issues.
+The push for more contextualized data also presents two key issues with missing data. More event-based assessments tend to (1) encounter issues when models require time intervals between measurements to be identical (i.e., equidistant measurements) and an increased focus on context-specific phenomena has (2) lead to issues when data is only available under certain conditions, including event-based questions (i.e., structurally missing data). Smaller issues of non-equidistant data can be avoided with transformations \citep[e.g., dynamic time warping,][]{berndt1994} or newer modeling procedures \citep[e.g., continuous-time models][]{dehaan-rietdijk2017} but for many analyses, including many cluster approaches, non-equidistant measurements remain a prevalent issue. Structural missingness remains an even more strenuous challenge. Structural missingness occurs when data is missing because it logically cannot be collected. It would not be sensible to measure the quality of an event for participants that did not experience the event. This type of missingness particular becomes an issue when researchers are interested in how two concepts co-develop and one of the concepts has structural missingness under certain conditions. The most common practice for structurally missing data is to either exclude the variable or any measurement that has no structurally missing data \citep[e.g.,][]{lavori2008}\footnote{This is the case because the most commonly used models require complete data \citep{schafer2002} and structurally missing data cannot be imputed as it logically does not exist \citep[e.g.,][]{lavori2008}.} --- neither option suits a research question that includes a developmental relationship between the two variables. In short, adequate descriptive approaches should be able to deal with non-equidistant and structurally missing data in order to address modern ESM data.
 
-The push for more contextualized models also presents new issues with missing data. More event-based assessments tend to encounter issues when models require time intervals between measurements to be identical (i.e., equidistant measurements) and an increased focus on context-specific phenomena has lead to issues when data is only available under certain conditions, including follow-up questions (i.e., structurally missing data). Smaller issues of non-equidistant data can be avoided with transformations \citep[e.g., dynamic time warping,][]{berndt1994} or newer modeling procedures \citep[e.g., continuous-time models][]{dehaan-rietdijk2017} but it's prevalence is indicative of the structure of real-world issues researchers seek to investigate. Structural missingness remains a much more strenuous challenge. Many of the most commonly used models need complete data \citep{schafer2002} and structurally missing data cannot be imputed as it logically does not exist \citep[e.g.,][]{lavori2008}. This type of missingness becomes a colossal issue when researchers are interested in how two things co-develop and one of the concepts has structural missingness under certain conditions. The most common practice for structurally missing data is to either exclude the variable or any measurement that has no structurally missing data \citep[e.g.,][]{lavori2008} --- neither option suits a research question that includes a developmental relationship between the two variables. In short, adequate descriptive approaches should be able to deal with non-equidistant and structurally missing data in order to address modern ESM data.
-
-Finally, both the push for more multivariate conceptualizations and contextualized measurements have highlighted issues with how temporal developments are conceptualized. Firstly, researchers are increasingly interested in how mean levels of variables change over time (i.e., non-stationary), such trend data is often assumed to be non-linear, and with the increased focus on more diverse conceptualizations researchers are interested in relationships between variables that change on fundamentally different time scales. Many of the commonly used analyses for ESM data are stationary lagged regression models that assume stable means and variances over time (incl., vector autoregressive models, dynamic structural equation models, autoregressive integrated moving average models, and cross-lagged panel analyses) or use basic trajectory models (e.g., mixed effects models, spline regression models, and latent growth curve modeling). And even fewer analysis techniques allow for substantially different time scales between variables. A modern descriptive and exploratory methodology should thus be able to flexibly capture and comparable non-stationary and non-linear trends, also across different time scales.
+Finally, new approaches to ESM data have highlighted two main issues with how temporal developments are conceptualized. Researchers are (1) increasingly interested in how mean-levels of variables change over time, often in a non-linear fashion (i.e., non-stationary), and (2) there is increased interest in relationships between variables that change on fundamentally different time scales. Many of the commonly used analyses for ESM data assume that means and variances are stable over time\footnote{These models include the popular vector autoregressive models, dynamic structural equation models, autoregressive integrated moving average models, and cross-lagged panel analyses. Notable time-varying adaption include \citet{haslbeck2021a}.}. While several trend modeling methodologies exist (e.g., spline regression models, latent growth curve modeling), their availability is limited and they seldomly extend into the descriptive realm. Moreover, among the approaches that allow for means to change, even fewer allow for substantially different time scales between variables, which can be essential in understanding how daily experiences relate to slower psychological phenomena that develop over days, weeks, and months \citep[e.g., see][]{Ram2014}. A modern descriptive and exploratory methodology, including a clustering approach, should thus be able to flexibly capture and compare non-stationary and non-linear trends, also across different time scales.
 
 \section{Time Series Clustering}
-One promising approach to describing and exploring time-series data has been the idea of structuring data using clustering analyses. Clustering seeks to organize data into groups that are maximally different from one another while minimizing differences within the groups. Time-series clustering has been extremely common in other empirical fields, including analyses of astronomical, meteorological, and aviation pathways, biological and medical developments, as well as energy and finance patterns \citep{Aghabozorgi2015}. But also for psychological data time-series clustering is not entirely novel \citep[e.g.,][]{ernst2021}. However, most clustering introduced for psychological data has faced the dimensionality-, missingness-, and time scale issues described above.
+One promising approach to describing and exploring time-series data has been the idea of structuring data using clustering analyses. Clustering seeks to organize data into groups that are maximally different from one another while minimizing differences within the groups. Time-series clustering has been extremely common in other empirical fields, including analyses of astronomical, meteorological, and aviation pathways, biological and medical developments, as well as energy and finance patterns \citep{Aghabozorgi2015}. But also for psychological data, time-series clustering is not entirely novel \citep[e.g.,][]{ernst2021}. However, most clustering introduced for psychological data has faced the dimensionality-, missingness-, and time scale issues described above.
 
-Many of the common time-series clustering algorithms used today have been developed within the machine learning literature and have commonly been separated into three different approaches: (1) shape-based, (2) model-based, and (3) feature-based clustering \citep{hautamaki2008, liao2005}. Shape-based clustering analyses use the raw time series and seek to match time series by non-linearly stretching and contracting the time axes. The other two approaches do not use the raw time series directly but convert the data first. The model-based clustering has been the most commonly used method within the psychological literature and clusters the parameters of a parametric model fitted for each participant \citep[e.g.,][]{ernst2021}. The flexibility of such clustering is restricted to the assumptions of the model used, so that stationary models, for example, do not capture non-stationary data well. Finally, feature-based clustering analyses are the most flexible, as they allow users to summarize the time series data with a wide variety of features that capture the data characteristics of interest. The participants are then clustered on basis of the extracted features. To showcase the flexibility of this approach, a commonly used software package for this approach allows users to extract a total of 794 time series features \citep[][]{christ2018}. Time series features can be chosen by the user based on their research question and can, for example, include the mean and standard deviation of a time series, but also linear and non-linear trends, inertia-related features such as auto-correlations, or the stability of the time series (e.g., mean absolute change). Given the flexibility of the feature-based approach, users are able to apply the analysis across multivariate data, feature extraction mitigates issues of non-equidistant and structurally missing data, and the features can capture and compare across non-linear trends at different time scales.
+Many of the common time-series clustering algorithms used today have been developed within the machine learning literature and have commonly been separated into three different approaches: (1) shape-based, (2) model-based, and (3) feature-based clustering \citep{hautamaki2008, liao2005}. Shape-based clustering analyses use the raw time series and seek to match time series by non-linearly stretching and contracting the time axes. The other two approaches do not use the raw time series directly but convert the data first. The model-based clustering has been the most commonly used method within the psychological literature and clusters the parameters of a parametric model fitted for each participant \citep[e.g.,][]{ernst2021}. The flexibility of such clustering is restricted to the assumptions of the model used, so that stationary models, for example, do not capture non-stationary data well. Finally, feature-based clustering analyses are the most flexible, as they allow users to summarize the time series data with a wide variety of features that capture the data characteristics of interest. The participants are then clustered on basis of the extracted features. As an illustration of the flexibility of this approach, a commonly used software package for this approach allows users to extract a total of 794 time series features \citep[][]{christ2018}. Time series features can be chosen by the user based on their research question and can, for example, include the mean and standard deviation of a time series, but also linear and non-linear trends, inertia-related features such as auto-correlations, or the stability of the time series (e.g., mean absolute change). Given the flexibility of the feature-based approach, users are able to apply the analysis across multivariate data, feature extraction mitigates issues of non-equidistant and structurally missing data, and the features can capture and compare across non-linear trends at different time scales.
 
 \section{Feature-based Time Series Clustering}
 
@@ -365,30 +363,18 @@ To illustrate common use cases of feature-based time series clustering with psyc
 
 \section{Discussion}
 % aims re-iterated
-To be written.
+We sought to introduce a flexible and transparent analysis that aids researchers in describing, exploring, and understanding psychological time series data. Such an analysis needs to address the demands of the growing variety of ESM research. In particular, modern describe- and explore analyses should be able to deal with high dimensionality, structural missingness, and diverse time-varying developments. We have argued that feature-based time series clustering is one option that meets this challenge. 
 
-\subsection{Limitations}
-To be written.
+We have methodologically deconstructed the feature extraction, feature reduction and feature clustering steps and offered methodological as well as conceptual examples for each step. Within this step-wise approach, our article shows that feature-based clustering offers an excellent fit for psychological research practice as both the features as well as the analysis steps are well-established within the field and statistical packages are readily available. Time series features (such as means or linear trends) are not only easy to extract but also hold conceptual meaning for psychological data and can be chosen to address specific research questions (also see \tblref{tab:esmFeatures}). 
 
-\subsection{Implications}
-To be written.
+To illustrate the practical utility of the approach, we applied the method to real-life empirical data with diverse conceptualizations, missingness, and nonlinear trends. We make available the full code, custom functions, and illustrations to aid the approachability of the method. In the interpretation step we also show how the clusters can be compared across the original feature set as well as other meaningful situational and person-specific differences (e.g., see \fgrref{fig:clusterFeatVar}). We also find that for our example of migration experiences, the method was useful in discerning adaptive from more stressful experiences and helped to contextualize the diverging experiences.
 
+As with any statistical method, feature-based time series clustering is not without limitations. 
+In particular, feature-based clustering has both a usability as well as robustness limitation in its multiple steps. In terms of convenience, each of the three steps requires users to make an informed decision about the choice of method and algorithm. These additional steps of decision-making and transparency heighten the initial barrier to entry. We hope that our empirical illustration offers a relatively generalizable procedure that showcases the ease of use but clustering unfortunately does not offer a universal one-size-fits-all solution. 
 
-\subsection{Conclusion}
-To be written.
+In terms of methodological robustness, the variety of methods in each of the steps also brings with it the potential uncomparable results across methods. While the variety and diversity of methods is helpful in finding options even for more complex types of data, different algorithms often offer different results. And even when patterns produce robust clustering solutions across algorithms, individual methods might still have their ideosyncratic shortcomings and might, for example, be sensitive to outliers. 
 
-
-
-
-\section{Notes}
-
-\citep[e.g., see][]{Ram2014} [Processes Across Multiple Time-Scales]
-
-"The goal of clustering is to identify structure in an unlabeled data set by objectively organizing data into homogeneous groups where the within-group-object dissimilarity is minimized and the between-group-object dissimilarity is maximized." --- \citep[][p.1857]{liao2005}
-
-\subsection{Migration Parts}
-In the example of the migration experiences, researchers might for example be interested in how well-being develops in relations the quality of interactions with the majority group. Because rating of interaction quality are only possible when an interaction actually happened, one cannot impute interaction quality ratings for measurements that did not include an interaction. 
-
+Notwithstanding the limitations, we believe that feature-based clustering offers an exciting new potential for psychological time series. Across a variety of scientific fields, feature-based time series clustering has been valued for its structuring and simplifying utilities. Within the growing field of psychological time series, modern ESM data is becoming increasingly more complex in terms of participants, variables, and time points. Feature-based time series clusters can aid in reducing these complexities to important and meaningful patterns, an increasingly important task for researchers and practitioners. 
 
 
 % Tables
@@ -427,7 +413,7 @@ In the example of the migration experiences, researchers might for example be in
   \label{fig:clusterFeatVar}
   \centering\includegraphics[width=\textwidth]{figures/clusterFeatVarComb.pdf}
   \caption*{Note: \\
-  same data}
+  Within the ``(B) Feature Focus'' subplot, the `n' and `Discrimination' comparison variables were not part of the original time series clustering.}
 \end{figure*}
 
 \begin{figure*}[hbtp]
@@ -435,7 +421,7 @@ In the example of the migration experiences, researchers might for example be in
   \label{fig:clusterTs}
   \centering\includegraphics[width=\textwidth]{figures/clusterTsComb.pdf}
   \caption*{Note: \\
-  same data}
+  Subplot (A) displays the variable cluster means at every measurement occasion. Subplot (B) shows the GAM spline for each cluster across the measurement occasions.}
 \end{figure*}
 
 \printbibliography
