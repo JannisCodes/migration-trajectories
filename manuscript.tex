@@ -141,7 +141,7 @@ Correspondence concerning this article should be addressed to Jannis Kreienkamp,
 
 % Abstract
 \abstract{
-Psychological time series data has not only become more common but also more diverse and complex. Researchers and practitioners are more and more interested in non-stationary developmental patterns of multivariate concepts, across different time scales, while contextualized measurements bring about issues of non-imputable missingness. At the same time, clustering analyses offer the potential of reducing these complexities to important and meaningful patterns. Such procedures could aid researchers and practitioners in describing and exploring patterns across participants and could promote the creation of more embedded theories and interventions. In this manuscript, we propose feature-based time series clustering as a flexible, transparent, and well-grounded clustering approach that addresses the growing dimensionality, missingness, and time scale challenges. We introduce the individual feature extraction, -reduction, and -clustering steps and illustrate their utility with an empirical example. We show that time series features such as means, autocorrelations, and linear trends are not only familiar to psychological researchers but are also conceptually meaningful in interpreting time series clusters. Beyond the conceptual and methodological introduction, we also provide practical algorithm overviews and readily available code for data preparation, analysis, and interpretation.
+Psychological time series data has not only become more common but also more diverse and complex. Researchers and practitioners are more and more interested in non-stationary developmental patterns of multivariate concepts, across different time scales, while contextualized measurements bring about issues of non-imputable missingness. At the same time, clustering analyses offer the potential of reducing these complexities to important and meaningful patterns. Such procedures could aid researchers and practitioners in describing and exploring patterns across participants and could promote the creation of more embedded theories and interventions. In this manuscript, we propose feature-based time series clustering as a flexible, transparent, and well-grounded clustering approach that addresses the growing challenges of dimensionality, missingness, and time scales. We introduce the individual feature extraction, -reduction, and -clustering steps and illustrate their utility with an empirical example. We show that time series features such as means, autocorrelations, and linear trends are not only familiar to psychological researchers but are also conceptually meaningful in interpreting time series clusters. Beyond the conceptual and methodological introduction, we also provide practical algorithm overviews and readily available code for data preparation, analysis, and interpretation.
 
 }
 
@@ -285,6 +285,39 @@ Psychological time series data has not only become more common but also more div
 \vspace{1em}
 \end{mdframed}
 
+Recent years have seen a striking increase in the number and variety of research studies that follow participants' everyday experiences and collect real-world psychological time series \citep[e.g., experience sampling method (ESM),][; also see \fgrref{fig:ScopusEsm}]{hamaker2017}. These extensive longitudinal data sets come with new forms of heterogeneity, where researchers have to consider differences across large numbers of participants, time points, and variables \citep[e.g.,][]{cattell1966, Monden2015}. Oftentimes, however, researchers are interested in precisely this complexity and wish to understand how people differ in their temporal developments across a number of distinct variables \citep[i.e., understand the structure of between-subject differences of within-participant dynamics; e.g.,][]{ernst2021}. One relatively recent addition to the toolbox of ESM researchers has been time series clustering --- the idea of grouping participants based on the characteristics of their time series dynamics \citep{ariens2020}.
+
+Clustering holds a number of important prospects as it seeks to organize data into groups that maximizes differences between groups while minimizing differences within the groups. For time series clustering this means that a participant's dynamics of some variable(s) have maximum similarity with the dynamics of other individuals in the same group, and minimum similarity with individuals in other groups \citep[e.g.,][]{liao2005}. As such, time series clustering has a number of methodological and empirical use cases. Methodologically, comparing person-specific dynamics between participants allows researchers to investigate whether processes on the individual level generalize to the interindividual level \citep[i.e., ergodicity; e.g.,][]{adolf2019, molenaar2004}. Similarly, clusters might allow researchers to identify cases where the meaning of measurements might have changed over time \citep[i.e., measurement invariance; e.g., ][]{adolf2014}. For a more detailed of these benefits, see \citet{ernst2021}. 
+
+benefits of exploratory separation
+\begin{itemize}[nosep]
+    \item with extremely large data sets models can be estimated on a group level rather than for every individual (REFERENCE for TS clustering as preparation step)
+    \item describe and explore data with reducing complexity: by extracting structure between participants
+    \item phenomena detection \citep[i.e., extract abstract functional principles from phenomena][]{eronen2021a}. Important for building theories and practical interventions.
+    \item check of or avoid ergodicity \citep{adolf2019, molenaar2004} and measurement invariance \citep{adolf2014}
+\end{itemize}
+
+Time-series clustering has been extremely common in other empirical fields, including analyses of astronomical, meteorological, and aviation pathways, biological and medical developments, as well as energy and finance patterns \citep{Aghabozorgi2015}. But also for psychological data, time-series clustering has recently become more common \citep[e.g.,][]{ernst2021}.
+
+Thus far the most common clustering approach for ESM data has been to group individuals based on their model parameters \citep[e.g., intercepts and slopes from vector autoregression models (VAR),][]{ariens2020}. While these model parameters are familiar to researchers in the field, the model-based approach has a number of important shortcomings. Computationally, the number of parameters compounds with increases in variables and lag orders, which tends to result in efficiency and accuracy reduction for most clustering algorithms and is sometimes referred to as the dimensionality curse \citep{altman2018}\footnote{As an illustration of this scalability issue, consider a VAR model of 8 variables that includes the first three lags (i.e., VAR(3)). For each of the 8 variables we would have 25 parameters --- one intercept and 24 slopes (8 variables * 3 lags each). That compounds to a total of 200 parameters per person (8 variables * 25 parameters).}. But more importantly, using the model parameters means that the clustering is restricted by the assumptions and limitations of the statistical model. To take the VAR model as an example, the model assumes that the time intervals between measurements are identical (i.e., equidistant measurements), it does not allow for missing values, and it assumes that the means as well variances of the variables do not change over time \citep[i.e., stationarity assumption;][]{lutkepohl2005}. 
+
+These shortcomings however stand in sharp contrast with common research interests in the field and the types of data researchers commonly collect. 
+Detail on multidimensional nonequidistant structurally missing nonlinear trends. 
+
+we thus need a way of dealing with these types of data. 
+While some of these issues can by avoided by transforming the data \citep[e.g., detrending;][]{salles2019} or switching to different time series models \citep[e.g., time-varying VAR;][]{bringmann2018b}, a more flexible alternative would be to expand the clustering inputs to other time series characteristics of interest beyond model parameters. 
+
+Importantly, model intercepts and slopes are not the only way in which researchers conceptualize and describe time series. 
+
+we propose, ...
+
+
+-----
+
+Additionally, ``scalability problems, and can lead to performance reductions when the clusters are close to each other''
+
+-----
+\newpage
 % Relevance Pragraph and issue
 Recent years have seen a striking increase in the number and variety of research studies using experience sampling data \citep[][; also see \fgrref{fig:ScopusEsm}]{hamaker2017}. 
 With the increased availability of technologies to easily collect large amounts of experience sampling data using mobile devices \citep[e.g.,][]{Keil2020} and web-based applications \citep[e.g.,][]{Arslan2020}, the experience-sampling method (ESM) has been applied to a host of new types of psychological data. 
@@ -347,7 +380,7 @@ The second general approach to the dimensionality curse has been feature project
 \subsection{Feature clustering}
 For feature-based time-series clustering, the main aim is to organize participants into groups so that the features of participants within a group are as similar as possible, while the features of people in different groups are as different as possible. The crux of clustering is, thus, to have clearly defined and effective measurements of (dis)similarity. Most of the clustering algorithms used today use some form of distance measurement to optimize group assignment (or similarity measurement for qualitative features). While others have produced excellent overviews of the many clustering approaches available \citep[e.g.,][]{xu2015}, we will briefly introduce some of the more readily available approaches suitable for most time series feature data. The well-established and readily available clustering approaches can, broadly speaking, be categorized as based on (1) centroids, (2) distributions, (3) density, (4) hierarchies, or (5) a combination thereof (see \tblref{tab:clusterApproaches}). 
 
-Each of these approaches can be a valuable clustering approach for time series feature data and users will usually have to make an informed decision based on the structure of their data as well as an appropriate weighing of accuracy and efficiency. As an example, under ideal conditions, all approaches are likely to suggest very similar clusters. However, when the shapes of clusters, for example, become more complex in a multi-dimensional space, density-based or hierarchy-based approaches that allow for more bottom-up clustering are likely to be more accurate. Yet, with higher numbers of participants and features, both density- and hierarchy-based approaches may perform less well and the more efficient centroid-based methods might be more effective. Similarly, several of the proposed time series features are statics that are generated from Gaussian distributions and a distribution-based algorithm might be ideally suited to separate such distributions. Yet, in cases where mis-specifications are costly, a method with fewer assumptions might be more advisable. 
+Each of these approaches can be a valuable clustering approach for time series feature data and users will usually have to make an informed decision based on the structure of their data as well as an appropriate weighing of accuracy and efficiency. As an example, under ideal conditions, all approaches are likely to suggest very similar clusters. However, when the shapes of clusters, for example, become more complex in a multi-dimensional space, density-based or hierarchy-based approaches that allow for more bottom-up clustering are likely to be more accurate. Yet, with higher numbers of participants and features, both density- and hierarchy-based approaches may perform less well and the more efficient centroid-based methods might be more effective. Similarly, several of the proposed time series features are statics that are generated from Gaussian distributions and a distribution-based algorithm might be ideally suited to separate such distributions \hl{(Corduas & Piccollo, 2008)}. Yet, in cases where mis-specifications are costly, a method with fewer assumptions might be more advisable. 
 
 There is thus, unfortunately, no one-size-fits-all solution to clustering. On the bright side, however, the thriving methodological developments in the clustering literature offer a wide variety of options that offer prospects even for extremely large and complex data sets. We provide a short intuitive explanation for common approaches, together with some of their characteristics and example algorithms in \tblref{tab:clusterApproaches}. For our own illustration, we have chosen that centroid-based k-means clustering. While k-means comes at the expense of high accuracy with more complex cluster shapes, we specifically chose k-means because it is an extremely efficient method that works well with large participant- and feature numbers without making too many restrictive assumptions about the shape of the data. K-means is also well-established within the research community and has been readily implemented in many statistical software packages. Additionally, many of the feature selection methods have specifically been designed for the well-established k-means algorithm. As such, the k-means offers a good starting point for many psychological researchers and the method should be generalizable across a relatively wide variety of projects.
 
@@ -375,6 +408,17 @@ In particular, feature-based clustering has both a usability as well as robustne
 In terms of methodological robustness, the variety of methods in each of the steps also brings with it the potential uncomparable results across methods. While the variety and diversity of methods is helpful in finding options even for more complex types of data, different algorithms often offer different results. And even when patterns produce robust clustering solutions across algorithms, individual methods might still have their ideosyncratic shortcomings and might, for example, be sensitive to outliers. 
 
 Notwithstanding the limitations, we believe that feature-based clustering offers an exciting new potential for psychological time series. Across a variety of scientific fields, feature-based time series clustering has been valued for its structuring and simplifying utilities. Within the growing field of psychological time series, modern ESM data is becoming increasingly more complex in terms of participants, variables, and time points. Feature-based time series clusters can aid in reducing these complexities to important and meaningful patterns, an increasingly important task for researchers and practitioners. 
+
+
+\section{Notes}
+
+TS feature clustering steps: \citep{rasanen2009, wang2006}
+
+model based clustering: \citep{bulteel2016, stefanovic2022}
+
+sort of feature based clustering in psych \citep{heylen2016}
+
+clustering in reduced space \citep{timmerman2013}
 
 
 % Tables
