@@ -81,9 +81,9 @@ bookmarksopen=true,
 bookmarksopenlevel=0,
 hypertexnames=false,
 colorlinks   = true, %Colours links instead of ugly boxes
-urlcolor     = blue, %Colour for external hyperlinks
-linkcolor    = blue, %Colour of internal links
-citecolor   = cyan, %Colour of citations
+urlcolor     = blue, %blue,Colour for external hyperlinks
+linkcolor    = black, %blue, Colour of internal links
+citecolor   = black, % cyan, Colour of citations
 pdfstartview={FitV},
 unicode,
 breaklinks=true,
@@ -298,9 +298,23 @@ These shortcomings, however, stand in sharp contrast with the types of data rese
 
 Importantly, model-based clustering is not the only clustering approach, and model intercepts and slopes are not the only way in which researchers conceptualize and describe time series. A flexible extension of model-based clustering is feature-based clustering \citep[e.g.,][]{Aghabozorgi2015}\footnote{It should be noted that a third option is shape-based clustering, which uses the raw time series and seeks to match different time series by non-linearly stretching and contracting the time axes. Shape-based clustering might be less relevant to many psychological time series because the forced alignment and scaling can, for example, lead to misspecifications \citep[e.g., ][]{faloutsos1994}. Such scaling issues are less of a concern for highly regular and comparable time series such as EEG \citep[][]{huang1985}.}. Whereas model-based clustering is specifically limited to model parameters as time series characteristics, feature-based clustering extends the time series characteristics to virtually any numerical summary of a time series \citep[e.g.,][]{liao2005}. As an illustration of the flexibility of this approach, a commonly used software package for this approach allows users to extract a total of 794 time series features \citep[][]{christ2018}. Time series features can be chosen by the user based on their research question and can, for example, include the mean and standard deviation of a time series, but also linear and non-linear trends, inertia-related features such as auto-correlations, or the stability of the time series \citep[e.g., mean absolute change; e.g.,][]{barandas2020}. Given the flexibility of the feature-based approach, users are able to apply the analysis across multivariate data, feature extraction mitigates issues of non-equidistant and structurally missing data, and the features can capture and compare across non-linear trends at different time scales.
 
-\section{Features of Psychological Time Series}
-
 \section{Feature-based Time Series Clustering}
+
+\subsection{Features of Psychological Time Series}
+
+\paragraph{Central Tendency}
+
+\paragraph{Variability}
+
+\paragraph{(In)stability}
+
+\paragraph{Inertia and Periodicity}
+
+\paragraph{Linear Trend}
+
+\paragraph{Nonlinearity}
+
+\paragraph{Analysis Steps}
 
 ------------------------
 
@@ -316,12 +330,12 @@ clustering in reduced space \citep{timmerman2013}
 
 The feature-based clustering can be structured into four main steps \citep{rasanen2009, wang2006}. (1) The selection and preparation of the input variables, (2) the extraction of the features that describe the time series, (3) an optional feature reduction step if there are too many data points for the clustering algorithms, and (4) the actual clustering of the time series features. We provide a conceptual overview that can be used alongside this section in \fgrref{fig:TSCFlow}. 
 
-\subsection{Input variables}
+\paragraph{Input variables}
 Time series clustering starts with the selection and preparation of the variables of interest. While the selection will necessarily be field- and concept-specific, there are a few conceptual and methodological issues that should be considered. Conceptually, the included variables should adequately capture the concept of interest and should be meaningful to the understanding of the time series. There are, for example, calls that emotion dynamics should be assessed with a repertoire of positive and negative emotions \citep[e.g.,][]{dejonckheere2019}, migration experiences are fully captured with affect, behavior, cognition, and desire measurements \citep[e.g.,][]{Kreienkamp2022d}, and many health developments are commonly captured within the biopsychosocial domains \citep[e.g.,][]{suls2004}. At the same time, however, the added number of variables can become a methodological concern. Not only can redundant and irrelevant variables diminish the quality of the analyses, but with intensive longitudinal data the number of data points compounds across participants, measurement occasions, and variables so that additional variables can make many of the following steps substantially more difficult (also see \fgrref{fig:TSCFlowN}). 
 
 Once the important variables have been selected, the data needs to be prepared for the analysis steps. Importantly, this not only means validating and cleaning the data (e.g., re-coding, removing duplicate or unwanted measurements) but also making the time series comparable. Two important steps are making the time-frames and response scales comparable across participants. Extracting features that describe the development of a month for one participant but 90 days for another participant might not be comparable for some psychological phenomena. This comparability is important on a conceptual level but the difference in data availability might also influence the clustering steps, where the participant with the shorter measurement period would, for example, have a larger number of missing values. It is thus generally advised to reduce the data to a common and comparable time frame. 
 
-\subsection{Feature extraction}
+\paragraph{Feature extraction}
 The main aim of feature extraction is to describe the most important and meaningful aspects of a time series. There are, however, hundreds of possible features to describe psychological time series \citep[e.g., tsfresh][]{christ2018}. One approach to choosing relevant features would be to extract a large number of features and then assess which features are most effective at capturing differences in the time series. However, such an approach is not always advisable for psychological time series. For one, features should reduce the data dimensionality --- it would thus not necessarily be advisable to describe 60 ESM measurements with 180 time series features. More importantly, however, careful feature extraction can be crucial in the interpretability and explainability of the results. This is particularly the case when features have a conceptual or psychological meaning. Taking the concept of well-being as an example, psychologists might be interested in whether certain participants tend to have higher well-being in general (i.e., mean) or whether some participants fluctuate between extremely high and low well-being (i.e., variance). But psychologists might not necessarily be interested in the exact time point after which 50\% of the summed well-being values lie (i.e., relative mass quantile index) or how much different sine wave patterns within the well-being data correlate with one another (i.e., cross power spectral density). We would, thus, strongly advocate for a careful selection of time series features that are meaningful to the field and concepts.
 
 Fortunately, past conceptual and empirical efforts offer valuable discussions of common time series features in psychological research. While the final selection of features should always be driven by the research questions and field-specific conventions, we can build a practical toolbox of meaningful time series features for psychological data. In particular, we propose to focus on six features based on common psychological research questions and recent works on affect dynamics \citep[e.g.,][]{dejonckheere2019, kuppens2017, adya2001}. An overview of the proposed features, their substantive interpretations, and mathematical operationalizations is available in \tblref{tab:esmFeatures}.
@@ -336,7 +350,7 @@ This selection of the proposed six time-series features is in no way exhaustive 
 
 \input{tables/esmPsychFeatures}
 
-\subsection{Feature reduction}
+\paragraph{Feature reduction}
 Once a meaningful selection of time series features has been extracted for each variable and participant, the total number of data points usually remains too large for most clustering algorithms. As an example, a relatively common scenario would include 10 variables of interest, where 8 time series features are extracted, resulting in 80 features per participant (with a common sample size of 100 participants that would result in a total of 8,000 data points in this hypothetical example). We offer an illustration of the compounding numbers of data points in \fgrref{fig:TSCFlowN}. The difficulty of working with such a large number of dimensions is sometimes termed the `dimensionality curse' \citep[e.g.,][]{altman2018}. To deal with this dimensionality issue, two main approaches have been proposed --- feature selection and feature projection (a full overview of the approaches, methods, and common algorithms is available in \tblref{tab:featureReduction}). 
 
 Feature selections seek to create a subset of the most important features. The many available approaches differ in how they seek to determine the importance of the individual features. Generally speaking, selection methods can be categorized as `filter', `wrapper', or `hybrid' methods. The filter methods, broadly speaking determine important features by identifying irrelevant features (e.g., because features do not capture much information), and identifying redundant features (e.g., because features capture the same information). Wrapper methods on the other hand avoid the feature-based evaluation and focus on the performance of the later model to identify the most important features. A wrapper, thus, compares the performance of models with different feature combinations. Traditional examples of wrappers are forward selection or backward elimination procedures. Because filter methods might not always perform well and wrapper methods are computationally intensive\footnote{Computationally \textit{k} features could be considered in \(2^k – 1\) possible combinations --- for the example of 80 features that would allow for \(1.20 \times 10^{24}\) (over one septillion) combinations.}, hybrid methods seek to combine the two methods and find a balance between computational effort (i.e., efficiency) and performance (i.e., effectiveness). Methods might, for example, use a filter step to reduce the size of features considered in a later wrapper step.
@@ -345,16 +359,23 @@ The second general approach to the dimensionality curse has been feature project
 
 \input{tables/FeatureReduction}
 
-\subsection{Feature clustering}
+\paragraph{Feature clustering}
 For feature-based time-series clustering, the main aim is to organize participants into groups so that the features of participants within a group are as similar as possible, while the features of people in different groups are as different as possible. The crux of clustering is, thus, to have clearly defined and effective measurements of (dis)similarity. Most of the clustering algorithms used today use some form of distance measurement to optimize group assignment (or similarity measurement for qualitative features). While others have produced excellent overviews of the many clustering approaches available \citep[e.g.,][]{xu2015}, we will briefly introduce some of the more readily available approaches suitable for most time series feature data. The well-established and readily available clustering approaches can, broadly speaking, be categorized as based on (1) centroids, (2) distributions, (3) density, (4) hierarchies, or (5) a combination thereof (see \tblref{tab:clusterApproaches}). 
 
 Each of these approaches can be a valuable clustering approach for time series feature data and users will usually have to make an informed decision based on the structure of their data as well as an appropriate weighing of accuracy and efficiency. As an example, under ideal conditions, all approaches are likely to suggest very similar clusters. However, when the shapes of clusters, for example, become more complex in a multi-dimensional space, density-based or hierarchy-based approaches that allow for more bottom-up clustering are likely to be more accurate. Yet, with higher numbers of participants and features, both density- and hierarchy-based approaches may perform less well and the more efficient centroid-based methods might be more effective. Similarly, several of the proposed time series features are statics that are generated from Gaussian distributions and a distribution-based algorithm might be ideally suited to separate such distributions \hl{(Corduas \& Piccollo, 2008)}. Yet, in cases where mis-specifications are costly, a method with fewer assumptions might be more advisable. 
 
 There is thus, unfortunately, no one-size-fits-all solution to clustering. On the bright side, however, the thriving methodological developments in the clustering literature offer a wide variety of options that offer prospects even for extremely large and complex data sets. We provide a short intuitive explanation for common approaches, together with some of their characteristics and example algorithms in \tblref{tab:clusterApproaches}. For our own illustration, we have chosen that centroid-based k-means clustering. While k-means comes at the expense of high accuracy with more complex cluster shapes, we specifically chose k-means because it is an extremely efficient method that works well with large participant- and feature numbers without making too many restrictive assumptions about the shape of the data. K-means is also well-established within the research community and has been readily implemented in many statistical software packages. Additionally, many of the feature selection methods have specifically been designed for the well-established k-means algorithm. As such, the k-means offers a good starting point for many psychological researchers and the method should be generalizable across a relatively wide variety of projects.
 
-\subsection{Cluster Performance Evaluation}
+\paragraph{Cluster Performance Evaluation}
 
 PARAGRAPH ON PERFORMANCE METRICS (incl., cross-validation?)
+
+incl., finding cluster prototypes:
+1. The medoid sequence of the set. 2. The average sequence of the set. 3. The local search prototype
+
+External evaluation measures: These measures require knowledge of the true class labels and are used to compare the cluster assignments to the true class labels. Examples include accuracy, F-measure, adjusted Rand index, mutual information, and normalized mutual information.
+
+Internal evaluation measures: These measures do not require knowledge of the true class labels and are used to evaluate the quality of the clusters based on the characteristics of the data itself. Examples include silhouette coefficient, Calinski-Harabasz index, Davies-Bouldin index, and the Elbow method.
 
 PARAGRAPH ON REPORTING \citep[e.g.,][]{vandeschoot2017}
 
