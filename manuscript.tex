@@ -45,6 +45,7 @@
 \usepackage{makecell}
 \usepackage{tabu}
 
+
 % make warning with red triangle
 \newcommand\Warning[1][2ex]{%
   \renewcommand\stacktype{L}%
@@ -465,21 +466,6 @@ Notwithstanding the limitations, we believe that feature-based clustering offers
 
 % Figures
 
-\begin{figure*}[!ht] %hbtp
-  \caption{Cluster Group Comparisons based on Features and Variables}
-  \label{fig:clusterFeatVar}
-  \centering\includegraphics[width=\textwidth]{figures/clusterFeatVarComb.pdf}
-  \caption*{Note: \\
-  Within the ``(B) Feature Focus'' subplot, the `n' and `Discrimination' comparison variables were not part of the original time series clustering.}
-\end{figure*}
-
-\begin{figure*}[!ht] %hbtp
-  \caption{Cluster Group Comparisons over time}
-  \label{fig:clusterTs}
-  \centering\includegraphics[width=\textwidth]{figures/clusterTsComb.pdf}
-  \caption*{Note: \\
-  Subplot (A) displays the variable cluster means at every measurement occasion. Subplot (B) shows the GAM spline for each cluster across the measurement occasions.}
-\end{figure*}
 
 \printbibliography
 
@@ -489,11 +475,11 @@ Notwithstanding the limitations, we believe that feature-based clustering offers
 \label{app:ChallengesAppendix}
 We will briefly consider which challenges modern ESM data introduce and what qualities are called for in an extension of the clustering repertoire. We particularly highlight issues of dimensionality, non-equidistant or missing measurements, an interest in non-stationary trends, as well as inconsistent/diverse time scales. 
 
-Concerning dimensionality issues, especially more abstract psychological experiences often need a wider variety of measurements to be captured adequately. Today, few clinical conditions are captured with a single symptom measure \citep[e.g.,][]{cramer2016}, emotions are rarely assessed in isolation \citep[e.g.,][]{reitsema2022}, and socio-cultural experiences are now widely considered to be multimodal \citep[e.g.,][]{Kreienkamp2022d}. This also means that modern analysis techniques increasingly need be able to accommodate an increased focus on multivariate developments. At the same time, however, an increase in the number of considered variables tends to come at the expense of computational load for model estimations and clustering models may not converge \citep[the aforementioned dimensionality curse;][]{altman2018}. A modern time series clustering technique should consequently be able to summarize and structure multivariate phenomena without running into computational load issues.
+Concerning dimensionality issues, especially more abstract psychological experiences often need a wider variety of measurements to be captured adequately. Today, few clinical conditions are captured with a single symptom measure \citep[e.g.,][]{cramer2016}, emotions are rarely assessed in isolation \citep[e.g.,][]{reitsema2022}, and socio-cultural experiences are now widely considered to be multimodal \citep[e.g.,][]{Kreienkamp2022d}. This also means that modern analysis techniques increasingly need be able to accommodate an increased focus on multivariate developments. At the same time, however, an increase in the number of considered variables tends to come at the expense of computational load for model estimations, and clustering models may not converge \citep[the aforementioned dimensionality curse;][]{altman2018}. A modern time series clustering technique should consequently be able to summarize and structure multivariate phenomena without running into computational load issues.
 
 Another common type of data that are measurement regiments that collect data in irregular time intervals (i.e., non-equidistant measurements). Common are, for example, procedures where participants are asked to respond at random times throughout the day (i.e., signal-contingent) or following specific natural events of interest \citep[i.e., event-contingent; see][]{shiffman2008, myin-germeys2018}. Under such conditions data tends to violate the equidistance assumption that is expected by many time series models \citep[][]{hamaker2017}. Smaller issues of non-equidistant data can be avoided with transformations \citep[e.g., dynamic time warping,][]{berndt1994} or newer modeling procedures \citep[e.g., continuous-time models;][]{dehaan-rietdijk2017} but for many analyses, including some cluster approaches, non-equidistant measurements remain a prevalent issue. 
 
-Structural missingness remains an even more strenuous challenge. Structural missingness occurs when data is missing because it logically cannot be collected \citep[as opposed to probabilistically missing data;][]{little2020, mclean2017}. Often, however, researchers might want to include variables in their models that are not be available under all conditions. Follow-up and event-contingent questions are a common example in ESM studies. Researchers, for example, ask about the frequency, intensity, or duration of symptoms --- but only if a symptom was present \citep{kivela2022}. Such approaches become specifically critical in cases of sensitive questions such as questions about suicidal ideation or other potentially trauma inducing questions \citep[e.g.,][]{glenn2022}. The most common practice for structurally missing data is to either exclude the variable or any measurement that has no structurally missing data \citep[e.g.,][]{lavori2008}\footnote{This is the case because the most commonly used models require complete data \citep{schafer2002} and structurally missing data cannot be imputed as it logically does not exist \citep[e.g.,][]{lavori2008}.} --- neither option suits a research question that wishes to include variables with common structural missingness, such as event-specific or follow-up questions. In short, new clustering approaches should be able to deal with structurally missing data in order to address modern ESM data.
+Structural missingness remains an even more strenuous challenge. Structural missingness occurs when data is missing because it logically cannot be collected \citep[as opposed to probabilistically missing data;][]{little2020, mclean2017}. Often, however, researchers might want to include variables in their models that are not available under all conditions. Follow-up and event-contingent questions are a common example in ESM studies. Researchers, for example, ask about the frequency, intensity, or duration of symptoms --- but only if a symptom was present \citep{kivela2022}. Such approaches become specifically critical in cases of sensitive questions such as questions about suicidal ideation or other potentially trauma-inducing questions \citep[e.g.,][]{glenn2022}. The most common practice for structurally missing data is to either exclude the variable or any measurement that has no structurally missing data \citep[e.g.,][]{lavori2008}\footnote{This is the case because the most commonly used models require complete data \citep{schafer2002} and structurally missing data cannot be imputed as it logically does not exist \citep[e.g.,][]{lavori2008}.} --- neither option suits a research question that wishes to include variables with common structural missingness, such as event-specific or follow-up questions. In short, new clustering approaches should be able to deal with structurally missing data in order to address modern ESM data.
 
 When it comes to studying developmental trajectories, psychological researchers are often also interested in nonstationary processes because they are more representative of the complex, dynamic behavior of the human mind. In psychology, nonstationary processes are typically used to study phenomena such as cognitive development \citep[][]{quartz1997}, decision-making \citep[][]{ratcliff2016}, and emotion dynamics \citep[][]{bringmann2018b}. These processes are often characterized by changes in the underlying statistical properties of the data over time, such as changes in the mean or variance \citep[][]{molenaar2009}. Especially when considering changes in mean levels, researchers are often interested in nonlinear changes because they describe human functioning better. For example, in decision making people might switch between choices \citep[][]{ratcliff2016}, or patients reducing medication might experience mood swings \citep[][]{helmich2020a}. Similarly, psychologists are often also interested in how variances change over time. This is especially the case because several changes in an individual's variance have been found to be indicative of critical changes, including depression relapses and symptom shifts more generally \citep[e.g.,][]{schreuder2020, wichers2020}. There is, thus, also a need for time series clustering algorithms that capture nonstationary processes, including nonlinear trends.
 
