@@ -187,6 +187,14 @@ some features are better at distinguishing the clusters across variables
 information on which features were are most important in understanding
 the two extracted groups.
 
+\begin{figure}[!ht] %hbtp
+  \caption{Cluster Group Comparisons based on Features and Variables}
+  \label{fig:clusterFeatVar}
+  \centering\includegraphics[width=\textwidth]{figures/clusterFeatVarComb.pdf}
+  \caption*{Note: \\
+  Within the "(B) Feature Focus" subplot, the 'n' and 'Discrimination' comparison variables were not part of the original time series clustering.}
+\end{figure}
+
 We can then combine the two focus approaches to assess the developments
 between the two groups more holistically (see \fgrref{fig:clusterTs}).
 Immediately striking are the mean differences, where participants in the
@@ -228,3 +236,11 @@ levels of everyday discrimination. Thus, both intensive longitudinal and
 cross-sectional variables that were not included in the original
 clustering step can be used to explore and understand the cluster
 differences in more detail.
+
+\begin{figure}[!ht] %hbtp
+  \caption{Cluster Group Comparisons over time}
+  \label{fig:clusterTs}
+  \centering\includegraphics[width=\textwidth]{figures/clusterTsComb.pdf}
+  \caption*{Note: \\
+  Subplot (A) displays the variable cluster means at every measurement occasion. Subplot (B) shows the GAM spline for each cluster across the measurement occasions.}
+\end{figure}
