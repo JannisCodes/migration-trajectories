@@ -722,8 +722,8 @@ allMlCor %>%
     )
   ) %>%
   kable_styling(latex_options = "scale_down") %>%
-  gsub("\\begin{table}", "\\begin{sidewaystable}\n\\centering", ., fixed = TRUE) %>%
-  gsub("\\end{table}", "\\end{sidewaystable}", ., fixed = TRUE) %>%
+  gsub("\\begin{table}", "\\begin{sidewaystable*}[!hbtp]\n\\centering", ., fixed = TRUE) %>%
+  gsub("\\end{table}", "\\end{sidewaystable*}", ., fixed = TRUE) %>%
   save_kable("Tables/descrLong.tex")
 ```
 
