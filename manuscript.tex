@@ -1,5 +1,5 @@
 % define document type (i.e., template. Here: A4 APA manuscript with 12pt font)
-\documentclass[man, 12pt, a4paper, mask]{apa7}
+\documentclass[man, 12pt, a4paper, mask, floatsintext]{apa7}
 
 % change margins (e.g., for margin comments):
 %\usepackage{geometry}
@@ -285,9 +285,30 @@ Psychological time series data has not only become more common but also more div
 % \vspace{1em}
 % \end{mdframed}
 
-Recent years have seen a striking increase in the number and variety of research studies that follow participants' everyday experiences and collect real-world psychological time series \citep[e.g., experience sampling method (ESM),][; also see \fgrref{fig:ScopusEsm}]{hamaker2017}. These extensive longitudinal data sets come with new forms of heterogeneity, where researchers have to consider differences across large numbers of participants, time points, and variables \citep[e.g.,][]{cattell1966, Monden2015, wardenaar2013}. Oftentimes, however, researchers are interested in precisely this complexity and wish to understand how people differ in their temporal developments across a number of distinct variables \citep[i.e., understand the structure of between-subject differences of within-participant dynamics; e.g.,][]{ernst2021}. One relatively recent addition to the toolbox of ESM researchers has been time series clustering --- the idea of grouping participants based on the characteristics of their time series dynamics \citep{ariens2020}. In practice, this means that participants are inductively grouped in such a way that the dynamics of some variable(s) have maximum similarity for individuals in the same group, and minimum similarity for individuals in different groups \citep[e.g.,][]{liao2005}.
+Recent years have seen a striking increase in the number and variety of research studies that follow participants' everyday experiences and collect real-world psychological time series \citep[e.g., experience sampling method (ESM),][; also see \fgrref{fig:ScopusEsm}]{hamaker2017}. These extensive longitudinal data sets come with new forms of heterogeneity, where researchers have to consider differences across large numbers of participants, time points, and variables \citep[e.g.,][]{cattell1966, Monden2015, wardenaar2013}. Oftentimes, however, researchers are interested in precisely this complexity and wish to understand how people differ in their temporal developments across several variables \citep[i.e., understand the structure of between-subject differences of within-participant dynamics; e.g.,][]{ernst2021}. One relatively recent addition to the toolbox of ESM researchers has been time series clustering --- the idea of grouping participants based on the similarity of their time series \citep{ariens2020}. 
 
-Time series clustering has a number of conceptual use cases. Specifically, time series clustering aids in reducing the time, variable, and person complexity by extracting structure between participants. These reduction and structuring qualities can be essential in detecting phenomena and extracting more abstract functional principles \citep[][]{eronen2021a}. Such meaningful psychological principles and phenomena have often been recognized as being imperative for building robust theories and real-world interventions \citep[e.g.,][]{borsboom2021, eronen2020}.
+\begin{figure}[!hbtp] %hbtp
+  \caption{Scopus ESM Development}
+  \label{fig:ScopusEsm}
+  \centering\includegraphics[width=\textwidth]{figures/Scopus-ESM-Development.png}
+  \caption*{Note: \\
+  Search Terms: `( "ecological momentary assessment"  OR  "experience sampling"  OR  "intensive longitudinal")' in Title, Abstract, or Keyword.}
+\end{figure}
+
+The main aim of time series clustering is to inductively group participants in such a way that the dynamics of some variable(s) have maximum similarity for individuals in the same group, and minimum similarity for individuals in different groups \citep[e.g.,][]{liao2005}. In practice, this means time series clustering critically depends on identifying similarities or dissimilarities in time series and then accurately distinguishing different groups (REF).
+
+1. phenomena and principle detection
+    a. differences between clusters
+    b. patterns within clusters (\~ early warning signals?)
+2. 
+
+Time series clustering has a number of conceptual use cases with psychological data. Prime among them is the ability to reduce the time, variable, and person complexity by extracting structure between participants. These reduction and structuring qualities can be essential in detecting phenomena and extracting more abstract functional principles \citep[][]{eronen2021a}. 
+These phenomena and principles can be (1) meaningful differences between clusters, as well (2) important patterns, trends, and relationships within clusters \citep[e.g.,][]{schrodt2000}. 
+
+Once distinct groups and patterns have been identified, researchers can examine the extent to which these within-group and between-group structures are associated with other variables of interest, such as personality traits, demographic characteristics, or other psychological constructs (REFERENCE).
+
+Such meaningful psychological principles and phenomena have often been recognized as being imperative for building robust theories and real-world interventions \citep[e.g.,][]{borsboom2021, eronen2020}. 
+Additionally, time series clustering has been used to inform the development of targeted interventions and therapies for individuals, for example, with mood disorders and other psychological conditions (REFERENCE). 
 
 
 %Time-series clustering has been extremely common in other empirical fields, including analyses of astronomical, meteorological, and aviation pathways, biological and medical developments, as well as energy and finance patterns \citep{Aghabozorgi2015}. But also for psychological data, time-series clustering has recently become more common \citep[e.g.,][]{ernst2021}.
@@ -301,42 +322,18 @@ Importantly, model-based clustering is not the only clustering approach, and mod
 \section{Feature-based Time Series Clustering}
 
 \subsection{Features of Psychological Time Series}
+There are hundreds of possible ts features 
 
-\paragraph{Central Tendency}
+\citet{kuppens2017} originally proposed (1) variability, (2) co-variance or ICC, (3) inertia, and (4) cross-lagged correlations. These features were then extended and formalized by \citet{krone2018} into (1) within-person variance, (2) innovation, (3) inertia or autocorrelation, (4) cross-lagged regression parameters, (5) covariances as granularity, and (6) mean intensity. \citet{krone2018} were even able to use these features to cluster study participants.
 
-\paragraph{Variability}
+\citet{dejonckheere2019} discuss (1) mean, (2) variance, (3) relative variance, (4) instability, (5) inertia / autoregression, (6) interdependence / network density, (7) granularity or differentiation / ICC, (8) correlation, and (9) diversity / Gini coefficient. 
 
-\paragraph{(In)stability}
+Outside the psychological literature, time series features have also included more summaries in terms of measurement distribution, categorical states, and, importantly, nonlinear developments. 
 
-\paragraph{Inertia and Periodicity}
+\citet{kiwuwa-muyingo2011} proposed to extract clinically meaningful states for medical adherence data. 
 
-\paragraph{Linear Trend}
+\citet{wang2006} propose a set of nine statistical features for describing a trajectory: (1) trend, (2) seasonality, (3) periodicity, (4) skewness, (5) kurtosis, (6) serial correlation, (7) non-linearity, (8) self-similarity, and (9) chaos. This selection was also used by \citep{fulcher2013}. \citet{adya2001} proposed a total of 28 features relevant for forecasting, which largely fit within the selection proposed by \citet{wang2006}.
 
-\paragraph{Nonlinearity}
-
-\paragraph{Analysis Steps}
-
-------------------------
-
-NOTES:
-
-model based clustering: \citep{bulteel2016, stefanovic2022}
-
-sort of feature-based clustering in psych \citep{heylen2016}
-
-clustering in reduced space \citep{timmerman2013}
-
-------------------------
-
-The feature-based clustering can be structured into four main steps \citep{rasanen2009, wang2006}. (1) The selection and preparation of the input variables, (2) the extraction of the features that describe the time series, (3) an optional feature reduction step if there are too many data points for the clustering algorithms, and (4) the actual clustering of the time series features. We provide a conceptual overview that can be used alongside this section in \fgrref{fig:TSCFlow}. 
-
-\paragraph{Input variables}
-Time series clustering starts with the selection and preparation of the variables of interest. While the selection will necessarily be field- and concept-specific, there are a few conceptual and methodological issues that should be considered. Conceptually, the included variables should adequately capture the concept of interest and should be meaningful to the understanding of the time series. There are, for example, calls that emotion dynamics should be assessed with a repertoire of positive and negative emotions \citep[e.g.,][]{dejonckheere2019}, migration experiences are fully captured with affect, behavior, cognition, and desire measurements \citep[e.g.,][]{Kreienkamp2022d}, and many health developments are commonly captured within the biopsychosocial domains \citep[e.g.,][]{suls2004}. At the same time, however, the added number of variables can become a methodological concern. Not only can redundant and irrelevant variables diminish the quality of the analyses, but with intensive longitudinal data the number of data points compounds across participants, measurement occasions, and variables so that additional variables can make many of the following steps substantially more difficult (also see \fgrref{fig:TSCFlowN}). 
-
-Once the important variables have been selected, the data needs to be prepared for the analysis steps. Importantly, this not only means validating and cleaning the data (e.g., re-coding, removing duplicate or unwanted measurements) but also making the time series comparable. Two important steps are making the time-frames and response scales comparable across participants. Extracting features that describe the development of a month for one participant but 90 days for another participant might not be comparable for some psychological phenomena. This comparability is important on a conceptual level but the difference in data availability might also influence the clustering steps, where the participant with the shorter measurement period would, for example, have a larger number of missing values. It is thus generally advised to reduce the data to a common and comparable time frame. 
-
-\paragraph{Feature extraction}
-The main aim of feature extraction is to describe the most important and meaningful aspects of a time series. There are, however, hundreds of possible features to describe psychological time series \citep[e.g., tsfresh][]{christ2018}. One approach to choosing relevant features would be to extract a large number of features and then assess which features are most effective at capturing differences in the time series. However, such an approach is not always advisable for psychological time series. For one, features should reduce the data dimensionality --- it would thus not necessarily be advisable to describe 60 ESM measurements with 180 time series features. More importantly, however, careful feature extraction can be crucial in the interpretability and explainability of the results. This is particularly the case when features have a conceptual or psychological meaning. Taking the concept of well-being as an example, psychologists might be interested in whether certain participants tend to have higher well-being in general (i.e., mean) or whether some participants fluctuate between extremely high and low well-being (i.e., variance). But psychologists might not necessarily be interested in the exact time point after which 50\% of the summed well-being values lie (i.e., relative mass quantile index) or how much different sine wave patterns within the well-being data correlate with one another (i.e., cross power spectral density). We would, thus, strongly advocate for a careful selection of time series features that are meaningful to the field and concepts.
 
 Fortunately, past conceptual and empirical efforts offer valuable discussions of common time series features in psychological research. While the final selection of features should always be driven by the research questions and field-specific conventions, we can build a practical toolbox of meaningful time series features for psychological data. In particular, we propose to focus on six features based on common psychological research questions and recent works on affect dynamics \citep[e.g.,][]{dejonckheere2019, kuppens2017, adya2001}. An overview of the proposed features, their substantive interpretations, and mathematical operationalizations is available in \tblref{tab:esmFeatures}.
 
@@ -347,6 +344,61 @@ The third and fourth features describe the structure of the variability within t
 The final two features are linear and nonlinear trends. \textit{Linear trends} are a common research interest for longitudinal data. ``Do patient symptoms improve?'' or ``Does worker productivity decline?'', are familiar types of research questions. Mathematically, such linear trends are commonly captured using (piecewise) linear regression coefficients. \textit{Nonlinear trends} are important in two regards. Firstly, nonlinearity is a deviation from linear trends and secondly, the shape and structure of the nonlinear trend. Questions like ``Is the development of anxiety a nonlinear process?'' are mathematically captured using nonlinearity parameters such the bicoherence metrics \citep{cuddy2009}. The structure of nonlinear trends is often mathematically captured using polynomial coefficients or more broadly by how wiggly the line is (e.g., estimated degrees of freedom of GAM spline models; similar to the number of spikes \citealp[]{caro-martin2018}). 
 
 This selection of the proposed six time-series features is in no way exhaustive or imperative. Both using a purely data-driven approach or selecting other aspects to summarize the time series are legitimate options. The list seeks to offer a practical toolbox of features that are common and meaningful to psychological research questions and -practice (see \tblref{tab:esmFeatures} for a more complete overview).
+
+
+\paragraph{Central Tendency}
+
+\paragraph{Variability}
+
+\paragraph{(In)stability}
+
+\paragraph{Inertia and Periodicity} self-similarity, seasonality, periodicity, inertia
+
+\paragraph{Linear Trend}
+
+\paragraph{Nonlinearity}
+
+\subsection{Analysis Steps}
+
+------------------------
+
+NOTES:
+
+model based clustering: \citep{bulteel2016, stefanovic2022}
+
+parameter-based clustering: VAR \citep{ernst2021} splines \citep{axen2011} 
+
+sort of feature-based clustering in psych \citep{heylen2016} as well as \citep{krone2018}
+
+clustering in reduced space \citep{timmerman2013}
+
+------------------------
+
+The feature-based clustering can be structured into four main steps \citep{rasanen2009, wang2006}. (1) The selection and preparation of the input variables, (2) the extraction of the features that describe the time series, (3) an optional feature reduction step if there are too many data points for the clustering algorithms, and (4) the actual clustering of the time series features. We provide a conceptual overview that can be used alongside this section in \fgrref{fig:TSCFlow}. 
+
+\begin{figure}[!ht] % \begin{figure*}[hbtp] <-- on its own page
+  \caption{Flowchart Feature-Based Time Series Clustering in Psychology}
+  \label{fig:TSCFlow}
+  \centering\includegraphics[width=\textwidth]{figures/TS Cluster Flow/TimeSeriesClusterFlowSelection.pdf}
+  \caption*{Note: \\
+  Choices selected for illustration in this manuscript are marked in bold.}
+\end{figure}
+
+\paragraph{Input variables}
+Time series clustering starts with the selection and preparation of the variables of interest. While the selection will necessarily be field- and concept-specific, there are a few conceptual and methodological issues that should be considered. Conceptually, the included variables should adequately capture the concept of interest and should be meaningful to the understanding of the time series. There are, for example, calls that emotion dynamics should be assessed with a repertoire of positive and negative emotions \citep[e.g.,][]{dejonckheere2019}, migration experiences are fully captured with affect, behavior, cognition, and desire measurements \citep[e.g.,][]{Kreienkamp2022d}, and many health developments are commonly captured within the biopsychosocial domains \citep[e.g.,][]{suls2004}. At the same time, however, the added number of variables can become a methodological concern. Not only can redundant and irrelevant variables diminish the quality of the analyses, but with intensive longitudinal data the number of data points compounds across participants, measurement occasions, and variables so that additional variables can make many of the following steps substantially more difficult (also see \fgrref{fig:TSCFlowN}). 
+
+\begin{figure}[!ht] %hbtp
+  \caption{Exemplary Flowchart of Data Points in Feature-Based Time Series Clustering}
+  \label{fig:TSCFlowN}
+  \centering\includegraphics[width=\textwidth]{figures/TS Cluster Flow/tsClustFlowN.pdf}
+  \caption*{Note: \\
+  The presented number of participants, variables, and measurement occasions are somewhat arbitrary but generally represent common sample sizes found within the literature. Also the number of extracted clusters is presented for illustrative purposes only.}
+\end{figure}
+
+Once the important variables have been selected, the data needs to be prepared for the analysis steps. Importantly, this not only means validating and cleaning the data (e.g., re-coding, removing duplicate or unwanted measurements) but also making the time series comparable. Two important steps are making the time-frames and response scales comparable across participants. Extracting features that describe the development of a month for one participant but 90 days for another participant might not be comparable for some psychological phenomena. This comparability is important on a conceptual level but the difference in data availability might also influence the clustering steps, where the participant with the shorter measurement period would, for example, have a larger number of missing values. It is thus generally advised to reduce the data to a common and comparable time frame. 
+
+\paragraph{Feature extraction}
+The main aim of feature extraction is to describe the most important and meaningful aspects of a time series. There are, however, hundreds of possible features to describe psychological time series \citep[e.g., tsfresh][]{christ2018}. One approach to choosing relevant features would be to extract a large number of features and then assess which features are most effective at capturing differences in the time series. However, such an approach is not always advisable for psychological time series. For one, features should reduce the data dimensionality --- it would thus not necessarily be advisable to describe 60 ESM measurements with 180 time series features. More importantly, however, careful feature extraction can be crucial in the interpretability and explainability of the results. This is particularly the case when features have a conceptual or psychological meaning. Taking the concept of well-being as an example, psychologists might be interested in whether certain participants tend to have higher well-being in general (i.e., mean) or whether some participants fluctuate between extremely high and low well-being (i.e., variance). But psychologists might not necessarily be interested in the exact time point after which 50\% of the summed well-being values lie (i.e., relative mass quantile index) or how much different sine wave patterns within the well-being data correlate with one another (i.e., cross power spectral density). We would, thus, strongly advocate for a careful selection of time series features that are meaningful to the field and concepts.
 
 \input{tables/esmPsychFeatures}
 
@@ -413,31 +465,7 @@ Notwithstanding the limitations, we believe that feature-based clustering offers
 
 % Figures
 
-\begin{figure}[hbtp]
-  \caption{Scopus ESM Development}
-  \label{fig:ScopusEsm}
-  \centering\includegraphics[width=\textwidth]{figures/Scopus-ESM-Development.png}
-  \caption*{Note: \\
-  Search Terms: `( "ecological momentary assessment"  OR  "experience sampling"  OR  "intensive longitudinal")' in Title, Abstract, or Keyword.}
-\end{figure}
-
-\begin{figure*}[hbtp]
-  \caption{Flowchart Feature-Based Time Series Clustering in Psychology}
-  \label{fig:TSCFlow}
-  \centering\includegraphics[width=\textwidth]{figures/TS Cluster Flow/TimeSeriesClusterFlowSelection.pdf}
-  \caption*{Note: \\
-  Choices selected for illustration in this manuscript are marked in bold.}
-\end{figure*}
-
-\begin{figure*}[hbtp]
-  \caption{Exemplary Flowchart of Data Points in Feature-Based Time Series Clustering}
-  \label{fig:TSCFlowN}
-  \centering\includegraphics[width=\textwidth]{figures/TS Cluster Flow/tsClustFlowN.pdf}
-  \caption*{Note: \\
-  The presented number of participants, variables, and measurement occasions are somewhat arbitrary but generally represent common sample sizes found within the literature. Also the number of extracted clusters is presented for illustrative purposes only.}
-\end{figure*}
-
-\begin{figure*}[hbtp]
+\begin{figure*}[!ht] %hbtp
   \caption{Cluster Group Comparisons based on Features and Variables}
   \label{fig:clusterFeatVar}
   \centering\includegraphics[width=\textwidth]{figures/clusterFeatVarComb.pdf}
@@ -445,7 +473,7 @@ Notwithstanding the limitations, we believe that feature-based clustering offers
   Within the ``(B) Feature Focus'' subplot, the `n' and `Discrimination' comparison variables were not part of the original time series clustering.}
 \end{figure*}
 
-\begin{figure*}[hbtp]
+\begin{figure*}[!ht] %hbtp
   \caption{Cluster Group Comparisons over time}
   \label{fig:clusterTs}
   \centering\includegraphics[width=\textwidth]{figures/clusterTsComb.pdf}
