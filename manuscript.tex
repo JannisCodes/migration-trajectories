@@ -245,46 +245,75 @@ Psychological time series data has not only become more common but also more div
     skipabove = -12pt
 }
 
-% \begin{mdframed}[style=mdfbox]
-% \noindent\center\textit{Structure}:
-% \begin{itemize}[nosep]
-%     \item introduction
-%     \begin{itemize}[nosep]
-%         \item\ [Relevance]: increase in number and variety of ESM data
-%         \item\ [Problem]: no descriptive / understand structure analyses
-%         \item\ [Proposal]: feature based clusterting = flexible +  transparent
-%     \end{itemize}
-%     \item Modern ESM data: new type of data and issues for analysis:
-%     \begin{itemize}[nosep]
-%         \item incomplete data (complete data models vs. structural missingness)
-%         \item non-equidistant
-%         \item non-stationary
-%         \item changes/trends on different time scales
-%         \item interest in multivariate developments
-%         \item dimensionality curse
-%     \end{itemize}
-%     \item Time series clustering
-%     \begin{itemize}[nosep]
-%         \item shape-based
-%         \item model-based
-%         \item \textbf{feature-based}
-%     \end{itemize}
-%     \item Feature-Based Clustering
-%     \begin{itemize}[nosep]
-%         \item input variables
-%         \item feature extraction
-%         \item feature reduction
-%         \item feature clustering
-%     \end{itemize}
-%     \item Empirical Illustration
-%     \begin{itemize}[nosep]
-%         \item Data
-%         \item Analysis and Results
-%     \end{itemize}
-%     \item Discussion (summary, limitation, implications, conclusion, etc.)
-% \end{itemize}
-% \vspace{1em}
-% \end{mdframed}
+\begin{mdframed}[style=mdfbox]
+\noindent\center\textit{Structure}:
+\begin{itemize}[nosep]
+    \item introduction
+    \begin{itemize}[nosep]
+        \item increase in number and variety of ESM data + ts clustering to understand complex developmental differences.
+        \item why cluster time series? 
+        \begin{enumerate}[nosep]
+            \item differences between clusters
+            \item patterns within clusters
+            \item relation to out-of cluster variables
+            \item robust theories and interventions
+        \end{enumerate}
+        \item can't cluster all the raw data (b/c too much data and not directly comparable).
+        \item summarize the data and cluster based on the summaries.
+        \item ideally these summaries are:
+        \begin{enumerate}[nosep]
+            \item good at captuing the data
+            \item meaningful = help us understand how the clustering arrived at the output (i.e., explainable) + helps us make sense of the final cluster output (i.e., interpretable)
+        \end{enumerate}
+        \item currently model parameters as summaries.
+        \item limitations of parameter summaries: assumptions not always good at capturing data and model parameters not always interpretable
+        \item current solution: more complicated models (e.g., address violated assumptions or add different types of parameters)
+        \item proposed solution: features as flexible and meaningful approach of summarizing the time series
+        \item ---------------------------------------------------------------------------
+        \item limitations of model parameters: 
+        \begin{itemize}[nosep]
+            \item strong assumptions = not always a good (dis-)similiarity: 
+            \begin{enumerate}[nosep]
+                \item non-equidistant measurements
+                \item non-imputable missingness
+                \item non-stationary
+                \item non-linear developments
+            \end{enumerate}
+            \item difficult to interpret psychologically 
+            \begin{enumerate}[nosep]
+                \item limited to few ways of psychological effects (e.g., lagged + cross-lagged effects)
+            \end{enumerate}
+        \end{itemize} 
+        \item push for more complicated models aimed at addressing (1) similarity concerns (e.g., amend assumptions; e.g., see den Teuling) or (2) interpretatbility (e.g., more types of effects; e.g., see krone2018)
+        \item proposed alternative: go back to interpretable similarity measurements. General statistics and parameters instead of only parameters.
+    \end{itemize}
+    \item Feature-based Time Series Clustering
+    \begin{itemize}[nosep]
+        \item different types of similarity grouping: five types
+        \item why features: flexible similarity (b/c more variety), less assumptions, easy to calculate/extract, theory-based selection (as per RQ), psychological interpretability, ...
+        \item Features in Psychological Time Series
+        \begin{itemize}[nosep]
+            \item central tendency
+            \item variability
+            \item (in)stability
+            \item self-similarity
+            \item linear trend
+            \item nonlinearity
+        \end{itemize}
+        \item Analysis Steps
+        \begin{itemize}[nosep]
+            \item input variables
+            \item feature extraction
+            \item (feature reduction)
+            \item feature clustering
+            \item cluster evaluation
+        \end{itemize}
+    \end{itemize}
+    \item Empirical Illustration
+    \item Discussion (summary, limitation, implications, conclusion, etc.)
+\end{itemize}
+\vspace{1em}
+\end{mdframed}
 
 Recent years have seen a striking increase in the number and variety of research studies that follow participants' everyday experiences and collect real-world psychological time series \citep[e.g.,][; also see \fgrref{fig:ScopusEsm}]{hamaker2017}\footnote{In psychology, extensive longitudinal data collection methods are often referred to as experience sampling method (ESM), ecological momentary assessment (EMA), or ambulatory assessment (AA) studies. While the terms come for different conceptual backgrounds, they share a focus on collecting data over an extended period of time to capture people's behaviors and experiences as they vary over time and in response to different situations and events. In this article, we will use the experience sampling (ESM) term as it has the strongest footing within the clustering literature.}. These extensive longitudinal data sets come with new forms of heterogeneity, where researchers have to consider differences across large numbers of participants, time points, and variables \citep[e.g.,][]{cattell1966, Monden2015, wardenaar2013}. Oftentimes, however, researchers are interested in precisely this complexity and wish to understand how people differ in their temporal developments across several variables \citep[e.g.,][]{ernst2021}. One relatively recent addition to the toolbox of ESM researchers has been time series clustering --- the idea of inductively grouping participants based on the similarity of their time series \citep{ariens2020}. 
 
