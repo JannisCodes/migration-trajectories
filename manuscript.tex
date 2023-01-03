@@ -258,8 +258,7 @@ Psychological time series data has not only become more common but also more div
             \item relation to out-of cluster variables
             \item robust theories and interventions
         \end{enumerate}
-        \item can't cluster all the raw data (b/c too much data and not directly comparable).
-        \item summarize the data and cluster based on the summaries.
+        \item can't cluster all the raw data (b/c too much data and not directly comparable).Instead, summarize the data and cluster based on the summaries.
         \item ideally these summaries are:
         \begin{enumerate}[nosep]
             \item good at captuing the data
@@ -330,12 +329,9 @@ Time series clustering has a number of conceptual use cases with psychological d
 
 %Time-series clustering has been extremely common in other empirical fields, including analyses of astronomical, meteorological, and aviation pathways, biological and medical developments, as well as energy and finance patterns \citep{Aghabozorgi2015}. But also for psychological data, time-series clustering has recently become more common \citep[e.g.,][]{ernst2021}.
 
-However, while clustering can be incredibly useful, arriving at these clusters critically depends on two core challenges. 
+%The main aim of time series clustering is to inductively group participants in such a way that the dynamics of some variable(s) have maximum similarity for individuals in the same group, and minimum similarity for individuals in different groups \citep[e.g.,][]{Aghabozorgi2015}.
 
-this means time series clustering critically depends on making time series comparable to 
-identify key (dis)similarities and then accurately distinguishing different groups \citep[e.g.,][]{Aghabozorgi2015}.
-
-The main aim of time series clustering is to inductively group participants in such a way that the dynamics of some variable(s) have maximum similarity for individuals in the same group, and minimum similarity for individuals in different groups \citep[e.g.,][]{Aghabozorgi2015}. In practice, this means time series clustering critically depends on identifying similarities or dissimilarities in time series and then accurately distinguishing different groups \citep[e.g.,][]{Aghabozorgi2015}. Broadly speaking, time series (dis-)similarity can be approximated by either comparing the raw time series or by comparing some numerical representation of the time series (e.g., \citealp[]{liao2005}; see \fgrref{fig:tsClustTax} for an illustration). The (dis-)similarity measurements can then be clustered either on their own or as part of the representation estimation (e.g., \citealp[]{denteuling2021}; see `embedded' in \fgrref{fig:tsClustTax}).
+However, while clustering can be incredibly useful, arriving at these clusters critically depends on two core challenges. First, time series need to be made comparable in order to identify key (dis)similarities and second, comparable (dis)similarities need to be accurately distinguishing into different groups \citep[e.g.,][]{Aghabozorgi2015}. In practice, most psychological time series cannot be compared based on the raw data itself. This is the case because in most cases the raw time series include too many time data points for most clustering methods to handle \citep[e.g.,][]{altman2018} and, more importantly, individual time points are oftentimes not directly comparable between participants in psychological data and would lead to misspecifications \citep[e.g., ][]{faloutsos1994}. While such issues can be avoided with transformations for highly regular, controlled, and comparable time series such as EEG \citep[e.g.,][]{huang1985}, most ESM psychologists are usually not interested in directly comparing individual timepoints between participants but are interested in developmental patterns and relationships. As a result, most psychological time series are summarized via a numerical representation and these numerical summaries are then comparable and used to cluster participants (e.g., \citealp[]{liao2005}; see \fgrref{fig:tsClustTax}).
 
 \begin{figure}[!hbtp] %hbtp
   \caption{Time Series Clustering Taxonomy}
@@ -344,6 +340,9 @@ The main aim of time series clustering is to inductively group participants in s
   \caption*{Note: \\
   The taxonomy only exemplifies some of the basic differences between a number of common time series clustering approaches. As such, the taxonomy and the notes are neither exhaustive nor complete in distinguishing different approaches. Additionally, terms and labels are used inconsistently across different types of literature and are chosen to avoid overlapping labels.}
 \end{figure}
+
+The representations that summarize the original time series data should (1) capture the original data accurately without loosing too much information, and (2) should be conceptually meaningful \citep[e.g.,][]{vandermaaten2009}. Extracting accurate and meaningful representations of the time series can be essential for understanding what goes into the clustering algorithm (i.e., assists with explainability) and can be crucial in making sense of the final cluster output \citep[i.e., assists with interpretability; e.g.,][]{Kennedy2021}. 
+
 
 Thus far, one of the most common clustering approaches for ESM data has been to group individuals based on person-specific model parameters --- notably intercepts and slopes from vector autoregression models \citep[VAR; e.g.,][]{ariens2020}. While these model parameters are familiar to researchers in the field, the model-based approach has a number of important shortcomings. Computationally, the number of parameters compounds with increases in variables and lag orders, which tends to result in efficiency and accuracy reduction for most clustering algorithms and is sometimes referred to as the dimensionality curse \citep{altman2018}\footnote{As an illustration of this scalability issue, consider a VAR model of 8 variables that includes the first three lags (i.e., VAR(3)). For each of the 8 variables, we would have 25 parameters --- one intercept and 24 slopes (8 variables * 3 lags each). That compounds to a total of 200 parameters per person (8 variables * 25 parameters).}. But more importantly, using model parameters means that the clustering is restricted by the assumptions and limitations of the statistical model. To take the common VAR model as an example, the model assumes that the time intervals between measurements are identical (i.e., equidistant measurements), it does not allow for missing values, and it assumes that the means as well as variances of the variables do not change over time \citep[i.e., stationarity assumption;][]{lutkepohl2005}. 
 
