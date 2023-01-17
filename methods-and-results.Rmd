@@ -753,21 +753,40 @@ pMissFull <- pMissFeat(
 
 For the features, we selected and extracted one of each of the features proposed in \tblref{tab:esmFeatures}. We particularly chose the more robust median and median absolute deviation (MAD) for central tendency and variability. Within the variability structure, we chose the slightly more intuitive mean absolute change (MAC) for stability and stayed with the common lag--1 autocorrelation for inertia. For the trend summaries, we chose the overall linear regression slope to describe the linear trend and we summarized the nonlinear trend with the estimated degrees of freedom of an empty GAM spline model (edf) --- the edf summarizes the \textit{wiggliness} of the spline trend line. We chose these features in particular because we consider them to be the most broadly applicable features. We also extracted the participant's number of completed ESM measurements to ensure that the clusters are comparable in that regard. We provide an R-function that automatically extracts and prepares a large selection of the time series feature operationalizations presented in \tblref{tab:esmFeatures} in our GitHub repository (see the \texttt{featureExtractor} function).
 
-For the central tendency: $Median$ where $X_{ij}$ is the an ordered list of values from the time series of variable $j$ for participant $i$. 
+For the central tendency: \textit{median} ($M$) where $X_{ij}$ is the an ordered list of values from the time series of variable $j$ for participant $i$. The calculation depends on whether the number of measurements in a time series $n$ is odd or even. 
 
 \begin{equation} \label{eq:median}
-  Median(X_{ij}) = 
+  M(X_{ij}) = 
     \begin{cases}
       X \left[ \frac{n+1}{2} \right] & \text{if $n$ is odd} \\
       \frac{X \left[ \frac{n}{2} \right] + X \left[ \frac{n}{2} +1 \right]}{2} & \text{if $n$ is even}
     \end{cases}
 \end{equation}
 
-For distribution we chose the \textit{Median Absolute Deviation} ($MAD$), where we calculate the $Median$ (as in \eqref{eq:median}) for the absolute deviations of measurement $x$ at time point $t$ for participant $i$ and variable $j$. 
+For distribution we chose the \textit{Median Absolute Deviation} ($MAD$), where we calculate the \textit{median} ($M$; calculated as in \eqref{eq:median}) for the absolute deviations of measurement $x$ at time point $t$ for participant $i$ and variable $j$ from the median of that time series $X$. 
 
 \begin{equation} \label{eq:mad}
-  MAD(x_{ijt}) = Median(| x_{ijt} - \overline{x_{ij}} |)
+  MAD(X_{ij}) = M(\left| x_{ijt} - M(X_{ij})} \right|)
 \end{equation}
+
+mean absolute change (MAC) for stability 
+
+\begin{equation} \label{eq:mac}
+  MAC(X_{ij}) = \frac{1}{n-1} \sum_{t=1, \ldots, t-1}\left|x_{t+1}-x_t\right|
+\end{equation}
+
+
+lag--1 autocorrelation for inertia: lag $l=1$
+
+\begin{equation} \label{eq:ar}
+  \frac{1}{(n-l)\sigma^2}\sum_{t=1}^{n-1}(X_t-\mu)(X_{t+l}-\mu) \\
+  \frac{1}{(n-1)\sigma^2}\sum_{t=1}^{n-1}(X_t-\mu)(X_{t+1}-\mu)
+\end{equation}
+
+
+overall linear regression slope to describe the linear trend 
+
+summarized the nonlinear trend with the estimated degrees of freedom of an empty GAM spline model (edf) --- the edf summarizes the \textit{wiggliness} of the spline trend line.
 
 
 After the feature extraction, we found that about `r format(round(pMissFull$pmiss %>% filter(set == "All") %>% select(pMissTotal) %>% pull, 2), nsmall=2)`\% of the extracted features are missing across the `r ncol(featFull$features %>% select(-ends_with(featureExclusion)))-1` features per participant. This might, for example, happen if participants do not have two subsequent measurements with outgroup interactions, so that an autocorrelation with lag-1 cannot be calculated for the contact-specific variables. The small number of missing values indicates that the feature-based approach indeed largely avoids the structural missingness issue. The few missing values can, however, be an issue for some feature reduction or feature clustering algorithms. We, thus, impute the missing feature values with a single predictive mean matching imputation using the MICE library. 
