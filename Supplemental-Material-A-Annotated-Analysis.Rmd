@@ -141,7 +141,7 @@ source("./scripts/functions/meanViz.R")
 source("./scripts/functions/gam.R")
 source("./scripts/functions/tsFeatureExtractor.R")
 
-# Markdown Options
+
 knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file()) # set working directory
 knitr::opts_knit$get("root.dir") # check working directory
 options(

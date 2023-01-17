@@ -13,8 +13,7 @@ pre-questionnaire. Participants received either monetary compensation or
 partial course credits based on the number of surveys they completed.
 For our empirical example we focus on the variables that were collected
 during the ESM surveys and were available in all three studies. Full
-methodological details are available in the empirical article by
-\citet[][]{Kreienkamp2022b}.
+methodological details are available in \citet[][]{Kreienkamp2022b}.
 
 \subsubsection{Sample}
 
@@ -48,16 +47,18 @@ emotional, and cognitive experience offered a diverse conceptualization
 of migration experience (beyond behavioral measurements) that is
 becoming more common in the literature \citep[][]{Kreienkamp2022d}. Full
 methodological details are available in Online Supplemental Material A,
-but basic item information, descriptives, and correlations are available
-in \tblref{tab:descrLong}.
+but basic item information, descriptives, and correlations are also
+available in \tblref{tab:descrLong}.
+
+\input{tables/descrLong}
 
 \subsection{Analysis and Results}
 
 To perform the main analysis on our selected variables, we showcase the
-extract--reduce--cluster steps in sequential order. For each of the
-steps fully reproducible and annotated code is available in Online
-Supplemental A as well as in the accompanying OSF- and GitHub
-repositories (REFERENCES).
+extract--reduce--cluster--evaluate steps in sequential order. For each
+of the steps fully reproducible and annotated code is available in
+Online Supplemental A as well as in the accompanying OSF- and GitHub
+repositories (REF).
 
 \subsubsection{Feature extraction}
 
@@ -78,6 +79,18 @@ We provide an R-function that automatically extracts and prepares a
 large selection of the time series feature operationalizations presented
 in \tblref{tab:esmFeatures} in our GitHub repository (see the
 \texttt{featureExtractor} function).
+
+For the central tendency: \(Median\) where \(X_{ij}\) is the an ordered
+list of values from the time series of variable \(j\) for participant
+\(i\).
+
+\begin{equation}
+  Median(X_ij) = \left\{ 
+    \begin{array}{ll}
+      X \left[ \frac{n+1}{2} \right] & if n is odd \\
+      \frac{X \left[ \frac{n}{2} \right] + X \left[ \frac{n}{2} +1 \right]}{2} & if n is even
+    \end{array}
+\end{equation}
 
 After the feature extraction, we found that about 1.40\% of the
 extracted features are missing across the 72 features per participant.
@@ -154,11 +167,6 @@ and broader phenomenon of interest.
 
 \subsubsection{Feature clustering}
 
-\Question{\textcolor{cyan}{It is good practice to standardize the input of the k-means algorithm. However, I think that does not make sense for PCs because the PCA is based on the idea of decomposing variances (and capturing the most variance in PC1, ...). If I actually standardize the PC-score, we get really weird k-means results. The only discussion of this I could find was a tutorial that DID NOT standardize the PCs: \url{https://medium.com/more-python-less-problems/principal-component-analysis-and-k-means-clustering-to-visualize-a-high-dimensional-dataset-577b2a7a5fe2} 
-I had originally written: 
-"To ensure that the clustering is weighing the principal components equally (as opposed to their variance), we standardize the particpants' PC-scores." 
-but I went back to the 'raw' PC-scores now. But we should discuss this.}}
-
 For our illustration of the feature clustering procedure, we use the
 generalizable and efficient centroid-based k-means clustering. The
 procedure needs the user to make a selection on the optimal number of
@@ -212,8 +220,6 @@ representativeness, outgroup attitudes, well-being are relatively stable
 for both clusters, the deteriorating cluster also showed substantially
 higher variablity and instability over time (also see
 \fgrref[A]{fig:clusterTs}).
-
-\Question{\textcolor{cyan}{Talk about early warning signals here? E.g., divergences in means over time could be invesitigated with targeted studies.}}
 
 We can also assess the clusters across any other person-level variable.
 This out-of-feature comparison allows us to check for data artifacts, as
