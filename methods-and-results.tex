@@ -85,12 +85,22 @@ list of values from the time series of variable \(j\) for participant
 \(i\).
 
 \begin{equation}
-  Median(X_ij) = \left\{ 
+  Median(X_{ij}) = \left\{ 
     \begin{array}{ll}
-      X \left[ \frac{n+1}{2} \right] & if n is odd \\
-      \frac{X \left[ \frac{n}{2} \right] + X \left[ \frac{n}{2} +1 \right]}{2} & if n is even
+      X \left[ \frac{n+1}{2} \right] & \text{if $n$ is odd} \\
+      \frac{X \left[ \frac{n}{2} \right] + X \left[ \frac{n}{2} +1 \right]}{2} & \text{if $n$ is even}
     \end{array}
 \end{equation}
+
+\begin{equation}
+  Median(X_{ij}) = 
+    \begin{cases}
+      X \left[ \frac{n+1}{2} \right] & \text{if $n$ is odd} \\
+      \frac{X \left[ \frac{n}{2} \right] + X \left[ \frac{n}{2} +1 \right]}{2} & \text{if $n$ is even}
+    \end{cases}
+\end{equation}
+
+For distribution
 
 After the feature extraction, we found that about 1.40\% of the
 extracted features are missing across the 72 features per participant.
