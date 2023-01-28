@@ -109,7 +109,9 @@ breaklinks=true,
 \addbibresource{referencesZotero.bib}
 
 % Title and header
-\title{Describe and Explore: Using feature-based time series clustering to identify meaningful structures in intensive longitudinal data}
+%\title{Describe and Explore: Using feature-based time series clustering to identify meaningful structures in intensive longitudinal data}
+\title{A Gentle Introduction and Application of Feature-Based Clustering with Psychological Time Series}
+
 \shorttitle{feature-based time series clustering}
 
 % Authors
@@ -249,26 +251,26 @@ Psychological time series data has not only become more common but also more div
 \noindent\center\textit{Structure}:
 \begin{itemize}[nosep]
     \item introduction
-    \begin{itemize}[nosep]
-        \item increase in number and variety of ESM data + ts clustering to understand complex developmental differences.
-        \item why cluster time series? 
-        \begin{enumerate}[nosep]
-            \item differences between clusters
-            \item patterns within clusters
-            \item relation to out-of cluster variables
-            \item robust theories and interventions
-        \end{enumerate}
-        \item can't cluster all the raw data (b/c too much data and not directly comparable). Instead, summarize the data and cluster based on the summaries.
-        \item ideally these summaries are:
-        \begin{enumerate}[nosep]
-            \item good at captuing the data
-            \item meaningful = help us understand how the clustering arrived at the output (i.e., explainable) + helps us make sense of the final cluster output (i.e., interpretable)
-        \end{enumerate}
-        \item currently model parameters as summaries.
-        \item limitations of parameter summaries: assumptions not always good at capturing data and model parameters not always interpretable
-        \item current solution: more complicated models (e.g., address violated assumptions or add different types of parameters)
-        \item proposed solution: features as flexible and meaningful approach of summarizing the time series
-    \end{itemize}
+        \begin{itemize}[nosep]
+            \item increase in number and variety of ESM data + ts clustering to understand complex developmental differences.
+            \item ESM literature: features to capture meaningful aspects
+            \item current clustering based on common model parameters, which only include a small selection of features and often have strong assumptions
+            \item Instead of building more complicated models (e.g., address violated assumptions or add different types of parameters), we propose to cluster based on important and relevant features directly.
+            \item Called feature-based clustering. Common procedure in digital phenotyping and the broader ml literature. Used in many fields
+            \item in this paper we provide a practical introduction to the method and illustrate its utility with real-world ESM data.
+        \end{itemize}
+    \item Data Used for Illustration
+    \item Analysis Steps + Application
+        \begin{itemize}[nosep]
+            \item input variables
+            \item feature extraction
+            \item (feature reduction)
+            \item feature clustering
+            \item cluster evaluation
+        \end{itemize}
+    \item Discussion (summary, limitation, implications, conclusion, etc.)
+    \newpage
+    \item\ [...]
     \item Feature-based Time Series Clustering
     \begin{itemize}[nosep]
         \item why features: flexible similarity (b/c more variety), less assumptions, easy to calculate/extract, theory-based selection (as per RQ), psychological interpretability, ...
@@ -297,38 +299,25 @@ Psychological time series data has not only become more common but also more div
 \end{mdframed}
 \newpage
 
-Recent years have seen a striking increase in the number and variety of research studies that follow participants' everyday experiences and collect real-world psychological time series \citep[e.g.,][]{hamaker2017}\footnote{In psychology, extensive longitudinal data collection methods are often referred to as experience sampling method (ESM), ecological momentary assessment (EMA), or ambulatory assessment (AA) studies. While the terms come for different conceptual backgrounds, they share a focus on collecting data over an extended period of time to capture people's behaviors and experiences as they vary over time and in response to different situations and events. In this article, we will use the experience sampling (ESM) term as it has the strongest footing within the clustering literature.}. These extensive longitudinal data sets come with new forms of heterogeneity, where researchers have to consider differences across large numbers of participants, time points, and variables \citep[e.g.,][]{cattell1966, Monden2015, wardenaar2013}. Oftentimes, however, researchers are interested in precisely this complexity and wish to understand how people differ in their temporal developments across several variables \citep[e.g.,][]{ernst2021}. One relatively recent addition to the toolbox of ESM researchers has been time series clustering --- the idea of inductively grouping participants based on similarities of their time series \citep{ariens2020}. 
+Recent years have seen a striking increase in the number and variety of research studies that follow participants' everyday experiences and collect real-world psychological time series \citep[e.g.,][]{hamaker2017}\footnote{In psychology, extensive longitudinal data collection methods are often referred to as experience sampling method (ESM), ecological momentary assessment (EMA), or ambulatory assessment (AA) studies. While the terms come for different conceptual backgrounds, they share a focus on collecting data over an extended period of time to capture people's behaviors and experiences as they vary over time and in response to different situations and events. In this article, we will use the experience sampling (ESM) term as it has the strongest footing within the clustering literature.}. These extensive longitudinal data sets come with new forms of heterogeneity, where researchers have to consider differences across large numbers of participants, time points, and variables \citep[e.g.,][]{cattell1966, wardenaar2013}. Oftentimes, however, researchers are interested in precisely this complexity and wish to understand how people differ in their developments across several variables \citep[e.g.,][]{ernst2021}. Researchers and practitioners are, for example, asking: ``Do patients differ in their development of several key symptoms?'' \citep{Monden2015} or ``How do migrants differ in the development of their psychological needs as they arrive in the new environment?'' \citep{Kreienkamp2022d}. Recently, one promising way of identifying developmental patterns that differ between participants has been \textit{time series clustering} --- the idea of inductively grouping participants based on similarities of their time series \citep{ariens2020}. Such clustering, however, depends on comparing participants based on meaningful (dis)similarities in their time series \citep[][]{Aghabozorgi2015}. 
 
-Time series clustering has a number of conceptual use cases with psychological data. Prime among them is the ability to reduce the time, variable, and person complexity by extracting and organizing participant-level structures. These reduction and structuring qualities can be essential in detecting phenomena and extracting more abstract functional principles \citep[][]{eronen2021a}. These phenomena and principles can be meaningful differences that distinguish participants in different clusters, as well important patterns, trends, and relationships that participants share within a cluster \citep[e.g.,][]{schrodt2000}. Once distinct groups and patterns have been identified, researchers can examine the extent to which these within-group and between-group structures are associated with other variables of interest, such as personality traits, demographic characteristics, or other psychological constructs \citep[e.g.,][]{monden2022}. By detecting meaningful and robust structures and patterns, time series clustering can, thus, be used to inform the development of robust theories as well as targeted interventions and therapies for individuals, for example, with mood disorders and other psychological conditions \citep[e.g.,][]{borsboom2021, eronen2020}.
+Fortunately, past conceptual and empirical works in the ESM literature have collected a number of measures that capture meaningful aspects of psychological time series. Originally, \citet{kuppens2017} proposed four features to capture psychological dynamics: (1) within-person variability, (2) co-variance or ICC, (3) inertia or autocorrelation, and (4) cross-lagged correlations. These features were then extended by \citet{krone2018}, adding (5) innovation variance, and (6) mean intensity. From a slightly different perspective \citet{dejonckheere2019} later added three additional features for psychological time series: (7) instability (8) interdependence (i.e., network density), and (9) diversity \citep[i.e., Gini coefficient; also see][]{wendt2020}. 
+
+Yet, despite this rich diversity of meaningful time series features in psychology, most clustering of ESM data has only focused on a small and restrictive selection of time series characteristics. Thus far, one of the most common approaches has been to cluster participants based on person-specific model parameters --- notably intercepts and slopes from vector autoregression models \citep[VAR; e.g.,][]{ariens2020, bulteel2016, stefanovic2022}. While such model parameters are familiar to researchers in the field, they are often restricted to autocorrelations and cross-lagged partial correlations \citep[e.g.,][]{bringmann2018c}. Additionally, the validity of model parameters is traditionally restricted by the assumptions of the particular statistical model. To take the common VAR model as an example, the model explicitly assumes that the time intervals between measurements are consistent (i.e., equidistant measurement assumption), it does not allow for missing values, and it assumes that means or variances do not change over time \citep[i.e., stationarity assumption;][]{lutkepohl2005}. All of these are types of data researchers commonly collect and contradict important researcher interests in the field \citep[][; see \appref{app:ChallengesAppendix} for a more extensive discussion of the current challenges that clustering approaches should address]{myin-germeys2018, hamaker2017, kivela2022, helmich2020a}. Model parameters might, thus, not always accurately capture the original time series and are often restricted in the features they capture.
+
+% There is, thus, a resolute need for more flexible and meaningful time series summaries that can capture diverse measurement and missingness patterns and can capture non-stationary data, including non-linear trends, also across different time scales.
+
+%Recent efforts to address the shortcomings of model parameters for time series clustering have primarily proposed more complicated models aimed at addressing either accuracy or interpretability concerns. Accuracy concerns have particularly been addressed by building more advanced models that relax specific assumptions \citep[e.g.,][]{denteuling2021} or by switching to different types of models with fewer assumptions, including spline models \citep{axen2011}. To expand interpretability, researchers have proposed to model additional types of parameters, including variability or granularity parameters \citep[e.g., see][]{krone2018}. 
+%\citet{krone2018} even built a parametric model to tentatively cluster study participants.
+
+Recent efforts to address the shortcomings of model parameters for time series clustering have primarily proposed more complicated models, which either seek to relax specific assumptions \citep[e.g.,][]{denteuling2021} or include additional time series features \citep[e.g., see][]{krone2018}. In this manuscript, we instead, propose to cluster psychological time series based on important and relevant features directly. Such an approach is a common procedure in digital phenotyping \citep[][]{REF} and the broader machine learning literature \citep[][]{maharaj2019}. Adequately named \textit{feature-based time series clustering}, the analysis has been applied to a variety of data, including analyses of astronomical, meteorological, and aviation pathways, biological and medical developments, as well as energy and finance patterns \citep{Aghabozorgi2015}.
+
+In this paper, we provide a practical introduction to the method and illustrate its utility with real-world ESM data. We argue that feature-based clustering offers a flexible variety, less strict assumptions, easy and intuitive extraction, theory-based selection, and meaningful psychological interpretability. Below, we introduce the empirical data we use for the illustration and then delineate the individual analysis steps.
 
 
-%Time-series clustering has been extremely common in other empirical fields, including analyses of astronomical, meteorological, and aviation pathways, biological and medical developments, as well as energy and finance patterns \citep{Aghabozorgi2015}. But also for psychological data, time-series clustering has recently become more common \citep[e.g.,][]{ernst2021}.
+\section{Data Used for Illustration}
 
-%The main aim of time series clustering is to inductively group participants in such a way that the dynamics of some variable(s) have maximum similarity for individuals in the same group, and minimum similarity for individuals in different groups \citep[e.g.,][]{Aghabozorgi2015}.
-
-However, while clustering can be incredibly useful, arriving at these clusters critically depends on two core challenges. First, time series need to be made comparable in order to identify key (dis)similarities and second, comparable (dis)similarities need to be accurately distinguishing into different groups \citep[e.g.,][]{Aghabozorgi2015}. In practice, most psychological time series cannot be compared based on the raw data itself. This is the case because in most cases the raw time series include too many data points --- sometimes referred to as the dimensionality curse \citep[e.g.,][]{altman2018} --- and, more importantly, individual time points are oftentimes not directly comparable between participants in psychological data and would lead to misspecifications \citep[e.g., ][]{faloutsos1994}. While such issues can be avoided with transformations for highly regular, controlled, and comparable time series such as EEG data \citep[e.g.,][]{huang1985}, most ESM researchers are usually not interested in directly comparing individual timepoints between participants but are interested in developmental patterns and relationships. 
-
-\begin{figure}[!hbtp] %hbtp
-  \caption{Time Series Clustering Taxonomy}
-  \label{fig:tsClustTax}
-  \centering\includegraphics[width=\textwidth]{figures/TS Cluster Flow/tsClustTax.pdf}
-  \caption*{Note: \\
-  The taxonomy only exemplifies some of the basic differences between a number of common time series clustering approaches. As such, the taxonomy and the notes are neither exhaustive nor complete in distinguishing different approaches. Additionally, terms and labels are used inconsistently across different types of literature and are chosen to avoid overlapping labels.}
-\end{figure}
-
-As a result, most psychological time series are summarized via a numerical representation and these numerical summaries are then comparable and used to cluster participants (e.g., \citealp[]{timmerman2013}; see \fgrref{fig:tsClustTax}). Ideally, the representations that summarize the original time series data should (1) capture the original data accurately without loosing too much information, and (2) should be conceptually meaningful \citep[][]{vandermaaten2009}. Extracting accurate and meaningful representations of the time series can be essential for understanding what goes into the clustering algorithm (i.e., assists with explainability) and can be crucial in making sense of the final cluster output \citep[i.e., assists with interpretability; e.g.,][]{Kennedy2021}. 
-
-Thus far, one of the most common representation approaches for clustering of ESM data has been to extract person-specific model parameters --- notably intercepts and slopes from vector autoregression models \citep[VAR; e.g.,][]{ariens2020, bulteel2016, stefanovic2022}. While model parameters are familiar to researchers in the field, the model-based approach has a number of important shortcomings that relate to accuracy and interpretability. In terms of accuracy, the validity of model parameters is restricted by the assumptions of the statistical model. To take the common VAR model as an example, the model does not accurately capture data with unequal time intervals between measurements (i.e., nonequidistant measurements), it does not allow for missing values, and it does not allow for means or variances to change over time \citep[i.e., stationarity assumption;][]{lutkepohl2005}. As for the interpretability of the model parameters, purely data-driven model parameters, such as frequencies from a fourier analysis, are often difficult to interpret conceptually \citep[e.g.,][]{mayor2022}. But even more `meaningful' parameters from models used in theory-testing practices, such as VAR parameters, are commonly restricted to lagged partial correlations \citep[e.g.,][]{bringmann2018c}. Model parameters might, thus, not always accurately capture the original time series and are often restricted in their conceptual interpretation.
-
-%Computationally, the number of parameters compounds with increases in variables and lag orders, which tends to result in efficiency and accuracy reduction for most clustering algorithms and is sometimes referred to as the dimensionality curse \citep{altman2018}\footnote{As an illustration of this scalability issue, consider a VAR model of 8 variables that includes the first three lags (i.e., VAR(3)). For each of the 8 variables, we would have 25 parameters --- one intercept and 24 slopes (8 variables * 3 lags each). That compounds to a total of 200 parameters per person (8 variables * 25 parameters).}.
-
-These shortcomings, however, stand in sharp contrast with the types of data researchers commonly collect and do not align common research interests in the field. Psychological researchers might, for example, collect data based on the occurrence of natural events, which tends to result in non-equidistant measurements \citep[e.g.,][]{myin-germeys2018, hamaker2017} and context-specific missingness that cannot be imputed, for instance, interaction quality perceptions \citep[e.g.,][]{kivela2022, lavori2008}. At the same time, researchers are often specifically interested in non-stationary developments, looking, for example, at how symptom levels and -variations change over time --- often abruptly and non-linearly \citep[e.g.,][; see \appref{app:ChallengesAppendix} for a more extensive discussion of the current challenges that clustering approaches should address]{bringmann2018b, helmich2020a}. There is, thus, a resolute need for more flexible and meaningful time series summaries that can capture diverse measurement and missingness patterns and can capture non-stationary data, including non-linear trends, also across different time scales.
-
-% In short, the time series clustering repertoire should be extended to approaches that can more flexibly allow for diverse measurement and missingness patterns and can capture non-stationary data, including non-linear trends, also across different time scales.
-
-Recent efforts to address the shortcomings of model parameters for time series clustering, have primarily proposed more complicated models aimed at addressing either accuracy or interpretatbility concerns. Accuracy concerns have particularly been addressed by building more advanced models that relax specific assumptions \citep[e.g.,][]{denteuling2021} or by switching to different types of models with less assumptions, including spline models \citep{axen2011}. To expand interpretatbility, researchers have proposed to model additional types of parameters, including variability or granularity parameters \citep[e.g., see][]{krone2018}. 
-
-In this manuscript we instead, propose to look at the broader machine learning literature and to consider a wider range of time series features to describe psychological time series. In particular, we propose to use an expanded feature-based clustering approach, which allows users to summarize time series based on a research-specific combination of parameters and descriptive statistics. We argue that feature-based clustering offers a flexible variety, less strict assumptions, easy and intuitive extraction, theory-based selection, and meaningful psychological interpretability. STRUCTURE SENTENCE: introduction of approach + empirical illustration
+\section{Analysis Steps and Application} 
 
 \section{Feature-based Time Series Clustering}
 
@@ -395,7 +384,7 @@ Time series clustering starts with the selection and preparation of the variable
 Once the important variables have been selected, the data needs to be prepared for the analysis steps. Importantly, this not only means validating and cleaning the data (e.g., re-coding, removing duplicate or unwanted measurements) but also making the time series comparable. Two important steps are making the time-frames and response scales comparable across participants --- for example, by choosing a time frame that is common to most participants and standardizing the participants' responses \citep{liao2005}.
 
 \paragraph{Feature extraction}
-The main feature extraction step ultimately depends on the choice of the selected time series features but generally speaking the process is comparatively simple. For each of the included variables the features are extracted for each participant and replace the original time series \citep{wang2006}.
+The main feature extraction step ultimately depends on the choice of the selected time series features but generally speaking the process is comparatively simple. For each of the included variables the features are extracted for each participant and replace the original time series \citep{wang2006}\footnote{It should be noted that also within the psychological literature alternative summaries have been proposed that for example include measurement distribution, nonlinear developments, or categorical states. As an example, \citet{kiwuwa-muyingo2011} proposed to extract clinically meaningful states for medical adherence data and suggests these states as meaningful time series features.}.
 
 \paragraph{Feature reduction}
 Once a meaningful selection of time series features has been extracted for each variable and participant, the total number of data points sometimes remains too large for the desired clustering algorithm. As an example, a relatively common scenario would include 10 variables of interest, where 8 time series features are extracted, resulting in 80 features per participant (with a common sample size of 100 participants that would result in a total of 8,000 data points in this hypothetical example). We offer an illustration of the compounding numbers of data points in \fgrref{fig:TSCFlowN}. The difficulty of working with such a large number of dimensions is sometimes termed the `dimensionality curse' \citep[e.g.,][]{altman2018}. To deal with this dimensionality issue, two main approaches have been proposed --- feature selection and feature projection \citep[e.g.,][also see \tblref{tab:featureReduction} for a full overview of the approaches, methods, and common algorithms]{erdogmus2008}. 
@@ -438,6 +427,14 @@ We sought to introduce a flexible and transparent analysis that aids researchers
 
 We have methodologically deconstructed the feature extraction, feature reduction and feature clustering steps and offered methodological as well as conceptual examples for each step. Within this step-wise approach, our article shows that feature-based clustering offers an excellent fit for psychological research practice as both the features as well as the analysis steps are well-established within the field and statistical packages are readily available. Time series features (such as means or linear trends) are not only easy to extract but also hold conceptual meaning for psychological data and can be chosen to address specific research questions (also see \tblref{tab:esmFeatures}). 
 
+\begin{figure}[!hbtp] %hbtp
+  \caption{Time Series Clustering Taxonomy}
+  \label{fig:tsClustTax}
+  \centering\includegraphics[width=\textwidth]{figures/TS Cluster Flow/tsClustTax.pdf}
+  \caption*{Note: \\
+  The taxonomy only exemplifies some of the basic differences between a number of common time series clustering approaches. As such, the taxonomy and the notes are neither exhaustive nor complete in distinguishing different approaches. Additionally, terms and labels are used inconsistently across different types of literature and are chosen to avoid overlapping labels.}
+\end{figure}
+
 To illustrate the practical utility of the approach, we applied the method to real-life empirical data with diverse conceptualizations, missingness, and nonlinear trends. We make available the full code, custom functions, and illustrations to aid the approachability of the method. In the interpretation step we also show how the clusters can be compared across the original feature set as well as other meaningful situational and person-specific differences (e.g., see \fgrref{fig:clusterFeatVar}). We also find that for our example of migration experiences, the method was useful in discerning adaptive from more stressful experiences and helped to contextualize the diverging experiences.
 
 As with any statistical method, feature-based time series clustering is not without limitations. 
@@ -461,8 +458,19 @@ Notwithstanding the limitations, we believe that feature-based clustering offers
 
 \appendix
 
-\section{ESM Data Challenges}
+\section{ESM Data Challenges and Promises}
 \label{app:ChallengesAppendix}
+
+\subsection{Promises}
+
+Time series clustering has a number of conceptual use cases with psychological data. Prime among them is the ability to reduce the time, variable, and person complexity by extracting and organizing participant-level structures. These reduction and structuring qualities can be essential in detecting phenomena and extracting more abstract functional principles \citep[][]{eronen2021a}. These phenomena and principles can be meaningful differences that distinguish participants in different clusters, as well important patterns, trends, and relationships that participants share within a cluster \citep[e.g.,][]{schrodt2000}. Once distinct groups and patterns have been identified, researchers can examine the extent to which these within-group and between-group structures are associated with other variables of interest, such as personality traits, demographic characteristics, or other psychological constructs \citep[e.g.,][]{monden2022}. By detecting meaningful and robust structures and patterns, time series clustering can, thus, be used to inform the development of robust theories as well as targeted interventions and therapies for individuals, for example, with mood disorders and other psychological conditions \citep[e.g.,][]{borsboom2021, eronen2020}.
+
+However, while clustering can be incredibly useful, arriving at these clusters critically depends on two core challenges. First, time series need to be made comparable in order to identify key (dis)similarities and second, comparable (dis)similarities need to be accurately distinguishing into different groups \citep[e.g.,][]{Aghabozorgi2015}. In practice, most psychological time series cannot be compared based on the raw data itself. This is the case because in most cases the raw time series include too many data points --- sometimes referred to as the dimensionality curse \citep[e.g.,][]{altman2018} --- and, more importantly, individual time points are oftentimes not directly comparable between participants in psychological data and would lead to misspecifications \citep[e.g., ][]{faloutsos1994}. While such issues can be avoided with transformations for highly regular, controlled, and comparable time series such as EEG data \citep[e.g.,][]{huang1985}, most ESM researchers are usually not interested in directly comparing individual timepoints between participants but are interested in developmental patterns and relationships. 
+
+As a result, most psychological time series are summarized via a numerical representation and these numerical summaries are then comparable and used to cluster participants (e.g., \citealp[]{timmerman2013}; see \fgrref{fig:tsClustTax}). Ideally, the representations that summarize the original time series data should (1) capture the original data accurately without loosing too much information, and (2) should be conceptually meaningful \citep[][]{vandermaaten2009}. Extracting accurate and meaningful representations of the time series can be essential for understanding what goes into the clustering algorithm (i.e., assists with explainability) and can be crucial in making sense of the final cluster output \citep[i.e., assists with interpretability; e.g.,][]{Kennedy2021}. 
+
+\subsection{Challenges}
+
 We will briefly consider which challenges modern ESM data introduce and what qualities are called for in an extension of the clustering repertoire. We particularly highlight issues of dimensionality, non-equidistant or missing measurements, an interest in non-stationary trends, as well as inconsistent/diverse time scales. 
 
 Concerning dimensionality issues, especially more abstract psychological experiences often need a wider variety of measurements to be captured adequately. Today, few clinical conditions are captured with a single symptom measure \citep[e.g.,][]{cramer2016}, emotions are rarely assessed in isolation \citep[e.g.,][]{reitsema2022}, and socio-cultural experiences are now widely considered to be multimodal \citep[e.g.,][]{Kreienkamp2022d}. This also means that modern analysis techniques increasingly need be able to accommodate an increased focus on multivariate developments. At the same time, however, an increase in the number of considered variables tends to come at the expense of computational load for model estimations, and clustering models may not converge \citep[the aforementioned dimensionality curse;][]{altman2018}. A modern time series clustering technique should consequently be able to summarize and structure multivariate phenomena without running into computational load issues.
@@ -475,5 +483,6 @@ When it comes to studying developmental trajectories, psychological researchers 
 
 Psychological time series often exhibit complex patterns and relationships that can change over different time scales. For example, a time series of daily mood ratings may show a weekly pattern, with higher ratings on the weekends and lower ratings during the week. At the same time, the series may also exhibit a longer-term trend, with overall mood levels increasing or decreasing over the course of several months or years \citep[e.g.,][]{Ram2014}. \sout{These different time scales can be studied separately or in combination, using different statistical techniques and modeling approaches \citep[][]{bertenthal2007, jeronimus2019a}.} Different time scales can become an even more difficult issue when different variables in a model develop on different time scales \citep{bringmann2022b}. Different time scales are thus also a concern clustering approaches should be able to address.
 
+%These shortcomings, however, stand in sharp contrast with the types of data researchers commonly collect and do not align with common research interests in the field. Psychological researchers might, for example, collect data based on the occurrence of natural events, which tends to result in non-equidistant measurements \citep[e.g.,][]{myin-germeys2018, hamaker2017} and context-specific missingness that cannot be imputed, for instance, interaction quality perceptions \citep[e.g.,][]{kivela2022, lavori2008}. At the same time, researchers are often specifically interested in non-stationary developments, looking, for example, at how symptom levels and -variations change over time --- often abruptly and non-linearly \citep[e.g.,][]{bringmann2018b, helmich2020a}.
 
 \end{document}
