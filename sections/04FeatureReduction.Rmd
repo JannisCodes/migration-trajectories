@@ -1,0 +1,76 @@
+---
+output: latex_fragment
+bibliography: ../referencesZotero.bib
+csl: ../apa.csl
+---
+
+```{r}
+#| label: section setup
+#| include: false
+
+# Global Chunk Options
+knitr::opts_chunk$set(
+  fig.width = 12,
+  fig.height = 8,
+  fig.path = "../Figures/",
+  include = FALSE,
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+```{r}
+#| label: pca
+
+# prepare data
+raw_data <- featData
+z_data <- featFullImp$featuresImpZ %>% select(-ends_with(featureExclusion), ends_with("_n"))
+scaled_data <- featFullImp$featuresImpZMat %>% select(-ends_with(featureExclusion)) 
+
+res.pca <- prcomp(scaled_data, scale. = FALSE)
+summary(res.pca)
+
+res.varExplained <- data.frame(
+  Explained_Variance = cumsum(summary(res.pca)[["importance"]]['Proportion of Variance',]),
+  Components = seq(1, length(cumsum(summary(res.pca)[["importance"]]['Proportion of Variance',])), 1)
+)
+fviz_eig(res.pca, addlabels = TRUE)
+ggplot(data = res.varExplained, aes(x = Components, y = Explained_Variance)) +
+  geom_point() +
+  geom_line() +
+  theme_Publication()
+
+pca_cutoff <- min(which(cumsum(summary(res.pca)[["importance"]]['Proportion of Variance',]) >= 0.8))
+
+plot_ly(
+  res.pca$rotation %>% as.data.frame,
+  x = ~ PC1,
+  y = ~ PC2,
+  z = ~ PC3,
+  size = 2,
+  type = 'scatter3d',
+  mode = 'markers',
+  text = ~ paste('Variable:', rownames(res.pca$rotation))
+) %>%
+  layout(title = 'Variables in reduced space')
+plot_ly(
+  res.pca$x %>% as.data.frame,
+  x = ~ PC1,
+  y = ~ PC2,
+  z = ~ PC3,
+  size = 2,
+  type = 'scatter3d',
+  mode = 'markers',
+  text = ~ paste('Participant:', rownames(res.pca$x))
+) %>%
+  layout(title = 'Participants in reduced space')
+
+# extract coordinates for the individuals (PC-scores)
+pca.out <- as.data.frame(res.pca$x[,1:pca_cutoff])
+```
+
+For the feature reduction, we chose the common \textit{principal component analysis} (PCA). Some of the more tailor-made feature selection algorithms can be more accurate in reducing the feature dimensionality and might retain feature importance information more directly, depending on the specific data structure. However, PCAs have the distinct benefit that they are well-established within the psychometric literature and can broadly be applied to a wide variety of studies in an automatize manner. As our aim is to present a general illustration that can also be adopted for more general data descriptive uses, we present the workflow using a PCA here but we encourage users to consider more specialized methods as well.
+
+To use the principal component analysis with our extracted time series features, we first standardize all features across participants to ensure that all features are weighted equally. We then enter all `r ncol(scaled_data)` features into the analysis. The PCA will use linear transformations in such a way that the first component captures the most possible variance of the original data (e.g., by finding a vector that maximizes the sum of squared distances). The following components will then use the same method to iteratively explain the most of the remaining variance while also ensuring that the components are linearly uncorrelated. In practice, this meant that the PCA decomposed the `r ncol(scaled_data)` features into `r ncol(scaled_data)` principal components but now (because of the uncorrelated linear transformations) the first few principal components will capture a majority of the variance. We can then decide how much information (i.e., variance) we are willing to sacrifice for a reduced dimensionality. A common rule of thumb is to use the principal components that jointly explain 70--90% of the original variance (i.e., cumulative percentage explained variance). For our illustration we select the first `r pca_cutoff` principal components that explain 80% of the variance in the original `r ncol(scaled_data)` features (reducing the dimensionality by `r format(round((1-pca_cutoff/ncol(scaled_data))*100, 2), nsmall=2)`%). For the extracted principal components we save the `r pca_cutoff` PC-scores for each participant (i.e., the participants' coordinates in the reduced dimensional space).
+
+We would like to comment on two practical matters when using principal components --- the amount of dimensionality reduction and the interpretation of the principal components. As for the expected dimensionality reduction, given its methodology, PCAs tend to 'work better' at reducing dimensions with (highly) correlated variables. Thus, with a set of very homogeneous variables and features users will need less principal components to explain a large amount of variance, while a more diverse set of variables and features will tend to require more principal components to capture the same amount of variance. Our `r pca_cutoff` principal components are still a relatively high number of variables but this is not surprising as we chose a diverse conceptualization and a diverse set of time series features. As for the interpretability, PCA allows users to extract information on the meaning of the principal components. In particular, because the principal components are linear combination of original features, users can extract the relative importance of each feature for the extracted principal components (i.e., the eigenvectors). While this can be useful in understanding the variance in the original data or help with manual feature selection, we use the PCA purely to reduce the dimensionality for the clustering step. Instead of relying on the principal components, we use the original features of interest to interpret the later extracted clusters. We particularly advocate for such an approach if the original features were chosen for their psychological meaning in understanding the time series and broader phenomenon of interest.

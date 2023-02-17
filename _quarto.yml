@@ -1,0 +1,21 @@
+project:
+  title: "migration-trajectory"
+  output-dir: docs
+  render:
+    - methods-and-results.qmd
+  
+bibliography: referencesZotero.bib
+csl: apa.csl
+
+format:
+  latex: 
+    standalone: false
+  textile:
+    standalone: false
+  html:
+    css: styles.css
+    html-math-method: katex
+  pdf:
+    documentclass: apa7
+    margin-left: 30mm
+    margin-right: 30mm

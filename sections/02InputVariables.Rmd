@@ -1,0 +1,172 @@
+---
+output: latex_fragment
+bibliography: ../referencesZotero.bib
+csl: ../apa.csl
+---
+
+```{r}
+#| label: section setup
+#| include: false
+
+# Global Chunk Options
+knitr::opts_chunk$set(
+  fig.width = 12,
+  fig.height = 8,
+  fig.path = "../Figures/",
+  include = FALSE,
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+We included 12 variables that were available across all three studies and captured information about the participant's interactions, as well as cognitive-, emotional-, and motivational self in relationship with the majority group. We chose these two aspects in particular because (1) the interaction-specific information exemplified the structural missingness issue of modern ESM data and (2) the motivational, emotional, and cognitive experience offered a diverse conceptualization of migration experience (beyond behavioral measurements) that is becoming more common in the literature \citep[][]{Kreienkamp2022d}. Full methodological details are available in Online Supplemental Material A, but basic item information, descriptives, and correlations are also available in \tblref{tab:descrLong}.
+
+```{r}
+#| label: descrWide
+
+variableLab <- c(
+  "AttitudesDutch" = "Outgroup Attitude",
+  "AttitudesPartner" = "Int: Partner Attitude",
+  "DaytimeNeedFulfillment" = "Need Fulfillment",
+  "exWB" = "Well-Being",
+  "InteractionContextAccidental" = "Int: Accidental",
+  "InteractionContextCooperative" = "Int: Cooperative",
+  "InteractionContextRepresentativeNL" = "Int: Representative",
+  "InteractionContextvoluntary" = "Int: Voluntary",
+  "KeyNeedDueToPartner" = "Int: Need Fulfillment Partner",
+  "KeyNeedFulfillment" = "Int: Need Fulfillment",
+  "qualityMeaning" = "Int: Meaningful",
+  "qualityOverall" = "Int: Quality"
+) %>% enframe(., name = "variable", value = "label")
+
+dtAll <- rbind(
+  dtS1Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S1") %>%
+    mutate(across(!TID & !study, as.numeric)),
+  dtS2Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S2"),
+  dtS3Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S3")
+) %>%
+  group_by(study, PID) %>%
+  mutate(ID = cur_group_id()) %>%
+  ungroup %>%
+  mutate(date = as.Date(gsub(" .*", "", TID)),
+         week = strftime(date, format = "%Y-W%V")) %>%
+  select(ID,
+         PID,
+         study,
+         date,
+         week,
+         TIDnum,
+         any_of(varNamS123PCA)) %>%
+  arrange(ID, TIDnum) %>%
+  select_if(~ sum(!is.na(.)) > 1) %>% # only include variables that have any data (i.e., not all NA)
+  as.data.frame
+
+allMlCor <-
+  MlCorMat(
+    data = dtAll,
+    id = "ID",
+    selection = c(
+      "InteractionContextAccidental", 
+      "InteractionContextvoluntary", 
+      "InteractionContextCooperative",
+      "InteractionContextRepresentativeNL",
+      "qualityMeaning",
+      "qualityOverall", 
+      "KeyNeedFulfillment", 
+      "KeyNeedDueToPartner", 
+      "AttitudesPartner",
+      "DaytimeNeedFulfillment",
+      "AttitudesDutch",
+      "exWB"
+    ),
+    labels = c(
+      "Int: Accidental", 
+      "Int: Voluntary", 
+      "Int: Cooperative",
+      "Int: Representative",
+      "Int: Meaningful",
+      "Int: Quality", 
+      "Core Need", 
+      "Core Need Due to Partner", 
+      "Attitude Partner",
+      "Daytime Core Need",
+      "Outgroup Attitude",
+      "Well-being"
+    )
+  )
+
+# Sample Descriptives Table --- wider version
+allMlCor %>%
+  t %>%
+  as.data.frame %>%
+  kbl(.,
+      format = "latex",
+      caption = "Correlation Table and Descriptive Statistics",
+      booktabs = TRUE,
+      align = c("l", rep("c", ncol(.) - 1))) %>%
+  kable_classic() %>%
+  add_header_above(
+    .,
+    c(
+      "",
+      "Correlations" = ncol(allMlCor),
+      "Descriptives" = nrow(allMlCor) - ncol(allMlCor)
+    )
+  ) %>%
+  footnote(
+    general = c(
+      "Upper triangle: Between-person correlations;",
+      "Lower triangle: Within-person correlations;",
+      "*** p < .001, ** p < .01,  * p < .05"
+    )
+  ) %>%
+  kable_styling(latex_options = "scale_down") %>%
+  gsub("\\begin{table}", "\\begin{sidewaystable}\n\\centering", ., fixed = TRUE) %>%
+  gsub("\\end{table}", "\\end{sidewaystable}", ., fixed = TRUE) %>%
+  save_kable("Tables/descrWide.tex")
+```
+
+```{r}
+#| label: descrLong
+
+# Sample Descriptives Table --- longer version
+allMlCor %>%
+  as.data.frame %>%
+  kbl(.,
+      format = "latex",
+      caption = "Correlation Table and Descriptive Statistics",
+      booktabs = TRUE,
+      align = "c", #c("l", rep("c", ncol(.) - 1)),
+      escape = FALSE,
+      col.names = c(
+        #"",
+        "\\makecell{Int: \\\\ Accidental}",
+        "\\makecell{Int: \\\\ Voluntary}", 
+        "\\makecell{Int: \\\\ Cooperative}",
+        "\\makecell{Int: \\\\ Representative}",
+        "\\makecell{Int: \\\\ Meaningful}",
+        "\\makecell{Int: \\\\ Quality}", 
+        "Core Need", 
+        "\\makecell{Core Need \\\\ Due to Partner}", 
+        "\\makecell{Attitude \\\\ Partner}",
+        "\\makecell{Daytime \\\\ Core Need}",
+        "\\makecell{Outgroup \\\\ Attitude}",
+        "Well-being"
+      )) %>%
+  kable_classic() %>%
+  pack_rows("Correlations", 1, ncol(allMlCor)) %>%
+  pack_rows("Descriptives", ncol(allMlCor)+1, nrow(allMlCor)) %>%
+  footnote(
+    general = c(
+      "Upper triangle: Between-person correlations;",
+      "Lower triangle: Within-person correlations;",
+      "*** p < .001, ** p < .01,  * p < .05"
+    )
+  ) %>%
+  kable_styling(latex_options = "scale_down") %>%
+  gsub("\\begin{table}", "\\begin{sidewaystable*}[!hbtp]\n\\centering", ., fixed = TRUE) %>%
+  gsub("\\end{table}", "\\end{sidewaystable*}", ., fixed = TRUE) %>%
+  save_kable("Tables/descrLong.tex")
+```
+
+\input{tables/descrLong}

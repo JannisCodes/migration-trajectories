@@ -1,0 +1,326 @@
+---
+output: latex_fragment
+bibliography: ../referencesZotero.bib
+csl: ../apa.csl
+---
+
+```{r}
+#| label: section setup
+#| include: false
+
+# Global Chunk Options
+knitr::opts_chunk$set(
+  fig.width = 12,
+  fig.height = 8,
+  fig.path = "../Figures/",
+  include = FALSE,
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+In order to interpret the two clusters, we compare the two clusters in their features as well as in their raw time series. We first inspect the clusters with a focus on the included variables (see \fgrref[A]{fig:clusterFeatVar}). We (1) see that for some variables the features are generally stronger in separating the clusters (e.g., 'how cooperative an interaction was' compared to 'attitudes towards the Dutch'). Additionally, we see that (2) within the variables some features are better at distinguishing clusters (e.g., median of well-being vs. MAC of well-being).We then inspect the clusters with a focus on the features (see \fgrref[B]{fig:clusterFeatVar}). While this is the same data as for the variable focus, we can see more clearly that some features are better at distinguishing the clusters across variables (e.g., mean and median compared to auto correlations). This offers some information on which features were are most important in understanding the two extracted groups.
+
+```{=tex}
+\begin{figure}[!ht] %hbtp
+  \caption{Cluster Group Comparisons based on Features and Variables}
+  \label{fig:clusterFeatVar}
+  \centering\includegraphics[width=\textwidth]{figures/clusterFeatVarComb.pdf}
+  \caption*{Note: \\
+  Within the "(B) Feature Focus" subplot, the 'n' and 'Discrimination' comparison variables were not part of the original time series clustering.}
+\end{figure}
+```
+We can then combine the two focus approaches to assess the developments between the two groups more holistically (see \fgrref{fig:clusterTs}). Immediately striking are the mean differences, where participants in the second cluster had more meaningful and fulfilling outgroup interactions also consistently reported more voluntary and cooperative interactions but less accidental and involuntary interactions. The same cluster also reported an increase in need fulfilling interaction over the 30 day period and an increase in interactions that were representative of the outgroup. Whereas the other cluster showed a decrease in voluntary, cooperative, and positive interactions over the 30 days. This 'deterioration' cluster also saw a decrease in general need fulfillment and experienced well-being over the 30 days (see \fgrref[B]{fig:clusterTs}). We also see that while interaction representativeness, outgroup attitudes, well-being are relatively stable for both clusters, the deteriorating cluster also showed substantially higher variablity and instability over time (also see \fgrref[A]{fig:clusterTs}).
+
+<!-- \Question{\textcolor{cyan}{Talk about early warning signals here? E.g., divergences in means over time could be invesitigated with targeted studies.}} -->
+
+We can also assess the clusters across any other person-level variable. This out-of-feature comparison allows us to check for data artifacts, as well as check whether the developmental clusters are associated with important social markers and individual differences. To illustrate artifact checks, we added the number of measurements into the comparison and find that the participants in the detereoration cluster on average completed more ESM surveys and reported on more intergroup interactions than the cluster with the more positive interactions (see \fgrref[B]{fig:clusterTs}). While this difference could indicate that the clusters might not entirely be comparable in the response patterns, we can find some relief in our data exclusion procedures during which we ensured that the general time frame and completion rates were not too dissimilar. To illustrate the utility of individual differences, we compare the two samples in terms of the participants' self-reported discrimination experiences in the Netherlands (measured during the post-measurement). \fgrref[B]{fig:clusterTs} illustrates that participants in the deteriorating cluster reported substantially higher levels of everyday discrimination. Thus, both intensive longitudinal and cross-sectional variables that were not included in the original clustering step can be used to explore and understand the cluster differences in more detail.
+
+```{=tex}
+\begin{figure}[!ht] %hbtp
+  \caption{Cluster Group Comparisons over time}
+  \label{fig:clusterTs}
+  \centering\includegraphics[width=\textwidth]{figures/clusterTsComb.pdf}
+  \caption*{Note: \\
+  Subplot (A) displays the variable cluster means at every measurement occasion. Subplot (B) shows the GAM spline for each cluster across the measurement occasions.}
+\end{figure}
+```
+
+```{r}
+#| label: average feature by cluster
+
+# CLUSTER VARIABLE LABELS
+variableLab <- c(
+  "AttitudesDutch" = "Outgroup Attitude",
+  "AttitudesPartner" = "Int: Partner Attitude",
+  "DaytimeNeedFulfillment" = "Need Fulfillment",
+  "exWB" = "Well-Being",
+  "InteractionContextAccidental" = "Int: Accidental",
+  "InteractionContextCooperative" = "Int: Cooperative",
+  "InteractionContextRepresentativeNL" = "Int: Representative",
+  "InteractionContextvoluntary" = "Int: Voluntary",
+  "KeyNeedDueToPartner" = "Int: Need Fulfillment Partner",
+  "KeyNeedFulfillment" = "Int: Need Fulfillment",
+  "qualityMeaning" = "Int: Meaningful",
+  "qualityOverall" = "Int: Quality"
+) %>% enframe(., name = "variable", value = "label")
+
+# ADD VALIDATION VARS:
+validationNam <- c(
+  "gender.pre",
+  "IntGrAnx01.pre",
+  "IntGrAnx02.pre",
+  "IntGrAnx03.pre",
+  "IntGrAnx04.pre",
+  "IntGrAnx05.pre",
+  "IntGrAnx06.pre",
+  "IntGrAnx07R.pre",
+  "IntGrAnx08R.pre",
+  "IntGrAnx09R.pre",
+  "IntGrAnx10R.pre",
+  "IntGrAnx11R.pre",
+  "IntGrAnx12R.pre",
+  "SWL01.pre",
+  "SWL02.pre",
+  "SWL03.pre",
+  "SWL04.pre",
+  "SWL05.pre",
+  "EvDayDiscr01.post",
+  "EvDayDiscr02.post",
+  "EvDayDiscr03.post",
+  "EvDayDiscr04.post",
+  "EvDayDiscr05.post",
+  "EvDayDiscr06.post",
+  "EvDayDiscr07.post",
+  "EvDayDiscr08.post",
+  "EvDayDiscr09.post"
+)
+
+# EXTRACT OUT-OF-CLUSTER VALIDATION VARIABLES
+validation <- rbind(
+  dtS1Red %>% select(any_of(idVars), any_of(validationNam)) %>% mutate(study = "S1", gender.pre = (gender.pre-2)*-1),
+  dtS2Red %>% select(any_of(idVars), any_of(validationNam)) %>% mutate(study = "S2"),
+  dtS3Red %>% select(any_of(idVars), any_of(validationNam)) %>% mutate(study = "S3")
+) %>% 
+  group_by(study, PID) %>%
+  mutate(ID = cur_group_id()) %>%
+  ungroup %>%
+  group_by(study, ID) %>%
+  summarise(
+    gender = gender.pre,
+    IntGrAnx.pre = rowMeans(across(starts_with("IntGrAnx")), na.rm = TRUE),
+    SWL.pre = rowMeans(across(starts_with("SWL")), na.rm = TRUE),
+    EvDayDiscr.post = rowMeans(across(starts_with("EvDayDiscr")), na.rm = TRUE)
+  ) %>%
+  ungroup %>%
+  distinct %>% 
+  mutate(
+    gender.z = scale(gender, scale = TRUE),
+    IntGrAnx.pre.z = scale(IntGrAnx.pre, scale = TRUE),
+    SWL.pre.z = scale(SWL.pre, scale = TRUE),
+    EvDayDiscr.post.z = scale(EvDayDiscr.post, scale = TRUE)
+  ) %>%
+  select(
+    ID,
+    #gender.z,
+    #IntGrAnx.pre.z,
+    #SWL.pre.z,
+    EvDayDiscr.post.z
+  )
+val <- validation %>% select(-ID) %>% names
+validationFeature <- validation
+for(feature in variableLab$variable) {
+  validationFeature <- validationFeature %>% bind_cols(., select(., setNames(val, paste(feature, val, sep = "_"))))
+}
+validationFeature <- validationFeature %>% select(-any_of(val))
+
+
+# CLUSTER VARIABLE LABELS
+variableLab <- c(
+  "AttitudesDutch" = "Outgroup Attitude",
+  "AttitudesPartner" = "Int: Partner Attitude",
+  "DaytimeNeedFulfillment" = "Need Fulfillment",
+  "exWB" = "Well-Being",
+  "InteractionContextAccidental" = "Int: Accidental",
+  "InteractionContextCooperative" = "Int: Cooperative",
+  "InteractionContextRepresentativeNL" = "Int: Representative",
+  "InteractionContextvoluntary" = "Int: Voluntary",
+  "KeyNeedDueToPartner" = "Int: Need Fulfillment Partner",
+  "KeyNeedFulfillment" = "Int: Need Fulfillment",
+  "qualityMeaning" = "Int: Meaningful",
+  "qualityOverall" = "Int: Quality"
+) %>% enframe(., name = "variable", value = "label")
+validationLab <- c(
+  "gender.z" = "Val: Gender",
+  "SWL.pre.z" = "Val: Sat. with life",
+  "IntGrAnx.pre.z" = "Val: Intergroup Anxiety",
+  "EvDayDiscr.post.z" = " Discrimination"
+) %>% enframe(., name = "variable", value = "label")
+
+featCluster <- data.frame(ID = as.numeric(names(kmeansOut$cluster)), cluster = kmeansOut$cluster) %>%
+  merge(., z_data) %>%
+  group_by(cluster) %>%
+  summarise(across(everything(), list(mean = mean, se = se), na.rm=TRUE)) %>%
+  ungroup %>% 
+  select(-starts_with("ID")) %>%
+  pivot_longer(
+    cols = -c(cluster),
+    names_to = c("variable", ".value"),
+    names_pattern = "(.*)_(.*)"
+  ) %>% 
+  mutate(
+    nam = variable,
+    variable = gsub("\\_.*", "", nam),
+    feature = gsub("^.*?\\_", "", nam)
+  ) %>% 
+  merge(., variableLab) %>%
+  select(
+    cluster,
+    nam,
+    variable,
+    label,
+    feature,
+    everything()
+  )
+
+featClusterVal <- data.frame(ID = as.numeric(names(kmeansOut$cluster)), cluster = kmeansOut$cluster) %>%
+  merge(., z_data) %>%
+  merge(., validationFeature) %>%
+  group_by(cluster) %>%
+  summarise(across(everything(), list(mean = mean, se = se), na.rm=TRUE)) %>%
+  ungroup %>% 
+  select(-starts_with("ID")) %>%
+  pivot_longer(
+    cols = -c(cluster),
+    names_to = c("variable", ".value"),
+    names_pattern = "(.*)_(.*)"
+  ) %>% 
+  mutate(
+    nam = variable,
+    variable = gsub("\\_.*", "", nam),
+    feature = gsub("^.*?\\_", "", nam)
+  ) %>% 
+  merge(., variableLab) %>% 
+  mutate(feature = stri_replace_all_regex(
+    feature,
+    pattern=validationLab$variable,
+    replacement=validationLab$label,
+    vectorize=FALSE
+  )) %>% 
+  select(
+    cluster,
+    nam,
+    variable,
+    label,
+    feature,
+    everything()
+  )
+
+rawCluster <- data.frame(ID = as.numeric(names(kmeansOut$cluster)), cluster = kmeansOut$cluster) %>%
+  merge(., raw_data) %>%
+  select(
+    ID,
+    TIDnum,
+    cluster,
+    any_of(varNamS123)
+  ) %>%
+  reshape2::melt(id.vars = c("cluster", "ID","TIDnum")) %>% 
+  merge(., variableLab)
+```
+
+```{r}
+#| label: clusterVariableGrid
+
+clusterVariableGrid <- featCluster %>% 
+  ggplot(., aes(x = feature, y = mean, group = cluster, color = as.factor(cluster))) +
+  geom_point() +
+  geom_line() +
+  #geom_errorbar(aes(ymin = mean-se, ymax = mean+se), width=.1, position=position_dodge(0.1), size=0.5, alpha=0.4) +
+  coord_flip() +
+  labs(
+    x = "Features",
+    y = "Standardized Mean",
+    color = "Cluster"
+  ) +
+  facet_wrap(~ label) +
+  theme_Publication()
+clusterVariableGrid
+```
+
+```{r}
+#| label: clusterFeatureGrid
+
+clusterFeatureGrid <- featClusterVal %>% 
+  ggplot(., aes(x = label, y = mean, group = cluster, color = as.factor(cluster))) +
+  geom_point() +
+  geom_line() +
+  #geom_ribbon(aes(ymin = mean-se, ymax = mean+se), alpha = 0.2) +
+  #geom_errorbar(aes(ymin = mean-se, ymax = mean+se), width=.1, position=position_dodge(0.1), size=0.5, alpha=0.4) +
+  coord_flip() +
+  labs(
+    x = "Features",
+    y = "Standardized Mean",
+    color = "Cluster"
+  ) +
+  facet_wrap(~ factor(feature, levels = unique(featClusterVal$feature)), ncol=4) +
+  theme_Publication()
+clusterFeatureGrid
+```
+
+```{r}
+#| label: clusterFeatVarComb
+
+clusterFeatVarComb <- ggpubr::ggarrange(
+  clusterVariableGrid + theme(axis.title.x = element_blank()),
+  clusterFeatureGrid,
+  ncol = 1,
+  labels = c("(A) Variable Focus", "(B) Feature Focus"),
+  common.legend = TRUE,
+  legend = "bottom",
+  align = "v"
+) 
+ggsave("Figures/clusterFeatVarComb.pdf", clusterFeatVarComb, width = 12, height = 12)
+```
+
+```{r clusterTS, include=FALSE}
+clusterTS <- rawCluster %>% 
+  ggplot(., aes(x=TIDnum, y=value, group=cluster, color=as.factor(cluster))) +
+  geom_line(aes(x=TIDnum, y=value, group=ID, color=as.factor(cluster)), alpha=0.05) +
+  stat_summary(fun=mean, geom="line") +
+  facet_wrap(~ label, scales = "free_y") +
+  labs(
+    x = "Time ID",
+    y = "Response (Mean Cluster Response Bold)",
+    color = "Cluster"
+  ) +
+  theme_Publication() 
+clusterTS
+```
+
+```{r clusterTSTrend, include=FALSE}
+clusterTSTrend <- rawCluster %>% 
+  ggplot(., aes(x=TIDnum, y=value, group=cluster, color=as.factor(cluster))) +
+  geom_line(aes(x=TIDnum, y=value, group=ID, color=as.factor(cluster)), alpha=0.05) +
+  geom_smooth(aes(group=cluster)) +
+  #stat_summary(fun=mean, geom="line") +
+  facet_wrap(~ label, scales = "free_y") +
+  labs(
+    x = "Time ID",
+    y = "Response (Mean Cluster Response Bold)",
+    color = "Cluster"
+  ) +
+  theme_Publication()
+clusterTSTrend
+```
+
+```{r clusterTsComb, include=FALSE}
+clusterTsComb <- ggpubr::ggarrange(
+  clusterTS + theme(axis.title.x = element_blank()),
+  clusterTSTrend,
+  ncol = 1,
+  labels = c("(A) Timepoint Means", "(B) Average Spline Trends"),
+  common.legend = TRUE,
+  legend = "bottom"
+)
+ggsave("Figures/clusterTsComb.pdf", clusterTsComb, width = 12, height = 12)
+```

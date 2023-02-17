@@ -1,0 +1,72 @@
+---
+output: latex_fragment
+bibliography: ../referencesZotero.bib
+csl: ../apa.csl
+---
+
+```{r}
+#| label: section setup
+#| include: false
+
+# Global Chunk Options
+knitr::opts_chunk$set(
+  fig.width = 12,
+  fig.height = 8,
+  fig.path = "../Figures/",
+  include = FALSE,
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+```{r}
+#| label: featureClustering
+
+# load libraries
+library(factoextra)
+library(NbClust)
+
+# check variance differences
+max(pca.out %>% summarize_all(var))/min(pca.out %>% summarize_all(var))
+pca.out %>%
+  summarize_all(sd) %>%
+  pivot_longer(everything(), names_to = "PC", values_to = "sd") %>%
+  ggplot(., aes(x=reorder(PC, sd), y=sd, label=sd)) +
+  geom_bar(stat='identity', width=.5) +
+  coord_flip() +
+  theme_Publication()
+
+# prep data
+scaled_pc <- pca.out #%>% scale
+
+# Elbow method
+fviz_nbclust(scaled_pc, kmeans, method = "wss") +
+  geom_vline(xintercept = 2, linetype = 2)+
+  labs(subtitle = "Elbow method") +
+  theme_Publication()
+# Silhouette method
+fviz_nbclust(scaled_pc, kmeans, method = "silhouette")+
+  labs(subtitle = "Silhouette method") +
+  theme_Publication()
+```
+
+```{r}
+#| label: k-means modeling based on selected k
+
+kmeansOut <- kmeans(scaled_pc, centers = 2, nstart = 100)
+```
+
+```{r}
+#| label: Plot Convex Hulls
+
+fviz_cluster(kmeansOut, geom = "point", data = scaled_pc, ggtheme = theme_Publication())
+fviz_cluster(kmeansOut, geom = "point", data = z_data, ggtheme = theme_Publication())
+```
+
+<!-- \Question{\textcolor{cyan}{It is good practice to standardize the input of the k-means algorithm. However, I think that does not make sense for PCs because the PCA is based on the idea of decomposing variances (and capturing the most variance in PC1, ...). If I actually standardize the PC-score, we get really weird k-means results. The only discussion of this I could find was a tutorial that DID NOT standardize the PCs: \url{https://medium.com/more-python-less-problems/principal-component-analysis-and-k-means-clustering-to-visualize-a-high-dimensional-dataset-577b2a7a5fe2}  -->
+
+<!-- I had originally written:  -->
+<!-- "To ensure that the clustering is weighing the principal components equally (as opposed to their variance), we standardize the particpants' PC-scores."  -->
+<!-- but I went back to the 'raw' PC-scores now. But we should discuss this.}} -->
+
+For our illustration of the feature clustering procedure, we use the generalizable and efficient centroid-based k-means clustering. The procedure needs the user to make a selection on the optimal number of clusters in order to run the main algorithm. We use the Elbow and the Silhouette method, which both suggest two clusters to be the optimal solution (see Supplemental Material A). We then entered the participants' PC-scores into the k-means algorithm. We used the recommended Hartigan and Wong algorithm \citep{hartigan1979} with 100 random initial centroid positions to avoid convergence to a sub-optimal solution (i.e., local minima). The k-means analysis assigned `r table(kmeansOut$cluster)[1]` participants to cluster 1 and `r table(kmeansOut$cluster)[2]` participants to cluster 2.
