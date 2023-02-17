@@ -12,7 +12,7 @@ csl: ../apa.csl
 knitr::opts_chunk$set(
   fig.width = 12,
   fig.height = 8,
-  fig.path = "../Figures/",
+  fig.path = "../figures/",
   include = FALSE,
   warning = FALSE,
   message = FALSE
