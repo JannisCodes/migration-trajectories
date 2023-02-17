@@ -321,7 +321,7 @@ In the sections below we particularly seek to provide a practical introduction t
 To illustrate the functioning and utility of feature-based time series clustering with psychological ESM data, we apply the clustering process to a recent set of studies that collected data from research on migration experiences. Researchers have recently started using ESM data to follow the daily interactions of migrants with the cultural majority groups \citep[e.g.,][]{Keil2020} and this type of research exemplifies some of the real-world data issues that ESM data commonly faces. The new type of research comes as a response to prominent reviews within the migration literature, which have called for more longitudinal \citep[e.g.,][]{Ward2019} and real-world data \citep[e.g.,][]{McKeown2017}, while at the same time, conceptual works have pushed for more diverse assessments of migration experiences, including motivational, affective, cognitive, and behavioral aspects \citep[e.g.,][]{Kreienkamp2022d}. The migration ESM research, thus, offers a good example of the ESM data that introduces a multivariate conceptualization with event-specific missingness patterns.
 
 
-[...]
+\input{latex-results/01DataDescription.tex}
 
 \section{Analysis Steps and Application} 
 
@@ -350,6 +350,8 @@ Time series clustering starts with the selection and preparation of the variable
 
 Once the important variables have been selected, the data needs to be prepared for the analysis steps. Importantly, this not only means validating and cleaning the data (e.g., re-coding, removing duplicate or unwanted measurements) but also making the time series comparable. Two important steps are making the time-frames and response scales comparable across participants --- for example, by choosing a time frame that is common to most participants and standardizing the participants' responses \citep{liao2005}.
 
+\input{latex-results/02InputVariables.tex}
+
 \paragraph{Feature extraction}
 The main feature extraction step ultimately depends on the choice of the selected time series features but generally speaking the process is comparatively simple. For each of the included variables the features are extracted for each participant and replace the original time series \citep{wang2006}\footnote{It should be noted that also within the psychological literature alternative summaries have been proposed that for example include measurement distribution, nonlinear developments, or categorical states. As an example, \citet{kiwuwa-muyingo2011} proposed to extract clinically meaningful states for medical adherence data and suggests these states as meaningful time series features.}.
 
@@ -369,6 +371,7 @@ Thus, while the final selection of features should always be driven by the resea
 
 It should be noted that this selection of the proposed six time-series features is in no way exhaustive or imperative. Both using a purely data-driven approach or selecting other aspects to summarize the time series are legitimate options \citep[e.g., see][]{heylen2016}. The list seeks to offer a practical toolbox of features that are common and meaningful to psychological research questions and -practice but are also easy to extract and summarize a broad range of developments without asserting strict assumptions (see \tblref{tab:esmFeatures} for an overview).
 
+\input{latex-results/03FeatureExtraction.tex}
 
 \paragraph{Feature reduction}
 Once a meaningful selection of time series features has been extracted for each variable and participant, the total number of data points sometimes remains too large for the desired clustering algorithm. As an example, a relatively common scenario would include 10 variables of interest, where 8 time series features are extracted, resulting in 80 features per participant (with a common sample size of 100 participants that would result in a total of 8,000 data points in this hypothetical example). We offer an illustration of the compounding numbers of data points in \fgrref{fig:TSCFlowN}. The difficulty of working with such a large number of dimensions is sometimes termed the `dimensionality curse' \citep[e.g.,][]{altman2018}. To deal with this dimensionality issue, two main approaches have been proposed --- feature selection and feature projection \citep[e.g.,][also see \tblref{tab:featureReduction} for a full overview of the approaches, methods, and common algorithms]{erdogmus2008}. 
@@ -379,6 +382,8 @@ The second general approach to the dimensionality curse has been feature project
 
 \input{tables/FeatureReduction}
 
+\input{latex-results/04FeatureReduction.tex}
+
 \paragraph{Feature clustering}
 For feature-based time-series clustering, the main aim is to organize participants into groups so that the features of participants within a group are as similar as possible, while the features of people in different groups are as different as possible \citep{liao2005}. The crux of clustering is, thus, to have clearly defined and effective measurements of (dis)similarity. Most of the clustering algorithms used today use some form of distance measurement to optimize group assignment \citep[or similarity measurement for qualitative features; see][]{Aghabozorgi2015}. While others have produced excellent overviews of the many clustering approaches available \citep[e.g.,][]{xu2015}, we will briefly introduce some of the more readily available approaches suitable for most time series feature data. The well-established and readily available clustering approaches can, broadly speaking, be categorized as based on (1) centroids, (2) distributions, (3) density, (4) hierarchies, or (5) a combination thereof \citep[see \tblref{tab:clusterApproaches} for an overview; also see][for a broader review]{jain1999}. 
 
@@ -387,6 +392,8 @@ Each of these approaches can be a valuable clustering approach for time series f
 There is thus, unfortunately, no one-size-fits-all solution to clustering. On the bright side, however, the thriving methodological developments in the clustering literature offer a wide variety of options that offer prospects even for extremely large and complex data sets. We provide a short intuitive explanation for common approaches, together with some of their characteristics and example algorithms in \tblref{tab:clusterApproaches}. For our own illustration, we have chosen that centroid-based k-means clustering. While k-means comes at the expense of high accuracy with more complex cluster shapes, we specifically chose k-means because it is an extremely efficient method that works well with large participant- and feature numbers without making too many restrictive assumptions about the shape of the data \citep{jain2010}. K-means is also well-established within the research community and has been readily implemented in many statistical software packages \citep{hand2005}. Additionally, many of the feature selection methods have specifically been designed for the well-established k-means algorithm \citep[e.g.,][]{boutsidis2010}. As such, the k-means offers a good starting point for many psychological researchers and the method should be generalizable across a relatively wide variety of projects.
 
 \input{tables/clusterApproaches}
+
+\input{latex-results/05FeatureClustering.tex}
 
 \paragraph{Cluster Evaluation}
 The final evaluation step includes two main elements, (1) evaluating the performance of the clustering analysis and (2) interpreting the extracted clusters conceptually. 
@@ -397,10 +404,7 @@ The interpretation of feature-based time series clustering in psychology involve
 
 Before moving to our empirical illustration, we would like to comment on the reporting of feature-based time series clustering. Clustering is inherently an exploratory analysis and, as such, each of the analysis steps involves a set of decisions by the user. While this is common for other types of analyses as well, it remains imperative to report the analysis in the most transparent and reproducible manner possible. In our own description of the method, we have separated both the time series features as well as the analysis steps into distinct taxonomies in order to facilitate the transparency of the individual steps and decision moments. Beyond the structures proposed here, \citet{vandeschoot2017} have proposed an extensive checklist for latent trajectory studies. Most of their recommendations and reporting guidelines apply to feature-based clustering as well and might even offer a template for researchers hoping to pre-register their analysis procedures.
 
-% Methods and Results from RMarkdown render
-\input{methods-and-results}
-%\input{tables/descrWide} 
-%\input{tables/descrLong}
+\input{latex-results/06ClusterEvaluation.tex}
 
 \section{Discussion}
 % aims re-iterated
