@@ -3,7 +3,6 @@ output: latex_fragment
 # format: 
 #   latex:
 #     standalone: false
-#format: context
 bibliography: referencesZotero.bib
 csl: apa.csl
 execute:

@@ -1,32 +1,8 @@
 ---
 title: "Report: Illustration Results"
 subtitle: "Render report for 'A Gentle Introduction and Application of Feature-Based Clustering with Psychological Time Series'"
-author:
-- ██████ ██████████^1^
-- ██████████ ████████^1^
-- █████ █████████^1^
-- █████ ██ █████^1^
-- ███ ███████^1^
-- ^1^██████████ ██ █████████, Department of Psychology
-- "Author Information:"
-- "Correspondence concerning this article should be addressed to ██████ ██████████, ██████████ ██ ██████████, █████████ ██ ██████████, █████ ██████████ ███, ████ ██ █████████ ████████████████. E-mail: █████████████████"
-- 'The main manuscript is available at <a href="https://www.doi.org/ToBePublished" target="_blank">doi.org/ToBePublished</a>'
-- 'The data repository for this manuscript is available at <a href="https://osf.io/" target="_blank">osf.io/TBD</a>'
-- 'The GitHub repository for this manuscript is available at <a href="https://github.com/maskedForPeerReview" target="_blank">github.com/maskedForPeerReview</a>'
 date: "Last updated: `r format(Sys.time(), '%d %B, %Y')`"
-output: 
-  bookdown::html_document2:
-    fig_caption: yes
-    md_extensions: +footnotes
-    code_folding: hide
-    mathjax: default
-    theme: yeti
-    toc: yes
-    toc_float: yes
-    number_sections: false
-    css: style.css
-    includes:
-      in_header: "_includes/head-custom-rmd.html" 
+output: pdf_document
 editor_options:
   chunk_output_type: console
 bibliography: referencesZotero.bib
@@ -499,7 +475,7 @@ varNames %>%
   separate(variable, c("concept", "variable", "study1", "study2", "study3"), " - ") %>%
   mutate(across(c(study1, study2, study3), as.numeric)) %>%
   arrange(concept, unspecific, `Interaction Only`) %>% 
-  mutate_all(~recode(.x, `0`="", ` 1`="✓")) %>%
+  mutate_all(~recode(.x, `0`="", ` 1`="X")) %>%
   relocate(starts_with("study"), .after = last_col()) %>%
   rename_with(., ~ gsub("study", "Study ", .x, fixed = TRUE)) %>%
   kbl(.,
@@ -508,12 +484,7 @@ varNames %>%
       align = c("l", "l", rep("c", ncol(.)-2)),
       digits=2,
       caption = "Variables by Interaction Types and Study Availability") %>%
-  add_header_above(c(" " = 2, "Contact Type" = 2, "Study Availability" = 3)) %>%
-  kable_classic(
-    full_width = F,
-    lightable_options = "hover",
-    html_font = "Cambria"
-  )
+  add_header_above(c(" " = 2, "Contact Type" = 2, "Study Availability" = 3))
 ```
 
 ```{r}
@@ -551,7 +522,7 @@ varNames %>%
   mutate(across(c(study1, study2, study3), as.numeric)) %>%
   #select(-study1, -study2, -study3) %>%
   arrange(concept, unspecific, `Interaction Only`) %>% 
-  mutate_all(~recode(.x, `0`="", ` 1`="✓")) %>%
+  mutate_all(~recode(.x, `0`="", ` 1`="X")) %>%
   relocate(starts_with("study"), .after = last_col()) %>%
   rename_with(., ~ gsub("study", "Study ", .x, fixed = TRUE)) %>%
   kbl(.,
@@ -650,17 +621,17 @@ rmarkdown::render(
 
 The full session information with all relevant system information and all loaded and installed packages is available in the collapsible section below.
 
-<details>
+<!-- <details> -->
 
-<summary>
+<!-- <summary> -->
 
 System Info
 
-</summary>
+<!-- </summary> -->
 
-\renewcommand{\arraystretch}{0.8}
+<!-- \renewcommand{\arraystretch}{0.8} -->
 
-<!-- decrease line spacing for the table -->
+<!-- <!-- decrease line spacing for the table --> -->
 
 ```{r Reproducibility-sessionInfo-R-environment, echo=FALSE, message=FALSE, warning=FALSE, fig.align="center", out.width='100%', results='asis'}
 df_session_platform <- devtools::session_info()$platform %>%
@@ -675,33 +646,28 @@ kbl(
   booktabs = T,
   align = "l",
   caption = "R environment session info for reproducibility of results" # complete caption for main document
-) %>%
-  kable_classic(
-    full_width = F,
-    lightable_options = "hover",
-    html_font = "Cambria"
-  )
+)
 ```
 
-\renewcommand{\arraystretch}{1}
+<!-- \renewcommand{\arraystretch}{1} -->
 
-<!-- reset row height/line spacing -->
+<!-- <!-- reset row height/line spacing --> -->
 
-</details>
+<!-- </details> -->
 
-<br>
+<!-- <br> -->
 
-<details>
+<!-- <details> -->
 
-<summary>
+<!-- <summary> -->
 
 Package Info
 
-</summary>
+<!-- </summary> -->
 
-\renewcommand{\arraystretch}{0.6}
+<!-- \renewcommand{\arraystretch}{0.6} -->
 
-<!-- decrease line spacing for the table -->
+<!-- <!-- decrease line spacing for the table --> -->
 
 ```{r Reproducibility-sessionInfo-R-packages, echo=FALSE, message=FALSE, warning=FALSE, fig.align="center", out.width='100%', results='asis'}
 df_session_packages <- devtools::session_info()$packages %>%
@@ -717,41 +683,34 @@ kbl(
   booktabs = T,
   align = "l",
   caption = "Package info for reproducibility of results" # complete caption for main document
-) %>%
-  kable_classic(
-    full_width = F,
-    lightable_options = "hover",
-    html_font = "Cambria"
-  )
+)
 ```
 
-\renewcommand{\arraystretch}{1}
+<!-- \renewcommand{\arraystretch}{1} -->
 
-<!-- reset row height/line spacing -->
+<!-- <!-- reset row height/line spacing --> -->
 
-</details>
+<!-- </details> -->
 
-<br>
+<!-- <br> -->
 
-<details>
+<!-- <details> -->
 
-<summary>
+<!-- <summary> -->
 
 Full Session Info (including loaded but unattached packages --- for troubleshooting only)
 
-</summary>
+<!-- </summary> -->
 
 `r pander(sessionInfo(), compact = FALSE)`
 
-</details>
+<!-- </details> -->
 
-</br>
+<!-- </br> -->
 
 ------------------------------------------------------------------------
 
 </br>
-
-# References
 
 ::: {.tocify-extend-page data-unique="tocify-extend-page" style="height: 0;"}
 :::
