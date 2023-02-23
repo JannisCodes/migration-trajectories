@@ -94,6 +94,7 @@ breaklinks=true,
 \newcommand{\fgrref}[2][]{\hyperref[#2]{Figure \ref*{#2}#1}}
 \newcommand{\tblref}[2][]{\hyperref[#2]{Table \ref*{#2}#1}}
 \newcommand{\appref}[2][]{\hyperref[#2]{Appendix \ref*{#2}#1}}
+\newcommand{\equatref}[2][]{\hyperref[#2]{Equation \ref*{#2}#1}}
 
 % custom open science badge height
 \newlength{\badgeheight}
@@ -358,7 +359,7 @@ Fortunately, past conceptual and empirical efforts offer valuable discussions of
 
 Some of the features found in the psychological literature are not necessarily well-suited to summarize time series for feature-based clustering and some key conceptual features are not well represented in the literature. In particular, covariances and cross-lagged correlations often produce a large number of parameters and might not necessarily summarize the existing data enough \citep{ernst2021}. Others such as network density parameters, used to summarize variable interdependence, might not always be meaningful for psychological data \citep{bringmann2019a}. At the same time, linear and nonlinear trends are not captured by the features commonly proposed for psychological time series, because the features are often developed for stationary models \citep[e.g.,][]{krone2018}. 
 
-Thus, while the final selection of features should always be driven by the research questions and field-specific conventions, for our illustration we chose six features that relate to common psychological research questions and recent works within the field: (1) central tendency, (2) variability, (3) instability, (4) self-similarity, (5) linear trend, and (6) nonlinearity. An overview of the selected features, their substantive interpretations, and mathematical operationalizations is also available in \tblref{tab:esmFeatures}. We offer a short introduction of each of these six features below as a practical starting point for researchers and practitioners interested in feature-based clustering of psychological time series data. We provide additional background on the theoretical relevance of the selected features in \appref{app:FeatureBackground}.
+Thus, while the final selection of features should always be driven by the research questions and field-specific conventions, for our illustration we chose six features that relate to common psychological research questions and recent works within the field: (1) central tendency, (2) variability, (3) instability, (4) self-similarity, (5) linear trend, and (6) nonlinearity. An overview of the selected features, their substantive interpretations, and mathematical operationalizations is also available in \tblref{tab:esmFeatures}. We provide additional background on the theoretical relevance of the selected features in \appref{app:FeatureBackground}. For each of the six time series features we chose, we chose a mathematical representation that was appropriate for our type of data. We provide a short introduction of each feature below. 
 
 \input{tables/esmPsychFeatures}
 
