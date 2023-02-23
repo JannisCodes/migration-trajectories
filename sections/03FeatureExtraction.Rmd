@@ -40,8 +40,9 @@ pMissFull <- pMissFeat(
 ```
 
 \paragraph{Central tendency.}
-The central tendency refers to the statistical measures that represent the "typical" or "average" of a set of data. The most common measures of central tendency are the mean, median, and mode \citep{weisberg1992}. As a familiar statistic from probability theory, the central tendency sits at the heart of many fundamental questions about psychological time series. Researchers might, for example, be interested in whether "Over a one month period, are some people happier than others?".
-For our central tendency feature we chose the robust \textit{median}, which can avoid potential issues with non-normally distributed time series responses or outliers \citep{weisberg1992}. To calculate the \textit{median} ($M$), we let $X_{ij}$ be the ordered list of values from the time series of variable $j$ for participant $i$. The calculation depends on whether the number of measurements in a time series $n$ is odd or even.
+The central tendency refers to the statistical measures that represent the "typical" or "average" of a set of data. The most common measures of central tendency are the mean, median, and mode \citep{weisberg1992}. As a familiar statistic from probability theory, the central tendency sits at the heart of many fundamental questions about psychological time series. Researchers might, for example, be interested in whether "Over a one month period, are some people happier than others?"
+
+For the central tendency feature of our illustration we chose the robust \textit{median}, which can avoid potential issues with non-normally distributed time series responses or outliers \citep{weisberg1992}. To calculate the \textit{median} ($M$), we let $X_{ij}$ be the ordered list of values from the time series of variable $j$ for participant $i$. The calculation depends on whether the number of measurements in a time series $n$ is odd or even.
 
 ```{=tex}
 \begin{equation} \label{eq:median}
@@ -55,7 +56,8 @@ For our central tendency feature we chose the robust \textit{median}, which can 
 
 
 \paragraph{Variability.}
-Variability captures the degree to which a set of data differs from the central tendency and is sometimes also referred to as the dispersion or spread of the data \citep{weisberg1992}. In time series analyses, variability is conceptually important because information about the distribution and diversity of the data has been found to be indicative of worse psychological states \citep{myin-germeys2018}. Person level differences of ESM measurements have, for example, been associated with higher levels of psycho-pathological recurrences among depression patients \citep{timm2017}.
+Variability captures the degree to which a set of data differs from the central tendency and is sometimes also referred to as the dispersion or spread of the data \citep{weisberg1992}. In time series analyses, variability is conceptually important because information about the distribution and diversity of the data has been found to be indicative of worse psychological states \citep{myin-germeys2018}. Person level differences of ESM measurements have, for example, been associated with higher levels of psycho-pathological recurrences among depression patients \citep{timm2017}. As such, psychological researchers and practitioners are often empirically interested in person-level differences in variability. Researchers on polarization and radicalization might for example ask: "Are people settled in their attitudes towards migrants or vary across the measurement period?''
+
 For our illustration data, we chose to capture the time series variability with the \textit{Median Absolute Deviation} ($MAD$), where we calculate the \textit{median} ($M$; calculated as in \equatref{eq:median}) for the absolute deviations of measurement $x$ at time point $t$ for participant $i$ and variable $j$ from the median of that time series $X$.
 
 ```{=tex}
@@ -67,6 +69,7 @@ For our illustration data, we chose to capture the time series variability with 
 
 \paragraph{Instability.}
 Instability captures the average change between two consecutive measurements \citep{ebner-priemer2009}. While instability is conceptually related to the variability feature, variability does not take into account temporal dependency, whereas instability looks at the 'jumpy-ness' of the data over time. In other words, variability reflects the range or diversity of values in a time series data, while instability reflects the fluctuation or inconsistency in a time series data over time  \citep{trull2008}. For example, if a person has rapid and extreme changes in mood their mood is highly unstable, while if a person's mood responses span a wide range over the entire study period, their mood is highly variable \citep{jahng2008}. Within psychological time series, instability measurements have especially been important in the research of borderline personality disorder \citep{trull2008} and suicidality \citep{kivela2022}, but also in understanding early warning signals more generally \citep{wichers2019}. Conceptually, the instability feature, thus, relates to a broad range of research questions, including: "Do changes tend to be slow and gradual or fast and abrupt?" 
+
 For our data we chose the \textit{mean absolute change} \citep[$MAC$; e.g.,][]{ebner-priemer2009, barandas2020}, which looks at the average absolute difference of measurements $x$ at time points $t$ and $t-1$, for each time series $X$ of participant $i$ and variable $j$.
 
 ```{=tex}
@@ -78,6 +81,7 @@ For our data we chose the \textit{mean absolute change} \citep[$MAC$; e.g.,][]{e
 
 \paragraph{Self-similarity.}
 Self-similarity in time series data refers to the property of a time series to exhibit similar patterns of behavior over different time scales \citep{dmello2021}. That is, self-similarity describes how much a measurement carries over to future measurements. One important self-similarity in psychological time series is \texit{inertia} --- how much a measurement carries over to its next measurement \citep{kuppens2010}. If inertia is high a development tends to stay in a certain state or continues to move towards a certain direction. Because high inertia is resistant to change, in emotion dynamics high inertia has been found to be indicative of underreactive systems and to be characteristic of psychological maladjustment \citep{kuppens2010}. In a similar vein, high inertia at baseline was even predictive of the initial onset of depression \citep{kuppens2012}. Conceptually, inertia is more broadly connected to research questions such as: ``Do patients stay in a depressed mood for several measurements?'' 
+
 For our illustration case, we chose the commonly used autocorrelation or autoregression with a lag-1 to capture the inertia. High autocorrelation values can indicate high levels of inertia, while low autocorrelation values may indicate a more unpredictable or volatile time series \citep{dejonckheere2019}. The lag--1 autocorrelation $r_{ij,1}$ looks at the average correlation between a measurement $x$ and the proceeding measurement $x_{t-1}$ for the time series $X$ of participant $i$ and variable $j$. 
 
 ```{=tex}
@@ -89,7 +93,8 @@ For our illustration case, we chose the commonly used autocorrelation or autoreg
 
 \paragraph{Linear trend.}
 In non-stationary time series a linear trend can be observed when there is a consistent increase or decrease in the data over time \citep{nyblom1986}. For psychological time series, researchers have, for example, pointed out the importance of linear trends in interpersonal communications \citep{vasileiadou2014}, and emotion dynamics \citep{oravecz2016}. Theoretically, linear trends are often considered the simplest way of assessing whether a psychological theory of change is appropriate \citep{gottman1969}. In empirical practice, linear trends are, thus, commonly exemplified by research questions such as "Do patient symptoms improve consistently?" or "Does worker productivity decline continuously?"
-For the variables in our illustration data set we chose an overall linear regression slope to capture the linear trend. 
+
+For the variables in our illustration data set we chose an overall linear regression slope to capture the linear trend. The regression slope provides the average change from one time point $t$ to the next across all measurements $x$ of a time series $X$ of participant $i$ and variable $j$.
 
 ```{=tex}
 \begin{equation} \label{eq:lin}

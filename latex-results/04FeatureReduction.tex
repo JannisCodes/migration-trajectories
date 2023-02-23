@@ -13,10 +13,10 @@ encourage users to consider more specialized methods as well.
 To use the principal component analysis with our extracted time series
 features, we first standardize all features across participants to
 ensure that all features are weighted equally. We then enter all 72
-features into the analysis. The PCA will use linear transformations in
-such a way that the first component captures the most possible variance
-of the original data (e.g., by finding a vector that maximizes the sum
-of squared distances). The following components will then use the same
+features into the analysis. The PCA uses linear transformations in such
+a way that the first component captures the most possible variance of
+the original data (e.g., by finding a vector that maximizes the sum of
+squared distances). The following components will then use the same
 method to iteratively explain the most of the remaining variance while
 also ensuring that the components are linearly uncorrelated. In
 practice, this meant that the PCA decomposed the 72 features into 72
@@ -53,6 +53,7 @@ variance in the original data or help with manual feature selection, we
 use the PCA purely to reduce the dimensionality for the clustering step.
 Instead of relying on the principal components, we use the original
 features of interest to interpret the later extracted clusters. We
-particularly advocate for such an approach if the original features were
-chosen for their psychological meaning in understanding the time series
-and broader phenomenon of interest.
+particularly advocate for such an approach if all original features are
+considered psychologically meaningful in understanding the time series
+and users would like to retain the features for inpterpretation
+(irrespective of the features importance).

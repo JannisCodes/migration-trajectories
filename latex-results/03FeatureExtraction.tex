@@ -7,7 +7,9 @@ measures of central tendency are the mean, median, and mode
 the central tendency sits at the heart of many fundamental questions
 about psychological time series. Researchers might, for example, be
 interested in whether ``Over a one month period, are some people happier
-than others?''. For our central tendency feature we chose the robust
+than others?''
+
+For the central tendency feature of our illustration we chose the robust
 \textit{median}, which can avoid potential issues with non-normally
 distributed time series responses or outliers \citep{weisberg1992}. To
 calculate the \textit{median} (\(M\)), we let \(X_{ij}\) be the ordered
@@ -33,13 +35,18 @@ distribution and diversity of the data has been found to be indicative
 of worse psychological states \citep{myin-germeys2018}. Person level
 differences of ESM measurements have, for example, been associated with
 higher levels of psycho-pathological recurrences among depression
-patients \citep{timm2017}. For our illustration data, we chose to
-capture the time series variability with the
-\textit{Median Absolute Deviation} (\(MAD\)), where we calculate the
-\textit{median} (\(M\); calculated as in \equatref{eq:median}) for the
-absolute deviations of measurement \(x\) at time point \(t\) for
-participant \(i\) and variable \(j\) from the median of that time series
-\(X\).
+patients \citep{timm2017}. As such, psychological researchers and
+practitioners are often empirically interested in person-level
+differences in variability. Researchers on polarization and
+radicalization might for example ask: ``Are people settled in their
+attitudes towards migrants or vary across the measurement period?'\,'
+
+For our illustration data, we chose to capture the time series
+variability with the \textit{Median Absolute Deviation} (\(MAD\)), where
+we calculate the \textit{median} (\(M\); calculated as in
+\equatref{eq:median}) for the absolute deviations of measurement \(x\)
+at time point \(t\) for participant \(i\) and variable \(j\) from the
+median of that time series \(X\).
 
 \begin{equation} \label{eq:mad}
   MAD(X_{ij}) = M(\left| x_{ijt} - M(X_{ij}) \right|)
@@ -64,7 +71,9 @@ suicidality \citep{kivela2022}, but also in understanding early warning
 signals more generally \citep{wichers2019}. Conceptually, the
 instability feature, thus, relates to a broad range of research
 questions, including: ``Do changes tend to be slow and gradual or fast
-and abrupt?'' For our data we chose the \textit{mean absolute change}
+and abrupt?''
+
+For our data we chose the \textit{mean absolute change}
 \citep[$MAC$; e.g.,][]{ebner-priemer2009, barandas2020}, which looks at
 the average absolute difference of measurements \(x\) at time points
 \(t\) and \(t-1\), for each time series \(X\) of participant \(i\) and
@@ -90,8 +99,9 @@ characteristic of psychological maladjustment \citep{kuppens2010}. In a
 similar vein, high inertia at baseline was even predictive of the
 initial onset of depression \citep{kuppens2012}. Conceptually, inertia
 is more broadly connected to research questions such as: ``Do patients
-stay in a depressed mood for several measurements?'\,' For our
-illustration case, we chose the commonly used autocorrelation or
+stay in a depressed mood for several measurements?'\,'
+
+For our illustration case, we chose the commonly used autocorrelation or
 autoregression with a lag-1 to capture the inertia. High autocorrelation
 values can indicate high levels of inertia, while low autocorrelation
 values may indicate a more unpredictable or volatile time series
@@ -116,8 +126,13 @@ the simplest way of assessing whether a psychological theory of change
 is appropriate \citep{gottman1969}. In empirical practice, linear trends
 are, thus, commonly exemplified by research questions such as ``Do
 patient symptoms improve consistently?'' or ``Does worker productivity
-decline continuously?'' For the variables in our illustration data set
-we chose an overall linear regression slope to capture the linear trend.
+decline continuously?''
+
+For the variables in our illustration data set we chose an overall
+linear regression slope to capture the linear trend. The regression
+slope provides the average change from one time point \(t\) to the next
+across all measurements \(x\) of a time series \(X\) of participant
+\(i\) and variable \(j\).
 
 \begin{equation} \label{eq:lin}
   b_{ij} = \frac{\sum(t-\overline{t})(x_{ijt}-\overline{x}_{ij})}{\sum(t-\overline{t})^2}
