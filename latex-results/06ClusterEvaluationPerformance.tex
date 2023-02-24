@@ -15,12 +15,12 @@ The first statistic we looked at was the a total within-cluster sum of
 square \(WCSS\) (also see \equatref{eq:kWCSS}). While the within cluster
 variation will naturally decrease with (more) smaller clusters, we
 observed that the decrease in \(WCSS\) was largest until \(k=2\) after
-which the decrease was much smaller. This method is also called the
-\textit{elbow method} \citep{syakur2018}. We then looked at a second,
-commonly used measure, the average silhouette score. This statistic
-measures the degree to which each time feature data point is similar to
-other points within the same cluster, compared to points in other
-clusters \citep{rousseeuw1987}. In our case, the \(k=2\) solution
+which the decrease was much smaller. This method is also sometimes
+referred to as the `elbow method' \citep{syakur2018}. We then looked at
+a second, commonly used measure, the average silhouette score. This
+statistic measures the degree to which each time feature data point is
+similar to other points within the same cluster, compared to points in
+other clusters \citep{rousseeuw1987}. In our case, the \(k=2\) solution
 maximized the silhouette coefficient (\(s_2=\) 0.09). Finally, the
 Calinski-Harabasz index assesses the compactness and separation of the
 clusters by asssessing the ratio of the sum of between-clusters
