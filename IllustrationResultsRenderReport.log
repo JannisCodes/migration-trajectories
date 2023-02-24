@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.2.21)  24 FEB 2023 21:42
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.2.21)  24 FEB 2023 22:10
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -644,8 +644,8 @@ Underfull \hbox (badness 10000) in paragraph at lines 658--668
  []
 
 
-Overfull \hbox (207.07747pt too wide) in paragraph at lines 658--668
-\T1/lmr/m/n/10 output pan-doc360524da3467.tex --lua-filter /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
+Overfull \hbox (201.52197pt too wide) in paragraph at lines 658--668
+\T1/lmr/m/n/10 output pan-doc53e32f4870cf.tex --lua-filter /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
  []
 
 
@@ -699,8 +699,8 @@ Underfull \hbox (badness 10000) in paragraph at lines 712--722
  []
 
 
-Overfull \hbox (207.07747pt too wide) in paragraph at lines 712--722
-\T1/lmr/m/n/10 output pan-doc360521945b26.tex --lua-filter /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
+Overfull \hbox (205.96648pt too wide) in paragraph at lines 712--722
+\T1/lmr/m/n/10 output pan-doc53e373dcc89b.tex --lua-filter /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
  []
 
 
@@ -734,8 +734,8 @@ Overfull \hbox (1365.62129pt too wide) in paragraph at lines 748--753
  []
 
 
-Overfull \hbox (205.96648pt too wide) in paragraph at lines 754--764
-\T1/lmr/m/n/10 output pan-doc360513e17483.tex --lua-filter /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
+Overfull \hbox (202.07747pt too wide) in paragraph at lines 754--764
+\T1/lmr/m/n/10 output pan-doc53e345b198b.tex --lua-filter /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
  []
 
 
@@ -769,8 +769,8 @@ Overfull \hbox (1344.67635pt too wide) in paragraph at lines 790--795
  []
 
 
-Overfull \hbox (207.63297pt too wide) in paragraph at lines 796--806
-\T1/lmr/m/n/10 output pan-doc360541a92dab.tex --lua-filter /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
+Overfull \hbox (204.85548pt too wide) in paragraph at lines 796--806
+\T1/lmr/m/n/10 output pan-doc53e3106592cc.tex --lua-filter /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
  []
 
 
@@ -814,8 +814,8 @@ Overfull \hbox (1490.39844pt too wide) in paragraph at lines 838--843
  []
 
 
-Overfull \hbox (207.35526pt too wide) in paragraph at lines 844--854
-\T1/lmr/m/n/10 output pan-doc36053171d1be.tex --lua-filter /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
+Overfull \hbox (207.07747pt too wide) in paragraph at lines 844--854
+\T1/lmr/m/n/10 output pan-doc53e312bb8046.tex --lua-filter /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
  []
 
 
@@ -869,8 +869,8 @@ Overfull \hbox (51.82823pt too wide) in paragraph at lines 895--905
  []
 
 
-Overfull \hbox (207.35497pt too wide) in paragraph at lines 895--905
-\T1/lmr/m/n/10 --output pan-doc3605633c2ffb.tex --lua-filter /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
+Overfull \hbox (209.02197pt too wide) in paragraph at lines 895--905
+\T1/lmr/m/n/10 --output pan-doc53e326cafd61.tex --lua-filter /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
  []
 
 
@@ -954,8 +954,8 @@ Overfull \hbox (58.3565pt too wide) in paragraph at lines 978--988
  []
 
 
-Overfull \hbox (208.18846pt too wide) in paragraph at lines 978--988
-\T1/lmr/m/n/10 --output pan-doc3605458fd5fa.tex --lua-filter /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
+Overfull \hbox (206.52197pt too wide) in paragraph at lines 978--988
+\T1/lmr/m/n/10 --output pan-doc53e33cf58f62.tex --lua-filter /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
  []
 
 
@@ -994,7 +994,7 @@ Here is how much of TeX's memory you used:
  14 hyphenation exceptions out of 8191
  89i,9n,90p,852b,501s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {/Users/jannis/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}{/Users/jannis/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}</Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtti10.pfb>
-Output written on IllustrationResultsRenderReport.pdf (20 pages, 223418 bytes).
+Output written on IllustrationResultsRenderReport.pdf (20 pages, 223361 bytes).
 PDF statistics:
  197 PDF objects out of 1000 (max. 8388607)
  157 compressed objects within 2 object streams
