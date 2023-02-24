@@ -606,13 +606,28 @@ rmarkdown::render(
 
 # Cluster Evaluation
 
+## CLuster Performance
+
 ```{r}
-#| label: render cluster evaluation
+#| label: render cluster performance
 #| include: true
 #| results: 'asis'
 
 rmarkdown::render(
-  input = "sections/06ClusterEvaluation.Rmd",
+  input = "sections/06ClusterEvaluationPerformance.Rmd",
+  output_dir = outputDir
+)
+```
+
+## CLuster Interpretation
+
+```{r}
+#| label: render cluster interpretation
+#| include: true
+#| results: 'asis'
+
+rmarkdown::render(
+  input = "sections/07ClusterEvaluationInterpretation.Rmd",
   output_dir = outputDir
 )
 ```

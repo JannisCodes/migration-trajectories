@@ -30,18 +30,20 @@ feature has a centroid that is closer than that of the currently
 assigned cluster (3) updates the centroids based on any reassigned
 features, and then iterates between steps two and three until \(WCSS\)
 is minimized (i.e., locally optimal convergence) or a maximum number of
-iterations is reached. Given the iterative nature of the algorithm, the
-initial partitioning is often important because the algorithm might
-arrive at a suboptimal clustering where the \(WCSS\) cannot be further
-reduced by moving any feature to another cluster, despite a better
-solution existing (i.e., a local minimum). It is, therefore often
+iterations is reached \citep{jain2010}. Given the iterative nature of
+the algorithm, the initial partitioning is often important because the
+algorithm might arrive at a suboptimal clustering where the \(WCSS\)
+cannot be further reduced by moving any feature to another cluster,
+despite a better solution existing
+\citep[i.e., a local minimum;][]{timmerman2013}. It is, therefore often
 recommended to run the k-means clustering with several different
 starting positions.
 
-In our case we used the Elbow and the Silhouette method to determine the
-recommended number of \(k\) clusters, which for both methods was two
-clusters (see Supplemental Material A). We then entered the
-participants' PC-scores from the feature reduction step into the k-means
-algorithm. To avoid local minima we used 100 random initial centroid
-positions. In the final solution the k-means analysis assigned 80
-participants to cluster 1 and 76 participants to cluster 2.
+In our case we entered the participants' PC-scores from the feature
+reduction step into the k-means algorithm. Because we did know the
+underlying number of clusters within our sample, we calculated the
+cluster solutions for \(k =\) 2 through 10. To avoid local minima we
+used 100 random initial centroid positions for each run. Each of the 9
+cluster solutions converged within the iteration limit. In the next step
+we will then evaluate which of the extracted cluster solutions offers
+the best fit with the data.

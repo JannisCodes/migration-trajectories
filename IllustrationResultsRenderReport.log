@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.2.21)  24 FEB 2023 15:46
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.2.21)  24 FEB 2023 21:42
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -644,8 +644,8 @@ Underfull \hbox (badness 10000) in paragraph at lines 658--668
  []
 
 
-Overfull \hbox (206.24396pt too wide) in paragraph at lines 658--668
-\T1/lmr/m/n/10 output pan-doc3a2d63b3b62f.tex --lua-filter /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
+Overfull \hbox (207.07747pt too wide) in paragraph at lines 658--668
+\T1/lmr/m/n/10 output pan-doc360524da3467.tex --lua-filter /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
  []
 
 
@@ -699,8 +699,8 @@ Underfull \hbox (badness 10000) in paragraph at lines 712--722
  []
 
 
-Overfull \hbox (206.52197pt too wide) in paragraph at lines 712--722
-\T1/lmr/m/n/10 output pan-doc3a2d6c790168.tex --lua-filter /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
+Overfull \hbox (207.07747pt too wide) in paragraph at lines 712--722
+\T1/lmr/m/n/10 output pan-doc360521945b26.tex --lua-filter /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
  []
 
 
@@ -734,8 +734,8 @@ Overfull \hbox (1365.62129pt too wide) in paragraph at lines 748--753
  []
 
 
-Overfull \hbox (207.07747pt too wide) in paragraph at lines 754--764
-\T1/lmr/m/n/10 output pan-doc3a2d38335d1e.tex --lua-filter /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
+Overfull \hbox (205.96648pt too wide) in paragraph at lines 754--764
+\T1/lmr/m/n/10 output pan-doc360513e17483.tex --lua-filter /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
  []
 
 
@@ -769,8 +769,8 @@ Overfull \hbox (1344.67635pt too wide) in paragraph at lines 790--795
  []
 
 
-Overfull \hbox (205.96648pt too wide) in paragraph at lines 796--806
-\T1/lmr/m/n/10 output pan-doc3a2d70048eae.tex --lua-filter /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
+Overfull \hbox (207.63297pt too wide) in paragraph at lines 796--806
+\T1/lmr/m/n/10 output pan-doc360541a92dab.tex --lua-filter /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
  []
 
 
@@ -784,166 +784,220 @@ Overfull \hbox (144.85509pt too wide) in paragraph at lines 796--806
  []
 
 [11]
-Overfull \hbox (114.12964pt too wide) in paragraph at lines 828--831
-[]\T1/lmr/m/n/10 | |..................................................................................................................................
+Overfull \hbox (29.6858pt too wide) in paragraph at lines 823--827
+[]\T1/lmr/m/n/10 | |...............................................................................................................
  []
 
 
-Overfull \hbox (303.57271pt too wide) in paragraph at lines 832--837
-[]\T1/lmr/m/n/10 | |.............................................................................................................................................................................
+Overfull \hbox (276.90623pt too wide) in paragraph at lines 828--831
+[]\T1/lmr/m/n/10 | |.......................................................................................................................................................................
  []
 
 
-Overfull \hbox (631.45969pt too wide) in paragraph at lines 832--837
-\T1/lmr/m/n/10 | 44% la-bel: fea-tureClus-ter-ing | |.........................................................................................................................................................................................................................
+Overfull \hbox (527.45998pt too wide) in paragraph at lines 832--837
+[]\T1/lmr/m/n/10 | |...............................................................................................................................................................................................................................
  []
 
 
-Overfull \hbox (690.23657pt too wide) in paragraph at lines 838--843
-[]\T1/lmr/m/n/10 | |....................................................................................................................................................................................................................................................................
+Overfull \hbox (907.01324pt too wide) in paragraph at lines 832--837
+\T1/lmr/m/n/10 | 57% la-bel: fea-tureClus-ter-ing | |.......................................................................................................................................................................................................................................................................................
  []
 
 
-Overfull \hbox (1099.29016pt too wide) in paragraph at lines 838--843
-\T1/lmr/m/n/10 | 67% la-bel: k-means mod-el-ing based on se-lected k | |...............................................................................................................................................................................................................................................................................................................
+Overfull \hbox (1020.78973pt too wide) in paragraph at lines 838--843
+[]\T1/lmr/m/n/10 | |..............................................................................................................................................................................................................................................................................................................................................
  []
 
 
-Overfull \hbox (1076.90044pt too wide) in paragraph at lines 844--849
-[]\T1/lmr/m/n/10 | |...........................................................................................................................................................................................................................................................................................................................................................
+Overfull \hbox (1490.39844pt too wide) in paragraph at lines 838--843
+\T1/lmr/m/n/10 | 86% la-bel: k-means mod-el-ing based on se-lected k | |......................................................................................................................................................................................................................................................................................................................................................................................................|
  []
 
 
-Overfull \hbox (1407.09314pt too wide) in paragraph at lines 844--849
-\T1/lmr/m/n/10 | 89% la-bel: Plot Con-vex Hulls | |......................................................................................................................................................................................................................................................................................................................................................................................................|
+Overfull \hbox (207.35526pt too wide) in paragraph at lines 844--854
+\T1/lmr/m/n/10 output pan-doc36053171d1be.tex --lua-filter /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
  []
 
 
-Overfull \hbox (206.52197pt too wide) in paragraph at lines 850--860
-\T1/lmr/m/n/10 output pan-doc3a2d73558c41.tex --lua-filter /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
- []
-
-
-Overfull \hbox (29.27193pt too wide) in paragraph at lines 850--860
+Overfull \hbox (29.27193pt too wide) in paragraph at lines 844--854
 \T1/lmr/m/n/10 --lua-filter /Library/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/latex-
  []
 
 
-Overfull \hbox (144.85509pt too wide) in paragraph at lines 850--860
+Overfull \hbox (144.85509pt too wide) in paragraph at lines 844--854
 \T1/lmr/m/n/10 div.lua --self-contained --template /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmd/fragment/default.tex
  []
 
+
+Overfull \hbox (29.6858pt too wide) in paragraph at lines 874--878
+[]\T1/lmr/m/n/10 | |...............................................................................................................
+ []
+
+
+Overfull \hbox (276.90623pt too wide) in paragraph at lines 879--882
+[]\T1/lmr/m/n/10 | |.......................................................................................................................................................................
+ []
+
+
+Overfull \hbox (527.45998pt too wide) in paragraph at lines 883--888
+[]\T1/lmr/m/n/10 | |...............................................................................................................................................................................................................................
+ []
+
+
+Overfull \hbox (944.5687pt too wide) in paragraph at lines 883--888
+\T1/lmr/m/n/10 | 57% la-bel: clus-ter per-fo-mance in-dices | |.......................................................................................................................................................................................................................................................................................
+ []
+
 [12]
-Overfull \hbox (215.65837pt too wide) in paragraph at lines 886--891
-\T1/lmr/m/n/10 la-bel: av-er-age fea-ture by clus-ter | |..........................................................................................................................
+Overfull \hbox (1020.78973pt too wide) in paragraph at lines 889--894
+[]\T1/lmr/m/n/10 | |..............................................................................................................................................................................................................................................................................................................................................
  []
 
 
-Overfull \hbox (183.57358pt too wide) in paragraph at lines 892--897
-[]\T1/lmr/m/n/10 | |..................................................................................................................................................
+Overfull \hbox (1404.73158pt too wide) in paragraph at lines 889--894
+\T1/lmr/m/n/10 | 86% la-bel: Plot Per-for-mance | |......................................................................................................................................................................................................................................................................................................................................................................................................|
  []
 
 
-Overfull \hbox (436.83606pt too wide) in paragraph at lines 892--897
-\T1/lmr/m/n/10 | 38% la-bel: clus-ter-Vari-able-Grid | |...........................................................................................................................................................................
- []
-
-
-Overfull \hbox (403.01643pt too wide) in paragraph at lines 898--903
-[]\T1/lmr/m/n/10 | |...................................................................................................................................................................................................
- []
-
-
-Overfull \hbox (646.97383pt too wide) in paragraph at lines 898--903
-\T1/lmr/m/n/10 | 50% la-bel: clus-ter-Fea-ture-Grid | |...........................................................................................................................................................................................................................
- []
-
-
-Overfull \hbox (620.79263pt too wide) in paragraph at lines 904--909
-[]\T1/lmr/m/n/10 | |....................................................................................................................................................................................................................................................
- []
-
-
-Overfull \hbox (872.15247pt too wide) in paragraph at lines 904--909
-\T1/lmr/m/n/10 | 62% la-bel: clus-ter-Feat-Var-Comb | |............................................................................................................................................................................................................................................................................
- []
-
-
-Overfull \hbox (834.12442pt too wide) in paragraph at lines 910--914
-[]\T1/lmr/m/n/10 | |....................................................................................................................................................................................................................................................................................................
- []
-
-
-Overfull \hbox (943.56807pt too wide) in paragraph at lines 915--918
-[]\T1/lmr/m/n/10 | |.............................................................................................................................................................................................................................................................................................................................
- []
-
-
-Overfull \hbox (1050.23396pt too wide) in paragraph at lines 919--923
-[]\T1/lmr/m/n/10 | |.....................................................................................................................................................................................................................................................................................................................................................
- []
-
-
-Overfull \hbox (1163.01093pt too wide) in paragraph at lines 924--927
-[]\T1/lmr/m/n/10 | |..............................................................................................................................................................................................................................................................................................................................................................................
- []
-
-
-Overfull \hbox (1274.12123pt too wide) in paragraph at lines 928--932
-[]\T1/lmr/m/n/10 | |......................................................................................................................................................................................................................................................................................................................................................................................................|
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 933--943
+Underfull \hbox (badness 10000) in paragraph at lines 895--905
 []\T1/lmr/m/n/10 /Applications/RStudio.app/Contents/Resources/app/quarto/bin/tools/pandoc +RTS -K512m -RTS
  []
 
 
-Overfull \hbox (212.07747pt too wide) in paragraph at lines 933--943
-\T1/lmr/m/n/10 --output pan-doc3a2d6e008d42.tex --lua-filter /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
+Overfull \hbox (51.82823pt too wide) in paragraph at lines 895--905
+\T1/lmr/m/n/10 06Clus-terEval-u-a-tion-Per-for-mance.knit.md --to la-tex --from mark-down+autolink_bare_uris+tex_math_single_backslash
  []
 
 
-Overfull \hbox (29.27193pt too wide) in paragraph at lines 933--943
+Overfull \hbox (207.35497pt too wide) in paragraph at lines 895--905
+\T1/lmr/m/n/10 --output pan-doc3605633c2ffb.tex --lua-filter /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
+ []
+
+
+Overfull \hbox (29.27193pt too wide) in paragraph at lines 895--905
 \T1/lmr/m/n/10 --lua-filter /Library/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/latex-
  []
 
 
-Overfull \hbox (144.85509pt too wide) in paragraph at lines 933--943
+Overfull \hbox (144.85509pt too wide) in paragraph at lines 895--905
 \T1/lmr/m/n/10 div.lua --self-contained --template /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmd/fragment/default.tex
  []
 
 
-Overfull \hbox (25.46709pt too wide) in paragraph at lines 959--976
- [][] 
+Overfull \hbox (215.65837pt too wide) in paragraph at lines 931--936
+\T1/lmr/m/n/10 la-bel: av-er-age fea-ture by clus-ter | |..........................................................................................................................
  []
 
 
-Overfull \hbox (89.03564pt too wide) in paragraph at lines 988--1069
- [][] 
+Overfull \hbox (183.57358pt too wide) in paragraph at lines 937--942
+[]\T1/lmr/m/n/10 | |..................................................................................................................................................
  []
 
 
-LaTeX Warning: Float too large for page by 217.60022pt on input line 1069.
+Overfull \hbox (436.83606pt too wide) in paragraph at lines 937--942
+\T1/lmr/m/n/10 | 38% la-bel: clus-ter-Vari-able-Grid | |...........................................................................................................................................................................
+ []
+
+
+Overfull \hbox (403.01643pt too wide) in paragraph at lines 943--948
+[]\T1/lmr/m/n/10 | |...................................................................................................................................................................................................
+ []
+
+
+Overfull \hbox (646.97383pt too wide) in paragraph at lines 943--948
+\T1/lmr/m/n/10 | 50% la-bel: clus-ter-Fea-ture-Grid | |...........................................................................................................................................................................................................................
+ []
+
+
+Overfull \hbox (620.79263pt too wide) in paragraph at lines 949--954
+[]\T1/lmr/m/n/10 | |....................................................................................................................................................................................................................................................
+ []
+
+
+Overfull \hbox (872.15247pt too wide) in paragraph at lines 949--954
+\T1/lmr/m/n/10 | 62% la-bel: clus-ter-Feat-Var-Comb | |............................................................................................................................................................................................................................................................................
+ []
+
+
+Overfull \hbox (834.12442pt too wide) in paragraph at lines 955--959
+[]\T1/lmr/m/n/10 | |....................................................................................................................................................................................................................................................................................................
+ []
+
+
+Overfull \hbox (943.56807pt too wide) in paragraph at lines 960--963
+[]\T1/lmr/m/n/10 | |.............................................................................................................................................................................................................................................................................................................................
+ []
+
+
+Overfull \hbox (1050.23396pt too wide) in paragraph at lines 964--968
+[]\T1/lmr/m/n/10 | |.....................................................................................................................................................................................................................................................................................................................................................
+ []
+
+
+Overfull \hbox (1163.01093pt too wide) in paragraph at lines 969--972
+[]\T1/lmr/m/n/10 | |..............................................................................................................................................................................................................................................................................................................................................................................
+ []
+
+
+Overfull \hbox (1274.12123pt too wide) in paragraph at lines 973--977
+[]\T1/lmr/m/n/10 | |......................................................................................................................................................................................................................................................................................................................................................................................................|
+ []
 
 [13]
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 1088.
+Underfull \hbox (badness 10000) in paragraph at lines 978--988
+[]\T1/lmr/m/n/10 /Applications/RStudio.app/Contents/Resources/app/quarto/bin/tools/pandoc +RTS -K512m -RTS
+ []
+
+
+Overfull \hbox (58.3565pt too wide) in paragraph at lines 978--988
+\T1/lmr/m/n/10 07Clus-terEval-u-a-tion-In-ter-pre-ta-tion.knit.md --to la-tex --from mark-down+autolink_bare_uris+tex_math_single_backslash
+ []
+
+
+Overfull \hbox (208.18846pt too wide) in paragraph at lines 978--988
+\T1/lmr/m/n/10 --output pan-doc3605458fd5fa.tex --lua-filter /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
+ []
+
+
+Overfull \hbox (29.27193pt too wide) in paragraph at lines 978--988
+\T1/lmr/m/n/10 --lua-filter /Library/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmarkdown/lua/latex-
+ []
+
+
+Overfull \hbox (144.85509pt too wide) in paragraph at lines 978--988
+\T1/lmr/m/n/10 div.lua --self-contained --template /Li-brary/Frameworks/R.framework/Versions/4.2/Resources/library/rmarkdown/rmd/fragment/default.tex
+ []
+
+
+Overfull \hbox (25.46709pt too wide) in paragraph at lines 1004--1021
+ [][] 
+ []
+
+
+Overfull \hbox (89.03564pt too wide) in paragraph at lines 1033--1114
+ [][] 
+ []
+
+
+LaTeX Warning: Float too large for page by 217.60022pt on input line 1114.
+
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 1133.
 (/Users/jannis/Library/TinyTeX/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-) [14] [15] [16] [17] [18] [19] (./IllustrationResultsRenderReport.aux) ) 
+) [14] [15] [16] [17] [18] [19] [20] (./IllustrationResultsRenderReport.aux) ) 
 Here is how much of TeX's memory you used:
- 13565 strings out of 477964
- 214668 string characters out of 5837540
- 1899346 words of memory out of 5000000
- 33469 multiletter control sequences out of 15000+600000
- 555988 words of font info for 74 fonts, out of 8000000 for 9000
+ 13575 strings out of 477964
+ 214805 string characters out of 5837540
+ 1894346 words of memory out of 5000000
+ 33474 multiletter control sequences out of 15000+600000
+ 558986 words of font info for 75 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  89i,9n,90p,852b,501s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {/Users/jannis/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}{/Users/jannis/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}</Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></Users/jannis/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtti10.pfb>
-Output written on IllustrationResultsRenderReport.pdf (19 pages, 221459 bytes).
+Output written on IllustrationResultsRenderReport.pdf (20 pages, 223418 bytes).
 PDF statistics:
- 182 PDF objects out of 1000 (max. 8388607)
- 143 compressed objects within 2 object streams
- 38 named destinations out of 1000 (max. 500000)
- 57 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 197 PDF objects out of 1000 (max. 8388607)
+ 157 compressed objects within 2 object streams
+ 43 named destinations out of 1000 (max. 500000)
+ 73 words of extra memory for PDF output out of 10000 (max. 10000000)
 
