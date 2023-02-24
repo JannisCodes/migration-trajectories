@@ -69,4 +69,23 @@ fviz_cluster(kmeansOut, geom = "point", data = z_data, ggtheme = theme_Publicati
 <!-- "To ensure that the clustering is weighing the principal components equally (as opposed to their variance), we standardize the particpants' PC-scores."  -->
 <!-- but I went back to the 'raw' PC-scores now. But we should discuss this.}} -->
 
-For our illustration of the feature clustering procedure, we use the generalizable and efficient centroid-based k-means clustering. The procedure needs the user to make a selection on the optimal number of clusters in order to run the main algorithm. We use the Elbow and the Silhouette method, which both suggest two clusters to be the optimal solution (see Supplemental Material A). We then entered the participants' PC-scores into the k-means algorithm. We used the recommended Hartigan and Wong algorithm \citep{hartigan1979} with 100 random initial centroid positions to avoid convergence to a sub-optimal solution (i.e., local minima). The k-means analysis assigned `r table(kmeansOut$cluster)[1]` participants to cluster 1 and `r table(kmeansOut$cluster)[2]` participants to cluster 2.
+For the actual k-means clustering, the analysis seeks to minimize the total within-cluster variation. We used the Hartigan and Wong algorithm, which is a widely used approach in k-means clustering of time series features \citep{hartigan1979}. This algorithm is designed to optimize the clustering of the feature data into $k$ groups, where $k$ is a pre-defined number of clusters. The algorithm starts by randomly separating the data points into k clusters and then iteratively updates the assignment of each point to the nearest cluster center until convergence. The Hartigan and Wong algorithm specifically calculates the within-cluster variation ($W$) of cluster $C_i$ as the summed squared Euclidean distances of the feature $x$ to its assigned cluster centroid $\mu_i$:
+
+```{=tex}
+\begin{equation} \label{eq:kWCi}
+  W(C_i) = \sum_{x \in C_i}(x-\mu_i)^2
+\end{equation}
+```
+
+By summing the within cluster sum of squares from all $k$ clusters, we can then derive the total within-cluster sum of square $WCSS$:
+
+```{=tex}
+\begin{equation} \label{eq:kWCSS}
+  WCSS = \sum_{i=1}^k W(C_i) = \sum_{i=1}^k \sum_{x \in C_i} (x - \mu_i)^2
+\end{equation}
+```
+
+It is this $WCSS$ that becomes the objective function to be minimized, by iteratively moving features from one cluster to another \citep{hartigan1979}. In particular, the algorithm (1) calculates the cluster centroids of the initial partitioning, (2) checks whether any feature has a centroid that is closer than that of the currently assigned cluster (3) updates the centroids based on any reassigned features, and then iterates between steps two and three until $WCSS$ is minimized (i.e., locally optimal convergence) or a maximum number of iterations is reached. Given the iterative nature of the algorithm, the initial partitioning is often important because the algorithm might arrive at a suboptimal clustering where the $WCSS$ cannot be further reduced by moving any feature to another cluster, despite a better solution existing (i.e., a local minimum). It is, therefore often recommended to run the k-means clustering with several different starting positions.
+
+In our case we used the Elbow and the Silhouette method to determine the recommended number of $k$ clusters, which for both methods suggested two clusters (see Supplemental Material A). We then entered the participants' PC-scores from the previous step into the k-means algorithm. To avoid local minima we used 100 random initial centroid positions. In the final solution the k-means analysis assigned `r table(kmeansOut$cluster)[1]` participants to cluster 1 and `r table(kmeansOut$cluster)[2]` participants to cluster 2.
+
