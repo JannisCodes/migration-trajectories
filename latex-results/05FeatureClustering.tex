@@ -1,21 +1,21 @@
-For the actual k-means clustering, the analysis seeks to minimize the
-total within-cluster variation. We used the Hartigan and Wong algorithm,
-which is a widely used approach in k-means clustering of time series
-features \citep{hartigan1979}. This algorithm is designed to optimize
-the clustering of the feature data into \(k\) groups, where \(k\) is a
-pre-defined number of clusters. The algorithm starts by randomly
-separating the data points into k clusters and then iteratively updates
-the assignment of each point to the nearest cluster center until
-convergence. The Hartigan and Wong algorithm specifically calculates the
+During the k-means clustering itself, the analysis seeks to minimize the
+total within-cluster variation. The analysis is designed to optimize the
+clustering of the feature data into \(k\) groups, where \(k\) is a
+pre-defined number of clusters. We used the Hartigan and Wong algorithm,
+which is a widely used algorithm in k-means clustering
+\citep{hartigan1979}. The algorithm starts by randomly separating the
+data points into k clusters and then iteratively updates the assignment
+of each point to the nearest cluster center until convergence. To do so,
+the Hartigan and Wong algorithm specifically calculates the
 within-cluster variation (\(W\)) of cluster \(C_i\) as the summed
-squared Euclidean distances of the feature \(x\) to its assigned cluster
+squared Euclidean distances of the feature \(x\) to the closest cluster
 centroid \(\mu_i\):
 
 \begin{equation} \label{eq:kWCi}
   W(C_i) = \sum_{x \in C_i}(x-\mu_i)^2
 \end{equation}
 
-By summing the within cluster sum of squares from all \(k\) clusters, we
+By summing the within-cluster sum of squares from all \(k\) clusters, we
 can then derive the total within-cluster sum of square \(WCSS\):
 
 \begin{equation} \label{eq:kWCSS}
@@ -39,9 +39,9 @@ recommended to run the k-means clustering with several different
 starting positions.
 
 In our case we used the Elbow and the Silhouette method to determine the
-recommended number of \(k\) clusters, which for both methods suggested
-two clusters (see Supplemental Material A). We then entered the
-participants' PC-scores from the previous step into the k-means
+recommended number of \(k\) clusters, which for both methods was two
+clusters (see Supplemental Material A). We then entered the
+participants' PC-scores from the feature reduction step into the k-means
 algorithm. To avoid local minima we used 100 random initial centroid
 positions. In the final solution the k-means analysis assigned 80
 participants to cluster 1 and 76 participants to cluster 2.
