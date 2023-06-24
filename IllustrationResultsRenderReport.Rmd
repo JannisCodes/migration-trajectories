@@ -51,6 +51,7 @@ lib <- c(
   "pander",
   "devtools",
   "mada",
+  # "fpc",
   "data.table",
   "plyr",
   "dplyr",

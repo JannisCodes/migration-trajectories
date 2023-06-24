@@ -32,21 +32,25 @@ central tendency and is sometimes also referred to as the dispersion or
 spread of the data \citep{weisberg1992}. In time series analyses,
 variability is conceptually important because information about the
 distribution and diversity of the data has been found to be indicative
-of worse psychological states \citep{myin-germeys2018}. Person level
-differences of ESM measurements have, for example, been associated with
-higher levels of psycho-pathological recurrences among depression
-patients \citep{timm2017}. As such, psychological researchers and
-practitioners are often empirically interested in person-level
+of worse psychological states \citep{myin-germeys2018, helmich2021}.
+Person level differences of ESM measurements have, for example, been
+associated with higher levels of psycho-pathological recurrences among
+depression patients \citep{timm2017}. As such, psychological researchers
+and practitioners are often empirically interested in person-level
 differences in variability. Researchers on polarization and
 radicalization might for example ask: ``Are people settled in their
-attitudes towards migrants or do they vary across the measurement period?'\,'
+attitudes towards migrants or do they vary across the measurement
+period?'\,'
 
 For our illustration data, we chose to capture the time series
 variability with the \textit{Median Absolute Deviation} (\(MAD\)), where
 we calculate the \textit{median} (\(M\); calculated as in
 \equatref{eq:median}) for the absolute deviations of measurement \(x\)
 at time point \(t\) for participant \(i\) and variable \(j\) from the
-median of that time series \(X\).
+median of that time series \(X\). We again chose the robust statistic
+because the Median-based measure is less affected by non-normal
+distributions and extreme values or outliers compared to other measures
+of variability like the standard deviation \citep{weisberg1992}
 
 \begin{equation} \label{eq:mad}
   MAD(X_{ij}) = M(\left| x_{ijt} - M(X_{ij}) \right|)
@@ -70,18 +74,28 @@ the research of borderline personality disorder \citep{trull2008} and
 suicidality \citep{kivela2022}, but also in understanding early warning
 signals more generally \citep{wichers2019}. Conceptually, the
 instability feature, thus, relates to a broad range of research
-questions, including: ``Do changes tend to be slow and gradual or fast
-and abrupt?''
+questions, including: ``What is the nature of daily mood swings in
+individuals with bipolar disorder?'' or ``How does the pattern of
+day-to-day (i.e., measurement-to-measurement) fluctuations in
+self-esteem during adolescence reflect the process of identity formation
+and self-concept development?''
 
 For our data we chose the \textit{mean absolute change}
 \citep[$MAC$; e.g.,][]{ebner-priemer2009, barandas2020}, which looks at
-the average absolute difference of measurements \(x\) at time points
-\(t\) and \(t-1\), for each time series \(X\) of participant \(i\) and
-variable \(j\).
+the average absolute difference of two consecutive measurements \(x\) at
+time points \(t\) and \(t-1\), for each time series \(X\) of participant
+\(i\) and variable \(j\).
 
 \begin{equation} \label{eq:mac}
   MAC(X_{ij}) = \frac{1}{n-1} \sum_{t=1, \ldots, t-1}\left|x_{t}-x_{t-1}\right|
 \end{equation}
+
+Another common measurement of instability is the
+\textit{Mean of the Squared Successive Differences} (\(MSSD\)), which is
+often preferred where differences in magnitude are more important than
+the frequency of those changes, for example, when big shifts in time
+series are considered more impactful or when outliers are meaningful and
+need to be taken into account.
 
 \paragraph{Self-similarity.}
 
@@ -91,15 +105,15 @@ scales \citep{dmello2021}. That is, self-similarity describes how much a
 measurement carries over to future measurements. One important
 self-similarity in psychological time series is \texit{inertia} --- how
 much a measurement carries over to its next measurement
-\citep{kuppens2010}. If inertia is high a development tends to stay in a
-certain state or continues to move towards a certain direction. Because
-high inertia is resistant to change, in emotion dynamics high inertia
-has been found to be indicative of underreactive systems and to be
-characteristic of psychological maladjustment \citep{kuppens2010}. In a
-similar vein, high inertia at baseline was even predictive of the
+\citep{kuppens2010, suls1998}. If inertia is high a development tends to
+stay in a certain state. Because high inertia is resistant to change, in
+emotion dynamics high inertia of negative affect has been found to be
+indicative of underreactive systems and to be characteristic of
+psychological maladjustment \citep{kuppens2010}. In a similar vein, high
+inertia in negative affect at baseline was even predictive of the
 initial onset of depression \citep{kuppens2012}. Conceptually, inertia
 is more broadly connected to research questions such as: ``Do patients
-stay in a depressed mood for several measurements?'\,'
+stay in a negative mood for several measurements?'\,'
 
 For our illustration case, we chose the commonly used autocorrelation or
 autoregression with a lag-1 to capture the inertia. High autocorrelation
@@ -130,9 +144,20 @@ decline continuously?''
 
 For the variables in our illustration data set we chose an overall
 linear regression slope to capture the linear trend. The regression
-slope provides the average change from one time point \(t\) to the next
-across all measurements \(x\) of a time series \(X\) of participant
-\(i\) and variable \(j\).
+slope \(b_{ij}\) provides the average change from one time point \(t\)
+to the next across all measurements \(x\) of a time series \(X\) of
+participant \(i\) and variable \(j\). The specific form of the OLS slope
+formula we provide below, calculates \(b_{ij}\) as the sum across all
+time points of the product of the deviation of time \(t\) from its mean
+\(\overline{t}\) and the deviation of \(x_{ij}\) from its mean
+\(\overline{x}_{ij}\) at each time point, divided by the sum across all
+time points of the square of the deviation of time from its mean
+(\(\sum(t-\overline{t})^2\)). Intuitively, the formula captures the rate
+of change of variable \(x_{ij}\) with respect to time. This slope will
+indicate how the variable \(x_{ij}\) changes over time, controlling for
+its mean value and the mean of time. If the slope is positive,
+\(x_{ij}\) increases over time; if it's negative, \(x_{ij}\) decreases
+over time.
 
 \begin{equation} \label{eq:lin}
   b_{ij} = \frac{\sum(t-\overline{t})(x_{ijt}-\overline{x}_{ij})}{\sum(t-\overline{t})^2}
@@ -150,8 +175,8 @@ improvement of depression \citep{helmich2020a}. But also substance abuse
 \citep{vandermaas2003}. Conceptually, researchers might have research
 question about the type of the development: ``Is the development of
 anxiety a nonlinear process?'' as well as the shape and structure of the
-development: ``Does anxiety change as a sudden or smooth transition?''
-We summarized the nonlinear trend with the
+development: ``How many spikes in anxiety did a patient experience?'' We
+summarized the nonlinear trend with the
 \textit{estimated degrees of freedom} of an empty GAM spline model. The
 \(edf\) summarizes the \textit{wiggliness} of a spline trend line by
 estimating the number of parametric and non-parametric (or smooth) terms
@@ -166,14 +191,15 @@ trend.
 
 Beyond our main features of interest, we also extracted the
 participant's number of completed ESM measurements to ensure that the
-clusters are comparable in that regard. After the feature extraction, we
-found that about 1.40\% of the extracted features are missing across the
-72 features per participant. This might, for example, happen if
+clusters are comparable in that regard (i.e., to exclude spurious
+explanations for the cluster assignments). After the feature extraction,
+we found that about 1.40\% of the extracted features are missing across
+the 72 features per participant. This might, for example, happen if
 participants do not have two subsequent measurements with outgroup
 interactions, so that an autocorrelation with lag-1 cannot be calculated
 for the contact-specific variables. The small number of missing values
 indicates that the feature-based approach indeed largely avoids the
-structural missingness issue. The few missing values can, however, be an
-issue for some feature reduction or feature clustering algorithms. We,
-thus, impute the missing feature values with a single predictive mean
-matching imputation using the MICE library.
+structural missingness issue. However, even the few missing values can
+be an issue for some feature reduction or feature clustering algorithms.
+We, thus, impute the missing feature values with a single predictive
+mean matching imputation using the MICE library \citep[][]{buuren2011}.
