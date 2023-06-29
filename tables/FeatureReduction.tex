@@ -15,7 +15,7 @@
         
         Selection \linebreak & 
         filter \linebreak & 
-        Features are selected individually or jointly based selection criteria. One common selection criteria is the amount of information and (unique) variance a feature captures. Univariate methodologies are able identify irrelevant features (i.e., because features do not capture much information), multivariate methods additionally allow to remove redundant features \citep[i.e., because features capture the same information][]{yu2004}. \linebreak &
+        Features are selected individually or jointly based on selection criteria. One common selection criterion is the amount of information and (unique) variance a feature captures. Univariate methodologies are able to identify irrelevant features (i.e., because features do not capture much information), multivariate methods additionally allow to remove redundant features \citep[i.e., because features capture the same information][]{yu2004}. \linebreak &
         \vspace{-1em}
         \begin{itemize}[nosep,leftmargin=*,label={--}]
             \item univariate filter (e.g., Laplacian Score)
@@ -25,7 +25,7 @@
         
         \linebreak & 
         Wrapper \linebreak & 
-        Wrapper methodologies run models with different feature combinations and compare performance. Because the selection process is essentially a search problem this method is computationally intensive. Traditionally wrappers have used forward selections or backwards eliminations but recently alternative approaches have been proposed based such as ant colony and swarm intelligence paradigms \citep[e.g., see][]{tang2014}. \linebreak &
+        Wrapper methodologies run models with different feature combinations and compare performance. Because the selection process is essentially a search problem this method is computationally intensive. Traditionally wrappers have used forward selections or backward eliminations but recently alternative approaches have been proposed based such as ant colony and swarm intelligence paradigms \citep[e.g., see][]{tang2014}. \linebreak &
         \vspace{-1em}
         \begin{itemize}[nosep,leftmargin=*,label={--}]
             \item sequential (e.g., forward selection)
@@ -36,7 +36,7 @@
         
         \linebreak & 
         hybrid \linebreak & 
-        Hybrid selection methodological combine filter and wrapper methodologies to avoid the shortcomings of the individual methods. An initial filter step reduces computational effort (efficiency) and the wrapper ensures high performance \citep[effectiveness; e.g.,][]{alelyani2014}. \linebreak &
+        Hybrid selection methodologies combine filter and wrapper methodologies to avoid the shortcomings of the individual methods. An initial filter step selects candidate features (efficiency) and a subsequent wrapper ensures high performance \citep[effectiveness; e.g.,][]{alelyani2014}. \linebreak &
         \vspace{-1em}
         \begin{itemize}[nosep,leftmargin=*,label={--}]
             \item filter + wrapper (e.g., Calinski-Harabasz Index)
