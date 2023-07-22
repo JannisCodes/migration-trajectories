@@ -6,7 +6,7 @@ measures of central tendency are the mean, median, and mode
 \citep{weisberg1992}. As a familiar statistic from probability theory,
 the central tendency sits at the heart of many fundamental questions
 about psychological time series. Researchers might, for example, be
-interested in whether ``Over a one month period, are some people happier
+interested in whether ``Over a one-month period, are some people happier
 than others?''
 
 For the central tendency feature of our illustration we chose the robust
@@ -108,7 +108,7 @@ much a measurement carries over to its next measurement
 \citep{kuppens2010, suls1998}. If inertia is high a development tends to
 stay in a certain state. Because high inertia is resistant to change, in
 emotion dynamics high inertia of negative affect has been found to be
-indicative of underreactive systems and to be characteristic of
+indicative of under-reactive systems and to be characteristic of
 psychological maladjustment \citep{kuppens2010}. In a similar vein, high
 inertia in negative affect at baseline was even predictive of the
 initial onset of depression \citep{kuppens2012}. Conceptually, inertia
@@ -130,7 +130,7 @@ participant \(i\) and variable \(j\).
 
 \paragraph{Linear trend.}
 
-In non-stationary time series a linear trend can be observed when there
+In non-stationary time series, a linear trend can be observed when there
 is a consistent increase or decrease in the data over time
 \citep{nyblom1986}. For psychological time series, researchers have, for
 example, pointed out the importance of linear trends in interpersonal
@@ -142,12 +142,12 @@ are, thus, commonly exemplified by research questions such as ``Do
 patient symptoms improve consistently?'' or ``Does worker productivity
 decline continuously?''
 
-For the variables in our illustration data set we chose an overall
+For the variables in our illustration data set, we chose an overall
 linear regression slope to capture the linear trend. The regression
 slope \(b_{ij}\) provides the average change from one time point \(t\)
 to the next across all measurements \(x\) of a time series \(X\) of
 participant \(i\) and variable \(j\). The specific form of the OLS slope
-formula we provide below, calculates \(b_{ij}\) as the sum across all
+formula we provide below calculates \(b_{ij}\) as the sum across all
 time points of the product of the deviation of time \(t\) from its mean
 \(\overline{t}\) and the deviation of \(x_{ij}\) from its mean
 \(\overline{x}_{ij}\) at each time point, divided by the sum across all
@@ -165,7 +165,7 @@ over time.
 
 \paragraph{Nonlinearity.}
 
-Changes in psychology are not always linear, instead nonlinearity is a
+Changes in psychology are not always linear, instead, nonlinearity is a
 common feature of psychological time series \citep{hayes2007}. As an
 example, episodic disorders, such as depression, are most likely best
 described as non-linear systems \citep{hosenfeld2015}. Similarly,
@@ -173,7 +173,7 @@ patients in recovery from depression showed sudden changes in the
 improvement of depression \citep{helmich2020a}. But also substance abuse
 \citep{boker1998} or attitude changes rarely develop linearly
 \citep{vandermaas2003}. Conceptually, researchers might have research
-question about the type of the development: ``Is the development of
+questions about the type of the development: ``Is the development of
 anxiety a nonlinear process?'' as well as the shape and structure of the
 development: ``How many spikes in anxiety did a patient experience?'' We
 summarized the nonlinear trend with the
@@ -203,3 +203,6 @@ structural missingness issue. However, even the few missing values can
 be an issue for some feature reduction or feature clustering algorithms.
 We, thus, impute the missing feature values with a single predictive
 mean matching imputation using the MICE library \citep[][]{buuren2011}.
+Note again that with this procedure we only need to impute an extremely
+small number of missing values as most feature calculations can use the
+available data instead.

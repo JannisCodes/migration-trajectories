@@ -11,8 +11,8 @@ interpret the results in the context of the specific analysis
 \(k=2\) clusters performed the best. Three commonly reported indices we
 would like to highlight are the comparison of within clusters sum of
 squares, the average silhouette score, and the Calinski-Harabasz index.
-The first statistic we looked at was the a total within-cluster sum of
-square \(WCSS\) (see also \equatref{eq:kWCSS}). While the within cluster
+The first statistic we looked at was the total within-cluster sum of
+square \(WCSS\) (see also \equatref{eq:kWCSS}). While the within-cluster
 variation will naturally decrease with (more) smaller clusters, we
 observed that the decrease in \(WCSS\) was largest until \(k=2\) after
 which the decrease was much smaller. This method is also sometimes
@@ -23,10 +23,10 @@ similar to other points within the same cluster, compared to points in
 other clusters \citep{rousseeuw1987}. In our case, the \(k=2\) solution
 maximized the silhouette coefficient (\(s_2=\) 0.09). Finally, the
 Calinski-Harabasz index assesses the compactness and separation of the
-clusters by asssessing the ratio of the sum of between-clusters
+clusters by assessing the ratio of the sum of between-clusters
 dispersion and of inter-cluster dispersion for all clusters --- thus,
 the higher the score the better the performances \citep{calinski1974}.
-In our case the \(k=2\) solution also showed the highest
+In our case, the \(k=2\) solution also showed the highest
 Calinski-Harabasz index (\(CH_2=\) 16.38; a full table of all extracted
 validity statistics is available in Supplemental Material
 A)\footnote{It is important to note that another commonly assessed aspect of the evaluation is determining the stability and robustness of the clusters \citep{berkhin2006}. This can be assessed by evaluating the sensitivity of the clusters to different feature sets or clustering algorithms, or by using techniques such as bootstrapping to assess the uncertainty of the clusters \citep{vinh2009}. Especially when comparing different clustering algorithms one common index is the Bayesian information criterion (BIC), where a lower BIC indicates that a model is more representative of the data \citep{vandeschoot2017}.}.

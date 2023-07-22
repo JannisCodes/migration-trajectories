@@ -18,23 +18,24 @@ reduction step.
 Once the important variables have been selected, the data needs to be
 prepared for the analysis steps. Importantly, this not only means
 validating and cleaning the data (e.g., re-coding, removing duplicate or
-unwanted measurements) but also making the time series comparable. Two
+unwanted measurements) but also making the time-series comparable. Two
 important steps are making the time-frames and response scales
 comparable across participants --- for example, by choosing a time frame
 that is common to most participants and standardizing the participants'
-responses \citep{liao2005}.
+responses
+\citep['data exclusion' and 'data transformation' in \fgrref{fig:TSCFlow}; also see][]{liao2005}.
 
 In our illustration data set, the studies differed substantially in the
 maximum length of participation (\(\text{max}(t_{S1})=\) 63,
 \(\text{max}(t_{S2})=\) 69, \(\text{max}(t_{S3})=\) 155). This was
 likely due to the option to continue participation without compensation
-in the later two studies. To make the three studies comparable in
+in the latter two studies. To make the three studies comparable in
 participation and time frames, we iteratively removed all measurement
 occasions and participants that had more than 45\% missingness
-\citep[which was in line with the general rcecommendation for data that might still need to rely on imputations for later model testing][]{Madley-Dowd2019}.
-This procedure let to a final sample of 157 participants, who jointly
+\citep[which was in line with the general recommendation for data that might still need to rely on imputations for later model testing][]{Madley-Dowd2019}.
+This procedure led to a final sample of 157 participants, who jointly
 produced 8,132 measurements. Importantly, both the participant
-repsonse-patterns and the time frame were now substantially more
+response-patterns and the time frame were now substantially more
 comparable (\(\text{max}(t_{S1})=\) 61, \(\text{max}(t_{S2})=\) 60,
 \(\text{max}(t_{S3})=\) 67). Full methodological details are available
 in Online Supplemental Material A, but basic item information,
