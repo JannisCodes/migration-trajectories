@@ -238,6 +238,7 @@ clusterVariableGrid <- featCluster %>%
   ggplot(., aes(x = feature, y = mean, group = cluster, color = as.factor(cluster))) +
   geom_point() +
   geom_line() +
+  scale_colour_manual(values = c("#384B6B", "#E2892B")) + 
   #geom_errorbar(aes(ymin = mean-se, ymax = mean+se), width=.1, position=position_dodge(0.1), size=0.5, alpha=0.4) +
   coord_flip() +
   labs(
@@ -259,6 +260,7 @@ clusterFeatureGrid <- featClusterVal %>%
   geom_line() +
   #geom_ribbon(aes(ymin = mean-se, ymax = mean+se), alpha = 0.2) +
   #geom_errorbar(aes(ymin = mean-se, ymax = mean+se), width=.1, position=position_dodge(0.1), size=0.5, alpha=0.4) +
+  scale_colour_manual(values = c("#384B6B", "#E2892B")) + 
   coord_flip() +
   labs(
     x = "Features",
@@ -290,6 +292,7 @@ clusterTS <- rawCluster %>%
   ggplot(., aes(x=TIDnum, y=value, group=cluster, color=as.factor(cluster))) +
   geom_line(aes(x=TIDnum, y=value, group=ID, color=as.factor(cluster)), alpha=0.05) +
   stat_summary(fun=mean, geom="line") +
+  scale_colour_manual(values = c("#384B6B", "#E2892B")) + 
   facet_wrap(~ label, scales = "free_y") +
   labs(
     x = "Time ID",
@@ -305,6 +308,7 @@ clusterTSTrend <- rawCluster %>%
   ggplot(., aes(x=TIDnum, y=value, group=cluster, color=as.factor(cluster))) +
   geom_line(aes(x=TIDnum, y=value, group=ID, color=as.factor(cluster)), alpha=0.05) +
   geom_smooth(aes(group=cluster)) +
+  scale_colour_manual(values = c("#384B6B", "#E2892B")) + 
   #stat_summary(fun=mean, geom="line") +
   facet_wrap(~ label, scales = "free_y") +
   labs(

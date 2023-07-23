@@ -607,7 +607,7 @@ rmarkdown::render(
 
 # Cluster Evaluation
 
-## CLuster Performance
+## Cluster Performance
 
 ```{r}
 #| label: render cluster performance
@@ -620,7 +620,7 @@ rmarkdown::render(
 )
 ```
 
-## CLuster Interpretation
+## Cluster Interpretation
 
 ```{r}
 #| label: render cluster interpretation
