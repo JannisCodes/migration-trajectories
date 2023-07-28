@@ -19,6 +19,7 @@ author:
 date: "Last updated: `r format(Sys.time(), '%d %B, %Y')`"
 output: 
   bookdown::html_document2:
+    highlight: pygments
     fig_caption: yes
     md_extensions: +footnotes
     code_folding: hide
@@ -32,7 +33,7 @@ output:
       in_header: "_includes/head-custom-rmd.html" 
 editor_options:
   chunk_output_type: console
-bibliography: references.bib
+bibliography: referencesZotero.bib
 csl: apa.csl
 header-includes:
    - \usepackage{amsmath, nccmath}
@@ -49,6 +50,12 @@ header-includes:
   margin-left:auto; 
   margin-right:auto;
 }
+
+body
+  { counter-reset: source-line 0; }
+pre.numberSource code
+  { counter-reset: none; }
+
 </style>
 ```
 
@@ -182,7 +189,8 @@ knitr::opts_chunk$set(
   fig.path = "Figures/",
   echo = TRUE,
   warning = FALSE,
-  message = FALSE
+  message = FALSE,
+  class.source = "numberLines lineAnchors"
 )
 ```
 
@@ -206,7 +214,7 @@ In an initial preparatory step, we import the data into the R project environmen
 
 ## Data Import
 
-The data were collected using two different survey tools. For the study with sojourners (Study 1: worker) we used the survey platform Qualtrics XM, whereas the studies with international students (Study 2: student), and the international medical professionals (Study 3: medical) were conducted using the survey framework FormR. This means that the datasets had inconsistent file formats and naming conventions. For the Qualtrics study we pre-processed some variables to ease the import process (for the syntax files see the SPS files in '*data/S1_Workers/processed/cleaned*' and for the raw data files see '*data/S1_Workers/raw*'). For the two other studies, we import the raw csv files from their respective folders.
+The data were collected using two different survey tools. For the study with sojourners (Study 1: worker) we used the survey platform Qualtrics XM, whereas the studies with international students (Study 2: student), and the international medical professionals (Study 3: medical) were conducted using the survey framework FormR. This means that the datasets had inconsistent file formats and naming conventions. For the Qualtrics study we pre-processed some variables to ease the import process (for the syntax files see the SPSS files in '*data/S1_Workers/processed/cleaned*' and for the raw data files see '*data/S1_Workers/raw*'). For the two other studies, we import the raw csv files from their respective folders.
 
 ```{r formrImport}
 # Load variable name lookup table
@@ -422,7 +430,7 @@ rm(df)
 
 ### Study 2
 
-For the student sample data was, similarly, collected in three separate surveys: (1) the pre-measurement, (2) the daily survey sent out at lunch and dinner time, and (3) a post-measurement. We combine the three individual surveys into one large dataframe and drop superfluous variables that are not relevant to the analyses relevant here. We exclude our own test data as well as one participant who entered the study twice (but gave different responses during the pre-measurement). We also reformat missing values and format core ID variables.\
+For the student sample data were, similarly, collected in three separate surveys: (1) the pre-measurement, (2) the daily survey sent out at lunch and dinner time, and (3) a post-measurement. We combine the three individual surveys into one large dataframe and drop superfluous variables that are not relevant to the analyses relevant here. We exclude our own test data as well as one participant who entered the study twice (but gave different responses during the pre-measurement). We also reformat missing values and format core ID variables.\
 <i class="fas fa-info-circle"></i> *Note:* All data preparation steps are saved in the '*dtS2*' list.
 
 ```{r cleanStudents}
@@ -436,8 +444,8 @@ ownIDs <- c(
 
 # Prepare dfs for Cleaning
 df.pre <- dtS2$raw.pre %>%
-  mutate_all(na_if, "") %>%
-  mutate_all(na_if, "NA") %>%
+  mutate(across(where(is.character), na_if, "")) %>%
+  mutate(across(where(is.character), na_if, "NA")) %>%
   filter(!is.na(ended)) %>% # remove all who did not finish
   filter(!email %in% .$email[duplicated(.$email)]) %>% # remove all who did the pre questionnaire multiple times (b/c inconsistent ratings scales)
   filter(!ResponseId %in% ownIDs) %>% # remove our own test
@@ -445,8 +453,8 @@ df.pre <- dtS2$raw.pre %>%
 names(df.pre) <- paste(names(df.pre), "pre", sep = ".")
 
 df.post <- dtS2$raw.post %>%
-  mutate_all(na_if, "") %>%
-  mutate_all(na_if, "NA") %>%
+  mutate(across(where(is.character), na_if, "")) %>%
+  mutate(across(where(is.character), na_if, "NA")) %>%
   filter(!is.na(ResponseId)) %>% # remove own test runs
   filter(!ResponseId %in% ownIDs) %>% # remove our own test
   filter(ResponseId %in% df.pre$ResponseId) %>% # remove anyone who wasn't in the pre
@@ -456,8 +464,8 @@ df.post <- dtS2$raw.post %>%
 names(df.post) <- paste(names(df.post), "post", sep = ".")
 
 df.daily <- dtS2$raw.daily %>%
-  mutate_all(na_if, "") %>%
-  mutate_all(na_if, "NA") %>%
+  mutate(across(where(is.character), na_if, "")) %>%
+  mutate(across(where(is.character), na_if, "NA")) %>%
   filter(!ResponseId %in% ownIDs) %>% # remove our own test
   filter(ResponseId %in% df.pre$ResponseId) %>% # remove anyone who wasn't in the pre
   filter(!is.na(ended)) %>% # remove all who never finished
@@ -507,16 +515,16 @@ ownIDs <- c(
 
 # Prepare dfs for Cleaning
 df.pre <- dtS3$raw.pre %>%
-  mutate_all(na_if, "") %>%
-  mutate_all(na_if, "NA") %>%
+  mutate(across(where(is.character), na_if, "")) %>%
+  mutate(across(where(is.character), na_if, "NA")) %>%
   filter(!is.na(ended)) %>% # remove all who did not finish
   filter(!ResponseId %in% ownIDs) %>% # remove our own test
   mutate(ResponseId = as.character(ResponseId)) # turn factor into character strings (probably just precaution)
 names(df.pre) <- paste(names(df.pre), "pre", sep = ".")
 
 df.post <- dtS3$raw.post %>%
-  mutate_all(na_if, "") %>%
-  mutate_all(na_if, "NA") %>% 
+  mutate(across(where(is.character), na_if, "")) %>%
+  mutate(across(where(is.character), na_if, "NA")) %>%
   filter(!is.na(ResponseId)) %>% # remove own test runs
   filter(!ResponseId %in% ownIDs) %>% # remove our own test
   filter(ResponseId %in% df.pre$ResponseId) %>% # remove anyone who wasn't in the pre
@@ -526,8 +534,8 @@ df.post <- dtS3$raw.post %>%
 names(df.post) <- paste(names(df.post), "post", sep = ".")
 
 df.daily <- dtS3$raw.daily %>%
-  mutate_all(na_if, "") %>%
-  mutate_all(na_if, "NA") %>%
+  mutate(across(where(is.character), na_if, "")) %>%
+  mutate(across(where(is.character), na_if, "NA")) %>%
   filter(!ResponseId %in% ownIDs) %>% # remove our own test
   filter(ResponseId %in% df.pre$ResponseId) %>% # remove anyone who wasn't in the pre
   #filter(!is.na(ended)) %>% # remove all who never finished [disabled because only relevant if data is missing]
@@ -2038,13 +2046,15 @@ We used the following five-step procedure to arrive at a stable, reproducible, a
 
 1. Variable selection
 2. Feature extraction
-3. (Feature selection)
+3. Feature reduction
 4. Clustering
 5. Visualization, interpretation, and validation
 
 ## Variable Selection
 
-We begin by selecting the variables, which we would like to include in the clustering procedure. For the clustering of time-series characteristics we focus on variables that are specific to the ESM measurements (i.e., variables collected during the various daily dairy pings). This means, that variables from the pre- and post-test are excluded from the clustering procedure. While the variables can in theory be added as additional features, they are not the focus of this manuscript. 
+We included 12 variables that were available across all three studies and captured information about the participant's interactions, as well as cognitive-, emotional-, and motivational self in relationship with the majority group. We chose these two aspects in particular because (1) the interaction-specific information exemplified the structural missingness issue of modern ESM data and (2) the motivational, emotional, and cognitive experience offered a diverse conceptualization of migration experience (beyond behavioral measurements) that is becoming more common in the literature [@Kreienkamp2022d].
+
+FILTER BY main
 
 In our case, we begin by collecting the variables that are in the ESM measurements of all three studies, in order to build the most powerful dataset for the main analysis. We then additionally, divide the variables by their response type and by study to check for cluster differences in the validation phase:
 
@@ -2483,11 +2493,11 @@ featData <- rbind(
   select_if(~ sum(!is.na(.)) > 1) %>% # only include variables that have any data (i.e., not all NA)
   as.data.frame
 
-apply(dtS1Red, 2, sum(is.na(.))/nrow(.))
-
-your_dataframe %>%
-  group_by(Your_Participantid) %>%
-  summarise(across(everything(), funs(100*mean(is.na(.)))))
+# apply(dtS1Red, 2, sum(is.na(.))/nrow(.))
+# 
+# your_dataframe %>%
+#   group_by(Your_Participantid) %>%
+#   summarise(across(everything(), funs(100*mean(is.na(.)))))
 
 
 # Don't re-run unless you have a few hours to spare!
@@ -2754,14 +2764,19 @@ scaled_data <- featFullImp$featuresImpZMat
 res.pca <- prcomp(scaled_data, scale = FALSE)
 fviz_eig(res.pca, addlabels = TRUE)
 
-var <- get_pca_var(res.pca)
-corrplot::corrplot(var$contrib[,1:10], is.corr=FALSE) 
+# var <- get_pca_var(res.pca)
+# corrplot::corrplot(var$contrib[,1:10], is.corr=FALSE) 
 fviz_contrib(res.pca, choice = "var", axes = 1, top = 50)
 fviz_contrib(res.pca, choice = "var", axes = 2, top = 50)
 
-res.desc <- FactoMineR::dimdesc(res.pca, axes = c(1,2), proba = 0.05)
+res.desc <-
+  FactoMineR::dimdesc(
+    FactoMineR::PCA(scaled_data, scale.unit = FALSE, graph = FALSE),
+    axes = c(1, 2),
+    proba = 0.05
+  )
 # Description of dimension 1
-res.desc$Dim.1
+# res.desc$Dim.1
 
 plot_ly(
   res.pca$rotation %>% as.data.frame,
@@ -3317,3 +3332,4 @@ Full Session Info (including loaded but unattached packages --- for troubleshoot
 
 ::: {.tocify-extend-page data-unique="tocify-extend-page" style="height: 0;"}
 :::
+
