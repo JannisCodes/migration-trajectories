@@ -33,14 +33,14 @@ spread of the data \citep{weisberg1992}. In time series analyses,
 variability is conceptually important because information about the
 distribution and diversity of the data has been found to be indicative
 of worse psychological states \citep{myin-germeys2018, helmich2021}.
-Person level differences of ESM measurements have, for example, been
+Person-level differences of ESM measurements have, for example, been
 associated with higher levels of psycho-pathological recurrences among
 depression patients \citep{timm2017}. As such, psychological researchers
-and practitioners are often empirically interested in person-level
+and practitioners are often empirically interested in between-person
 differences in variability. Researchers on polarization and
 radicalization might for example ask: ``Are people settled in their
 attitudes towards migrants or do they vary across the measurement
-period?'\,'
+period?''
 
 For our illustration data, we chose to capture the time series
 variability with the \textit{Median Absolute Deviation} (\(MAD\)), where
@@ -74,11 +74,10 @@ the research of borderline personality disorder \citep{trull2008} and
 suicidality \citep{kivela2022}, but also in understanding early warning
 signals more generally \citep{wichers2019}. Conceptually, the
 instability feature, thus, relates to a broad range of research
-questions, including: ``What is the nature of daily mood swings in
-individuals with bipolar disorder?'' or ``How does the pattern of
-day-to-day (i.e., measurement-to-measurement) fluctuations in
-self-esteem during adolescence reflect the process of identity formation
-and self-concept development?''
+questions, including: ``What is the nature of the identification changes
+in those who start working in a new country?'' or ``Do strong daily
+fluctuations in self-esteem reflect the process of identity formation in
+adolescents?''
 
 For our data we chose the \textit{mean absolute change}
 \citep[$MAC$; e.g.,][]{ebner-priemer2009, barandas2020}, which looks at
@@ -95,7 +94,7 @@ Another common measurement of instability is the
 often preferred where differences in magnitude are more important than
 the frequency of those changes, for example, when big shifts in time
 series are considered more impactful or when outliers are meaningful and
-need to be taken into account.
+need to be taken into account \citep{chatfield2003}.
 
 \paragraph{Self-similarity.}
 
@@ -112,20 +111,29 @@ indicative of under-reactive systems and to be characteristic of
 psychological maladjustment \citep{kuppens2010}. In a similar vein, high
 inertia in negative affect at baseline was even predictive of the
 initial onset of depression \citep{kuppens2012}. Conceptually, inertia
-is more broadly connected to research questions such as: ``Do patients
-stay in a negative mood for several measurements?'\,'
+is more broadly connected to research questions such as:
+\texttt{Do\ patients\ stay\ in\ a\ negative\ mood\ for\ several\ measurements?\textquotesingle{}\textquotesingle{}\ or}Do
+migrants stay with their language practice for several days at a
+time?'\,'
 
 For our illustration case, we chose the commonly used autocorrelation or
 autoregression with a lag-1 to capture the inertia. High autocorrelation
 values can indicate high levels of inertia, while low autocorrelation
 values may indicate a more unpredictable or volatile time series
 \citep{dejonckheere2019}. The lag--1 autocorrelation \(r_{ij,1}\) looks
-at the average correlation between a measurement \(x\) and the
-proceeding measurement \(x_{t-1}\) for the time series \(X\) of
-participant \(i\) and variable \(j\).
+at the average correlation between a measurement \(x\) and the preceding
+measurement \(x_{t-1}\) for the time series \(X\) of participant \(i\)
+and variable \(j\) with \(n\) measurements.
 
 \begin{equation} \label{eq:ar}
-  r_{ij,1} = \frac{\sum_{t=1}^{n-l}(x_{ijt}-\overline{x}_{ij})(x_{ij,t-1}-\overline{x}_{ij})}{\sum_{t=1}^{n}(x_{ijt}-\overline{x}_{ij})^2}
+  r_{ij,1} = \frac{\sum_{t=2}^{n}(x_{ijt}-\overline{x}_{ij})(x_{ij,t-1}-\overline{x}_{ij})}{\sum_{t=1}^{n}(x_{ijt}-\overline{x}_{ij})^2}
+\end{equation}
+
+Where \(\overline{x}_{ij}\) is the mean of the time series \(x_{ij}\),
+calculated as:
+
+\begin{equation} \label{eq:mean_for_ar1}
+  \overline{x}_{ij} = \frac{1}{n} \sum_{t=1}^{n} x_{ijt}
 \end{equation}
 
 \paragraph{Linear trend.}
@@ -174,20 +182,53 @@ improvement of depression \citep{helmich2020a}. But also substance abuse
 \citep{boker1998} or attitude changes rarely develop linearly
 \citep{vandermaas2003}. Conceptually, researchers might have research
 questions about the type of the development: ``Is the development of
-anxiety a nonlinear process?'' as well as the shape and structure of the
-development: ``How many spikes in anxiety did a patient experience?'' We
-summarized the nonlinear trend with the
+well-being a nonlinear process?'' as well as the shape and structure of
+the development: ``How many spikes in well-being did a migrant
+experience?''
+
+We summarized the nonlinear trend with the
 \textit{estimated degrees of freedom} of an empty GAM spline model. The
-\(edf\) summarizes the \textit{wiggliness} of a spline trend line by
-estimating the number of parametric and non-parametric (or smooth) terms
-\(p\) in the model. An edf of 1 would be equivalent to a linear
+\(edf\) summarizes the \textit{wiggliness} of a spline trend line
+\citep{wood2017}. The degrees of freedom of a spline model are primarily
+determined by the number of knots and the order of the spline. For
+instance, a cubic spline with \(k\) knots has \(k\)+3 degrees of freedom
+\citep{faraway2016}. However, in a penalized spline framework, which is
+commonly used for GAMs, the effective degrees of freedom can be less
+than \(k\)+3. This is because the model employs a smoothing parameter to
+control the trade-off between the complexity (flexibility) of the model
+and its fit to the data, thereby penalizing overly complex models and
+potentially reducing the effective degrees of freedom \citep{marx1998}.
+Intuitively then an edf of 1 would be equivalent to a linear
 relationship (i.e., one linear slope parameter), whereas a higher edf
 (particularly an edf \textgreater{} 2) is indicative of a non-linear
-trend.
+trend. The estimated degrees of freedom are commonly based on a concept
+called `effective degrees of freedom' and can be represented as the
+trace \(tr\) (i.e., the sum of the diagonal elements) of the smoother
+matrix \(S\), a symmetric matrix that maps from the raw data to the
+smooth estimates \citep{wood2017}.
+
+\begin{equation} \label{eq:df}
+  edf = tr(S)
+\end{equation}
+
+\textless!--Effective degrees of freedom for individual smooth terms are
+obtained by summing the Fii values corresponding to the coefficients βi
+of the smooth term (e.g., if the coefficients of a particular smooth are
+β5, . . . , β11 then the smooth's EDF is \$\sum\emph{\{i=5\}\^{}\{11\} =
+F}\{ii\}).--!\textgreater{}
+
+\textless!-- An alternative approach to understanding the edf is to
+approximate the number of parametric and non-parametric (or smooth)
+terms \(p\) in the penalized GAM. Both formulas are measuring the same
+concept (the model's complexity or flexibility) and both account for the
+penalization introduced to control overfitting in GAMs
+\citep{hastie1986}.
 
 \begin{equation} \label{eq:edf}
   edf \approx \sum p
 \end{equation}
+
+--!\textgreater{}
 
 Beyond our main features of interest, we also extracted the
 participant's number of completed ESM measurements to ensure that the

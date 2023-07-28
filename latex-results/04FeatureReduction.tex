@@ -14,12 +14,11 @@ can also be adopted across use cases, we present the workflow using a
 PCA here but we encourage users to consider more specialized methods as
 well.
 
-To use the principal component analysis with our extracted time series
-features, we first standardize all features across participants to
-ensure that all features are weighted equally. We then enter all 72
-features into the analysis. The PCA uses linear transformations in such
-a way that the first component captures the most possible variance of
-the original data
+To use the PCA with our extracted time series features, we first
+standardize all features across participants to ensure that all features
+are weighted equally. We then enter all 72 features into the analysis.
+The PCA uses linear transformations in such a way that the first
+component captures the most possible variance of the original data
 \citep[e.g., by finding a vector that maximizes the sum of squared distances][]{jolliffe2002, abdi2010}.
 The following components will then use the same method to iteratively
 explain the most of the remaining variance while also ensuring that the
