@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-For our illustration, we include 12 variables that were available across all three studies and captured information about the participant's interactions, as well as cognitive-, emotional-, and motivational self in relationship with the majority group. We chose these aspects in particular because (1) the interaction-specific information exemplified the structural missingness issue of modern ESM data and (2) the motivational, emotional, and cognitive experience offered a diverse conceptualization of migration experience (beyond behavioral measurements) that is becoming more common in the literature \citep[][]{Kreienkamp2022d}. The breadth of the included variables also showcases the utility of the method for a growing body of literature that considers heterogeneous and complex concepts. As a result, the number of included variables is also on the higher end for psychological concepts and additionally allows us to showcase the efficiency benefits of the method and offers a reasonable use case for the optional feature reduction step.
+For our illustration, we include 12 variables that were measured as part of the ESM surveys in all three studies and captured information about the participant's interactions, as well as cognitive-, emotional-, and motivational self in relationship with the majority group (see \tblref{tab:descrLong} for an overview). We chose these aspects in particular because (1) the interaction-specific information exemplified the structural missingness issue of modern ESM data and (2) the motivational, emotional, and cognitive experience offered a diverse conceptualization of migration experience (beyond behavioral measurements) that is becoming more common in the literature \citep[][]{Kreienkamp2022d}. The breadth of the included variables also showcases the utility of the method for a growing body of literature that considers heterogeneous and complex concepts. As a result, the number of included variables is also on the higher end for psychological concepts and additionally allows us to showcase the efficiency benefits of the method and offers a reasonable use case for the optional feature reduction step.
 
 Once the important variables have been selected, the data needs to be prepared for the analysis steps. Importantly, this not only means validating and cleaning the data (e.g., re-coding, removing duplicate or unwanted measurements) but also making the time-series comparable. Two important steps are making the time-frames and response scales comparable across participants --- for example, by choosing a time frame that is common to most participants and standardizing the participants' responses \citep['data exclusion' and 'data transformation' in \fgrref{fig:TSCFlow}; also see][]{liao2005}.
 
@@ -134,6 +134,8 @@ allMlCor %>%
 ```
 
 ```{r}
+# ADJUST LABELS!! (and add question texts?)
+
 # Sample Descriptives Table --- longer version
 allMlCor %>%
   as.data.frame %>%
@@ -164,9 +166,10 @@ allMlCor %>%
   pack_rows("Descriptives", ncol(allMlCor)+1, nrow(allMlCor)) %>%
   footnote(
     general = c(
-      "Upper triangle: Between-person correlations;",
-      "Lower triangle: Within-person correlations;",
-      "*** p < .001, ** p < .01,  * p < .05"
+      '"Int." = interaction.',
+      'Upper triangle: Between-person correlations;',
+      'Lower triangle: Within-person correlations;',
+      '*** p < .001, ** p < .01,  * p < .05'
     )
   ) %>%
   kable_styling(latex_options = "scale_down") %>%

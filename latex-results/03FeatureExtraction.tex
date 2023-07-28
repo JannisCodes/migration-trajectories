@@ -87,7 +87,7 @@ time points \(t\) and \(t-1\), for each time series \(X\) of participant
 \(i\) and variable \(j\).
 
 \begin{equation} \label{eq:mac}
-  MAC(X_{ij}) = \frac{1}{n-1} \sum_{t=1, \ldots, t-1}\left|x_{t}-x_{t-1}\right|
+  MAC(X_{ij}) = \frac{1}{n-1} \sum_{t=2, \ldots, t}\left|x_{t}-x_{t-1}\right|
 \end{equation}
 
 Another common measurement of instability is the
