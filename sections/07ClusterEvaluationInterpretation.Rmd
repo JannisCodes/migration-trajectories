@@ -380,10 +380,10 @@ feat_ttest_apa <- function(results_df, concept_in, feature_in) {
     round(., 2) %>%
     format(., nsmall=2)
   
-  paste("$difference$ = ", diff,
+  paste("\\textit{difference} = ", diff,
         ", $t$(", df, ") = ", t,
         ", $p$ ", p , 
-        ", $95%CI$ [", lwr,
+        ", \\textit{95\\%CI} [", lwr,
         ", ", upr, "]",
         sep = "")
 }
