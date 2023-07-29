@@ -327,8 +327,7 @@ for (concept in unique(results_df$concept)) {
              mean = as.numeric(plot_matrix[, 2]),
              lower = as.numeric(plot_matrix[, 3]),
              upper = as.numeric(plot_matrix[, 4]),
-             xlab = "Difference",
-             title = paste0("Forest plot for ", concept))
+             xlab = "Difference")
 }
 
 dev.off()
