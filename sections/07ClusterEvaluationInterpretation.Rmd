@@ -347,7 +347,8 @@ feat_ttest_apa <- function(results_df, concept_in, feature_in) {
     filter(concept == concept_in, feature == feature_in) %>% 
     select(difference) %>% 
     pull %>% 
-    format(round(., 2), nsmall=2)
+    round(., 2) %>% 
+    format(., nsmall=2)
   t <- results_df %>% 
     filter(concept == concept_in, feature == feature_in) %>% 
     select(t_value) %>% 
@@ -382,7 +383,7 @@ feat_ttest_apa <- function(results_df, concept_in, feature_in) {
   paste("$difference$ = ", diff,
         ", $t$(", df, ") = ", t,
         ", $p$ ", p , 
-        ", $95%CI [", lwr,
+        ", $95%CI$ [", lwr,
         ", ", upr, "]",
         sep = "")
 }
