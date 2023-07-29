@@ -55,7 +55,7 @@ varNames %>%
   select(-study1, -study2, -study3) %>%
   arrange(`Interaction Only`, Variable) %>% 
   mutate(ESM = 1) %>%
-  mutate_all(~recode(.x, `0`="", ` 1`="✔")) %>%
+  mutate_all(~recode(.x, `0`="", ` 1`="\\Checkmark")) %>%
   relocate(starts_with("ESM"), .after = "Aspect") %>%
   # relocate(starts_with("study"), .after = last_col()) %>%
   # rename_with(., ~ gsub("study", "Study ", .x, fixed = TRUE)) %>%
