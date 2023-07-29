@@ -64,7 +64,8 @@ varNames %>%
       booktabs = T,
       align = c("l", "l", "l", rep("c", ncol(.)-3)),
       digits = 2,
-      format = "latex",
+      format = "latex", 
+      linesep = "",
       label = "var_selection",
       caption = "Variable Selection") %>%
   add_header_above(c(" " = 4, "Contact Specific" = 2)) %>%
