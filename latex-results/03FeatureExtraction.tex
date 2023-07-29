@@ -211,25 +211,6 @@ smooth estimates \citep{wood2017}.
   edf = tr(S)
 \end{equation}
 
-\textless!--Effective degrees of freedom for individual smooth terms are
-obtained by summing the Fii values corresponding to the coefficients βi
-of the smooth term (e.g., if the coefficients of a particular smooth are
-β5, . . . , β11 then the smooth's EDF is \$\sum\emph{\{i=5\}\^{}\{11\} =
-F}\{ii\}).--!\textgreater{}
-
-\textless!-- An alternative approach to understanding the edf is to
-approximate the number of parametric and non-parametric (or smooth)
-terms \(p\) in the penalized GAM. Both formulas are measuring the same
-concept (the model's complexity or flexibility) and both account for the
-penalization introduced to control overfitting in GAMs
-\citep{hastie1986}.
-
-\begin{equation} \label{eq:edf}
-  edf \approx \sum p
-\end{equation}
-
---!\textgreater{}
-
 Beyond our main features of interest, we also extracted the
 participant's number of completed ESM measurements to ensure that the
 clusters are comparable in that regard (i.e., to exclude spurious
