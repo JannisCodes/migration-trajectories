@@ -21,6 +21,62 @@ knitr::opts_chunk$set(
 
 For our illustration, we include 12 variables that were measured as part of the ESM surveys in all three studies and captured information about the participant's interactions, as well as cognitive-, emotional-, and motivational self in relationship with the majority group (see \tblref{tab:descrLong} for an overview). We chose these aspects in particular because (1) the interaction-specific information exemplified the structural missingness issue of modern ESM data and (2) the motivational, emotional, and cognitive experience offered a diverse conceptualization of migration experience (beyond behavioral measurements) that is becoming more common in the literature \citep[][]{Kreienkamp2022d}. The breadth of the included variables also showcases the utility of the method for a growing body of literature that considers heterogeneous and complex concepts. As a result, the number of included variables is also on the higher end for psychological concepts and additionally allows us to showcase the efficiency benefits of the method and offers a reasonable use case for the optional feature reduction step.
 
+```{r}
+
+varNames %>%
+  filter(
+    pca != 0,
+    varNam %in% c(varNamS123PCA, varNamS1PCA, varNamS2PCA, varNamS3PCA)
+  ) %>%
+  mutate(
+    contactSpecific = recode(
+      .$contactSpecific,
+      `-1` = "No Interaction Only",
+      `0` = "unspecific",
+      `1` = "Interaction Only"
+    ),
+    study1 = ifelse(!is.na(studyS1), 1, 0),
+    study2 = ifelse(!is.na(studyS2), 1, 0),
+    study3 = ifelse(!is.na(studyS3), 1, 0)
+  ) %>% 
+  select(varNam, question, varGroup, contactSpecific, study1, study2, study3) %>%
+  filter(study1 == 1 & study2 == 1 & study3 == 1) %>%
+  group_by(varGroup, varNam, question, contactSpecific, study1, study2, study3) %>%
+  summarise(n = n()) %>%
+  pivot_wider(names_from = c("varNam", "question", "varGroup", "study1", "study2", "study3"), values_from = n, names_sep=" - ") %>%
+  ungroup %>%
+  t %>%
+  as.data.frame %>%
+  janitor::row_to_names(1) %>%
+  replace(is.na(.), 0) %>%
+  tibble::rownames_to_column(., var = "variable") %>%
+  separate(variable, c("Variable", "Question", "Aspect", "study1", "study2", "study3"), " - ") %>%
+  mutate(across(c(study1, study2, study3), as.numeric)) %>%
+  select(-study1, -study2, -study3) %>%
+  arrange(`Interaction Only`, Variable) %>% 
+  mutate(ESM = 1) %>%
+  mutate_all(~recode(.x, `0`="", ` 1`="✔")) %>%
+  relocate(starts_with("ESM"), .after = "Aspect") %>%
+  # relocate(starts_with("study"), .after = last_col()) %>%
+  # rename_with(., ~ gsub("study", "Study ", .x, fixed = TRUE)) %>%
+  kbl(.,
+      escape = FALSE,
+      booktabs = T,
+      align = c("l", "l", "l", rep("c", ncol(.)-3)),
+      digits = 2,
+      format = "latex",
+      label = "var_selection",
+      caption = "Variable Selection") %>%
+  add_header_above(c(" " = 4, "Contact Specific" = 2)) %>%
+  kable_styling(latex_options = "scale_down") %>%
+  gsub("\\begin{table}", "\\begin{sidewaystable*}[!hbtp]\n\\centering", ., fixed = TRUE) %>%
+  gsub("\\end{table}", "\\end{sidewaystable*}", ., fixed = TRUE) %>%
+  save_kable("tables/var_selection.tex")
+
+```
+
+\input{tables/var_selection}
+
 Once the important variables have been selected, the data needs to be prepared for the analysis steps. Importantly, this not only means validating and cleaning the data (e.g., re-coding, removing duplicate or unwanted measurements) but also making the time-series comparable. Two important steps are making the time-frames and response scales comparable across participants --- for example, by choosing a time frame that is common to most participants and standardizing the participants' responses \citep['data exclusion' and 'data transformation' in \fgrref{fig:TSCFlow}; also see][]{liao2005}.
 
 In our illustration data set, the studies differed substantially in the maximum length of participation ($\text{max}(t_{S1})=$ `r missS123$timeFull[missS123$study==1]`, $\text{max}(t_{S2})=$ `r missS123$timeFull[missS123$study==2]`, $\text{max}(t_{S3})=$ `r missS123$timeFull[missS123$study==3]`). This was likely due to the option to continue participation without compensation in the latter two studies. To make the three studies comparable in participation and time frames, we iteratively removed all measurement occasions and participants that had more than 45% missingness \citep[which was in line with the general recommendation for data that might still need to rely on imputations for later model testing][]{Madley-Dowd2019}. This procedure led to a final sample of `r sum(missS123$pptRed)` participants, who jointly produced `r format(sum(missS123$nRed), big.mark=",")` measurements. Importantly, both the participant response-patterns and the time frame were now substantially more comparable ($\text{max}(t_{S1})=$ `r missS123$timeRed[missS123$study==1]`, $\text{max}(t_{S2})=$ `r missS123$timeRed[missS123$study==2]`, $\text{max}(t_{S3})=$ `r missS123$timeRed[missS123$study==3]`). Full methodological details are available in Online Supplemental Material A, but basic item information, descriptives, and correlations are also available in \tblref{tab:descrLong}.
@@ -90,10 +146,10 @@ allMlCor <-
       "Int: Representative",
       "Int: Meaningful",
       "Int: Quality", 
-      "Core Need", 
-      "Core Need Due to Partner", 
+      "Int: Need Fulfillment", 
+      "Int: Need Fulfillment Partner", 
       "Attitude Partner",
-      "Daytime Core Need",
+      "Daytime Need Fulfillment",
       "Outgroup Attitude",
       "Well-being"
     )
@@ -130,7 +186,7 @@ allMlCor %>%
   kable_styling(latex_options = "scale_down") %>%
   gsub("\\begin{table}", "\\begin{sidewaystable}\n\\centering", ., fixed = TRUE) %>%
   gsub("\\end{table}", "\\end{sidewaystable}", ., fixed = TRUE) %>%
-  save_kable("Tables/descrWide.tex")
+  save_kable("tables/descrWide.tex")
 ```
 
 ```{r}
@@ -154,8 +210,8 @@ allMlCor %>%
         "\\makecell{Int: \\\\ Representative}",
         "\\makecell{Int: \\\\ Meaningful}",
         "\\makecell{Int: \\\\ Quality}", 
-        "Core Need", 
-        "\\makecell{Core Need \\\\ Due to Partner}", 
+        "\\makecell{Int: \\\\ Need Fulfil.}", 
+        "\\makecell{Int: \\\\ Need Fulfil. Partner}", 
         "\\makecell{Attitude \\\\ Partner}",
         "\\makecell{Daytime \\\\ Core Need}",
         "\\makecell{Outgroup \\\\ Attitude}",
@@ -175,7 +231,7 @@ allMlCor %>%
   kable_styling(latex_options = "scale_down") %>%
   gsub("\\begin{table}", "\\begin{sidewaystable*}[!hbtp]\n\\centering", ., fixed = TRUE) %>%
   gsub("\\end{table}", "\\end{sidewaystable*}", ., fixed = TRUE) %>%
-  save_kable("Tables/descrLong.tex")
+  save_kable("tables/descrLong.tex")
 ```
 
 \input{tables/descrLong}

@@ -508,31 +508,33 @@ varNames %>%
     study2 = ifelse(!is.na(studyS2), 1, 0),
     study3 = ifelse(!is.na(studyS3), 1, 0)
   ) %>% 
-  select(varNam, varGroup, contactSpecific, study1, study2, study3) %>%
+  select(varNam, question, varGroup, contactSpecific, study1, study2, study3) %>%
   filter(study1 == 1 & study2 == 1 & study3 == 1) %>%
-  group_by(varGroup, varNam, contactSpecific, study1, study2, study3) %>%
+  group_by(varGroup, varNam, question, contactSpecific, study1, study2, study3) %>%
   summarise(n = n()) %>%
-  pivot_wider(names_from = c("varGroup", "varNam", "study1", "study2", "study3"), values_from = n, names_sep=" - ") %>%
+  pivot_wider(names_from = c("varNam", "question", "varGroup", "study1", "study2", "study3"), values_from = n, names_sep=" - ") %>%
   ungroup %>%
   t %>%
   as.data.frame %>%
   janitor::row_to_names(1) %>%
   replace(is.na(.), 0) %>%
   tibble::rownames_to_column(., var = "variable") %>%
-  separate(variable, c("concept", "variable", "study1", "study2", "study3"), " - ") %>%
+  separate(variable, c("Variable", "Question", "Aspect", "study1", "study2", "study3"), " - ") %>%
   mutate(across(c(study1, study2, study3), as.numeric)) %>%
-  #select(-study1, -study2, -study3) %>%
-  arrange(concept, unspecific, `Interaction Only`) %>% 
-  mutate_all(~recode(.x, `0`="", ` 1`="X")) %>%
-  relocate(starts_with("study"), .after = last_col()) %>%
-  rename_with(., ~ gsub("study", "Study ", .x, fixed = TRUE)) %>%
+  select(-study1, -study2, -study3) %>%
+  arrange(`Interaction Only`, Variable) %>% 
+  mutate(ESM = 1) %>%
+  mutate_all(~recode(.x, `0`="", ` 1`="✔")) %>%
+  relocate(starts_with("ESM"), .after = "Aspect") %>%
+  # relocate(starts_with("study"), .after = last_col()) %>%
+  # rename_with(., ~ gsub("study", "Study ", .x, fixed = TRUE)) %>%
   kbl(.,
       escape = FALSE,
       booktabs = T,
-      align = c("l", "l", rep("c", ncol(.)-2)),
+      align = c("l", "l", "l", rep("c", ncol(.)-3)),
       digits=2,
       caption = "Variables by Interaction Types and Study Availability") %>%
-  add_header_above(c(" " = 2, "Contact Type" = 2, "Study Availability" = 3)) %>%
+  add_header_above(c(" " = 4, "Contact Specific" = 2)) %>%
   kable_classic(
     full_width = F,
     lightable_options = "hover",

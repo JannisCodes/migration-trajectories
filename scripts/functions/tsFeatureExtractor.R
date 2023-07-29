@@ -1,5 +1,29 @@
 
-
+#' Feature Extraction Function
+#'
+#' This function extracts features from a given dataset, grouping it by an identifier variable, and summarizing it by a set of measures 
+#' for each item in the given list of items. It generates univariate features such as mean, median, standard deviation, 
+#' mean absolute deviation, root mean square of successive differences, and mean absolute change.
+#' It also generates multivariate and time-based features, applying linear and non-linear trends using generalized additive models (GAMs),
+#' and calculates auto-regressive components and their confidence intervals.
+#' It standardizes the features, and outputs a list containing raw and standardized features, as well as the GAM models.
+#'
+#' @param data A data frame from which to extract features.
+#' @param items A character vector of the names of the variables for which to compute features.
+#' @param pid A character string specifying the name of the person identifier variable.
+#' @param tid A character string specifying the name of the time identifier variable.
+#'
+#' @return A list containing:
+#' features: A data frame of raw features.
+#' featuresZ: A data frame of standardized features.
+#' featuresZMat: A data frame of standardized features with person identifiers as row names.
+#' gam: A list of fitted GAM models for each person.
+#'
+#' @examples
+#' \dontrun{
+#' featureExtractor(df, c("item1", "item2"), "ID", "time")
+#' }
+#' @export
 featureExtractor <- function(data, items, pid, tid) {
   # for testing:
   # data <- featData
@@ -7,34 +31,34 @@ featureExtractor <- function(data, items, pid, tid) {
   # tid <- "TIDnum"
   # items <- varNamS123PCA[!varNamS123PCA %in% idVars]
   
+  # Change the names of the identifier columns to "ID" and "TIDnum"
   names(data)[names(data) == pid] <- "ID"
   names(data)[names(data) == tid] <- "TIDnum"
   
-  # univariate features
+  # Generate univariate features
   featUnivar <- data %>%
     group_by(ID) %>%
     summarise(across(
       any_of(items),
       list(
-        # central tendency
         mean = ~ mean(.x, na.rm = TRUE),
         median = ~ stats::median(.x, na.rm = TRUE),
-        # variance
         sd = ~ sd(.x, na.rm = TRUE),
         mad = ~ stats::mad(.x, na.rm = TRUE),
-        # stability
         rmssd = ~ psych::rmssd(.x, group=ID, lag = 1, na.rm=TRUE) %>% as.numeric,
         mac = ~ sum(abs(diff(.x, lag = 1)), na.rm = TRUE)/(sum(!is.na(.x)) - 1)
       )
     ))
   
-  # Multivariate and time-based features
+  # Initialize Multivariate and time-based features
   featMultivar <- featUnivar %>%
     select(ID)
   
-  # progress bar
-  Results_GAM <- sapply(as.character(unique(featData$ID)), function(x) NULL)
-  pb <- txtProgressBar(min = 0, max = length(unique(featMultivar$ID)), style = 3) #, width = length(unique(featMultivar$ID))
+  # Initialize progress bar
+  Results_GAM <- sapply(as.character(unique(data$ID)), function(x) NULL)
+  pb <- txtProgressBar(min = 0, max = length(unique(featMultivar$ID)), style = 3)
+  
+  # Iterate over each ID and calculate the Multivariate and time-based features
   for (i in unique(featMultivar$ID)) {
     for (j in items) {
       if (sum(!is.na(featData[[j]][featData$ID == i])) == 0) next # skip if all IV vals NA
@@ -87,7 +111,7 @@ featureExtractor <- function(data, items, pid, tid) {
       ar <- acf(dfGam$var, na.action=na.pass, plot=FALSE, lag.max = 14)
       featMultivar[[paste(j, "ar01", sep = "_")]][featMultivar$ID == i] <- ar$acf[2]
       featMultivar[[paste(j, "ar02", sep = "_")]][featMultivar$ID == i]  <- ar$acf[3]
-      #featMultivar[[paste(j, "ar14", sep = "_")]][featMultivar$ID == i]  <- ar$acf[15]
+      # featMultivar[[paste(j, "ar14", sep = "_")]][featMultivar$ID == i]  <- ar$acf[15]
       
       # Find out why these are different:
       # ar1 <- rcorr(dfGam$varLag1, dfGam$var)[["r"]][1,2]
@@ -148,6 +172,7 @@ featureExtractor <- function(data, items, pid, tid) {
     #if (i == length(unique(featMultivar$ID))) close(pb)
   }
   
+  # Merge the univariate features and multivariate features
   featOut <- 
     merge(
       featUnivar, featMultivar
@@ -155,11 +180,10 @@ featureExtractor <- function(data, items, pid, tid) {
     arrange(ID) %>%
     select(
       ID,
-      #PID,
-      #study,
       sort(colnames(.))
     ) 
   
+  # Standardize the features
   featOutZ <-
     featOut %>%
     mutate(
@@ -169,11 +193,13 @@ featureExtractor <- function(data, items, pid, tid) {
       )
     )
   
+  # Convert the ID column to row names
   featOutZRowNam <- 
     featOutZ %>%
     column_to_rownames("ID") %>% 
     mutate(across(everything(), as.vector)) # remove attributes
   
+  # Prepare output
   out <- list(
     features = featOut,
     featuresZ = featOutZ,
@@ -181,9 +207,11 @@ featureExtractor <- function(data, items, pid, tid) {
     gam = Results_GAM
   )
   
-  # end progressbar
+  # End the progressbar
   close(pb)
-  out
+  
+  # Return output
+  return(out)
 }
 
 featureImputer <- function(extractorList) {
