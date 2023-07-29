@@ -123,15 +123,18 @@ We summarized the nonlinear trend with the \textit{estimated degrees of freedom}
 \end{equation}
 ```
 
-<!--Effective degrees of freedom for individual smooth terms are obtained by summing the Fii values corresponding to the coefficients βi of the smooth term (e.g., if the coefficients of a particular smooth are β5, . . . , β11 then the smooth’s EDF is $\sum_{i=5}^{11} = F_{ii}).--!>
+```{r}
+#| include: False
 
-<!-- An alternative approach to understanding the edf is to approximate the number of parametric and non-parametric (or smooth) terms $p$ in the penalized GAM. Both formulas are measuring the same concept (the model's complexity or flexibility) and both account for the penalization introduced to control overfitting in GAMs \citep{hastie1986}.
-
-```{=tex}
-\begin{equation} \label{eq:edf}
-  edf \approx \sum p
-\end{equation}
+# Effective degrees of freedom for individual smooth terms are obtained by summing the Fii values corresponding to the coefficients βi of the smooth term (e.g., if the coefficients of a particular smooth are β5, . . . , β11 then the smooth’s EDF is $\sum_{i=5}^{11} = F_{ii}).
+# 
+# An alternative approach to understanding the edf is to approximate the number of parametric and non-parametric (or smooth) terms $p$ in the penalized GAM. Both formulas are measuring the same concept (the model's complexity or flexibility) and both account for the penalization introduced to control overfitting in GAMs \citep{hastie1986}.
+# 
+# ```{=tex}
+# \begin{equation} \label{eq:edf}
+#   edf \approx \sum p
+# \end{equation}
+# ```
 ```
---!>
 
 Beyond our main features of interest, we also extracted the participant's number of completed ESM measurements to ensure that the clusters are comparable in that regard (i.e., to exclude spurious explanations for the cluster assignments). After the feature extraction, we found that about `r format(round(pMissFull$pmiss %>% filter(set == "All") %>% select(pMissTotal) %>% pull, 2), nsmall=2)`% of the extracted features are missing across the `r ncol(featFull$features %>% select(-ends_with(featureExclusion)))-1` features per participant. This might, for example, happen if participants do not have two subsequent measurements with outgroup interactions, so that an autocorrelation with lag-1 cannot be calculated for the contact-specific variables. The small number of missing values indicates that the feature-based approach indeed largely avoids the structural missingness issue. However, even the few missing values can be an issue for some feature reduction or feature clustering algorithms. We, thus, impute the missing feature values with a single predictive mean matching imputation using the MICE library \citep[][]{buuren2011}. Note again that with this procedure we only need to impute an extremely small number of missing values as most feature calculations can use the available data instead.
