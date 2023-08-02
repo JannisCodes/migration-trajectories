@@ -246,8 +246,6 @@ for (feature in ts_features) {
   }
 }
 
-results$ar01$AttitudesDutch$conf.int
-
 results_df <- data.frame(concept = character(),
                          feature = character(),
                          difference = numeric(),
@@ -285,52 +283,45 @@ for (feature in ts_features) {
 }
 
 results_df <- results_df %>%
-      mutate(star = ifelse(p_value < 0.001, "***", ifelse(p_value < 0.01, "**", ifelse(p_value < 0.05, "*", ""))))
+      mutate(
+        star = ifelse(p_value < 0.001, "***", ifelse(p_value < 0.01, "**", ifelse(p_value < 0.05, "*", "")))
+      ) %>% 
+ left_join(
+   variableLab,
+   by = c('concept' = 'variable')
+ )
+  
 
 feature_plot_list <- list()
-
-library(forestplot)
 for (feature in unique(results_df$feature)) {
   # Subset the data for the current feature
   feature_data <- results_df[results_df$feature == feature, ]
   
-  # Create a matrix for the forestplot function
-  plot_matrix <- rbind(c("", "Difference", "Lower CI", "Upper CI"),
-                       cbind(feature_data$concept,
-                             feature_data$difference,
-                             feature_data$lwr,
-                             feature_data$upr))
-
-  # Create the forest plot
-  feature_plot_list[[feature]] <- forestplot::forestplot(labeltext = plot_matrix[, 1], 
-             mean = as.numeric(plot_matrix[, 2]),
-             lower = as.numeric(plot_matrix[, 3]),
-             upper = as.numeric(plot_matrix[, 4]),
-             xlab = "Difference",
-             title = paste0("Forest plot for ", feature))
-}
-
-concept_plot_list <- list()
-for (concept in unique(results_df$concept)) {
-  # Subset the data for the current feature
-  concept_data <- results_df[results_df$concept == concept, ]
+  df_plot <- data.frame(label = feature_data$label,
+                        difference = feature_data$difference,
+                        lwr = feature_data$lwr,
+                        upr = feature_data$upr)
   
-  # Create a matrix for the forestplot function
-  plot_matrix <- rbind(c("", "Difference", "Lower CI", "Upper CI"),
-                       cbind(feature_data$concept,
-                             feature_data$difference,
-                             feature_data$lwr,
-                             feature_data$upr))
-
-  # Create the forest plot
-  concept_plot_list[[concept]] <- forestplot::forestplot(labeltext = plot_matrix[, 1], 
-             mean = as.numeric(plot_matrix[, 2]),
-             lower = as.numeric(plot_matrix[, 3]),
-             upper = as.numeric(plot_matrix[, 4]),
-             xlab = "Difference")
+  feature_plot_list[[feature]] <- ggplot(df_plot, aes(y = label)) +
+    geom_point(aes(x = difference), shape=15, size=2) +
+    geom_linerange(aes(xmin = lwr, xmax = upr)) +
+    geom_vline(xintercept = 0, linetype="dashed") +
+    scale_x_continuous(expand = expansion(mult = 0)) +
+    theme_Publication() + 
+    theme(panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank(), 
+          axis.text.y = element_text(hjust=0), 
+          axis.line.y = element_blank(),
+          axis.ticks.y = element_blank(),
+          axis.title.y = element_blank())
 }
 
-dev.off()
+
+# Check if any graphics devices are open
+if (length(dev.list()) > 0) {
+  # Close the graphics device
+  dev.off()
+}
 pdf("figures/feature_comparison_mad.pdf")
 feature_plot_list$mad
 dev.off()
@@ -399,7 +390,7 @@ Finally, we can also assess the clusters across other individual difference vari
 \end{figure}
 ```
 
-To further illustrate the utility of assessing out-of-feature individual differences, we also compare the two samples in terms of the participants' self-reported discrimination experiences in the Netherlands (measured during the post-measurement). When looking at the group comparison, we find that participants in the deteriorating cluster (cluster 2) reported substantially higher levels of everyday discrimination (\hl{T-TEST HERE!!}; \fgrref[B]{fig:clusterFeatVar}). Thus, both intensive longitudinal (e.g., the sum of specific ESM measurements) and cross-sectional variables (e.g., general discrimination differences) that were not included in the original clustering step can be used to explore and understand the cluster differences in more detail.
+To further illustrate the utility of assessing out-of-feature individual differences, we also compare the two samples in terms of the participants' self-reported discrimination experiences in the Netherlands (measured during the post-measurement). When looking at the group comparison, we find that participants in the deteriorating cluster (cluster 2) reported substantially higher levels of everyday discrimination (`r feat_ttest_apa(results_df, "exWB", "EvDayDiscr.post.z")`; \fgrref[B]{fig:clusterFeatVar}). Thus, both intensive longitudinal (e.g., the sum of specific ESM measurements) and cross-sectional variables (e.g., general discrimination differences) that were not included in the original clustering step can be used to explore and understand the cluster differences in more detail.
 
 This cluster separation, then, has a number of empirical and practical applications. Firstly, the clusters are descriptive. With tens of variables, hundreds of participants, and thousands of measurements, singular descriptive statistics are often not able to capture the complex patterns that describe the data set. The feature-based clustering offers some direct insight into the complexity within the data set. In our empirical example, we, for example, see that participants are meaningfully distinguished by a combination of high (vs. low) central tendency, variability, and linear trend. Secondly, the clusters identify important groups. The adaptive and deteriorating groups offer starting points for empirical exploration as well as practical interventions. Researchers can start probing what exactly distinguishes the two groups further and generate new bottom-up hypotheses. Practitioners in the resettlement field can use the group separation to identify individuals in need of assistance and can explore contextual factors that might contribute to the difficulties some might face. In our illustration we, for example, found that participants in the deteriorating cluster (cluster 2) reported less need fulfilling interactions over time. Thirdly, the feature-based approach is flexible and meaningful. We were able to use a wide range of time series features that have been central in the ESM literature and were able to use them directly to identify meaningful groups. For our empirical illustration we, among others for example, chose to focus on whether participants differed in their average well-being (i.e., \textit{median}), how much their well-being would vary over time (i.e, \textit{MAD}), and whether their well-being would on average increase or decrease over time (i.e., \textit{linear trend}). Alternatively, for others cyclical patterns might be more important --- for example, whether well-being was higher on weekends. Importantly, in any case, we did not need to translate these dynamic features into probabilistic inference models (e.g., VAR models) to cluster the participants.
 
