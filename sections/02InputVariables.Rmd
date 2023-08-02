@@ -23,11 +23,30 @@ For our illustration, we include 12 variables that were measured as part of the 
 
 ```{r}
 
+variableLab <- c(
+  "AttitudesDutch" = "Outgroup Attitude",
+  "AttitudesPartner" = "Int: Partner Attitude",
+  "DaytimeNeedFulfillment" = "Need Fulfillment",
+  "exWB" = "Well-Being",
+  "InteractionContextAccidental" = "Int: Accidental",
+  "InteractionContextCooperative" = "Int: Cooperative",
+  "InteractionContextRepresentativeNL" = "Int: Representative",
+  "InteractionContextvoluntary" = "Int: Voluntary",
+  "KeyNeedDueToPartner" = "Int: Need Fulfillment Partner",
+  "KeyNeedFulfillment" = "Int: Need Fulfillment",
+  "qualityMeaning" = "Int: Meaningful",
+  "qualityOverall" = "Int: Quality"
+) %>% enframe(., name = "varNam", value = "label")
+
 varNames %>%
   filter(
     pca != 0,
     varNam %in% c(varNamS123PCA, varNamS1PCA, varNamS2PCA, varNamS3PCA)
   ) %>%
+  left_join(
+    variableLab,
+    by = 'varNam'
+  ) %>% 
   mutate(
     contactSpecific = recode(
       .$contactSpecific,
@@ -39,11 +58,11 @@ varNames %>%
     study2 = ifelse(!is.na(studyS2), 1, 0),
     study3 = ifelse(!is.na(studyS3), 1, 0)
   ) %>% 
-  select(varNam, question, varGroup, contactSpecific, study1, study2, study3) %>%
+  select(label, question, varGroup, contactSpecific, study1, study2, study3) %>%
   filter(study1 == 1 & study2 == 1 & study3 == 1) %>%
-  group_by(varGroup, varNam, question, contactSpecific, study1, study2, study3) %>%
+  group_by(varGroup, label, question, contactSpecific, study1, study2, study3) %>%
   summarise(n = n()) %>%
-  pivot_wider(names_from = c("varNam", "question", "varGroup", "study1", "study2", "study3"), values_from = n, names_sep=" - ") %>%
+  pivot_wider(names_from = c("label", "question", "varGroup", "study1", "study2", "study3"), values_from = n, names_sep=" - ") %>%
   ungroup %>%
   t %>%
   as.data.frame %>%
