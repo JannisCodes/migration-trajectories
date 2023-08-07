@@ -1,0 +1,566 @@
+---
+title: "1. Input Variables"
+bibliography: [packages.bib, ../referencesZotero.bib]
+csl: ../apa.csl
+---
+
+```{r}
+#| label: setup
+#| include: FALSE
+
+lib <- c(
+  "rmarkdown",
+  "knitr",
+  "readxl",
+  "tidyverse",
+  "kableExtra",
+  "reshape",
+  "knitcitations"
+)
+invisible(lapply(lib, library, character.only = TRUE))
+rm(lib)
+
+anytime::addFormats("%d-%m-%Y %H:%M:%S")  ## add format to anytime package (not default)
+anytime::addFormats("%Y-%m-%d %H:%M:%S")
+anytime::addFormats("%d-%m-%Y")
+
+knitr::opts_chunk$set(
+  class.source = 'numberLines lineAnchors'
+)
+
+source("scripts/load_data.R")
+
+```
+
+
+Time series clustering starts with the selection and preparation of the variables of interest. While the selection will necessarily be field- and concept-specific, there are a few conceptual and methodological issues that should be considered. Conceptually, we will need to make a choice of key variables that comprehensively capture the concept you would like to assess over time. Once the key variables are selected, we will need make sure that the variables are ready to be summarized using the time series features and that the format fits the chosen clustering procedure.
+
+## Variable Selection
+
+The included variables should adequately capture the concept of interest and should be meaningful to the understanding of the time series. One of the advantages of feature-based clustering is that it is inherently adept at accommodating multi-variate concepts --- a common aim in ESM research. In our illustration, we apply the clustering process to a recent set of studies that collected data on migration experiences. The data seek to capture the process of cultural adaptation and aims to identify diverging trajectories. Importantly for our illustration, the migration ESM research, also, exemplifies the real-world data issues that ESM data commonly face, including a multivariate conceptualization with event-specific missingness patterns.
+
+For our illustration, we include 12 variables that were measured as part of the ESM surveys in all three studies and captured information about the participant's interactions, as well as cognitive-, emotional-, and motivational self in relationship with the majority group [@Kreienkamp2022d].
+
+### Import the raw data
+
+We begin by importing the raw data as well as the variable meta data. Both of these data files are available as part of <a href="https://www.osf.io" target="_blank">our OSF repository</a>. To ensure the privacy and confidentiality of the study participants, we took a number of steps to pre-process the data:
+
+- consistent naming
+- key variables only (participant privacy)
+- post-test variable pre-calculated
+- long format ESM data of all three studies combined (indicator variable: `study`)
+
+This means that we import the [minimal reproducible dataset](https://doi.org/10.1002/cpet.32) of the key variables (`dt_raw` using the _data/osf_mini.Rda_ file) as well as a Microsoft Excel sheet providing a range of supplementary information, including the survey questions and variable labels (`var_meta` using the _data/osf_var_meta.xlsx_ file).
+
+```{r}
+#| label: import data
+#| eval: false
+
+dt_raw <- readRDS(file="data/osf_mini.Rda")
+var_meta <- readxl::read_excel("data/osf_var_meta.xlsx")
+```
+
+### Variable Overview
+
+To get an overview of the variables we display the variable names, labels, item descriptions, as well as the survey and analysis context (see [@tbl-var-overview]).
+
+```{r}
+#| label: tbl-var-overview
+#| tbl-cap: "Variable Overview"
+#| code-fold: true
+
+var_meta %>%
+  transmute(
+    "Variable Name" = name,
+    "Label" = label,
+    "Description" = description,
+    "Type" = type,
+    "Contact Specific" = recode(contact, `0`="", ` 1`="✔"),
+    "ESM" = recode(esm, `0`="", ` 1`="✔"),
+    "Post" = recode(post, `0`="", ` 1`="✔"),
+    "Cluster" = recode(cluster, `0`="", ` 1`="✔"),
+    "Validation" = recode(interpretation, `0`="", ` 1`="✔")
+  ) %>%
+  kbl(.,
+      escape = FALSE,
+      booktabs = TRUE,
+      label = "var_overview",
+      format = "html",
+      align = c(rep("l", 4), rep("c", ncol(.)-4)),
+      digits = 2,
+      linesep = "",
+      caption = "Variable Overview") %>%
+  add_header_above(c(" " = 5, "Survey" = 2, "Analysis" = 2)) %>%
+  kable_classic(
+    full_width = FALSE,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  ) %>%
+  scroll_box(width = "100%", height = "500px") %>%
+  footnote(
+    general = c('All ESM items used a continuous slider and were rescaled to a range of 0—100.')
+  )
+
+```
+
+## Variable Preparation
+
+the important variables have been selected, the data needs to be prepared for the analysis steps. Importantly, this not only means validating and cleaning the data (e.g., re-coding, removing duplicate or unwanted measurements) but also making the time-series comparable. Two important steps are making the time-frames and response scales comparable across participants --- for example, by choosing a time frame that is common to most participants and standardizing the participants' responses [@liao2005]. 
+
+### Data Availability
+
+In our illustration data set, the studies differed substantially in the maximum length of participation ($max(t_{S1})$ = 63, $max(t_{S2})$ = 69, $max(t_{S3})$ = 155). To make the three studies comparable in participation and time frames, we iteratively removed all measurement occasions and participants that had more than 45% missingness. This procedure is in line with the general recommendation for data that might still need to rely on imputations for later model testing [@Madley-Dowd2019].
+
+#### Study 1
+
+For the Study 1 we first assess the data availability pattern. We do this visually by representing participants as rows and measurement occasions as columns:
+
+```{r}
+#| label: Data Availability Study 1
+#| echo: false
+#| warning: false
+#| error: false
+
+dtS1Availability <- dt_raw %>%
+  filter(study == "S1") %>%
+  select(
+    PID,
+    TIDnum
+  ) %>%
+  arrange(PID, TIDnum) %>%
+  mutate(data = 1)
+dtS1Availability <- reshape::cast(dtS1Availability, PID ~ TIDnum) %>%
+  select(-PID) %>%
+  mutate_all(function(x) ifelse(x>1,1,x))
+
+rownames(dtS1Availability) <- paste("PP", 1:nrow(dtS1Availability), sep = "_")
+colnames(dtS1Availability) <- paste("t", 1:ncol(dtS1Availability), sep = "_")
+dtS1AvailabilityKbl <- dtS1Availability
+
+dtS1AvailabilityKbl[1:ncol(dtS1AvailabilityKbl)] <- lapply(dtS1AvailabilityKbl[1:ncol(dtS1AvailabilityKbl)], function(x) {
+    cell_spec(x,
+              bold = FALSE,
+              color = "white",
+              background = ifelse(x == 1, "green", "red")
+              )
+})
+kbl(
+  dtS1AvailabilityKbl,
+  format = "html",
+  escape = FALSE,
+  align = "c",
+  booktabs = TRUE,
+  caption = "Study 1: Data Availability" # complete caption for main document
+) %>%
+  kable_classic(
+    full_width = FALSE,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  ) %>%
+  scroll_box(width = "100%", height = "500px")
+```
+
+We then run the `cleanM` function, where sequentially remove the row or column with the most missing data until only rows and columns remain that have less than 45% missingness.
+
+:::{.scrolling}
+
+```{r}
+#| label: Data Availability Adjustment Study 1
+
+source("scripts/cleanM.R")
+dtS1RedInfo <- cleanM(M = as.data.frame(dtS1Availability), c = 55)
+```
+
+:::
+
+With the adjusted dataset we again visualize the data availability. 
+
+```{r}
+#| label: Plot Data Availability Adjustment Study 1
+
+PIDout <- gsub("PP_", "", dtS1RedInfo$rowNamesOut) %>% as.numeric
+TIDout <- gsub("t_", "", dtS1RedInfo$colNamesOut) %>% as.numeric
+TIDInRed <- gsub("t_", "", dtS1RedInfo$colNamesIn) %>% as.numeric
+TIDIn <- seq(min(TIDInRed), max(TIDInRed), 1)
+
+dtS1Red <- dt_raw %>%
+  filter(study == "S1") %>%
+  filter(
+    !PID %in% PIDout,
+    TIDnum %in% TIDIn
+  ) %>% 
+  mutate(TIDnum = TIDnum - min(TIDnum))
+rm(PIDout, TIDout, TIDInRed, TIDIn)
+
+# change glitch where survey was sent too early
+dtS1Red$TIDnum[dtS1Red$PID == 7 & as.character(dtS1Red$created) == "2018-05-18 11:46:40"] <- 10
+dtS1Red$TID[dtS1Red$PID == 7 & as.character(dtS1Red$created) == "2018-05-18 11:46:40"] <- "2018-05-18 Morning"
+
+dtS1AvailabilityRedKbl <- dtS1RedInfo$reducedMatrix
+dtS1AvailabilityRedKbl[1:ncol(dtS1AvailabilityRedKbl)] <- lapply(dtS1AvailabilityRedKbl[1:ncol(dtS1AvailabilityRedKbl)], function(x) {
+    cell_spec(x,
+              bold = FALSE,
+              color = "white",
+              background = ifelse(x == 1, "green", "red")
+              )
+})
+kbl(
+  dtS1AvailabilityRedKbl,
+  format = "html",
+  escape = FALSE,
+  align = "c",
+  booktabs = TRUE,
+  caption = "Study 1: Final Data Availability" # complete caption for main document
+) %>%
+  kable_classic(
+    full_width = FALSE,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  ) %>%
+  scroll_box(width = "100%", height = "500px")
+```
+
+#### Study 2
+
+For Study 2 we follow the same procedure, where we first visualize the original data availability:
+
+```{r}
+#| label: Data Availability Study 2
+#| echo: false
+#| warning: false
+#| error: false
+
+dtS2Availability <- dt_raw %>%
+  filter(study == "S2") %>%
+  select(
+    PID,
+    TIDnum
+  ) %>%
+  arrange(PID, TIDnum) %>%
+  mutate(data = 1)
+dtS2Availability <- reshape::cast(dtS2Availability, PID ~ TIDnum) %>%
+  select(-PID)
+
+rownames(dtS2Availability) <- paste("PP", 1:nrow(dtS2Availability), sep = "_")
+colnames(dtS2Availability) <- paste("t", 1:ncol(dtS2Availability), sep = "_")
+
+dtS2AvailabilityKbl <- dtS2Availability
+dtS2AvailabilityKbl[1:ncol(dtS2AvailabilityKbl)] <- lapply(dtS2AvailabilityKbl[1:ncol(dtS2AvailabilityKbl)], function(x) {
+    cell_spec(x,
+              bold = FALSE,
+              color = "white",
+              background = ifelse(x == 1, "green", "red")
+              )
+})
+kbl(
+  dtS2AvailabilityKbl,
+  format = "html",
+  escape = FALSE,
+  align = "c",
+  booktabs = TRUE,
+  caption = "Study 2: Data Availability" # complete caption for main document
+) %>%
+  kable_classic(
+    full_width = FALSE,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  ) %>%
+  scroll_box(width = "100%", height = "500px")
+```
+
+Again run the `cleanM` function to harmonize the missingness:
+
+:::{.scrolling}
+
+```{r}
+#| label: Data Availability Adjustment Study 2
+
+dtS2RedInfo <- cleanM(M = as.data.frame(dtS2Availability), c = 55)
+
+```
+
+:::
+
+And visualize the adjusted data availability.
+
+```{r}
+#| label: Plot Data Availability Adjustment Study 2
+
+PIDout <- gsub("PP_", "", dtS2RedInfo$rowNamesOut) %>% as.numeric
+TIDout <- gsub("t_", "", dtS2RedInfo$colNamesOut) %>% as.numeric
+TIDInRed <- gsub("t_", "", dtS2RedInfo$colNamesIn) %>% as.numeric
+TIDIn <- seq(min(TIDInRed), max(TIDInRed), 1)
+
+dtS2Red <- dt_raw %>%
+  filter(study == "S2") %>%
+  filter(
+    !PID %in% PIDout,
+    TIDnum %in% TIDIn
+  ) %>% 
+  mutate(TIDnum = TIDnum - min(TIDnum))
+rm(PIDout, TIDout, TIDInRed, TIDIn)
+
+# remove glitch entries 
+dtS2Red <- dtS2Red[!(dtS2Red$PID == 46 & dtS2Red$TIDnum == 57 & dtS2Red$ended == "2018-12-20 21:58:31"),]
+dtS2Red <- dtS2Red[!(dtS2Red$PID == 46 & dtS2Red$TIDnum == 59 & dtS2Red$ended == "2018-12-20 21:58:31"),]
+
+dtS2AvailabilityRedKbl <- dtS2RedInfo$reducedMatrix
+dtS2AvailabilityRedKbl[1:ncol(dtS2AvailabilityRedKbl)] <- lapply(dtS2AvailabilityRedKbl[1:ncol(dtS2AvailabilityRedKbl)], function(x) {
+    cell_spec(x,
+              bold = FALSE,
+              color = "white",
+              background = ifelse(x == 1, "green", "red")
+              )
+})
+kbl(
+  dtS2AvailabilityRedKbl,
+  format = "html",
+  escape = FALSE,
+  align = "c",
+  booktabs = TRUE,
+  caption = "Study 2: Final Data Availability" # complete caption for main document
+) %>%
+  kable_classic(
+    full_width = FALSE,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  ) %>%
+  scroll_box(width = "100%", height = "500px")
+```
+
+#### Study 3
+
+The data availability procedure for Study 3 again mirrors that of the previous two studies, where we assess the original availability (now with much more heterogeneity):
+
+```{r}
+#| label: Data Availability Study 3
+#| echo: false
+#| warning: false
+#| error: false
+
+dtS3Availability <- dt_raw %>%
+  filter(study == "S3") %>%
+  select(
+    PID,
+    TIDnum
+  ) %>%
+  arrange(PID, TIDnum) %>%
+  mutate(data = 1)
+dtS3Availability <- reshape::cast(dtS3Availability, PID ~ TIDnum, fill = 0) %>%
+  select(-PID)
+
+rownames(dtS3Availability) <- paste("PP", 1:nrow(dtS3Availability), sep = "_")
+colnames(dtS3Availability) <- paste("t", 1:ncol(dtS3Availability), sep = "_")
+
+dtS3AvailabilityKbl <- dtS3Availability
+dtS3AvailabilityKbl[1:ncol(dtS3AvailabilityKbl)] <- lapply(dtS3AvailabilityKbl[1:ncol(dtS3AvailabilityKbl)], function(x) {
+    cell_spec(x,
+              bold = FALSE,
+              color = "white",
+              background = ifelse(x == 1, "green", "red")
+              )
+})
+kbl(
+  dtS3AvailabilityKbl,
+  format = "html",
+  escape = FALSE,
+  align = "c",
+  booktabs = TRUE,
+  caption = "Study 2: Data Availability" # complete caption for main document
+) %>%
+  kable_classic(
+    full_width = FALSE,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  ) %>%
+  scroll_box(width = "100%", height = "500px")
+rm(dtS3AvailabilityKbl)
+```
+
+Run the sequential missingess reduction function:
+
+:::{.scrolling}
+
+```{r}
+#| label: Data Availability Adjustment Study 3
+
+dtS3RedInfo <- cleanM(M = as.data.frame(dtS3Availability), c = 55)
+```
+
+:::
+
+And re-assess the data availability.
+
+```{r}
+#| label: PlotData Availability Adjustment Study 3
+
+PIDout <- gsub("PP_", "", dtS3RedInfo$rowNamesOut) %>% as.numeric
+TIDout <- gsub("t_", "", dtS3RedInfo$colNamesOut) %>% as.numeric
+TIDInRed <- gsub("t_", "", dtS3RedInfo$colNamesIn) %>% as.numeric
+TIDIn <- seq(min(TIDInRed), max(TIDInRed), 1)
+
+dtS3Red <- dt_raw %>%
+  filter(study == "S3") %>%
+  filter(
+    !PID %in% PIDout,
+    TIDnum %in% TIDIn
+  ) %>% 
+  mutate(TIDnum = TIDnum - min(TIDnum))
+rm(PIDout, TIDout, TIDInRed, TIDIn)
+
+dtS3AvailabilityRedKbl <- dtS3RedInfo$reducedMatrix
+dtS3AvailabilityRedKbl[1:ncol(dtS3AvailabilityRedKbl)] <- lapply(dtS3AvailabilityRedKbl[1:ncol(dtS3AvailabilityRedKbl)], function(x) {
+    cell_spec(x,
+              bold = FALSE,
+              color = "white",
+              background = ifelse(x == 1, "green", "red")
+              )
+})
+kbl(
+  dtS3AvailabilityRedKbl,
+  format = "html",
+  escape = FALSE,
+  align = "c",
+  booktabs = TRUE,
+  caption = "Study 3: Final Data Availability" # complete caption for main document
+) %>%
+  kable_classic(
+    full_width = FALSE,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  ) %>%
+  scroll_box(width = "100%", height = "500px")
+```
+
+We then assess the missingness within three adjusted datasets by comparing how many measurements, participants, and timepoints were removed for each study. In general, we also find that the number of time points are now much more comparable ($max(t_{S1})$ = 61, $max(t_{S2})$ = 60, $max(t_{S3})$ = 67).
+
+```{r}
+#| label: missingness filtering
+
+source("scripts/missInfo.R")
+
+missS1 <- missInfo(full = dt_raw %>% filter(study == "S1"), reduced = dtS1Red)
+missS2 <- missInfo(full = dt_raw %>% filter(study == "S2"), reduced = dtS2Red)
+missS3 <- missInfo(full = dt_raw %>% filter(study == "S3"), reduced = dtS3Red)
+
+missS123 <- rbind(
+  missS1,
+  missS2,
+  missS3
+) %>%
+  mutate(study = c(1, 2, 3)) %>%
+  select(study, everything())
+
+missS123 %>%
+  kbl(.,
+      escape = FALSE,
+      format = "html",
+      booktabs = TRUE,
+      align = "c", #c("l", rep("c", ncol(.)-1)),
+      col.names = c("Study", rep(c("Full","Reduced","&Delta;", "%"), 3)),
+      digits = 2,
+      caption = "Missingness Info by Study") %>%
+  add_header_above(c(" " = 1, "Measurements" = 4, "Participants" = 4, "Timepoints" = 4)) %>%
+  kable_classic(
+    full_width = F,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  )
+
+```
+
+## Data Descriptives
+
+To get a better understanding of the resulting dataset, we as look at the variable descriptives and inter-variable relationships. We combine the harmonized datasets into a single data frame `dtAll` and use our custom `MlCorMat` function to create a multilevel correlation and descriptives object: `allMlCor`.
+
+```{r}
+#| label: descriptive preparation
+#| warning: false
+#| error: false
+
+dtAll <- rbind(
+  dtS1Red %>% select(-c("created", "ended")) %>% mutate(study = "S1") %>%
+    mutate(across(!TID & !study, as.numeric)),
+  dtS2Red %>% select(-c("created", "ended")) %>% mutate(study = "S2"),
+  dtS3Red %>% select(-c("created", "ended")) %>% mutate(study = "S3")
+) %>%
+  group_by(study, PID) %>%
+  mutate(ID = cur_group_id()) %>%
+  ungroup %>%
+  mutate(date = as.Date(gsub(" .*", "", TID)),
+         week = strftime(date, format = "%Y-W%V")) %>%
+  select(ID,
+         PID,
+         study,
+         date,
+         week,
+         TIDnum,
+         everything()) %>%
+  arrange(ID, TIDnum) %>%
+  select_if(~ sum(!is.na(.)) > 1) %>% # only include variables that have any data (i.e., not all NA)
+  as.data.frame
+
+source("scripts/MlCorMat.R")
+allMlCor <-
+  MlCorMat(
+    data = dtAll,
+    id = "ID",
+    selection = var_meta$name[var_meta$cluster == 1],
+    labels = var_meta$label[var_meta$cluster == 1]
+  )
+```
+
+We can then use the `kableExtra` package [@R-kableExtra] to display the descriptives table, which includes between-participant and within-participant bi-variate relationship information (correlations) as well as general descriptive statistics (mean, sd, ICC).
+
+```{r}
+#| label: descriptives table
+
+allMlCor %>%
+  as.data.frame %>%
+  kbl(.,
+      format = "html",
+      caption = "Correlation Table and Descriptive Statistics",
+      booktabs = TRUE,
+      align = "c", #c("l", rep("c", ncol(.) - 1)),
+      escape = FALSE,
+      label = "descrLong",
+      col.names = c(
+        #"",
+        "Int: Accidental",
+        "Int: Voluntary", 
+        "Int: Cooperative",
+        "Int: Representative",
+        "Int: Meaningful",
+        "Int: Quality", 
+        "Int: Need Fulfil.", 
+        "Int: Need Fulfil. Partner", 
+        "Int: Attitude Partner",
+        "Daytime Core Need",
+        "Outgroup Attitude",
+        "Well-being"
+      )) %>%
+  kable_classic(
+    full_width = FALSE,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  ) %>%
+  pack_rows("Correlations", 1, ncol(allMlCor)) %>%
+  pack_rows("Descriptives", ncol(allMlCor)+1, nrow(allMlCor)) %>%
+  footnote(
+    general = c(
+      '"Int." = interaction.',
+      'Upper triangle: Between-person correlations;',
+      'Lower triangle: Within-person correlations;',
+      '*** p < .001, ** p < .01,  * p < .05'
+    )
+  )
+
+
+```
+
+Prepared with a cleaned and harmonized set of data we can move on to the feature extraction step.
+
+## References
+
+::: {#refs}
+:::

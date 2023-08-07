@@ -1,0 +1,13 @@
+/* css styles */
+
+/* @import url(https://use.fontawesome.com/releases/v6.1.1/css/all.css); */
+
+body
+  { counter-reset: source-line 0; }
+pre.numberSource code
+  { counter-reset: none; }
+  
+.scrolling {
+  max-height: 500px;
+  overflow-y: auto;
+}

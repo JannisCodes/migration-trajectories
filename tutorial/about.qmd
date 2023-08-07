@@ -1,0 +1,160 @@
+---
+title: "About"
+bibliography: [packages.bib, ../referencesZotero.bib]
+csl: ../apa.csl
+---
+
+```{r}
+#| label: setup
+#| include: FALSE
+
+lib <- c(
+  "rmarkdown",
+  "knitr",
+  "tidyverse",
+  "kableExtra",
+  "tsFeatureExtracR",
+  "factoextra",
+  "fpc",
+  "readxl",
+  "reshape",
+  "tsFeatureExtracR",
+  "stats",
+  "plotly",
+  "htmltools",
+  "NbClust",
+  "devtools",
+  "pander",
+  "knitcitations",
+  "grateful",
+  "bibtex"
+)
+invisible(lapply(lib, library, character.only = TRUE))
+knitr::write_bib(file = 'packages.bib')
+
+
+knitr::opts_chunk$set(
+  class.source = 'numberLines lineAnchors'
+)
+
+```
+
+This illustration accompanies the publication "A Gentle Introduction and Application of Feature-Based Clustering with Psychological Time Series". As such, the illustration is not ...
+
+## Open Data
+
+short open data description here. Link to OSF
+
+## Open Code
+
+short open code description here. Link to GitHub
+
+
+## Software Information
+
+The full session information with all relevant system information and all loaded and installed packages is available in the collapsible section below.
+
+<details>
+
+<summary>
+
+System Info
+
+</summary>
+
+\renewcommand{\arraystretch}{0.8}
+
+<!-- decrease line spacing for the table -->
+
+```{r Reproducibility-sessionInfo-R-environment, echo=FALSE, message=FALSE, warning=FALSE, fig.align="center", out.width='100%', results='asis'}
+df_session_platform <- devtools::session_info()$platform %>%
+  unlist(.) %>%
+  as.data.frame(.) %>%
+  rownames_to_column(.)
+
+colnames(df_session_platform) <- c("Setting", "Value")
+
+kbl(
+  df_session_platform,
+  booktabs = T,
+  align = "l",
+  caption = "R environment session info for reproducibility of results" # complete caption for main document
+)
+```
+
+\renewcommand{\arraystretch}{1}
+
+<!-- reset row height/line spacing -->
+
+</details>
+
+
+<details>
+
+<summary>
+
+Package Info
+
+</summary>
+
+\renewcommand{\arraystretch}{0.6}
+
+<!-- decrease line spacing for the table -->
+
+```{r Reproducibility-sessionInfo-R-packages, echo=FALSE, message=FALSE, warning=FALSE, fig.align="center", out.width='100%', results='asis'}
+df_session_packages <- devtools::session_info()$packages %>%
+  as.data.frame(.) %>%
+  filter(attached == TRUE) %>%
+  dplyr::select(loadedversion, date, source) %>%
+  rownames_to_column()
+
+colnames(df_session_packages) <- c("Package", "Loaded version", "Date", "Source")
+
+kbl(
+  df_session_packages,
+  booktabs = T,
+  align = "l",
+  caption = "Package info for reproducibility of results" # complete caption for main document
+)
+```
+
+\renewcommand{\arraystretch}{1}
+
+<!-- reset row height/line spacing -->
+
+</details>
+
+<details>
+
+<summary>
+
+Full Session Info (including loaded but unattached packages --- for troubleshooting only)
+
+</summary>
+
+`r pander(sessionInfo(), compact = FALSE)`
+
+</details>
+
+## References
+
+```{r}
+#| echo: false
+#| results: asis
+
+bib_entries <- read.bib("packages.bib")
+all_keys <- names(bib_entries)
+
+# Create a hidden div with all the references
+cat('<div style="display:none;">')
+for (key in all_keys) {
+  cat(sprintf('[@%s] ', key))
+}
+cat('</div>')
+```
+
+::: {#refs}
+:::
+
+
+

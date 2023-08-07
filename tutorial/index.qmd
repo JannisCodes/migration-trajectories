@@ -1,0 +1,70 @@
+---
+title: "Illustration: Feature Based Time Series Clustering in Psychology [tsFeatureExtracR]"
+author:
+  - name: Jannis Kreienkamp
+    orcid: 0000-0002-1831-5604
+    email: j.kreienkamp@rug.nl
+    corresponding: true
+    # affiliations:
+    #   - ref: rug
+  - name: Maximilian Agostini
+    orcid: 0000-0001-6435-7621
+    # affiliations:
+    #   - ref: rug
+  - name: Rei Monden
+    orcid: 0000-0003-1744-5447
+    # affiliations:
+    #   - ref: hu
+  - name: Kai Epstude
+    orcid: 0000-0001-9817-3847
+    # affiliations:
+    #   - ref: rug
+  - name: Peter de Jonge
+    orcid: 0000-0002-0866-6929
+    # affiliations:
+    #   - ref: rug
+    #   - ref: icpe
+  - name: Laura F. Bringmann
+    orcid: 0000-0002-8091-9935
+    # affiliations:
+    #   - ref: rug
+    #   - ref: icpe
+# affiliations:
+#   - id: rug
+#     name: University of Groningen
+#   - id: hu
+#     name: Hiroshima University
+#   - id: icpe
+#     name: ICPE
+---
+
+```{r}
+#| label: setup
+#| include: FALSE
+
+knitr::opts_chunk$set(
+  class.source = "numberLines lineAnchors"
+  )
+```
+
+<br>
+
+Psychological researchers and practitioners collect increasingly complex time series data aimed at identifying differences between the developments of participants or patients. Past research has proposed a number of `dynamic features' that describe meaningful developmental patterns for psychological data (e.g., instability, inertia, linear trend). We propose that feature-based clustering offers an ideal fit for this type of data. We cluster participants based on the dynamic measures directly using common clustering algorithms, which means that the approach is flexible, transparent, and well-grounded.
+
+## The Illustration
+
+This illustration accompanies the publication "A Gentle Introduction and Application of Feature-Based Clustering with Psychological Time Series" and provides a hands-on tutorial-style code documentation. We provide annotated R code of all analysis steps as well as an associated R package that collects several of the functions we created along the way. 
+
+### The Structure
+
+We introduce the feature-based clustering approach and illustrate the utility of the method with real-world empirical data that highlight common ESM challenges of multivariate conceptualizations, structural missingness, and nonlinear trends. We use the data to showcase the main steps of input selection, feature extraction, feature reduction, feature clustering, and cluster evaluation.
+
+1. [Input variables](01-input-variables.qmd)
+2. [Feature extraction](02-feature-extraction.qmd)
+3. [Feature reduction](03-feature-reduction.qmd)
+4. [Clustering](04-clustering.qmd)
+5. [Evaluation](05-evaluation.qmd)
+6. [About](about.qmd)
+
+You can navigate through this illustration using the sidebar on the left or go through the individual steps using the forward and backward buttons at the bottom of each page. We close this illustration we a short about section that links important resources and software information.
+

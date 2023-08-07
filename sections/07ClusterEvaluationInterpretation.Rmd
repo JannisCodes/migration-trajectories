@@ -438,7 +438,7 @@ clusterFeatureGrid <- featClusterVal %>%
   scale_colour_manual(values = c("#384B6B", "#E2892B")) + 
   coord_flip() +
   labs(
-    x = "Features",
+    x = "Variable",
     y = "Standardized Mean",
     color = "Cluster"
   ) +

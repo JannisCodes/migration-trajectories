@@ -1,0 +1,73 @@
+---
+title: "4. Clustering"
+bibliography: [packages.bib, ../referencesZotero.bib]
+csl: ../apa.csl
+---
+
+
+```{r}
+#| label: setup
+#| include: FALSE
+
+lib <- c(
+  "rmarkdown",
+  "knitr",
+  "tidyverse",
+  "kableExtra",
+  "tsFeatureExtracR",
+  "factoextra",
+  "NbClust"
+)
+invisible(lapply(lib, library, character.only = TRUE))
+rm(lib)
+
+knitr::opts_chunk$set(
+  class.source = 'numberLines lineAnchors'
+)
+
+# import sourced data for faster renders
+source("scripts/load_data.R")
+
+pca_scores <- readRDS(file = "data/pca_scores.Rds")
+
+feature_selection <- c(
+  "ar01",
+  "edf",
+  "lin",
+  "mac",
+  "mad",
+  "median"
+)
+```
+
+For the actual clustering of the time-series features, the main aim is to organize participants into groups so that the features of participants within a group are as similar as possible, while the features of people in different groups are as different as possible [@liao2005]. There are a many different ways in which (time series) features can be clustered into homogeneous and well separated groups. We provide a more in-depth discussion of the different options in the main manuscript and we recommend the excellent overview of @xu2015 for a more general description of the different available approaches. Briefly speaking, the more readily available approaches suitable for most time series feature data can, broadly speaking, be categorized as based on (1) centroids, (2) distributions, (3) density, (4) hierarchies, or (5) a combination thereof [@jain1999]. There is, unfortunately, no one-size-fits-all solution to clustering and users will usually have to make an informed decision based on the structure of their data as well as an appropriate weighing of accuracy and efficiency. For our own illustration, we have chosen the centroid-based k-means clustering. 
+
+## K-means Clustering
+
+While k-means may not always deliver the highest accuracy, it brings forth distinct benefits. We selected k-means primarily due to its notable efficiency, which handles vast numbers of participants and features without imposing numerous limiting assumptions on cluster shapes [@jain2010]. The k-means technique has garnered recognition in the research world and has found its way into numerous statistical software tools [@hand2005]. Moreover, a significant number of feature selection approaches have been tailored explicitly for the reputable k-means algorithm [@boutsidis2010]. Therefore, k-means serves as an excellent foundation for many in the field of psychological research, and its applicability spans a diverse array of projects.
+
+In practice, we entered the participants' PC-scores from the feature reduction step into the k-means algorithm. Because we did not know the underlying number of clusters within our sample, we calculated the cluster solutions for $k=\{2, \dots , 10\}$ . To avoid local minima we used 100 random initial centroid positions for each run. We here use a for-loop to arrive at these cluster solutions using the `kmeans()` function from the `stats` package [@R-base] and save the results in the `kmeans_results` list.
+
+```{r}
+#| label: k-means modeling based on selected k
+
+kmeans_results <- list()
+for (i in 2:10) {
+  kmeans_results[[i-1]] <- kmeans(pca_scores, centers = i, nstart = 100)
+}
+```
+
+Each of the 9 cluster solutions converged within the iteration limit. In the next step, we will then evaluate which of the extracted cluster solutions offers the best fit with the data. 
+
+```{r}
+#| label: save kmeans results
+#| include: false
+
+saveRDS(kmeans_results, file = "data/kmeans_results.Rds")
+```
+
+
+## References
+
+::: {#refs}
+:::

@@ -1,0 +1,242 @@
+---
+title: "3. Feature Reduction"
+bibliography: [packages.bib, ../referencesZotero.bib]
+csl: ../apa.csl
+---
+
+```{r}
+#| label: setup
+#| include: FALSE
+
+lib <- c(
+  "rmarkdown",
+  "knitr",
+  "tidyverse",
+  "kableExtra",
+  "tsFeatureExtracR",
+  "stats",
+  "factoextra",
+  "plotly",
+  "htmltools"
+)
+invisible(lapply(lib, library, character.only = TRUE))
+rm(lib)
+
+knitr::opts_chunk$set(
+  class.source = 'numberLines lineAnchors'
+)
+
+# import sourced data for faster renders
+source("scripts/load_data.R")
+
+feature_selection <- c(
+  "ar01",
+  "edf",
+  "lin",
+  "mac",
+  "mad",
+  "median"
+)
+```
+
+Once a meaningful set of time series features has been extracted for each variable and participant, the total number of data points sometimes remains too large for the desired clustering algorithm [@altman2018]. In such cases, it is often recommended to perform an (optional) feature reduction. The commmonly used feature reduction procedures can commonly be separated into _feature selection_ and _feature projection_. We provide a more detailed discussion of the pros and cons of the different approaches. For this illustration we focus on feature projections, which have been popular because they are efficient, widely available, and applicable to a wide range of data types. That being said, because feature selection procedures have the benefit that they retain the interpretable feature labels directly and immediately indicate which features were most informative in the sample [@carreira-perpinan1997], we recommend users to carefully consider the most useful option for their use case.
+
+It is important to note again that a feature reduction step is not always necessary. Especially methods such as k-means are well equipped to deal with relatively large data sets [@jain2010]. It is important to check whether the full feature set leads to convergence issues or unstable cluster solutions. We go through the feature reduction steps as an exemplary illustration only.
+
+## Principal Component Analysis
+
+ We, specifically, selected the commonly used _principal component analysis_ (PCA). PCAs have the distinct benefit that they are well-established within the psychometric literature [@jolliffe2011] and can broadly be applied to a wide variety of studies in an automatized manner [@abdi2010]. As our aim is to present a general illustration that can also be adopted across use cases, we present the workflow using a PCA here but we encourage users to consider more specialized methods as well.
+ 
+### Running the PCA
+ 
+To use the PCA with our extracted time series features, we focus on a transformed feature set where the features are standardized across participants to ensure that all features are weighted equally. This transformation was already calculated as part of the `featureExtractor()` function and we now save it as a data frame `scaled_data`.
+
+
+```{r}
+#| label: pca data preparation
+
+scaled_data <- featFullImp$featuresImpZMat %>% select(ends_with(feature_selection)) 
+```
+
+We then enter the standardized features into the principal component analysis using the `prcomp()` function from the `stats` package [@R-base]. 
+
+```{r}
+#| label: run pca
+
+res.pca <- prcomp(scaled_data, scale. = FALSE)
+pca_summary <- summary(res.pca)
+
+# extract explained variances
+res.varExplained <- data.frame(
+  Explained_Variance = cumsum(summary(res.pca)[["importance"]]['Proportion of Variance',]),
+  Components = seq(1, length(cumsum(summary(res.pca)[["importance"]]['Proportion of Variance',])), 1)
+)
+```
+
+The PCA uses linear transformations in such a way that the first component captures the most possible variance of the original data (e.g., by finding a vector that maximizes the sum of squared distances; see @jolliffe2002, @abdi2010). The following components will then use the same method to iteratively explain the most of the remaining variance while also ensuring that the components are linearly uncorrelated [@shlens2014]. In practice, this meant that the PCA decomposed the `r ncol(scaled_data)` features into `r ncol(scaled_data)` principal components but now (because of the uncorrelated linear transformations) the first few principal components will capture a majority of the variance (see [@tbl-variance-decomposition]).
+
+```{r}
+#| label: tbl-variance-decomposition
+#| tbl-cap: "Variance Decomposition"
+
+# Creating a data frame to hold variance details
+variance_df <- data.frame(
+  Component = 1:length(pca_summary$sdev),
+  `Standard Deviation` = pca_summary$sdev,
+  `Proportion of Variance` = pca_summary$importance[2, ],
+  `Cumulative Proportion` = pca_summary$importance[3, ]
+)
+
+# Producing the kable output
+variance_df %>%
+ kbl(.,
+      escape = FALSE,
+      booktabs = TRUE,
+      label = "pca_summary",
+      format = "html",
+      digits = 2,
+      linesep = "",
+      col.names = c("Component", "Standard Deviation", "Proportion of Variance", "Cumulative Proportion"),
+      caption = "PCA Component Summary") %>%
+  kable_classic(
+    full_width = FALSE,
+    lightable_options = "hover",
+    html_font = "Cambria"
+  ) %>%
+  scroll_box(width = "100%", height = "500px")
+```
+
+
+### Component Selection
+
+We can then decide how much information (i.e., variance) we are willing to sacrifice for a reduced dimensionality. A common rule of thumb is to use the principal components that jointly explain 70--90% of the original variance [@jackson2003]. For our illustration, we chose a 80% of the cumulative percentage explained variance as the cutoff (i.e., `cutoff_percentage`)
+
+
+```{r}
+#| label: pca variance cut off
+
+cutoff_percentage <- 0.8
+pca_cutoff <- min(which(cumsum(summary(res.pca)[["importance"]]['Proportion of Variance',]) >= cutoff_percentage))
+```
+
+This means that we select the first `r pca_cutoff` principal components that explain 80% of the variance in the original `r ncol(scaled_data)` features (reducing the dimensionality by `r format(round((1-pca_cutoff/ncol(scaled_data))*100, 2), nsmall=2)`%).
+
+```{r}
+#| label: visualize variance explained
+
+fviz_eig(res.pca, 
+         addlabels = TRUE, 
+         choice = "variance",
+         ncp = pca_cutoff,
+         barfill = "#a6a6a6",
+         barcolor = "transparent",
+         main = "Scree Plot of Explained Variance per Principal Component",
+         xlab = "Principal Components") +
+         theme_Publication() +
+  theme(text = element_text(size = 14, color = "#333333"),
+        axis.title = element_text(size = 16, face = "bold", color = "#555555"),
+        plot.title = element_text(size = 18, hjust = 0.5, face = "bold", color = "#444444"),
+        legend.position = "none",
+        panel.grid.minor = element_blank())
+
+res.varExplained <- data.frame(
+  Explained_Variance = cumsum(summary(res.pca)[["importance"]]['Proportion of Variance',]),
+  Components = seq(1, length(cumsum(summary(res.pca)[["importance"]]['Proportion of Variance',])), 1)
+)
+
+ggplot(data = res.varExplained, aes(x = Components, y = Explained_Variance)) +
+  geom_point() +
+  geom_line() +
+  geom_vline(mapping = aes(xintercept = pca_cutoff), linetype = "longdash") +
+  geom_hline(mapping = aes(yintercept = cutoff_percentage), linetype = "longdash") +
+  geom_text(aes(x = pca_cutoff, y = min(Explained_Variance) + 0.01), 
+            label = paste0(pca_cutoff, " components"), hjust = -0.1, vjust = 0, size = 3) +
+  geom_text(aes(x = min(Components), y = cutoff_percentage), 
+            label = paste0(cutoff_percentage*100, "%"), hjust = 0, vjust = -1, size = 3) +
+  labs(title = "Cumulative Proportion of Variance Explained",
+       x = "Number of Components",
+       y = "Proportion of Variance Explained") +
+  tsFeatureExtracR::theme_Publication()
+```
+
+We can then also get a slightly better of an understanding of how the data is distributed by visualizing the features and the participants within the lower dimensional space. We here chose the first three principal components to allow for human undestandable dimensionality.
+
+```{r}
+#| label: plot particpants and features in reduced space
+
+plot1 <- plot_ly(
+  res.pca$rotation %>% as.data.frame,
+  x = ~ PC1,
+  y = ~ PC2,
+  z = ~ PC3,
+  size = 2,
+  type = 'scatter3d',
+  mode = 'markers',
+  text = ~ paste('Variable:', rownames(res.pca$rotation))
+) %>%
+  layout(title = 'Variables in reduced space')
+plot2 <- plot_ly(
+  res.pca$x %>% as.data.frame,
+  x = ~ PC1,
+  y = ~ PC2,
+  z = ~ PC3,
+  size = 2,
+  type = 'scatter3d',
+  mode = 'markers',
+  text = ~ paste('Participant:', rownames(res.pca$x))
+) %>%
+  layout(title = 'Participants in reduced space')
+
+# Display side by side using htmltools
+div(
+  style = "display: flex; justify-content: space-between;",
+  list(
+    div(plot1, style = "width: 50%;"),
+    div(plot2, style = "width: 50%;")
+  )
+)
+```
+
+### Save Principal Component Scores
+
+For the extracted principal components we save the `r pca_cutoff` principal component scores for each participant (i.e., the participants' coordinates in the reduced dimensional space; PC-scores) in the `pca_scores` data frame.
+
+```{r}
+#| label: save PC scores
+
+# extract coordinates for the individuals (PC-scores)
+pca_scores <- as.data.frame(res.pca$x[,1:pca_cutoff])
+```
+
+It is important to note that we do not standardize the principal component scores again before adding them into the clustering algorithm. With the PCs the differences in variances are crucial to the dimensionality reduction and standardizing the PC-scores would remove this information.
+
+```{r}
+#| label: visualize the standard deviations of each extracted component
+
+pca_scores %>%
+  summarize_all(sd) %>%
+  pivot_longer(everything(), names_to = "PC", values_to = "sd") %>%
+  ggplot(., aes(x=reorder(PC, sd), y=sd, label=sd)) +
+  geom_bar(stat='identity', width=.5) +
+  coord_flip() +
+  labs(
+    x = "Principal Component",
+    y = "Standard Deviation",
+    title = "Standard Deviation of each Principal Component"
+  ) +
+  theme_Publication()
+```
+
+With the reduced variable space of the PC-scores we can now move on to the clustering of the data.
+
+```{r}
+#| label: save pca.out for following qmd files
+#| include: false
+
+saveRDS(pca_scores, file = "data/pca_scores.Rds")
+```
+
+## References
+
+::: {#refs}
+:::

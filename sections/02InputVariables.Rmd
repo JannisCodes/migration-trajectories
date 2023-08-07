@@ -142,7 +142,8 @@ dtAll <- rbind(
          any_of(varNamS123PCA)) %>%
   arrange(ID, TIDnum) %>%
   select_if(~ sum(!is.na(.)) > 1) %>% # only include variables that have any data (i.e., not all NA)
-  as.data.frame
+  as.data.frame %>% 
+  mutate(exWB = scales::rescale(exWB, from = range(exWB, na.rm = TRUE), to = c(0, 100)))
 
 allMlCor <-
   MlCorMat(

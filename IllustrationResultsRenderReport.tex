@@ -130,7 +130,7 @@
 \subtitle{Render report for `A Gentle Introduction and Application of
 Feature-Based Clustering with Psychological Time Series'}
 \author{}
-\date{\vspace{-2.5em}Last updated: 25 June, 2023}
+\date{\vspace{-2.5em}Last updated: 05 August, 2023}
 
 \begin{document}
 \maketitle
@@ -503,19 +503,19 @@ Feature-Based Clustering with Psychological Time Series'}
 \cmidrule(l{3pt}r{3pt}){3-4} \cmidrule(l{3pt}r{3pt}){5-7}
 concept & variable & unspecific & Interaction Only & Study 1 & Study 2 & Study 3\\
 \midrule
-acculturation & AttitudesDutch & X &  & X & X & X\\
-acculturation & AttitudesPartner &  & X & X & X & X\\
-contactQuality & InteractionContextAccidental &  & X & X & X & X\\
-contactQuality & InteractionContextCooperative &  & X & X & X & X\\
+cognition & AttitudesDutch & X &  & X & X & X\\
+cognition & AttitudesPartner &  & X & X & X & X\\
+cognition & InteractionContextAccidental &  & X & X & X & X\\
+cognition & InteractionContextCooperative &  & X & X & X & X\\
+cognition & InteractionContextRepresentativeNL &  & X & X & X & X\\
+\addlinespace
+cognition & InteractionContextvoluntary &  & X & X & X & X\\
+cognition & qualityMeaning &  & X & X & X & X\\
+cognition & qualityOverall &  & X & X & X & X\\
 contactQuality & InteractionContextEqualStatus &  & X &  & X & X\\
-\addlinespace
-contactQuality & InteractionContextRepresentativeNL &  & X & X & X & X\\
-contactQuality & InteractionContextvoluntary &  & X & X & X & X\\
 contactQuality & qualityEffective &  & X &  & X & X\\
-contactQuality & qualityImportance &  & X &  & X & X\\
-contactQuality & qualityMeaning &  & X & X & X & X\\
 \addlinespace
-contactQuality & qualityOverall &  & X & X & X & X\\
+contactQuality & qualityImportance &  & X &  & X & X\\
 contactQuality & qualityStar &  & X & X &  & \\
 emotion & afraid & X &  &  &  & X\\
 emotion & angry & X &  &  &  & X\\
@@ -525,24 +525,24 @@ emotion & exWB & X &  & X & X & X\\
 emotion & lonelyAlways & X &  &  &  & X\\
 needs & DaytimeNeedFulfillment & X &  & X & X & X\\
 needs & DaytimeNeedImportance & X &  &  &  & X\\
-needs & KeyNeedFulfillment & X &  & X & X & X\\
-\addlinespace
 needs & KeyNeedImp & X &  &  &  & X\\
+\addlinespace
 needs & StudentGoal01 & X &  &  & X & X\\
 needs & StudentGoal02 & X &  &  & X & X\\
 needs & StudentGoal03 & X &  &  & X & X\\
 needs & StudentGoal04 & X &  &  & X & X\\
-\addlinespace
 needs & StudentGoal05 & X &  &  & X & X\\
+\addlinespace
 needs & StudentGoal06 & X &  &  & X & X\\
 needs & StudentGoal07 & X &  &  & X & X\\
 needs & StudentGoal08 & X &  &  & X & X\\
 needs & StudentGoal09 & X &  &  & X & X\\
-\addlinespace
 needs & StudentGoal10 & X &  &  & X & X\\
+\addlinespace
 needs & autonomy & X &  &  & X & X\\
 needs & competence & X &  &  & X & X\\
 needs & KeyNeedDueToPartner &  & X & X & X & X\\
+needs & KeyNeedFulfillment &  & X & X & X & X\\
 needs & KeyNeedShared &  & X &  & X & X\\
 \bottomrule
 \end{tabular}
@@ -566,31 +566,33 @@ needs & KeyNeedShared &  & X &  & X & X\\
     \AttributeTok{study2 =} \FunctionTok{ifelse}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(studyS2), }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{),}
     \AttributeTok{study3 =} \FunctionTok{ifelse}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(studyS3), }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{)}
 \NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{select}\NormalTok{(varNam, varGroup, contactSpecific, study1, study2, study3) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(varNam, question, varGroup, contactSpecific, study1, study2, study3) }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{filter}\NormalTok{(study1 }\SpecialCharTok{==} \DecValTok{1} \SpecialCharTok{\&}\NormalTok{ study2 }\SpecialCharTok{==} \DecValTok{1} \SpecialCharTok{\&}\NormalTok{ study3 }\SpecialCharTok{==} \DecValTok{1}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{group\_by}\NormalTok{(varGroup, varNam, contactSpecific, study1, study2, study3) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(varGroup, varNam, question, contactSpecific, study1, study2, study3) }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{summarise}\NormalTok{(}\AttributeTok{n =} \FunctionTok{n}\NormalTok{()) }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{pivot\_wider}\NormalTok{(}\AttributeTok{names\_from =} \FunctionTok{c}\NormalTok{(}\StringTok{"varGroup"}\NormalTok{, }\StringTok{"varNam"}\NormalTok{, }\StringTok{"study1"}\NormalTok{, }\StringTok{"study2"}\NormalTok{, }\StringTok{"study3"}\NormalTok{), }\AttributeTok{values\_from =}\NormalTok{ n, }\AttributeTok{names\_sep=}\StringTok{" {-} "}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{pivot\_wider}\NormalTok{(}\AttributeTok{names\_from =} \FunctionTok{c}\NormalTok{(}\StringTok{"varNam"}\NormalTok{, }\StringTok{"question"}\NormalTok{, }\StringTok{"varGroup"}\NormalTok{, }\StringTok{"study1"}\NormalTok{, }\StringTok{"study2"}\NormalTok{, }\StringTok{"study3"}\NormalTok{), }\AttributeTok{values\_from =}\NormalTok{ n, }\AttributeTok{names\_sep=}\StringTok{" {-} "}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
 \NormalTok{  ungroup }\SpecialCharTok{\%\textgreater{}\%}
 \NormalTok{  t }\SpecialCharTok{\%\textgreater{}\%}
 \NormalTok{  as.data.frame }\SpecialCharTok{\%\textgreater{}\%}
 \NormalTok{  janitor}\SpecialCharTok{::}\FunctionTok{row\_to\_names}\NormalTok{(}\DecValTok{1}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{replace}\NormalTok{(}\FunctionTok{is.na}\NormalTok{(.), }\DecValTok{0}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
 \NormalTok{  tibble}\SpecialCharTok{::}\FunctionTok{rownames\_to\_column}\NormalTok{(., }\AttributeTok{var =} \StringTok{"variable"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{separate}\NormalTok{(variable, }\FunctionTok{c}\NormalTok{(}\StringTok{"concept"}\NormalTok{, }\StringTok{"variable"}\NormalTok{, }\StringTok{"study1"}\NormalTok{, }\StringTok{"study2"}\NormalTok{, }\StringTok{"study3"}\NormalTok{), }\StringTok{" {-} "}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{separate}\NormalTok{(variable, }\FunctionTok{c}\NormalTok{(}\StringTok{"Variable"}\NormalTok{, }\StringTok{"Question"}\NormalTok{, }\StringTok{"Aspect"}\NormalTok{, }\StringTok{"study1"}\NormalTok{, }\StringTok{"study2"}\NormalTok{, }\StringTok{"study3"}\NormalTok{), }\StringTok{" {-} "}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{mutate}\NormalTok{(}\FunctionTok{across}\NormalTok{(}\FunctionTok{c}\NormalTok{(study1, study2, study3), as.numeric)) }\SpecialCharTok{\%\textgreater{}\%}
-  \CommentTok{\#select({-}study1, {-}study2, {-}study3) \%\textgreater{}\%}
-  \FunctionTok{arrange}\NormalTok{(concept, unspecific, }\StringTok{\textasciigrave{}}\AttributeTok{Interaction Only}\StringTok{\textasciigrave{}}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{mutate\_all}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\FunctionTok{recode}\NormalTok{(.x, }\StringTok{\textasciigrave{}}\AttributeTok{0}\StringTok{\textasciigrave{}}\OtherTok{=}\StringTok{""}\NormalTok{, }\StringTok{\textasciigrave{}}\AttributeTok{ 1}\StringTok{\textasciigrave{}}\OtherTok{=}\StringTok{"X"}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{relocate}\NormalTok{(}\FunctionTok{starts\_with}\NormalTok{(}\StringTok{"study"}\NormalTok{), }\AttributeTok{.after =} \FunctionTok{last\_col}\NormalTok{()) }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{rename\_with}\NormalTok{(., }\SpecialCharTok{\textasciitilde{}} \FunctionTok{gsub}\NormalTok{(}\StringTok{"study"}\NormalTok{, }\StringTok{"Study "}\NormalTok{, .x, }\AttributeTok{fixed =} \ConstantTok{TRUE}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\NormalTok{study1, }\SpecialCharTok{{-}}\NormalTok{study2, }\SpecialCharTok{{-}}\NormalTok{study3) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{arrange}\NormalTok{(}\StringTok{\textasciigrave{}}\AttributeTok{Interaction Only}\StringTok{\textasciigrave{}}\NormalTok{, Variable) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{ESM =} \DecValTok{1}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate\_all}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\FunctionTok{recode}\NormalTok{(.x, }\StringTok{\textasciigrave{}}\AttributeTok{0}\StringTok{\textasciigrave{}}\OtherTok{=}\StringTok{""}\NormalTok{, }\StringTok{\textasciigrave{}}\AttributeTok{ 1}\StringTok{\textasciigrave{}}\OtherTok{=}\StringTok{"✔"}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{relocate}\NormalTok{(}\FunctionTok{starts\_with}\NormalTok{(}\StringTok{"ESM"}\NormalTok{), }\AttributeTok{.after =} \StringTok{"Aspect"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \CommentTok{\# relocate(starts\_with("study"), .after = last\_col()) \%\textgreater{}\%}
+  \CommentTok{\# rename\_with(., \textasciitilde{} gsub("study", "Study ", .x, fixed = TRUE)) \%\textgreater{}\%}
   \FunctionTok{kbl}\NormalTok{(.,}
       \AttributeTok{escape =} \ConstantTok{FALSE}\NormalTok{,}
       \AttributeTok{booktabs =}\NormalTok{ T,}
-      \AttributeTok{align =} \FunctionTok{c}\NormalTok{(}\StringTok{"l"}\NormalTok{, }\StringTok{"l"}\NormalTok{, }\FunctionTok{rep}\NormalTok{(}\StringTok{"c"}\NormalTok{, }\FunctionTok{ncol}\NormalTok{(.)}\SpecialCharTok{{-}}\DecValTok{2}\NormalTok{)),}
+      \AttributeTok{align =} \FunctionTok{c}\NormalTok{(}\StringTok{"l"}\NormalTok{, }\StringTok{"l"}\NormalTok{, }\StringTok{"l"}\NormalTok{, }\FunctionTok{rep}\NormalTok{(}\StringTok{"c"}\NormalTok{, }\FunctionTok{ncol}\NormalTok{(.)}\SpecialCharTok{{-}}\DecValTok{3}\NormalTok{)),}
       \AttributeTok{digits=}\DecValTok{2}\NormalTok{,}
       \AttributeTok{caption =} \StringTok{"Variables by Interaction Types and Study Availability"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{add\_header\_above}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{" "} \OtherTok{=} \DecValTok{2}\NormalTok{, }\StringTok{"Contact Type"} \OtherTok{=} \DecValTok{2}\NormalTok{, }\StringTok{"Study Availability"} \OtherTok{=} \DecValTok{3}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{add\_header\_above}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{" "} \OtherTok{=} \DecValTok{4}\NormalTok{, }\StringTok{"Contact Specific"} \OtherTok{=} \DecValTok{2}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{kable\_classic}\NormalTok{(}
     \AttributeTok{full\_width =}\NormalTok{ F,}
     \AttributeTok{lightable\_options =} \StringTok{"hover"}\NormalTok{,}
@@ -603,26 +605,26 @@ needs & KeyNeedShared &  & X &  & X & X\\
 
 \caption{\label{tab:variables included in main analysis by response type}Variables by Interaction Types and Study Availability}
 \centering
-\begin{tabular}[t]{llccccc}
+\begin{tabular}[t]{lllccc}
 \toprule
-\multicolumn{2}{c}{ } & \multicolumn{2}{c}{Contact Type} & \multicolumn{3}{c}{Study Availability} \\
-\cmidrule(l{3pt}r{3pt}){3-4} \cmidrule(l{3pt}r{3pt}){5-7}
-concept & variable & unspecific & Interaction Only & Study 1 & Study 2 & Study 3\\
+\multicolumn{4}{c}{ } & \multicolumn{2}{c}{Contact Specific} \\
+\cmidrule(l{3pt}r{3pt}){5-6}
+Variable & Question & Aspect & ESM & unspecific & Interaction Only\\
 \midrule
-acculturation & AttitudesDutch & X &  & X & X & X\\
-acculturation & AttitudesPartner &  & X & X & X & X\\
-contactQuality & InteractionContextAccidental &  & X & X & X & X\\
-contactQuality & InteractionContextCooperative &  & X & X & X & X\\
-contactQuality & InteractionContextRepresentativeNL &  & X & X & X & X\\
+AttitudesPartner & At the moment, how favorably do you feel towards -NAME- & cognition & ✔ &  & ✔\\
+InteractionContextAccidental & The interaction with -NAME- was accidental. & cognition & ✔ &  & ✔\\
+InteractionContextCooperative & The interaction with -NAME- was cooperative. & cognition & ✔ &  & ✔\\
+InteractionContextRepresentativeNL & The interaction with -NAME- was representative of the Dutch. & cognition & ✔ &  & ✔\\
+InteractionContextvoluntary & The interaction with -NAME- was voluntary. & cognition & ✔ &  & ✔\\
 \addlinespace
-contactQuality & InteractionContextvoluntary &  & X & X & X & X\\
-contactQuality & qualityMeaning &  & X & X & X & X\\
-contactQuality & qualityOverall &  & X & X & X & X\\
-emotion & exWB & X &  & X & X & X\\
-needs & DaytimeNeedFulfillment & X &  & X & X & X\\
+KeyNeedDueToPartner & -NAME- helped fulfill your goal (-GOAL-) & needs & ✔ &  & ✔\\
+KeyNeedFulfillment & During your interaction with -NAME- your goal (-GOAL-) was fulfilled. & needs & ✔ &  & ✔\\
+qualityMeaning & Overall, the interaction with -NAME- was: Superficial --- Meaningful & cognition & ✔ &  & ✔\\
+qualityOverall & Overall, the interaction with -NAME- was: Unplesant --- Plesant & cognition & ✔ &  & ✔\\
+AttitudesDutch & At the moment, how favorably do you feel towards the Dutch. & cognition & ✔ & ✔ & \\
 \addlinespace
-needs & KeyNeedFulfillment & X &  & X & X & X\\
-needs & KeyNeedDueToPartner &  & X & X & X & X\\
+DaytimeNeedFulfillment & During this -morning/afternoon- your goal (-GOAL-) was fulfilled. & needs & ✔ & ✔ & \\
+exWB & How do you feel right now? very sad --- very happy & emotion & ✔ & ✔ & \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -652,7 +654,7 @@ needs & KeyNeedDueToPartner &  & X & X & X & X\\
 100\%\\
 /usr/local/bin/pandoc +RTS -K512m -RTS 01DataDescription.knit.md --to
 latex --from markdown+autolink\_bare\_uris+tex\_math\_single\_backslash
---output pandocefdc29070e0a.tex --lua-filter
+--output pandoc53b067a8976d.tex --lua-filter
 /Library/Frameworks/R.framework/Versions/4.3-x86\_64/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
 --lua-filter
 /Library/Frameworks/R.framework/Versions/4.3-x86\_64/Resources/library/rmarkdown/rmarkdown/lua/latex-div.lua
@@ -673,27 +675,31 @@ latex --from markdown+autolink\_bare\_uris+tex\_math\_single\_backslash
 \end{Shaded}
 
 \textbar{} \textbar{} \textbar{} 0\% \textbar{}
-\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots..
-\textbar{} 11\% \textbar{}
-\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots.
-\textbar{} 22\% (section setup) \textbar{}
-\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots..
-\textbar{} 33\% \textbar{}
-\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots.
-\textbar{} 44\% (descriptive-tbl-prep) \textbar{}
-\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots{}
-\textbar{} 56\% \textbar{}
-\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots..
-\textbar{} 67\% (unnamed-chunk-3) \textbar{}
-\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots{}
-\textbar{} 78\% \textbar{}
-\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots..
-\textbar{} 89\% (unnamed-chunk-4) \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots{}
+\textbar{} 9\% \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots.
+\textbar{} 18\% (section setup) \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots.
+\textbar{} 27\% \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots.
+\textbar{} 36\% (unnamed-chunk-2) \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots..
+\textbar{} 45\% \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots..
+\textbar{} 55\% (descriptive-tbl-prep) \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots{}
+\textbar{} 64\% \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots{}
+\textbar{} 73\% (unnamed-chunk-4) \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots{}
+\textbar{} 82\% \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots.
+\textbar{} 91\% (unnamed-chunk-5) \textbar{}
 \textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots.\textbar{}
 100\%\\
 /usr/local/bin/pandoc +RTS -K512m -RTS 02InputVariables.knit.md --to
 latex --from markdown+autolink\_bare\_uris+tex\_math\_single\_backslash
---output pandocefdc4af3957.tex --lua-filter
+--output pandoc53b023fa155.tex --lua-filter
 /Library/Frameworks/R.framework/Versions/4.3-x86\_64/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
 --lua-filter
 /Library/Frameworks/R.framework/Versions/4.3-x86\_64/Resources/library/rmarkdown/rmarkdown/lua/latex-div.lua
@@ -714,19 +720,23 @@ latex --from markdown+autolink\_bare\_uris+tex\_math\_single\_backslash
 \end{Shaded}
 
 \textbar{} \textbar{} \textbar{} 0\% \textbar{}
-\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots{}
-\textbar{} 20\% \textbar{}
-\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots{}
-\textbar{} 40\% (section setup) \textbar{}
-\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots..
-\textbar{} 60\% \textbar{}
-\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots..
-\textbar{} 80\% (featMiss) \textbar{}
-\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots..\textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots..
+\textbar{} 14\% \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots.
+\textbar{} 29\% (section setup) \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots{}
+\textbar{} 43\% \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots{}
+\textbar{} 57\% (featMiss) \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots..
+\textbar{} 71\% \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots.
+\textbar{} 86\% (unnamed-chunk-3) \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\textbar{}
 100\%\\
 /usr/local/bin/pandoc +RTS -K512m -RTS 03FeatureExtraction.knit.md --to
 latex --from markdown+autolink\_bare\_uris+tex\_math\_single\_backslash
---output pandocefdc3e18827a.tex --lua-filter
+--output pandoc53b0171b5d74.tex --lua-filter
 /Library/Frameworks/R.framework/Versions/4.3-x86\_64/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
 --lua-filter
 /Library/Frameworks/R.framework/Versions/4.3-x86\_64/Resources/library/rmarkdown/rmarkdown/lua/latex-div.lua
@@ -759,7 +769,7 @@ latex --from markdown+autolink\_bare\_uris+tex\_math\_single\_backslash
 100\%\\
 /usr/local/bin/pandoc +RTS -K512m -RTS 04FeatureReduction.knit.md --to
 latex --from markdown+autolink\_bare\_uris+tex\_math\_single\_backslash
---output pandocefdc76ac834.tex --lua-filter
+--output pandoc53b07cc35e5.tex --lua-filter
 /Library/Frameworks/R.framework/Versions/4.3-x86\_64/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
 --lua-filter
 /Library/Frameworks/R.framework/Versions/4.3-x86\_64/Resources/library/rmarkdown/rmarkdown/lua/latex-div.lua
@@ -796,7 +806,7 @@ latex --from markdown+autolink\_bare\_uris+tex\_math\_single\_backslash
 100\%\\
 /usr/local/bin/pandoc +RTS -K512m -RTS 05FeatureClustering.knit.md --to
 latex --from markdown+autolink\_bare\_uris+tex\_math\_single\_backslash
---output pandocefdc1cc0721a.tex --lua-filter
+--output pandoc53b04e823398.tex --lua-filter
 /Library/Frameworks/R.framework/Versions/4.3-x86\_64/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
 --lua-filter
 /Library/Frameworks/R.framework/Versions/4.3-x86\_64/Resources/library/rmarkdown/rmarkdown/lua/latex-div.lua
@@ -808,7 +818,7 @@ latex --from markdown+autolink\_bare\_uris+tex\_math\_single\_backslash
 \section{Cluster Evaluation}\label{cluster-evaluation}}
 
 \hypertarget{cluster-performance}{%
-\subsection{CLuster Performance}\label{cluster-performance}}
+\subsection{Cluster Performance}\label{cluster-performance}}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -837,7 +847,7 @@ latex --from markdown+autolink\_bare\_uris+tex\_math\_single\_backslash
 /usr/local/bin/pandoc +RTS -K512m -RTS
 06ClusterEvaluationPerformance.knit.md --to latex --from
 markdown+autolink\_bare\_uris+tex\_math\_single\_backslash --output
-pandocefdc79868f6d.tex --lua-filter
+pandoc53b032290b9d.tex --lua-filter
 /Library/Frameworks/R.framework/Versions/4.3-x86\_64/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
 --lua-filter
 /Library/Frameworks/R.framework/Versions/4.3-x86\_64/Resources/library/rmarkdown/rmarkdown/lua/latex-div.lua
@@ -846,7 +856,7 @@ pandocefdc79868f6d.tex --lua-filter
 --highlight-style tango --pdf-engine pdflatex --citeproc
 
 \hypertarget{cluster-interpretation}{%
-\subsection{CLuster Interpretation}\label{cluster-interpretation}}
+\subsection{Cluster Interpretation}\label{cluster-interpretation}}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -858,42 +868,45 @@ pandocefdc79868f6d.tex --lua-filter
 \end{Shaded}
 
 \textbar{} \textbar{} \textbar{} 0\% \textbar{}
-\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots.. \textbar{} 6\%
-\textbar{}
-\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots{}
-\textbar{} 12\% (section setup) \textbar{}
-\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots..
-\textbar{} 19\% \textbar{}
-\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots{}
-\textbar{} 25\% (average feature by cluster) \textbar{}
-\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots..
-\textbar{} 31\% \textbar{}
-\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots{}
-\textbar{} 38\% (clusterVariableGrid) \textbar{}
-\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots..
-\textbar{} 44\% \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots.. \textbar{} 6\% \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots.
+\textbar{} 11\% (section setup) \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots{}
+\textbar{} 17\% \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots..
+\textbar{} 22\% (average feature by cluster) \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots.
+\textbar{} 28\% \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots{}
+\textbar{} 33\% (formal cluster comparison) \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots..
+\textbar{} 39\% \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots.
+\textbar{} 44\% (clusterVariableGrid) \textbar{}
 \textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots{}
-\textbar{} 50\% (clusterFeatureGrid) \textbar{}
-\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots..
-\textbar{} 56\% \textbar{}
-\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots.
-\textbar{} 62\% (clusterFeatVarComb) \textbar{}
-\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots..
-\textbar{} 69\% \textbar{}
-\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots.
-\textbar{} 75\% (clusterTS) \textbar{}
-\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots..
-\textbar{} 81\% \textbar{}
-\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots.
-\textbar{} 88\% (clusterTSTrend) \textbar{}
-\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots..
+\textbar{} 50\% \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots{}
+\textbar{} 56\% (clusterFeatureGrid) \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots..
+\textbar{} 61\% \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots.
+\textbar{} 67\% (clusterFeatVarComb) \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots{}
+\textbar{} 72\% \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots..
+\textbar{} 78\% (clusterTS) \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots.
+\textbar{} 83\% \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots{}
+\textbar{} 89\% (clusterTSTrend) \textbar{}
+\textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots..
 \textbar{} 94\% \textbar{}
 \textbar\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots.\textbar{}
 100\% (clusterTsComb)\\
 /usr/local/bin/pandoc +RTS -K512m -RTS
 07ClusterEvaluationInterpretation.knit.md --to latex --from
 markdown+autolink\_bare\_uris+tex\_math\_single\_backslash --output
-pandocefdc3eca774b.tex --lua-filter
+pandoc53b02f9b7cbb.tex --lua-filter
 /Library/Frameworks/R.framework/Versions/4.3-x86\_64/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua
 --lua-filter
 /Library/Frameworks/R.framework/Versions/4.3-x86\_64/Resources/library/rmarkdown/rmarkdown/lua/latex-div.lua
@@ -921,7 +934,7 @@ System Info
 Setting & Value\\
 \midrule
 version & R version 4.3.0 (2023-04-21)\\
-os & macOS Ventura 13.4.1\\
+os & macOS Ventura 13.5\\
 system & x86\_64, darwin20\\
 ui & X11\\
 language & (EN)\\
@@ -929,7 +942,7 @@ language & (EN)\\
 collate & en\_US.UTF-8\\
 ctype & en\_US.UTF-8\\
 tz & Europe/Amsterdam\\
-date & 2023-06-25\\
+date & 2023-08-05\\
 pandoc & 3.1.3 @ /usr/local/bin/ (via rmarkdown)\\
 \bottomrule
 \end{tabular}
@@ -1005,13 +1018,13 @@ purrr & 1.0.1 & 2023-01-10 & CRAN (R 4.3.0)\\
 \addlinespace
 qgam & 1.3.4 & 2021-11-22 & CRAN (R 4.3.0)\\
 RColorBrewer & 1.1-3 & 2022-04-03 & CRAN (R 4.3.0)\\
-Rcpp & 1.0.10 & 2023-01-22 & CRAN (R 4.3.0)\\
+Rcpp & 1.0.11 & 2023-07-06 & CRAN (R 4.3.0)\\
 readxl & 1.4.2 & 2023-02-09 & CRAN (R 4.3.0)\\
 remedy & 0.1.0 & 2018-12-03 & CRAN (R 4.3.0)\\
 \addlinespace
 reshape & 0.8.9 & 2022-04-12 & CRAN (R 4.3.0)\\
 reshape2 & 1.4.4 & 2020-04-09 & CRAN (R 4.3.0)\\
-rmarkdown & 2.21 & 2023-03-26 & CRAN (R 4.3.0)\\
+rmarkdown & 2.23 & 2023-07-01 & CRAN (R 4.3.0)\\
 sessioninfo & 1.2.2 & 2021-12-06 & CRAN (R 4.3.0)\\
 shiny & 1.7.4 & 2022-12-15 & CRAN (R 4.3.0)\\
 \addlinespace
@@ -1178,7 +1191,7 @@ en\_US.UTF-8\textbar\textbar en\_US.UTF-8\textbar\textbar en\_US.UTF-8\textbar\t
 \item
   brms(v.2.19.0)
 \item
-  Rcpp(v.1.0.10)
+  Rcpp(v.1.0.11)
 \item
   MASS(v.7.3-58.4)
 \item
@@ -1188,7 +1201,7 @@ en\_US.UTF-8\textbar\textbar en\_US.UTF-8\textbar\textbar en\_US.UTF-8\textbar\t
 \item
   knitr(v.1.42)
 \item
-  rmarkdown(v.2.21)
+  rmarkdown(v.2.23)
 \end{itemize}
 
 \textbf{loaded via a namespace (and not attached):}
@@ -1320,7 +1333,7 @@ en\_US.UTF-8\textbar\textbar en\_US.UTF-8\textbar\textbar en\_US.UTF-8\textbar\t
 \item
   remotes(v.2.4.2)
 \item
-  vctrs(v.0.6.2)
+  vctrs(v.0.6.3)
 \item
   cellranger(v.1.1.0)
 \item
@@ -1498,7 +1511,7 @@ en\_US.UTF-8\textbar\textbar en\_US.UTF-8\textbar\textbar en\_US.UTF-8\textbar\t
 \item
   janitor(v.2.2.0)
 \item
-  broom(v.1.0.4)
+  broom(v.1.0.5)
 \item
   xtable(v.1.8-4)
 \item

@@ -1470,6 +1470,69 @@ rm(remergePP, PP)
 dtS3$full <- df
 ```
 
+
+### Data Export for OSF
+
+```{r}
+#| label: export-osf-datae
+
+export_vars <- c(
+  "PID",
+  "TIDnum",
+  "TID",
+  "created",
+  "ended",
+  "KeyNeedFulfillment",
+  "KeyNeedDueToPartner",
+  "InteractionContextAccidental",
+  "InteractionContextvoluntary",
+  "InteractionContextCooperative",
+  "InteractionContextRepresentativeNL",
+  "qualityOverall",
+  "qualityMeaning",
+  "DaytimeNeedFulfillment",
+  "AttitudesDutch",
+  "AttitudesPartner",
+  "exWB",
+  "EvDayDiscr01.post",
+  "EvDayDiscr02.post",
+  "EvDayDiscr03.post",
+  "EvDayDiscr04.post",
+  "EvDayDiscr05.post",
+  "EvDayDiscr06.post",
+  "EvDayDiscr07.post",
+  "EvDayDiscr08.post",
+  "EvDayDiscr09.post"
+)
+
+dtS1_osf <- dtS1$full %>%
+  select(all_of(export_vars)) %>%
+  mutate(EvDayDiscr.post = rowMeans(across(starts_with("EvDayDiscr")), na.rm = TRUE),
+         study = "S1") %>%
+  select(-starts_with("EvDayDiscr0")) 
+
+dtS2_osf <- dtS2$full %>%
+  select(all_of(export_vars)) %>%
+  mutate(EvDayDiscr.post = rowMeans(across(starts_with("EvDayDiscr")), na.rm = TRUE),
+         study = "S2") %>%
+  select(-starts_with("EvDayDiscr0")) 
+
+dtS3_osf <- dtS3$full %>%
+  select(all_of(export_vars)) %>%
+  mutate(EvDayDiscr.post = rowMeans(across(starts_with("EvDayDiscr")), na.rm = TRUE),
+         study = "S3") %>%
+  select(-starts_with("EvDayDiscr0")) 
+
+dt_osf <- rbind(
+  dtS1_osf,
+  dtS2_osf,
+  dtS3_osf
+) %>% 
+  mutate(exWB = scales::rescale(exWB, from = range(exWB, na.rm = TRUE), to = c(0, 100)))
+
+saveRDS(dt_osf, file="data/osf_mini.Rda")
+```
+
 ## Data Availability and Sample Selection {.tabset .tabset-fade}
 
 As one of our main analyses is a three-mode principal component analysis (3MPCA) we begin by assessing the amount of missing data in each of the ESM studies. To assess the missingness in detail, we prepare a data availability table of whether data is available or missing for each possible measurement point (data + morning/afternoon) for all individual participants. We then export the data availability tables as comma separated value files (.csv) to be assessed in detail using a spreadsheet program (such as MS Excel).

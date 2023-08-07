@@ -1,0 +1,73 @@
+project:
+  type: website
+  render:
+    - "*.qmd"
+  output-dir: ../../ts-feature-clustering-illustration
+
+website:
+  page-navigation: true
+  title: "Tutorial: Feature Based Time Series Clustering in Psychology"
+  description: "Short description goes here."
+  site-url: "https://github.com/JannisCodes" 
+  repo-url: https://github.com/JannisCodes
+  open-graph: true
+
+  # twitter-card:
+  #   creator: "@JannisWrites"
+  #   image: "images/twitter-card.png"
+  
+  sidebar:
+    background: "#D9E3E4"
+    logo: "images/logo.png"
+    pinned: true
+    align: left
+    style: "docked"
+    search: true
+    collapse-level: 1
+    
+    tools: 
+      - icon: database-fill
+        href: https://osf.io/tbd
+        text: OSF Repository
+      - icon: github
+        menu:
+          - text: Project Repository
+            href:  https://github.com/JannisCodes
+          - text: Illustration Repository
+            href:  https://github.com/JannisCodes
+      
+    
+    contents:
+      - href: index.qmd
+        text: Welcome
+      - href: 01-input-variables.qmd
+        text: 1. Input Variables
+      - href: 02-feature-extraction.qmd
+        text: 2. Feature Extraction
+      - href: 03-feature-reduction.qmd
+        text: 3. Feature Reduction
+      - href: 04-clustering.qmd
+        text: 4. Clustering
+      - href: 05-evaluation.qmd
+        text: 5. Evaluation
+      - href: about.qmd
+        text: About
+
+format:
+  html:
+    theme:
+      light: [cosmo, theme.scss]
+      dark: [cosmo, theme-dark.scss]
+    mainfont: "Atkinson Hyperlegible"
+    highlight-style: pygments
+    # code-line-numbers: true
+    # code-tools: true
+    code-copy: true
+    code-overflow: wrap
+    toc: true
+    css: styles.css
+
+freeze: auto
+
+editor: visual
+
