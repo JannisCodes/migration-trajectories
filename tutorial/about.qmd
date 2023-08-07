@@ -39,16 +39,15 @@ knitr::opts_chunk$set(
 
 ```
 
-This illustration accompanies the publication "A Gentle Introduction and Application of Feature-Based Clustering with Psychological Time Series". As such, the illustration is not ...
+This illustration accompanies the publication "A Gentle Introduction and Application of Feature-Based Clustering with Psychological Time Series". The aim of this illustration website is to offer a transparent, open, and accessible repository providing annotated code for all analysis steps.
 
 ## Open Data
 
-short open data description here. Link to OSF
+We provide all data necessary to replicate the full results of the main manuscript as well as this illustration. We specifically provide a minial reproducible dataset that includes all variables necessary to perform the analysis, while still protecting the privacy and confidentiality of the participants. All data is available as part of [our Open Science ](https://osf.io/75ryj/?view_only=db14031cd8704085b5c6165c9f5ed3e4) [@KreienkampMasked-clust-osf].
 
 ## Open Code
 
-short open code description here. Link to GitHub
-
+The full code of this illustration as well as the main manuscript is available as part of [our GitHub repository](https://github.com) [@KreienkampMasked-clust-github]. A minimal version of the code as well as an archive file are available in [our Open Science ](https://osf.io/75ryj/?view_only=db14031cd8704085b5c6165c9f5ed3e4) [@KreienkampMasked-clust-osf]. For convenience purposes, we have also collected a number of functions we created as part of the illustration as an R-package. This package is available as its own GitHub repository and can be downloaded with the `devtools` package as `tsFeatureExtracR`: `devtools::install_github("JannisCodes/tsFeatureExtracR")` [@KreienkampBlinded2023-tsFeatureExtracR].
 
 ## Software Information
 
