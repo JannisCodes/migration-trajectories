@@ -410,6 +410,7 @@ This cluster separation, then, has a number of empirical and practical applicati
 #| label: clusterVariableGrid
 
 clusterVariableGrid <- featCluster %>% 
+  filter(feature != "n") %>%
   ggplot(., aes(x = feature, y = mean, group = cluster, color = as.factor(cluster))) +
   geom_point() +
   geom_line() +
