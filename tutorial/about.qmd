@@ -43,11 +43,11 @@ This illustration accompanies the publication "A Gentle Introduction and Applica
 
 ## Open Data
 
-We provide all data necessary to replicate the full results of the main manuscript as well as this illustration. We specifically provide a minial reproducible dataset that includes all variables necessary to perform the analysis, while still protecting the privacy and confidentiality of the participants. All data is available as part of [our Open Science ](https://osf.io/75ryj/?view_only=db14031cd8704085b5c6165c9f5ed3e4) [@KreienkampMasked-clust-osf].
+We provide all data necessary to replicate the full results of the main manuscript as well as this illustration. We specifically provide a minial reproducible dataset that includes all variables necessary to perform the analysis, while still protecting the privacy and confidentiality of the participants. All data is available as part of [our Open Science repository](https://osf.io/j8dzv/?view_only=c765efa51e6545e588b29999611eb789) [@KreienkampMasked-clust-osf].
 
 ## Open Code
 
-The full code of this illustration as well as the main manuscript is available as part of [our GitHub repository](https://github.com) [@KreienkampMasked-clust-github]. A minimal version of the code as well as an archive file are available in [our Open Science ](https://osf.io/75ryj/?view_only=db14031cd8704085b5c6165c9f5ed3e4) [@KreienkampMasked-clust-osf]. For convenience purposes, we have also collected a number of functions we created as part of the illustration as an R-package. This package is available as its own GitHub repository and can be downloaded with the `devtools` package `devtools::install_github("JannisCodes/tsFeatureExtracR")`, you can also [download the R package here](https://github.com/JannisCodes/tsFeatureExtracR/archive/refs/tags/v.0.1.0.tar.gz) [@KreienkampBlinded2023-tsFeatureExtracR].
+The full code of this illustration as well as the main manuscript is available as part of [our GitHub repository](https://github.com) [@KreienkampMasked-clust-github]. A minimal version of the code as well as an archive file are available in [our Open Science repository](https://osf.io/j8dzv/?view_only=c765efa51e6545e588b29999611eb789) [@KreienkampMasked-clust-osf]. For convenience purposes, we have also collected a number of functions we created as part of the illustration as an R-package. This package is available as its own GitHub repository and can be downloaded with the `devtools` package `devtools::install_github("JannisCodes/tsFeatureExtracR")`, you can also [download the R package here](https://github.com/JannisCodes/tsFeatureExtracR/archive/refs/tags/v.0.1.0.tar.gz) [@KreienkampBlinded2023-tsFeatureExtracR].
 
 ## Software Information
 

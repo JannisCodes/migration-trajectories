@@ -29,14 +29,14 @@ website:
     
     tools: 
       - icon: database-fill
-        href: https://osf.io/tbd
+        href: https://osf.io/j8dzv/?view_only=c765efa51e6545e588b29999611eb789
         text: OSF Repository
       - icon: github
         menu:
-          - text: Project Repository
-            href:  https://github.com/JannisCodes
-          - text: Illustration Repository
-            href:  https://github.com/JannisCodes
+          - text: Project Repository (masked)
+            href:  https://github.com/
+          - text: Illustration Repository (masked)
+            href:  https://github.com/
       
     
     contents:

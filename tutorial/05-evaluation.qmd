@@ -56,7 +56,7 @@ In the performance evaluation step, we are mainly concerned with finding the opt
 
 ```{r}
 #| label: tbl-cluster-performance
-#| fig-cap: Cluster Performance for the k = 2–10
+#| tbl-cap: Cluster Performance for k = 2–10
 
 kmeans_performance <- list()
 for (i in 2:10) {
@@ -98,7 +98,7 @@ kmeans_metrics_names <- c(
 df_kmeans_performance %>%
   kbl(.,
       escape = FALSE,
-      booktabs = T,
+      booktabs = TRUE,
       align = "c",
       digits = 2,
       row.names = FALSE,
@@ -220,7 +220,7 @@ We can then plot the average features and for each variable and flipping the axe
 #| warning: false
 #| fig-width: 12
 #| fig-height: 18
-#| fig-cap: Note that n and discrimination are out of cluster variables.
+#| fig-cap: Cluster comparison by feature and variable. Note that n and discrimination are out of cluster variables.
 
 # clusterVariableGrid
 clusterVariableGrid <- featCluster %>% 
@@ -268,7 +268,7 @@ ggpubr::ggarrange(
 ) 
 ```
 
-We discuss the individual differences and their theoretical relevance as part of the main manuscript. However, in terms of methodological insight, we find variables and features that distinguish the clusters better than others and a combination of variables and features lets us explore meaningful group differences in more detail. In our case, we see that the central tendency, variability, and linear trend are best at distinguishing a group with mainly positive experiences (cluster 1) from a group with a more negative experience (cluster 2). We also see that our clusters line up with the past literature on the importance of focusing on simpler and more meaningful statistics [@bringmann2018c;eronen2021a].
+We discuss the individual differences and their theoretical relevance as part of the main manuscript. However, in terms of methodological insight, we find variables and features that distinguish the clusters better than others and a combination of variables and features lets us explore meaningful group differences in more detail. In our case, we see that the central tendency, variability, and linear trend are best at distinguishing a group with mainly positive experiences (cluster 1) from a group with a more negative experience (cluster 2). We also see that our clusters line up with the past literature on the importance of focusing on simpler and more meaningful statistics [@bringmann2018c;@eronen2021a].
 
 ### Average Time Series
 
@@ -280,6 +280,7 @@ In the second step, we look at the prototypical trajectories of the clusters. Fo
 #| warning: false
 #| fig-width: 12
 #| fig-height: 18
+#| fig-cap: Average cluster trajectories (using LM and GAM)
 
 
 rawCluster <- data.frame(ID = as.numeric(names(kmeans_final$cluster)), 
@@ -348,6 +349,7 @@ To illustrate artifact checks, we added the number of ESM measurements into the 
 #| label: fig-mad-cluster-comparison
 #| message: false
 #| warning: false
+#| fig-cap: Cluster comparison MAD across variables
 
 # ESM features
 raw_feat_clust <-
@@ -413,8 +415,6 @@ results_df <- rbind(
 feature_plot_list <- generate_feature_plots(results_df)
 
 feature_plot_list$mad
-
-feature_ttest_apa(results_df, "mean", "EvDayDiscr.post", "html")
 ```
 
 At the same time, however, the difference in the number of experienced interactions might also indicate a meaningful difference, where the deteriorating cluster (cluster 2) on average reported more outgroup interactions (`r feature_ttest_apa(results_df, "InteractionContextvoluntary", "n", "html")`), but these interactions were less voluntary (`r feature_ttest_apa(results_df, "InteractionContextvoluntary", "median", "html")`), less meaningful (`r feature_ttest_apa(results_df, "qualityMeaning", "median", "html")`), and less positive (`r feature_ttest_apa(results_df, "qualityOverall", "median", "html")`). 

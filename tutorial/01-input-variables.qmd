@@ -43,7 +43,7 @@ For our illustration, we include 12 variables that were measured as part of the 
 
 ### Import the raw data
 
-We begin by importing the raw data as well as the variable meta data. Both of these data files are available as part of <a href="https://www.osf.io" target="_blank">our OSF repository</a>. To ensure the privacy and confidentiality of the study participants, we took a number of steps to pre-process the data:
+We begin by importing the raw data as well as the variable meta data. Both of these data files are available as part of <a href="https://osf.io/j8dzv/?view_only=c765efa51e6545e588b29999611eb789" target="_blank">our OSF repository</a>. To ensure the privacy and confidentiality of the study participants, we took a number of steps to pre-process the data:
 
 - consistent naming
 - key variables only (participant privacy)
