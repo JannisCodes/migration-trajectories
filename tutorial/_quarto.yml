@@ -11,6 +11,8 @@ website:
   site-url: "https://github.com/JannisCodes" 
   repo-url: https://github.com/JannisCodes
   open-graph: true
+  
+  favicon: "images/android-chrome-192x192.png"
 
   # twitter-card:
   #   creator: "@JannisWrites"
@@ -20,7 +22,7 @@ website:
     background: "#D9E3E4"
     logo: "images/logo.png"
     pinned: true
-    align: left
+    align: center
     style: "docked"
     search: true
     collapse-level: 1
