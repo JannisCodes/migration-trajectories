@@ -9,7 +9,7 @@ Welcome to the GitHub Repository for the 'Migration Trajectories' Project.
 
 This repository brings together the full manuscript (synchronized from Overleaf) as well as all data sets and their analysis markdown files (syncronized from a local RStudio instance in RMarkdown files).
 
-The full annotated analysis code is available as part of our [Illustration Tutorial]([https://janniscodes.github.io/migration-trajectories/Supplemental-Material-A-Annotated-Analysis](https://janniscodes.github.io/ts-feature-clustering-illustration/)).
+The full annotated analysis code is available as part of our [Illustration Tutorial](https://janniscodes.github.io/ts-feature-clustering-illustration/).
 
 Please note that the full repository will remain 'private' and anonymized until after the manuscript has been accepted for publication (to allow for blind peer review).
 
