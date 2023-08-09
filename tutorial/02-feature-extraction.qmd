@@ -56,7 +56,7 @@ The selection of time series features should always be driven by the research qu
 6. non-linear trend
     + **GAM edf**
 
-_Note:_ Beyond the time series features described in this illustration, the [`tsfesh` python package](https://tsfresh.readthedocs.io/en/latest/) allows users to extract almost 800 time series features [@christ2018]. The package is well maintained and offers clear documentation of how each time series feature is calculated.
+_Note:_ Beyond the time series features described in this illustration, the [`tsfresh` python package](https://tsfresh.readthedocs.io/en/latest/) allows users to extract almost 800 time series features [@christ2018]. The package is well maintained and offers clear documentation of how each time series feature is calculated.
 
 We, thus, use enter our cleaned variables into the `featureExtractor()` function, where we additionally specify the participant id `pid` and the numeric time id `tid` as well as a vector with the column names of the variables for which we want to extract the features `items`.
 
