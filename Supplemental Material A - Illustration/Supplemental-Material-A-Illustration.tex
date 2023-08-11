@@ -29,15 +29,16 @@
 \usepackage{tcolorbox}
 
 % formatting links in the PDF file
+\definecolor{googleurlcolor}{HTML}{1a0dab}
 \hypersetup{
 pdfpagemode={UseOutlines},
 bookmarksopen=true,
 bookmarksopenlevel=0,
 hypertexnames=false,
 colorlinks   = true, %Colours links instead of ugly boxes
-urlcolor     = blue, %Colour for external hyperlinks
-linkcolor    = blue, %Colour of internal links
-citecolor   = black, %Colour of citations
+urlcolor     = googleurlcolor, %blue,Colour for external hyperlinks
+linkcolor    = black, %blue, Colour of internal links
+citecolor   = black, % cyan, Colour of citations
 pdfstartview={FitV},
 unicode,
 breaklinks=true,
@@ -96,16 +97,16 @@ breaklinks=true,
    \textbf{\thetitle} 
 \end{center}
 
-This supplementary information documents our tutorial-style illustration website. As part of our open supplemental materials, we share the full illustration as an interactive tutorial-style website. This file offers transparent and reproducible analysis code, which includes full author commentary. We rendered the Quarto project as an interactive HTML website, which we host as part of our open GitHub repository. We recommend the rendered version for almost all readers (full R code is also available via the rendered version).
+This supplementary information documents our tutorial-style illustration website. As part of our open supplemental materials, we share the full illustration as an interactive tutorial-style website. This file offers transparent and reproducible analysis code, which includes full author commentary. We rendered the Quarto project as an interactive HTML website, which we host as part of our open GitHub repository \citep{KreienkampMasked-illustration-github}. We recommend the rendered version for almost all readers (full R code is also available via the rendered version).
 
 \vspace{.5cm}
 \begin{tcolorbox}
     \vspace{0.2cm} \centering 
-    \href{https://janniscodes.github.io/ts-feature-clustering-illustration/}{https://www.tsfeatureclustr.com/}
+    \href{https://janniscodes.github.io/ts-feature-clustering-illustration/}{www.tsFeatureClustR.com}
     \vspace{0.2cm} 
 \end{tcolorbox}
 
-For readers interested in the raw files, the raw Quarto files are available in our OSF repository \citep[see][]{KreienkampMasked-clust-osf} and can also be accessed as part of the full GitHub repository \citep[][]{KreienkampMasked-clust-github}. 
+For readers interested in the raw files, the raw Quarto files are available in our OSF repository \citep[see][]{KreienkampMasked-clust-osf} and can also be accessed as part of the project GitHub repository \citep[][]{KreienkampMasked-clust-github}. 
 
 \printbibliography
 

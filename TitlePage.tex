@@ -36,18 +36,19 @@
 \usepackage{censor}
 
 % formatting links in the PDF file
+\definecolor{googleurlcolor}{HTML}{1a0dab}
 \hypersetup{
-pdfpagemode={UseOutlines},
-bookmarksopen=true,
-bookmarksopenlevel=0,
-hypertexnames=false,
-colorlinks   = true, %Colours links instead of ugly boxes
-urlcolor     = blue, %Colour for external hyperlinks
-linkcolor    = blue, %Colour of internal links
-citecolor   = cyan, %Colour of citations
-pdfstartview={FitV},
-unicode,
-breaklinks=true,
+    pdfpagemode={UseOutlines},
+    bookmarksopen=true,
+    bookmarksopenlevel=0,
+    hypertexnames=false,
+    colorlinks   = true, %Colours links instead of ugly boxes
+    urlcolor     = googleurlcolor, %blue,Colour for external hyperlinks
+    linkcolor    = black, %blue, Colour of internal links
+    citecolor   = black, % cyan, Colour of citations
+    pdfstartview={FitV},
+    unicode,
+    breaklinks=true,
 }
 
 % language settings
@@ -61,41 +62,40 @@ breaklinks=true,
 \addbibresource{referencesZotero.bib}
 
 % Title and header
-\title{Migration Experience Trajectories (Working Title)}
-\shorttitle{Migration Experience Trajectories}
+\title{A Gentle Introduction and Application of Feature-Based Clustering with Psychological Time Series\\}
+\shorttitle{feature-based time series clustering}
 
 % Authors
-\author[*,1,3]{Jannis Kreienkamp}
-\author[1,3]{Laura F. Bringmann}
-\author[1,3]{Kai Epstude}
-\author[1,3]{Maximilian Agostini}
+\author[*,1]{Jannis Kreienkamp}
+\author[1]{Maximilian Agostini}
+\author[2]{Rei Monden}
+\author[1]{Kai Epstude}
 \author[1,3]{Peter de Jonge}
-\author[2,3]{Rei Monden}
+\author[1,3]{Laura F. Bringmann}
 \affiliation{\hfill}
 
 \affil[1]{University of Groningen, Department of Psychology}
 \affil[2]{Hiroshima University, Graduate School of Advanced Science and Engineering}
-\affil[3]{Author order TBD (currently mostly in first name alphabetical order)}
+\affil[3]{Interdisciplinary Center Psychopathology and Emotion Regulation}
 
-\authornote{
+\authornote{   
    \addORCIDlink{* Jannis Kreienkamp}{0000-0002-1831-5604}\\
-   \addORCIDlink{Laura F. Bringmann}{0000-0002-8091-9935}\\
-   \addORCIDlink{Kai Epstude}{0000-0001-9817-3847}\\
    \addORCIDlink{Maximilian Agostini}{0000-0001-6435-7621}\\
+   \addORCIDlink{Rei Monden}{0000-0003-1744-5447}\\
+   \addORCIDlink{Kai Epstude}{0000-0001-9817-3847}\\
    \addORCIDlink{Peter de Jonge}{0000-0002-0866-6929}\\
-   \addORCIDlink{Rei Monden}{0000-0003-1744-5447}
+   \addORCIDlink{Laura F. Bringmann}{0000-0002-8091-9935}
 
-We have no known conflict of interest to declare. The authors received no specific funding for this work. Materials and  software is available at \url{https://janniscodes.github.io/migration-trajectories/}  \citep{KreienkampTBD}. Protocols, materials, data, and code are available at \url{https://osf.io/TBA} \citep{KreienkampTBD}. The preregistration of our analysis can be accessed as part of our Open Science Framework repository \citep{KreienkampTBD}.
+We have no known conflict of interest to declare. The authors received no specific funding for this work. Materials, data, and code are available at \url{https://osf.io/75ryj/?view_only=db14031cd8704085b5c6165c9f5ed3e4} \citep{Kreienkamp-clust-osf}. Materials and software are also available as part of our project GitHub repository \citep{Kreienkamp-clust-github}. The full illustration code is also available as a tutorial-style website at \href{https://tsfeatureclustr.com}{www.tsFeatureClustR.com} \citep{Kreienkamp-illustration-github}.
 
 Correspondence concerning this article should be addressed to Jannis Kreienkamp, Department of Psychology, University of Groningen, Grote Kruisstraat 2/1, 9712 TS Groningen (The Netherlands).  E-mail: \href{mailto:j.kreienkamp@rug.nl}{j.kreienkamp@rug.nl}
 
 \vspace{1em}
-\noindent\textit{Open Science Practices [?]:}\\
-\noindent \href{https://osf.io}{\includegraphics[height=\badgeheight]{assets/open-badges-small/registrationplus-color.png}} Preregistration+, 
-\href{https://osf.io}{\includegraphics[height=\badgeheight]{assets/open-badges-small/material-color.png}} Open Materials, 
-\href{https://osf.io}{\includegraphics[height=\badgeheight]{assets/open-badges-small/data-color.png}} Open Data,
-\href{https://osf.io}{\includegraphics[height=\badgeheight]{assets/open-badges-small/code-color.png}} Open Code, 
-\href{https://osf.io}{\includegraphics[height=\badgeheight]{assets/open-badges-small/supplements-color.png}} Open Supplements
+\textit{Open Science Practices:}
+    \href{https://osf.io/75ryj/?view_only=db14031cd8704085b5c6165c9f5ed3e4}{\includegraphics[height=\badgeheight]{assets/open-badges-small/material-color.png}} Open Materials, 
+    \href{https://osf.io/75ryj/?view_only=db14031cd8704085b5c6165c9f5ed3e4}{\includegraphics[height=\badgeheight]{assets/open-badges-small/data-color.png}} Open Data,
+    \href{https://osf.io/75ryj/?view_only=db14031cd8704085b5c6165c9f5ed3e4}{\includegraphics[height=\badgeheight]{assets/open-badges-small/code-color.png}} Open Code, \break
+    \href{https://osf.io/75ryj/?view_only=db14031cd8704085b5c6165c9f5ed3e4}{\includegraphics[height=\badgeheight]{assets/open-badges-small/supplements-color.png}} Open Supplements
 
 }
 
@@ -111,13 +111,13 @@ Correspondence concerning this article should be addressed to Jannis Kreienkamp,
 %\maketitle
 
 \makeatletter
-\vspace*{3em}
+\vspace*{2em}
 \begin{center}
 \noindent \textbf\@title
 \vspace{1em}
 \noindent \@author
 \end{center}
-\vspace{5em}
+\vspace{2em}
 \begin{center}%
     \textbf\acksname%
 \end{center}%
