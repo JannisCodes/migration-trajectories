@@ -1,5 +1,5 @@
 ---
-title: "Illustration: Feature Based Time Series Clustering in Psychology [tsFeatureExtracR]"
+title: "Illustration: Feature Based Time Series Clustering in Psychology [tsFeatureClustR]"
 author:
   - name: Masked for Peer Review
   - name: ██████ ██████████

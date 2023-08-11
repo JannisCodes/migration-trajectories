@@ -3,6 +3,8 @@ project:
   render:
     - "*.qmd"
   output-dir: ../../ts-feature-clustering-illustration
+  resources:
+    - CNAME
 
 website:
   page-navigation: true
