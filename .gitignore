@@ -11,6 +11,10 @@ Icon^M^M
 data/
 feedback/
 backup/
+_extensions/
+_freeze/
+*/_extensions/
+*/_freeze/
 NUL
 
 /.quarto/

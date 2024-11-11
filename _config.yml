@@ -1,6 +1,6 @@
 theme: jekyll-theme-minimal
 title: "Needs in Intergroup Contact"
 # description: "Author Information:<br>██████ ██████████<br>███████ ████████<br>█████ █████████<br>█████ ██ █████<br>███ ███████<br>████████████████████<br><br>[Authors and other identifying information removed for blind review.]"
-description: "Jannis Kreienkamp^1,2,3<br>Maximilian Agostini^1,2<br>Rei Monden^4<br>Kai Epstude^1<br>Peter de Jonge^1,3<br>Laura F. Bringmann^1,3<br>(^1University of Groningen, ^2The DataFlow Company, ^3Interdisciplinary Center Psychopathology and Emotion Regulation, ^4Hiroshima University)"
+description: "Jannis Kreienkamp<sup>1,2,3</sup><br>Maximilian Agostini<sup>1,2</sup><br>Rei Monden<sup>4</sup><br>Kai Epstude<sup>1</sup><br>Peter de Jonge<sup>1,3</sup><br>Laura F. Bringmann<sup>1,3</sup><br>(<sup>1</sup>University of Groningen, <sup>2</sup>The DataFlow Company, <sup>3</sup>Interdisciplinary Center Psychopathology and Emotion Regulation, <sup>4</sup>Hiroshima University)"
 #show_downloads: true
 github: false
