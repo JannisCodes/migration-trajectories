@@ -44,8 +44,8 @@ scaled_pc <- pca.out #%>% scale
 #| label: k-means modeling based on selected k
 
 kmeansRes <- list()
-for (i in 2:10) {
-  kmeansRes[[i-1]] <- kmeans(scaled_pc, centers = i, nstart = 100)
+for (i in 1:10) {
+  kmeansRes[[i]] <- kmeans(scaled_pc, centers = i, nstart = 100)
 }
 ```
 

@@ -1,7 +1,7 @@
 For our illustration, we include 12 variables that were measured as part
 of the ESM surveys in all three studies and captured information about
-the participant's interactions, as well as cognitive-, emotional-, and
-motivational self in relationship with the majority group (see
+the participant's interactions, as well as the cognitive-, emotional-,
+and motivational self in relationship with the majority group (see
 \tblref{tab:var_selection} for an overview). We chose these aspects in
 particular because (1) the interaction-specific information exemplified
 the structural missingness issue of modern ESM data and (2) the
@@ -13,20 +13,19 @@ showcases the utility of the method for a growing body of literature
 that considers heterogeneous and complex concepts. As a result, the
 number of included variables is also on the higher end for psychological
 concepts and additionally allows us to showcase the efficiency benefits
-of the method and offers a reasonable use case for the optional feature
-reduction step.
+of the method and offers a reasonable use case for the feature reduction
+step.
 
 \input{tables/var_selection}
 
 Once the important variables have been selected, the data needs to be
 prepared for the analysis steps. Importantly, this not only means
-validating and cleaning the data (e.g., re-coding, removing duplicate or
-unwanted measurements) but also making the time-series comparable. Two
-important steps are making the time-frames and response scales
-comparable across participants --- for example, by choosing a time frame
-that is common to most participants and standardizing the participants'
-responses
-\citep['data exclusion' and 'data transformation' in \fgrref{fig:TSCFlow}; also see][]{liao2005}.
+validating and cleaning the data (e.g., re-coding, combining scale
+items) but also making the time-series comparable. Making the
+time-frames and response scales comparable across participants, for
+example, includes choosing a time frame that is common to most
+participants
+\citep['data preparation' and 'data cleaning' in \fgrref{fig:TSCFlow}; also see][]{liao2005}.
 
 In our illustration data set, the studies differed substantially in the
 maximum length of participation (\(\text{max}(t_{S1})=\) 63,
@@ -35,14 +34,19 @@ likely due to the option to continue participation without compensation
 in the latter study. To make the three studies comparable in
 participation and time frames, we iteratively removed all measurement
 occasions and participants that had more than 45\% missingness
-\citep[which was in line with the general recommendation for data that might still need to rely on imputations for later model testing][]{Madley-Dowd2019}.
+\citep[which was in line with the general recommendation for data that might still need to rely on imputations for later model testing; see][]{Madley-Dowd2019}\footnote{Please note that for cases where the clustering is the main analysis, this high missingness threshold may be too conservative. As part of our validation analyses in \appref[]{app:ValidationAnalyses} we compare the model presented here with varying levels of missing data allowed.}.
 This procedure led to a final sample of 157 participants, who jointly
-produced 8,132 measurements. Importantly, both the participant
-response-patterns and the time frame were now substantially more
-comparable (\(\text{max}(t_{S1})=\) 61, \(\text{max}(t_{S2})=\) 60,
-\(\text{max}(t_{S3})=\) 67). Full methodological details are available
-in Online Supplemental Material A, but basic item information,
-descriptives, and correlations are also available in
+produced 8,132 survey responses. Importantly, both the participant
+response patterns and the time frame were now substantially more
+comparable (number of measurement occasions per person: \(t_{S1}\): min
+= 40, max = 61, mean = 57.33, sd = 4.69; \(t_{S2}\): min = 33, max = 60,
+mean = 49.05, sd = 6.73; \(t_{S3}\): min = 36, max = 65, mean = 54.20,
+sd = 7.04). It is important to consider that some time series features
+may be less reliable when the number of measurement occasions per person
+is low (e.g., below 30 measurements per person), and this should be
+taken into account when conducting similar analyses. Full methodological
+details are available in Online Supplemental Material A, but basic item
+information, descriptives, and correlations are also available in
 \tblref{tab:descrLong}.
 
 \input{tables/descrLong}

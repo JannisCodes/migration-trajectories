@@ -22,6 +22,7 @@
 #' @ImportFrom dplyr %>%
 
 cleanM <- function(M, c = 55) {
+  # M <- as.data.frame(dtAvailability)
   
   check <- list()
   rowNamesOut <- c()
@@ -35,6 +36,7 @@ cleanM <- function(M, c = 55) {
     
     # Determine which row/column has the lowest mean and should be removed
     rm <- which.min(rcMeans) %>% names
+    # cat(rm)
     rc <- ifelse(startsWith(rm, "PP_"), "row", "col")
     
     check[[i]] <- rcMeans

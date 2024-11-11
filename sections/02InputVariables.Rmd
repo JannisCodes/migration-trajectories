@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-For our illustration, we include 12 variables that were measured as part of the ESM surveys in all three studies and captured information about the participant's interactions, as well as cognitive-, emotional-, and motivational self in relationship with the majority group (see \tblref{tab:var_selection} for an overview). We chose these aspects in particular because (1) the interaction-specific information exemplified the structural missingness issue of modern ESM data and (2) the motivational, emotional, and cognitive experience offered a diverse conceptualization of migration experience (beyond behavioral measurements) that is becoming more common in the literature \citep[][]{Kreienkamp2022d}. The breadth of the included variables also showcases the utility of the method for a growing body of literature that considers heterogeneous and complex concepts. As a result, the number of included variables is also on the higher end for psychological concepts and additionally allows us to showcase the efficiency benefits of the method and offers a reasonable use case for the optional feature reduction step.
+For our illustration, we include 12 variables that were measured as part of the ESM surveys in all three studies and captured information about the participant's interactions, as well as the cognitive-, emotional-, and motivational self in relationship with the majority group (see \tblref{tab:var_selection} for an overview). We chose these aspects in particular because (1) the interaction-specific information exemplified the structural missingness issue of modern ESM data and (2) the motivational, emotional, and cognitive experience offered a diverse conceptualization of migration experience (beyond behavioral measurements) that is becoming more common in the literature \citep[][]{Kreienkamp2022d}. The breadth of the included variables also showcases the utility of the method for a growing body of literature that considers heterogeneous and complex concepts. As a result, the number of included variables is also on the higher end for psychological concepts and additionally allows us to showcase the efficiency benefits of the method and offers a reasonable use case for the feature reduction step.
 
 ```{r}
 
@@ -100,9 +100,59 @@ varNames %>%
 
 \input{tables/var_selection}
 
-Once the important variables have been selected, the data needs to be prepared for the analysis steps. Importantly, this not only means validating and cleaning the data (e.g., re-coding, removing duplicate or unwanted measurements) but also making the time-series comparable. Two important steps are making the time-frames and response scales comparable across participants --- for example, by choosing a time frame that is common to most participants and standardizing the participants' responses \citep['data exclusion' and 'data transformation' in \fgrref{fig:TSCFlow}; also see][]{liao2005}.
+```{r}
 
-In our illustration data set, the studies differed substantially in the maximum length of participation ($\text{max}(t_{S1})=$ `r missS123$timeFull[missS123$study==1]`, $\text{max}(t_{S2})=$ `r missS123$timeFull[missS123$study==2]`, $\text{max}(t_{S3})=$ `r missS123$timeFull[missS123$study==3]`). This was likely due to the option to continue participation without compensation in the latter study. To make the three studies comparable in participation and time frames, we iteratively removed all measurement occasions and participants that had more than 45% missingness \citep[which was in line with the general recommendation for data that might still need to rely on imputations for later model testing][]{Madley-Dowd2019}. This procedure led to a final sample of `r sum(missS123$pptRed)` participants, who jointly produced `r format(sum(missS123$nRed), big.mark=",")` measurements. Importantly, both the participant response-patterns and the time frame were now substantially more comparable ($\text{max}(t_{S1})=$ `r missS123$timeRed[missS123$study==1]`, $\text{max}(t_{S2})=$ `r missS123$timeRed[missS123$study==2]`, $\text{max}(t_{S3})=$ `r missS123$timeRed[missS123$study==3]`). Full methodological details are available in Online Supplemental Material A, but basic item information, descriptives, and correlations are also available in \tblref{tab:descrLong}.
+descr_N_all <- rbind(
+  dtS1Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S1") %>%
+    mutate(across(!TID & !study, as.numeric)),
+  dtS2Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S2"),
+  dtS3Red %>% select(any_of(varNamS123MiRed)) %>% mutate(study = "S3")
+)
+
+# Step 1: Count the number of measurements per person within each study
+measurement_counts <- descr_N_all %>%
+  group_by(study, PID) %>%                # Group by study and PID
+  summarise(measurement_count = n()) %>%  # Count the number of rows per PID (this is the number of measurements)
+  ungroup()                               # Ungroup the data
+
+# Step 2: Calculate the mean and standard deviation of measurements per study
+measurement_summary <- measurement_counts %>%
+  group_by(study) %>%                              # Group by study
+  summarise(
+    min_measurements = min(measurement_count),     # Calculate min of measurements per study
+    max_measurements = max(measurement_count),     # Calculate max of measurements per study
+    mean_measurements = mean(measurement_count),   # Calculate mean of measurements per study
+    sd_measurements = sd(measurement_count)        # Calculate standard deviation of measurements per study
+  )
+
+generate_descriptive_report <- function(study_id, measurement_summary) {
+  # Extract relevant statistics for the given study
+  min_measurements <- measurement_summary$min_measurements[measurement_summary$study == study_id]
+  max_measurements <- measurement_summary$max_measurements[measurement_summary$study == study_id]
+  mean_measurements <- format(round(measurement_summary$mean_measurements[measurement_summary$study == study_id], 2), nsmall=2)
+  sd_measurements <- format(round(measurement_summary$sd_measurements[measurement_summary$study == study_id], 2), nsmall=2)
+  
+  # Create the LaTeX formatted string
+  latex_string <- paste0(
+    "$t_{", study_id, "}$: min = ", min_measurements,
+    ", max = ", max_measurements,
+    ", mean = ", mean_measurements,
+    ", sd = ", sd_measurements
+  )
+  
+  return(latex_string)
+}
+
+latex_S1 <- generate_descriptive_report("S1", measurement_summary)
+latex_S2 <- generate_descriptive_report("S2", measurement_summary)
+latex_S3 <- generate_descriptive_report("S3", measurement_summary)
+
+```
+
+Once the important variables have been selected, the data needs to be prepared for the analysis steps. Importantly, this not only means validating and cleaning the data (e.g., re-coding, combining scale items) but also making the time-series comparable. Making the time-frames and response scales comparable across participants, for example, includes choosing a time frame that is common to most participants \citep['data preparation' and 'data cleaning' in \fgrref{fig:TSCFlow}; also see][]{liao2005}.
+
+In our illustration data set, the studies differed substantially in the maximum length of participation ($\text{max}(t_{S1})=$ `r missS123$timeFull[missS123$study==1]`, $\text{max}(t_{S2})=$ `r missS123$timeFull[missS123$study==2]`, $\text{max}(t_{S3})=$ `r missS123$timeFull[missS123$study==3]`). This was likely due to the option to continue participation without compensation in the latter study. To make the three studies comparable in participation and time frames, we iteratively removed all measurement occasions and participants that had more than 45% missingness \citep[which was in line with the general recommendation for data that might still need to rely on imputations for later model testing; see][]{Madley-Dowd2019}\footnote{Please note that for cases where the clustering is the main analysis, this high missingness threshold may be too conservative. As part of our validation analyses in \appref[]{app:ValidationAnalyses} we compare the model presented here with varying levels of missing data allowed.}. This procedure led to a final sample of `r sum(missS123$pptRed)` participants, who jointly produced `r format(sum(missS123$nRed), big.mark=",")` survey responses. Importantly, both the participant response patterns and the time frame were now substantially more comparable (number of measurement occasions per person: `r latex_S1`; `r latex_S2`; `r latex_S3`). It is important to consider that some time series features may be less reliable when the number of measurement occasions per person is low (e.g., below 30 measurements per person), and this should be taken into account when conducting similar analyses. Full methodological details are available in Online Supplemental Material A, but basic item information, descriptives, and correlations are also available in \tblref{tab:descrLong}.
+
 
 ```{r}
 #| label: descriptive-tbl-prep
@@ -202,6 +252,7 @@ allMlCor %>%
   ) %>%
   footnote(
     general = c(
+      '"Int." = outrgroup interaction, "-GOAL-" = self-identified goal, "-NAME-" = provided name of the interaction partner',
       "Upper triangle: Between-person correlations;",
       "Lower triangle: Within-person correlations;",
       "*** p < .001, ** p < .01,  * p < .05"
@@ -246,7 +297,7 @@ allMlCor %>%
   pack_rows("Descriptives", ncol(allMlCor)+1, nrow(allMlCor)) %>%
   footnote(
     general = c(
-      '"Int." = interaction.',
+      '"Int." = outgroup interaction, "ICC" = intraclass correlation coefficient, "SD" = standard deviation',
       'Upper triangle: Between-person correlations;',
       'Lower triangle: Within-person correlations;',
       '*** p < .001, ** p < .01,  * p < .05'

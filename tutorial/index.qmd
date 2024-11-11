@@ -77,7 +77,8 @@ We introduce the feature-based clustering approach and illustrate the utility of
 3. [Feature reduction](03-feature-reduction.qmd)
 4. [Clustering](04-clustering.qmd)
 5. [Evaluation](05-evaluation.qmd)
-6. [About](about.qmd)
+6. [Validation Analyses](06-validation-analyses.qmd)
+7. [About](about.qmd)
 
 You can navigate through this illustration using the sidebar on the left or go through the individual steps using the forward and backward buttons at the bottom of each page. We close this illustration we a short about section that links important resources and software information.
 

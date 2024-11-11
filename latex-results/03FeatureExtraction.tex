@@ -9,75 +9,111 @@ about psychological time series. Researchers might, for example, be
 interested in whether ``Over a one-month period, are some people happier
 than others?''
 
-For the central tendency feature of our illustration we chose the robust
-\textit{median}, which can avoid potential issues with non-normally
-distributed time series responses or outliers \citep{weisberg1992}. To
-calculate the \textit{median} (\(M\)), we let \(X_{ij}\) be the ordered
-list of values from the time series of variable \(j\) for participant
-\(i\). The calculation depends on whether the number of measurements in
-a time series \(n\) is odd or even.
+For the central tendency feature of our illustration, we chose the
+median (\(M\)), which effectively addresses potential complications
+arising from non-normally distributed responses or outliers within time
+series datasets \citep{weisberg1992}. To compute the median, it is
+imperative to differentiate between two types of time series
+representations for a given variable \(j\) related to participant \(i\):
+the chronological series and the ordered series. The chronological time
+series, denoted by \(X_{ij}\), encapsulates the sequence of observations
+\(\{x_{ij1}, x_{ij2}, ..., x_{ijn}\}\) for variable \(j\) concerning
+participant \(i\), organized by their temporal occurrence. Here,
+\(x_{ijt}\) signifies a specific observation at time \(t\) within this
+sequence. In contrast, the ordered time series, represented as
+\(\mathbf{X}_{ij}\), is derived from \(X_{ij}\) by sorting the
+observations in ascending order of magnitude. This ordered set is
+expressed as
+\(\{\mathbf{x}_{ij1}, \mathbf{x}_{ij2}, ..., \mathbf{x}_{ijn}\}\), with
+each \(\mathbf{x}_{ijk}\) corresponding to the \(k\)-th element in the
+reordered series \(\mathbf{X}_{ij}\).
+
+The median \(M(\mathbf{X}_{ij})\) is then the value located precisely at
+the center of the ordered time series \(\mathbf{X}_{ij}\). Depending on
+whether the total number of observations (\(n\)) is odd or even, the
+median is either the middel \(k\)-th element if \(n\) is odd, or the
+average of the two middle values if \(n\) is even:
 
 \begin{equation} \label{eq:median}
-  M(X_{ij}) = 
-    \begin{cases}
-      X \left[ \frac{n+1}{2} \right] & \text{if $n$ is odd} \\
-      \frac{X \left[ \frac{n}{2} \right] + X \left[ \frac{n}{2} +1 \right]}{2} & \text{if $n$ is even}
-    \end{cases}
+  M(\mathbf{X}_{ij}) = 
+  \begin{cases}
+    \mathbf{x}_{ij\left(\frac{n+1}{2}\right)} & \text{if $n$ is odd} \\
+    \frac{\mathbf{x}_{ij\left(\frac{n}{2}\right)} + \mathbf{x}_{ij\left(\frac{n}{2} + 1\right)}}{2} & \text{if $n$ is even}
+  \end{cases}
 \end{equation}
+
+This approach ensures that the median is a reliable indicator of central
+tendency in time series analysis, unaffected by data distribution
+asymmetries or the presence of outliers.
 
 \paragraph{Variability.}
 
 Variability captures the degree to which a set of data differs from the
 central tendency and is sometimes also referred to as the dispersion or
-spread of the data \citep{weisberg1992}. In time series analyses,
-variability is conceptually important because information about the
-distribution and diversity of the data has been found to be indicative
-of worse psychological states \citep{myin-germeys2018, helmich2021}.
-Person-level differences of ESM measurements have, for example, been
-associated with higher levels of psycho-pathological recurrences among
-depression patients \citep{timm2017}. As such, psychological researchers
-and practitioners are often empirically interested in between-person
+spread of the data \citep{weisberg1992}. Common measurements of the
+variability are the variance or standard deviation as well as their
+robust counter parts. In time series analyses, variability is
+conceptually important because information about the distribution and
+diversity of the data has been found to be indicative of worse
+psychological states \citep{myin-germeys2018, helmich2021}. Person-level
+differences of ESM measurements have, for example, been associated with
+higher levels of psycho-pathological recurrences among depression
+patients \citep{timm2017}. As such, psychological researchers and
+practitioners are often empirically interested in between-person
 differences in variability. Researchers on polarization and
 radicalization might for example ask: ``Are people settled in their
 attitudes towards migrants or do they vary across the measurement
 period?''
 
-For our illustration data, we chose to capture the time series
-variability with the \textit{Median Absolute Deviation} (\(MAD\)), where
-we calculate the \textit{median} (\(M\); calculated as in
-\equatref{eq:median}) for the absolute deviations of measurement \(x\)
-at time point \(t\) for participant \(i\) and variable \(j\) from the
-median of that time series \(X\). We again chose the robust statistic
-because the Median-based measure is less affected by non-normal
-distributions and extreme values or outliers compared to other measures
-of variability like the standard deviation \citep{weisberg1992}
+For our illustration data, we chose the
+\textit{Median Absolute Deviation} (\(MAD\)) to gauge the variability
+within our time series data. This choice is motivated by the robustness
+of MAD, particularly its resilience to the effects of non-normal
+distributions and outliers, which can significantly skew traditional
+variability measures like the standard deviation \citep{weisberg1992}.
+For a given variable \(j\) and participant \(i\), the MAD is calculated
+by first determining the median (\(M\)) of the ordered time series
+\(\mathbf{X}_{ij}\) as outlined in \equatref{eq:median}. We then compute
+the absolute deviations of each observation in the time series
+\(X_{ij}\) from this median value. Specifically, for each time point
+\(t\), we calculate the absolute difference between \(x_{ijt}\) and the
+series median \(M(\mathbf{X}_{ij})\). The MAD is then the median of
+these absolute deviations:
 
-\begin{equation} \label{eq:mad}
-  MAD(X_{ij}) = M(\left| x_{ijt} - M(X_{ij}) \right|)
-\end{equation}
+\begin{subequations}\label{eq:mad}
+    \begin{align} 
+      MAD(X_{ij}) &= M(\left| x_{ijt} - M(\mathbf{X}_{ij}) \right|) \label{eq:mad_general} \\
+                  &= M(\{ |x_{ij1} - M(\mathbf{X}_{ij})|, |x_{ij2} - M(\mathbf{X}_{ij})|, \ldots, |x_{ijn} - M(\mathbf{X}_{ij})| \}) \label{eq:mad_detailed}
+    \end{align}
+\end{subequations}
+
+The calculation of MAD focuses on the magnitudes of deviations, ensuring
+it provides a robust measure of dispersion that reflects the inherent
+variability in the time series data.
 
 \paragraph{Instability.}
 
 Instability captures the average change between two consecutive
-measurements \citep{ebner-priemer2009}. While instability is
+measurements \citep{ebner-priemer2009, jahng2008}. While instability is
 conceptually related to the variability feature, variability does not
 take into account temporal dependency, whereas instability looks at the
 `jumpy-ness' of the data over time. In other words, variability reflects
-the range or diversity of values in a time series data, while
-instability reflects the fluctuation or inconsistency in a time series
-data over time \citep{trull2008}. For example, if a person has rapid and
-extreme changes in mood their mood is highly unstable, while if a
-person's mood responses span a wide range over the entire study period,
-their mood is highly variable \citep{jahng2008}. Within psychological
-time series, instability measurements have especially been important in
-the research of borderline personality disorder \citep{trull2008} and
-suicidality \citep{kivela2022}, but also in understanding early warning
-signals more generally \citep{wichers2019}. Conceptually, the
-instability feature, thus, relates to a broad range of research
-questions, including: ``What is the nature of the identification changes
-in those who start working in a new country?'' or ``Do strong daily
-fluctuations in self-esteem reflect the process of identity formation in
-adolescents?''
+the range or diversity of values in the un-ordered time series data,
+while instability reflects the fluctuation or inconsistency in a time
+series data over time \citep{trull2008, houben2015, koval2013}. For
+example, if a person has rapid and extreme changes in mood their mood is
+highly unstable, while if a person's mood responses span a wide range
+over the entire study period, their mood is highly variable
+\citep[note that this does not need to be rapidly changing or instable, e.g., when there is linear increase over time; also see][]{jahng2008}.
+Within psychological time series, instability measurements have
+especially been important in the research of borderline personality
+disorder \citep{trull2008} and suicidality \citep{kivela2022}, but also
+in understanding early warning signals more generally
+\citep{wichers2019}. Conceptually, the instability feature, thus,
+relates to a broad range of research questions, including: ``What is the
+nature of the identification changes in those who start working in a new
+country?'' or ``Do strong daily fluctuations in self-esteem reflect the
+process of identity formation in adolescents?''
 
 For our data we chose the \textit{mean absolute change}
 \citep[$MAC$; e.g.,][]{ebner-priemer2009, barandas2020}, which looks at
@@ -94,27 +130,29 @@ Another common measurement of instability is the
 often preferred where differences in magnitude are more important than
 the frequency of those changes, for example, when big shifts in time
 series are considered more impactful or when outliers are meaningful and
-need to be taken into account \citep{chatfield2003}.
+need to be taken into account \citep{chatfield2003, bos2019}. For
+psychological ESM data, some research suggests that amplitude and
+frequency might predict different health outcomes and can be
+investigated jointly \citep{wang2012a, jahng2008}.
 
-\paragraph{Self-similarity.}
+\paragraph{Temporal dependence.}
 
-Self-similarity in time series data refers to the property of a time
-series to exhibit similar patterns of behavior over different time
-scales \citep{dmello2021}. That is, self-similarity describes how much a
-measurement carries over to future measurements. One important
-self-similarity in psychological time series is \textit{inertia} --- how
-much a measurement carries over to its next measurement
+Temporal dependence in time series data refers to the degree to which a
+time series is influenced by its past values, exhibiting patterns of
+behavior that may be regular over different time scales
+\citep{dmello2021}. In the context of psychological time series, an
+important aspect of temporal dependence is \textit{inertia} --- how much
+a measurement carries over to its next measurement
 \citep{kuppens2010, suls1998}. If inertia is high a development tends to
 stay in a certain state. Because high inertia is resistant to change, in
 emotion dynamics high inertia of negative affect has been found to be
 indicative of under-reactive systems and to be characteristic of
 psychological maladjustment \citep{kuppens2010}. In a similar vein, high
-inertia in negative affect at baseline was even predictive of the
-initial onset of depression \citep{kuppens2012}. Conceptually, inertia
-is more broadly connected to research questions such as:
-\texttt{Do\ patients\ stay\ in\ a\ negative\ mood\ for\ several\ measurements?\textquotesingle{}\textquotesingle{}\ or}Do
-migrants stay with their language practice for several days at a
-time?'\,'
+inertia in negative affect at baseline was predictive of the initial
+onset of depression \citep{kuppens2012}. Conceptually, inertia is more
+broadly connected to research questions such as: ``Do patients stay in a
+negative mood for several measurements?'' or ``Do migrants stay with
+their language practice for several days at a time?''
 
 For our illustration case, we chose the commonly used autocorrelation or
 autoregression with a lag-1 to capture the inertia. High autocorrelation
@@ -135,6 +173,13 @@ calculated as:
 \begin{equation} \label{eq:mean_for_ar1}
   \overline{x}_{ij} = \frac{1}{n} \sum_{t=1}^{n} x_{ijt}
 \end{equation}
+
+While inertia captures the simplest case of temporal dynamics, lag-1, we
+acknowledge that temporal dependence in psychological time series may
+also exhibit more complex relationships, including higher lagged auto
+correlations or cyclical relationships (fourier coefficients, or
+continuous wavelet transforms are often used to capture such
+relationships).
 
 \paragraph{Linear trend.}
 
@@ -175,7 +220,7 @@ over time.
 
 Changes in psychology are not always linear, instead, nonlinearity is a
 common feature of psychological time series \citep{hayes2007}. As an
-example, episodic disorders, such as depression, are most likely best
+example, episodic disorders, such as depression, are often best
 described as non-linear systems \citep{hosenfeld2015}. Similarly,
 patients in recovery from depression showed sudden changes in the
 improvement of depression \citep{helmich2020a}. But also substance abuse
@@ -189,27 +234,31 @@ experience?''
 We summarized the nonlinear trend with the
 \textit{estimated degrees of freedom} of an empty GAM spline model. The
 \(edf\) summarizes the \textit{wiggliness} of a spline trend line
-\citep{wood2017}. The degrees of freedom of a spline model are primarily
-determined by the number of knots and the order of the spline. For
-instance, a cubic spline with \(k\) knots has \(k\)+3 degrees of freedom
-\citep{faraway2016}. However, in a penalized spline framework, which is
-commonly used for GAMs, the effective degrees of freedom can be less
-than \(k\)+3. This is because the model employs a smoothing parameter to
-control the trade-off between the complexity (flexibility) of the model
-and its fit to the data, thereby penalizing overly complex models and
-potentially reducing the effective degrees of freedom \citep{marx1998}.
-Intuitively then an edf of 1 would be equivalent to a linear
-relationship (i.e., one linear slope parameter), whereas a higher edf
-(particularly an edf \textgreater{} 2) is indicative of a non-linear
-trend. The estimated degrees of freedom are commonly based on a concept
-called `effective degrees of freedom' and can be represented as the
-trace \(tr\) (i.e., the sum of the diagonal elements) of the smoother
-matrix \(S\), a symmetric matrix that maps from the raw data to the
-smooth estimates \citep{wood2017}.
+\citep{wood2017, bringmann2017}. The degrees of freedom of a spline
+model are primarily determined by the number of knots and the order of
+the spline. For instance, a cubic spline with \(k\) knots has \(k\)+3
+degrees of freedom
+\citep{faraway2016, haslbeck2021a, castro-alvarez2024}. However, in a
+penalized spline framework, which is commonly used for GAMs, the
+effective degrees of freedom can be less than \(k\)+3. This is because
+the model employs a smoothing parameter to control the trade-off between
+the complexity (flexibility) of the model and its fit to the data,
+thereby penalizing overly complex models and potentially reducing the
+effective degrees of freedom \citep{marx1998}. Intuitively then an edf
+of 1 would be equivalent to a linear relationship (i.e., one linear
+slope parameter), whereas a higher edf (particularly an edf
+\textgreater{} 2) is indicative of a non-linear trend. The estimated
+degrees of freedom are commonly based on a concept called `effective
+degrees of freedom' and can be represented as the trace \(tr\) (i.e.,
+the sum of the diagonal elements) of the smoother matrix \(S\), a
+symmetric matrix that maps from the raw data to the smooth estimates
+\citep{wood2017}.
 
 \begin{equation} \label{eq:df}
   edf = tr(S)
 \end{equation}
+
+\paragraph{Additional considerations.}
 
 Beyond our main features of interest, we also extracted the
 participant's number of completed ESM measurements to ensure that the
@@ -223,8 +272,12 @@ for the contact-specific variables. The small number of missing values
 indicates that the feature-based approach indeed largely avoids the
 structural missingness issue. However, even the few missing values can
 be an issue for some feature reduction or feature clustering algorithms.
-We, thus, impute the missing feature values with a single predictive
-mean matching imputation using the MICE library \citep[][]{buuren2011}.
-Note again that with this procedure we only need to impute an extremely
-small number of missing values as most feature calculations can use the
+We, thus, impute missing feature values via predictive mean matching
+(PMM) with the MICE package in R, employing a single imputation and
+specifying a maximum of 50 iterations and a fixed seed for convergence
+and reproducibility \citep[][]{buuren2011}. We chose PMM for its ability
+to preserve the original data distribution without assuming normality
+and robustly handling multiple data types \citep{vanbuuren2006}. Note
+again that with this procedure we only need to impute an extremely small
+number of missing values as most feature calculations can use the
 available data instead.

@@ -27,7 +27,7 @@ library(fpc)
 
 kmeansPerf <- list()
 for(i in 2:10){
-  kmeansPerf[[i-1]] <- fpc::cluster.stats(d = dist(scaled_pc), clustering = kmeansRes[[i-1]]$cluster, G2 = TRUE, G3 = TRUE, aggregateonly = TRUE) %>% unlist
+  kmeansPerf[[i-1]] <- fpc::cluster.stats(d = dist(scaled_pc), clustering = kmeansRes[[i]]$cluster, G2 = TRUE, G3 = TRUE, aggregateonly = TRUE) %>% unlist
 }
 kmeansPerfComp <- data.frame(Reduce(rbind, kmeansPerf))
 
@@ -47,7 +47,7 @@ kmeansStatNames <- c(
   "pearsongamma" = "Normalized gamma", # correlation between distances and a 0-1-vector where 0 means same cluster, 1 means different clusters. see Halkidi et al. (2001)
   "dunn" = "Dunn index", # minimum separation / maximum diameter, Dunn index, see Halkidi et al. (2002).
   "dunn2" = "Dunn index 2", # minimum average dissimilarity between two cluster / maximum average within cluster dissimilarity, another version of the family of Dunn indexes
-  "entropy" = "entropy of distribution of cluster memberships", # see Meila(2007)
+  "entropy" = "entropy of distribution of cluster memberships", # see Meila (2007)
   "wb.ratio" = "average within / average between", 
   "ch" = "Calinski and Harabasz index", # (Calinski and Harabasz 1974, optimal in Milligan and Cooper 1985; generalised for dissimilarites in Hennig and Liao 2013)
   "widestgap" = "widest within-cluster gap", 
@@ -69,6 +69,7 @@ kmeansPerfComp %>%
     html_font = "Cambria"
   )
 
+set.seed(12345)
 kmeansOut <- kmeans(scaled_pc, centers = 2, nstart = 100)
 ```
 
@@ -90,4 +91,57 @@ fviz_cluster(kmeansOut, geom = "point", data = z_data, ggtheme = theme_Publicati
 ```
 
 
-In our own illustration example, we used the \texttt{cluster.stats()} function from the \texttt{fpc} \textsf{R} package, which calculates a wide variety of internal cluster validity statistics for each of the extracted clustering solutions. With real-world data no single evaluation measure is likely perfect, and different measures may produce different results depending on the characteristics of the data and the research question being addressed \citep{kittler1998}. It is therefore important to consider a variety of evaluation measures and to carefully interpret the results in the context of the specific analysis \citep{vinh2009}. We found that across most indices, the analysis with $k=2$ clusters performed the best. Three commonly reported indices we would like to highlight are the comparison of within clusters sum of squares, the average silhouette score, and the Calinski-Harabasz index. The first statistic we looked at was the total within-cluster sum of square $WCSS$ (see also \equatref{eq:kWCSS}). While the within-cluster variation will naturally decrease with (more) smaller clusters, we observed that the decrease in $WCSS$ was largest until $k=2$ after which the decrease was much smaller. This method is also sometimes referred to as the 'elbow method' \citep{syakur2018}. We then looked at a second, commonly used measure, the average silhouette score. This statistic measures the degree to which each time feature data point is similar to other points within the same cluster, compared to points in other clusters \citep{rousseeuw1987}. In our case, the $k=2$ solution maximized the silhouette coefficient ($s_2=$ `r format(round(kmeansPerfComp$avg.silwidth[kmeansPerfComp$cluster.number==2], 2), nsmall = 2)`). Finally, the Calinski-Harabasz index assesses the compactness and separation of the clusters by assessing the ratio of the sum of between-clusters dispersion and of inter-cluster dispersion for all clusters --- thus, the higher the score the better the performances \citep{calinski1974}. In our case, the $k=2$ solution also showed the highest Calinski-Harabasz index ($CH_2=$ `r format(round(kmeansPerfComp$ch[kmeansPerfComp$cluster.number==2], 2), nsmall = 2)`; a full table of all extracted validity statistics is available in Supplemental Material A)\footnote{It is important to note that another commonly assessed aspect of the evaluation is determining the stability and robustness of the clusters \citep{berkhin2006}. This can be assessed by evaluating the sensitivity of the clusters to different feature sets or clustering algorithms, or by using techniques such as bootstrapping to assess the uncertainty of the clusters \citep{vinh2009}. Especially when comparing different clustering algorithms one common index is the Bayesian information criterion (BIC), where a lower BIC indicates that a model is more representative of the data \citep{vandeschoot2017}.}. In the final $k=2$ solution the k-means analysis also assigned a relatively even number of participants to cluster 1 ($n_{C_1}=$ `r table(kmeansOut$cluster)[1]`) and cluster 2 ($n_{C_1}=$ `r table(kmeansOut$cluster)[2]`).
+In our own illustration example, we used the \texttt{cluster.stats()} function from the \texttt{fpc} \textsf{R} package, which calculates a wide variety of internal cluster validity statistics for each of the extracted clustering solutions. With real-world data, no single evaluation measure is likely to be perfect. Different measures may yield varying results based on the data characteristics and the research question at hand \citep{kittler1998}. It is therefore important to consider a variety of evaluation measures and to carefully interpret the results in the context of the specific analysis \citep{vinh2009}. We found that across most indices, the analysis with $k=2$ clusters performed the best. Three commonly reported indices we would like to highlight are the comparison of within clusters sum of squares, the average silhouette score, and the Calinski-Harabasz index. The first statistic we looked at was the total within-cluster sum of square $WCSS$ (see also \equatref{eq:kWCSS}). While the within-cluster variation will naturally decrease with (more) smaller clusters, we observed that the decrease in $WCSS$ was largest until $k=2$, after which the decrease was much smaller. This method is also sometimes referred to as the 'elbow method' \citep{syakur2018}. We then looked at a second, commonly used measure, the average silhouette score. This statistic measures the degree to which each time feature data point is similar to other points within the same cluster, compared to points in other clusters \citep{rousseeuw1987}. In our case, the $k=2$ solution maximized the silhouette coefficient ($s_2=$ `r format(round(kmeansPerfComp$avg.silwidth[kmeansPerfComp$cluster.number==2], 2), nsmall = 2)`). Finally, the Calinski-Harabasz index assesses the compactness and separation of the clusters by assessing the ratio of the sum of between-clusters dispersion and of inter-cluster dispersion for all clusters --- thus, the higher the score the better the performances \citep{calinski1974}. In our case, the $k=2$ solution also showed the highest Calinski-Harabasz index ($CH_2=$ `r format(round(kmeansPerfComp$ch[kmeansPerfComp$cluster.number==2], 2), nsmall = 2)`; a full table of all extracted validity statistics is available in Supplemental Material A)\footnote{It is important to note that another commonly assessed aspect of the evaluation is determining the stability and robustness of the clusters \citep{berkhin2006}. This can be assessed by evaluating the sensitivity of the clusters to different feature sets or clustering algorithms, or by using techniques such as bootstrapping to assess the uncertainty of the clusters \citep{vinh2009}. Especially when comparing different clustering algorithms one common index is the Bayesian information criterion (BIC), where a lower BIC indicates that a model is more representative of the data \citep{vandeschoot2017}.}. In the final $k=2$ solution the k-means analysis also assigned a relatively even number of participants to cluster 1 ($n_{C_1}=$ `r table(kmeansOut$cluster)[1]`) and cluster 2 ($n_{C_1}=$ `r table(kmeansOut$cluster)[2]`).
+
+```{r}
+#| label: test single cluster solution
+
+library(cluster)
+
+numeric_data <- scaled_pc[, sapply(scaled_pc, is.numeric)]
+
+# also calculate k=1 solution
+kmeans_one_cluster <- kmeans(numeric_data, centers = 1, nstart = 25)
+kmeans_two_clusters <- kmeans(numeric_data, centers = 2, nstart = 25)
+
+# Compare the total within-cluster sum of squares
+total_withinss_one_cluster <- kmeans_one_cluster$tot.withinss
+total_withinss_two_clusters <- kmeans_two_clusters$tot.withinss
+
+
+# Calculate the total sum of squares
+total_ss <- sum(sapply(numeric_data, function(x) sum((x - mean(x))^2)))
+var_explained_one_cluster <- 1 - (total_withinss_one_cluster / total_ss)
+var_explained_two_clusters <- 1 - (total_withinss_two_clusters / total_ss)
+
+# create table output
+singleClusterPerf <- data.frame(
+  Clusters = c("One Cluster", "Two Clusters"),
+  TotalWithinSS = c(total_withinss_one_cluster, total_withinss_two_clusters),
+  VarianceExplained = c(var_explained_one_cluster, var_explained_two_clusters)
+)
+singleClusterPerf$VarianceExplained <-
+  ifelse(
+    singleClusterPerf$VarianceExplained < 0.001,
+    "<.001",
+    as.character(round(singleClusterPerf$VarianceExplained, 3))
+  )
+singleClusterPerfNames <- c("Cluster Count", "Total Within-Cluster SS", "Variance Explained")
+
+# singleClusterPerf %>%
+#   kbl(.,
+#       escape = TRUE,
+#       booktabs = TRUE,
+#       align = c("l", "c", "c"),
+#       digits = 3,
+#       row.names = FALSE,
+#       col.names = singleClusterPerfNames,
+#       caption = "K-Means Single Cluster Performance Comparison") %>%
+#   kable_classic(
+#     full_width = FALSE,
+#     lightable_options = "hover",
+#     html_font = "Cambria"
+#   )
+```
+
+To ensure that the clustering is necessary in the first place, we also compare the performance to a single cluster solution (i.e., a single centroid). The comparison to this \(k=1\) solution is slightly different because metrics like the between-cluster separation are not available. Nonetheless, comparing the within-cluster sums of squares (SS) and the explained variance, we find that two clusters indeed outperform a single cluster solution. Specifically, the total within-cluster SS decreased from `r format(filter(singleClusterPerf, Clusters == "One Cluster")$TotalWithinSS, digits=2, nsmall=2)` for one cluster to `r format(filter(singleClusterPerf, Clusters == "Two Clusters")$TotalWithinSS, digits=2, nsmall=2)` for two clusters. Additionally, the variance explained increased from `r format(filter(singleClusterPerf, Clusters == "One Cluster")$VarianceExplained, digits=3, nsmall=3)` to `r format(filter(singleClusterPerf, Clusters == "Two Clusters")$VarianceExplained, digits=3, nsmall=3)` when the cluster count was increased to two \citep[e.g., ][; also see \situtorial\ for full results]{beijers2022}.

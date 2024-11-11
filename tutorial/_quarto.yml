@@ -54,6 +54,8 @@ website:
         text: 4. Clustering
       - href: 05-evaluation.qmd
         text: 5. Evaluation
+      - href: 06-validation-analyses.qmd
+        text: 6. Validation Analyses
       - href: about.qmd
         text: About
 

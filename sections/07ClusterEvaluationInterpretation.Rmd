@@ -70,17 +70,40 @@ validationNam <- c(
 )
 
 # EXTRACT OUT-OF-CLUSTER VALIDATION VARIABLES
+dt_raw <- readRDS(file="tutorial/data/osf_mini.Rda")
+missingness_ooc <- full_join(
+  featData %>%
+    group_by(study, PID) %>%
+    summarise(n_feature = n()) %>%
+    ungroup(),
+  dt_raw %>%
+    group_by(study, PID) %>%
+    summarise(n_raw = n()) %>%
+    ungroup(),
+  by = c("study", "PID")
+) %>%
+  mutate(
+    nrm = n_raw - n_feature
+  ) %>%
+  filter(
+    !is.na(n_feature)
+  ) %>%
+  mutate(nrm.z = as.numeric(scale(nrm))) %>%
+  select(study, PID, nrm.z)
+
 validation <- rbind(
   dtS1Red %>% select(any_of(idVars), any_of(validationNam)) %>% mutate(study = "S1", gender.pre = (gender.pre-2)*-1),
   dtS2Red %>% select(any_of(idVars), any_of(validationNam)) %>% mutate(study = "S2"),
   dtS3Red %>% select(any_of(idVars), any_of(validationNam)) %>% mutate(study = "S3")
 ) %>% 
+  left_join(., missingness_ooc, by = c("study", "PID")) %>%
   group_by(study, PID) %>%
   mutate(ID = cur_group_id()) %>%
   ungroup %>%
   group_by(study, ID) %>%
   summarise(
     gender = gender.pre,
+    nrm.z = nrm.z,
     IntGrAnx.pre = rowMeans(across(starts_with("IntGrAnx")), na.rm = TRUE),
     SWL.pre = rowMeans(across(starts_with("SWL")), na.rm = TRUE),
     EvDayDiscr.post = rowMeans(across(starts_with("EvDayDiscr")), na.rm = TRUE)
@@ -98,7 +121,8 @@ validation <- rbind(
     #gender.z,
     #IntGrAnx.pre.z,
     #SWL.pre.z,
-    EvDayDiscr.post.z
+    EvDayDiscr.post.z,
+    nrm.z
   )
 val <- validation %>% select(-ID) %>% names
 validationFeature <- validation
@@ -201,22 +225,6 @@ rawCluster <- data.frame(ID = as.numeric(names(kmeansOut$cluster)), cluster = km
   merge(., variableLab)
 ```
 
-In short, we find that the feature-based clustering discerned two meaningfully different groups of participants. We find an adaptive group (cluster 1) that reports higher well-being and more positive outgroup attitudes (\textit{median}) that are also stable over time (\textit{MAD}, \textit{MAC}) and tend to increase over the 30 day test period (\textit{linear trend}). This group also reported consistently more meaningful, need-fulfilling, and cooperative outgroup interactions (\textit{median}). This group with overwhelmingly positive experiences stands in contrast with a more detrimental group (cluster 2). This cluster, on average, reported much less positive, less meaningful, and less fulfilling interactions and interaction patterns (\textit{median}). This group also reported less positive outgroup attitudes, lower well-being, and more discrimination experiences (\textit{median}). At the same time, for members of this detrimental cluster (cluster 2) conditions seemed to deteriorate over time (\textit{linear trend}), and there was generally less consistency in the experiences they were able to have (\textit{MAC}, \textit{MAD}, \textit{edf}). 
-
-To identify these patterns, we first inspect the clusters based on the average values of meaningful features (see \fgrref[A]{fig:clusterFeatVar}; \citealp{Kennedy2021}). We see that for some variables the features are generally stronger in separating the clusters. We, for example, see that the item on '\textit{how cooperative the interaction was}' distinguishes the two clusters across almost all seven features (except for the \textit{auto-correlation}, see \fgrref[A]{fig:clusterFeatVar}). Compare this to the '\textit{outgroup attitudes}' item where the differences between the clusters are much smaller for almost all features. We then inspect the clusters with a focus on the features (see \fgrref[B]{fig:clusterFeatVar}). While this is the same data as for the variable focus, we can see more clearly that some features are better at distinguishing the clusters across variables. For example, \textit{MAD} and \textit{median} distinguish the two clusters across almost all variables (except for the item of whether the interaction was representative of the outgroup). These two features stand in stark contrast to other features, such as the \textit{lag-1 auto correlations}, which showed much smaller differences between the two clusters (see \fgrref[B]{fig:clusterFeatVar}). This offers some information on which features were most important in understanding the two extracted groups. Taking these two perspectives together, we can also focus on individual features or variables in particular. We, for example, see a strong difference in the average well-being, where participants in cluster 2 showed a much lower median well-being over the time series. At the same time, in terms of stability, both groups have virtually identical average \textit{MAC} statistics for well-being (see \fgrref[A]{fig:clusterFeatVar}). There are, thus, variables and features that distinguish the clusters better than others and a combination of variables and features lets us explore meaningful group differences in more detail. In our case, we see that the central tendency, variability, and linear trend are best at distinguishing a group with mainly positive experiences (cluster 1) from a group with a more negative experience (cluster 2). We also see that our clusters line up with the past literature on the importance of focusing on simpler and more meaningful statistics \citep{bringmann2018c, eronen2021a}.
-
-```{=tex}
-\begin{figure}[!ht] %hbtp
-  \caption{Cluster Group Comparisons based on Features and Variables}
-  \label{fig:clusterFeatVar}
-  \centering\includegraphics[width=\textwidth]{figures/clusterFeatVarComb.pdf}
-  \caption*{Note: \\
-  "Int." = outgroup interaction. Within the "(B) Feature Focus" subplot, the 'n' and 'Discrimination' comparison variables were not part of the original time series clustering.}
-\end{figure}
-```
-
-In the second step, we look at the prototypical trajectories of the clusters. For k-means clustering it is often recommended to use the average over time of the responses within the cluster \citep[see \fgrref{fig:clusterTs};][]{niennattrakul2007}\footnote{It is important to note, however, that direct comparability can be a concern, and often times some subset selection or nonlinear alignment is necessary \citep[e.g.,][]{gupta1996}. Additionally, finding cluster prototypes is often substantially easier with embedded clustering methods because in many cases a cluster-level model is estimated as part of the expectation–maximization procedure \citep[e.g.,][]{denteuling2021} or \textit{S-GIMME} \citep[e.g.][]{lane2019}. For medoid-based clustering algorithms, a common approach is simply using cluster medoid as the prototype \citep{kaufman1990}.}. Immediately striking are the mean differences, where participants in cluster 1 had more meaningful and fulfilling outgroup interactions and also consistently reported more voluntary and cooperative interactions but fewer accidental and involuntary interactions. The same cluster (cluster 1) also reported an increase in need-fulfilling interactions over the 30-day period and an increase in interactions that were representative of the outgroup. Whereas the other cluster (cluster 2) showed a decrease in voluntary, cooperative, and positive interactions over the 30 days. This `deterioration' cluster (cluster 2) also saw a decrease in general need fulfillment and experienced well-being over the 30 days (see \fgrref[B]{fig:clusterTs}). We also see that while interaction representativeness, outgroup attitudes, and well-being are relatively stable for both clusters, the deteriorating cluster (cluster 2) also showed substantially higher variability and instability on most of the other variables (also see \fgrref[A]{fig:clusterTs}).
-
 ```{r}
 #| label: formal cluster comparison
 #| echo: false
@@ -317,6 +325,78 @@ for (feature in unique(results_df$feature)) {
 }
 
 
+plot_feature_selection <- c(
+  "median",
+  "mad",
+  "lin",
+  "edf"
+)
+feature_limits <- results_df %>%
+  filter(feature %in% plot_feature_selection) %>% 
+  summarise(
+    min_lwr = min(lwr, na.rm = TRUE),
+    max_upr = max(upr, na.rm = TRUE)
+  ) %>%
+  as.numeric()
+
+feature_comparison_combined <-
+  ggpubr::ggarrange(
+    feature_plot_list$median +
+      scale_x_continuous(limits = feature_limits) +
+      theme(
+        axis.title.x = element_blank(),
+        plot.margin = margin(
+          t = 20,
+          r = 1,
+          b = 20,
+          l = 20
+        )
+      ),
+    feature_plot_list$mad +
+      scale_x_continuous(limits = feature_limits) +
+      theme(
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        plot.margin = margin(
+          t = 20,
+          r = 20,
+          b = 20,
+          l = 20
+        )
+      ),
+    feature_plot_list$lin +
+      scale_x_continuous(limits = feature_limits) +
+      theme(# aspect.ratio = 1,
+        plot.margin = margin(
+          t = 20,
+          r = 1,
+          b = 10,
+          l = 20
+        )),
+    feature_plot_list$edf +
+      scale_x_continuous(limits = feature_limits) +
+      theme(
+        axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        plot.margin = margin(
+          t = 20,
+          r = 20,
+          b = 10,
+          l = 20
+        )
+      ),
+    ncol = 2,
+    nrow = 2,
+    widths = c(1.325, 1),
+    # align = "hv",
+    labels = c("(A) Median", "(B) MAD", "(C) Linear Slope", "(D) GAM edf"),
+    hjust = c(-0.25, -0.27, -0.17, -0.22),
+    common.legend = TRUE,
+    legend = "bottom"
+  ) 
+ggsave("Figures/feature_comparison_combined.pdf", feature_comparison_combined, width = 12, height = 12)
+
 # Check if any graphics devices are open
 if (length(dev.list()) > 0) {
   # Close the graphics device
@@ -377,16 +457,36 @@ feat_ttest_apa <- function(results_df, concept_in, feature_in) {
         ", ", upr, "]",
         sep = "")
 }
+
+
 ```
 
+In short, we find that the feature-based clustering discerned two meaningfully different groups of participants. We find an adaptive group (cluster 1) that reports higher well-being (\textit{median}: `r feat_ttest_apa(results_df, "exWB", "median")`; also see \fgrref[A]{fig:cluster_comparison_features}) and more positive outgroup interactions (\textit{median}: `r feat_ttest_apa(results_df, "qualityOverall", "median")`), which are also stable over time (\textit{MAC}: `r feat_ttest_apa(results_df, "qualityOverall", "mac")`) and tend to increase more over the 30 day test period (\textit{linear trend}: `r feat_ttest_apa(results_df, "qualityOverall", "lin")`; also see \fgrref[C]{fig:cluster_comparison_features}). This group also reported consistently more meaningful (\textit{median}: `r feat_ttest_apa(results_df, "qualityMeaning", "median")`), need-fulfilling (\textit{median}: `r feat_ttest_apa(results_df, "KeyNeedFulfillment", "median")`), and cooperative outgroup interactions (\textit{median}: `r feat_ttest_apa(results_df, "InteractionContextCooperative", "median")`). This group with overwhelmingly positive experiences stands in contrast with a more detrimental group (cluster 2). This cluster, on average, reported much less positive, less meaningful, and less fulfilling interactions and interaction patterns (\textit{median}). This group also reported less positive outgroup attitudes, lower well-being, and more discrimination experiences (\textit{median}). At the same time, for members of this detrimental cluster (cluster 2) conditions seemed to deteriorate over time (\textit{linear trend}), and there was generally less consistency in the experiences they were able to have (\textit{MAC}, \textit{MAD}, \textit{edf}; also see \fgrref[]{fig:cluster_comparison_features}; for a full and interactive comparison of all features see \situtorial). 
 
-Finally, we can also assess the clusters across other individual difference variables \citep[e.g.,][]{monden2022}. This out-of-feature comparison allows us to check for data artifacts, as well as check whether the developmental clusters are associated with important social markers and individual differences. To illustrate artifact checks, we added the number of ESM measurements into the comparison and find that the participants in the deterioration cluster (cluster 2) on average completed slightly more ESM surveys in general and reported on more intergroup interactions in particular (see $n$ in \fgrref[B]{fig:clusterFeatVar}). In our data exclusion procedures, we ensured that the general time frame and completion rates are similar for all participants and indeed the numbers in ESM measurements generally are largely similar (e.g., see $n$ for well-being and outgroup attitudes). However, the difference in the reported number of interactions might indicate either a clustering artifact or a meaningful difference. The higher average number of interactions in cluster 2 could, for example, indicate a clustering artifact if variances are substantially larger due to the larger samples \citep[e.g., restriction of range in the smaller sample][]{kogan2006}. In our case, this seems less likely because one out of four variables did not differ in terms of the MAD (i.e., our selected measurement of the time series variance; see \fgrref{fig:cluster_comparison_mad} for an illustration). At the same time, however, the difference in the number of experienced interactions might also indicate a meaningful difference, where the deteriorating cluster (cluster 2) on average reported more outgroup interactions (`r feat_ttest_apa(results_df, "InteractionContextvoluntary", "n")`), but these interactions were less voluntary (`r feat_ttest_apa(results_df, "InteractionContextvoluntary", "median")`), less meaningful (`r feat_ttest_apa(results_df, "qualityMeaning", "median")`), and less positive (`r feat_ttest_apa(results_df, "qualityOverall", "median")`). Thus, while more research is needed for a conclusive test, our data seems to suggest that the differences in reported interactions are a meaningful difference between the clusters. Such a finding would also be in line with past research highlighting the role of negative intergroup interactions in explaining intergroup relations \citep[e.g.,][]{Barlow2012, Prati2021, Graf2014}. 
+To identify these patterns, we first inspect the clusters based on the average values of meaningful features (see \fgrref[A]{fig:clusterFeatVar}; \citealp{Kennedy2021}). We see that for some variables the features are generally stronger in separating the clusters. We, for example, see that the item on '\textit{how cooperative the interaction was}' distinguishes the two clusters across almost all seven features (except for the \textit{auto-correlation}, see \fgrref[A]{fig:clusterFeatVar}). Compare this to the '\textit{outgroup attitudes}' item where the differences between the clusters are much smaller for almost all features. We then inspect the clusters with a focus on the features (see \fgrref[B]{fig:clusterFeatVar}). While this is the same data as for the variable focus, we can see more clearly that some features are better at distinguishing the clusters across variables. For example, \textit{MAD} and \textit{median} distinguish the two clusters across almost all variables (except for the item of whether the interaction was representative of the outgroup). These two features stand in stark contrast to other features, such as the \textit{lag-1 auto correlations} or the \textit{GAM edf}, which showed much smaller differences between the two clusters (see \fgrref[B]{fig:clusterFeatVar} and \fgrref[]{fig:cluster_comparison_features}; please note that we offer readers an interactive tool to assess the cluster differences for all features in \situtorial). This offers some information on which features were most important in differentiating the two extracted groups but also shows that with real-world data, not all features will have enough range to distinguish people on all variables (e.g., see the non-linearity patterns in \fgrref[]{fig:cluster_comparison_features}; for a more direct illustration of GAM edf differences see \citealp{bringmann2017}). Taking these two perspectives together, we can also focus on individual features or variables in particular. We, for example, see a strong difference in the average well-being, where participants in cluster 2 showed a much lower median well-being over the time series (`r feat_ttest_apa(results_df, "exWB", "median")`). At the same time, in terms of well-being stability, both groups have virtually identical average \textit{MAC} statistics for well-being (`r feat_ttest_apa(results_df, "exWB", "mac")`; also see \fgrref[A]{fig:clusterFeatVar}). There are, thus, variables and features that distinguish the clusters better than others and a combination of variables and features lets us explore meaningful group differences in more detail. In our case, we see that the central tendency, variability, and linear trend are best at distinguishing a group with mainly positive experiences (cluster 1) from a group with a more negative experience (cluster 2). We also see that our clusters line up with the past literature on the importance of focusing on simpler and more meaningful statistics \citep{bringmann2018c, eronen2021a, dejonckheere2019}.
 
 ```{=tex}
 \begin{figure}[!ht] %hbtp
-  \caption{Cluster comparison of Median Absolute Deviation for all variables}
-  \label{fig:cluster_comparison_mad}
-  \centering\includegraphics[width=\textwidth]{figures/feature_comparison_mad.pdf}
+  \caption{Cluster Group Comparisons based on Features and Variables}
+  \label{fig:clusterFeatVar}
+  \centering\includegraphics[width=\textwidth]{figures/clusterFeatVarComb_tutorial.pdf}
+  \caption*{Note: \\
+  "Int." = outgroup interaction, "mad" = median absolute deviation, "mac" = mean absolute change, "lin" = linear slope, "edf" = estimated degrees of freedom of an empty GAM spline model, "ar01" = lag-1 autocorrelation, "OCC"/"occ" = out-of-cluster comparison\\
+  Within the "(B) Feature Focus" subplot, the 'n (within ooc)' is an out-of-cluster comparison of the within-person available measurements for each variable; the 'between ooc (mean)' are also out-of-cluster comparisons but on a between person level. 'Measurements removed' is the person-specific count of measurement occasions removed during the missingness handling and 'Discrimination' is the scale mean of daily discimination experiences (measured during the final survey).}
+\end{figure}
+```
+
+In the second step, we look at the prototypical trajectories of the clusters. For k-means clustering it is often recommended to use the average over time of the responses within the cluster \citep[see \fgrref{fig:clusterTs};][]{niennattrakul2007}\footnote{It is important to note, however, that direct comparability can be a concern, and often times some subset selection or nonlinear alignment is necessary \citep[e.g.,][]{gupta1996}.}. Immediately striking are the mean differences, where participants in cluster 1 had more meaningful and fulfilling outgroup interactions and also consistently reported more voluntary and cooperative interactions but fewer accidental and involuntary interactions. The same cluster (cluster 1) also reported an increase in need-fulfilling interactions over the 30-day period and an increase in interactions that were representative of the outgroup. Whereas the other cluster (cluster 2) showed a decrease in voluntary, cooperative, and positive interactions over the 30 days. This `deterioration' cluster (cluster 2) also saw a decrease in general need fulfillment but not experienced well-being over the 30 days (see \fgrref[C]{fig:cluster_comparison_features}). We also see that while interaction representativeness, outgroup attitudes, and well-being are relatively stable for both clusters, the deteriorating cluster (cluster 2) also showed substantially higher variability and instability on most of the other variables (although these effects are much smaller; see \fgrref[A]{fig:clusterTs}).
+
+Finally, we can also assess the clusters across other individual difference variables \citep[e.g.,][]{monden2022}. This out-of-feature comparison allows us to check for data artifacts, as well as check whether the developmental clusters are associated with important social markers and individual differences. To illustrate artifact checks, we added the number of ESM measurements into the comparison and find that the participants in the deterioration cluster (cluster 2) on average completed slightly more ESM surveys in general and reported on more intergroup interactions in particular (see $n$ in \fgrref[B]{fig:clusterFeatVar}). In our data exclusion procedures, we ensured that the general time frame and completion rates are similar for all participants and indeed the numbers in ESM measurements generally are largely similar (e.g., see $n$ for well-being and outgroup attitudes). However, the difference in the reported number of interactions might indicate either a clustering artifact or a meaningful difference. The higher average number of interactions in cluster 2 could, for example, indicate a clustering artifact if variances are substantially larger due to the larger samples \citep[e.g., restriction of range in the smaller sample][]{kogan2006}. In our case, this seems less likely because one out of four variables did not differ in terms of the MAD (i.e., our selected measurement of the time series variance; see \fgrref{fig:cluster_comparison_features} for an illustration). At the same time, however, the difference in the number of experienced interactions might also indicate a meaningful difference, where the deteriorating cluster (cluster 2) on average reported more outgroup interactions (`r feat_ttest_apa(results_df, "InteractionContextvoluntary", "n")`), but these interactions were less voluntary (`r feat_ttest_apa(results_df, "InteractionContextvoluntary", "median")`), less meaningful (`r feat_ttest_apa(results_df, "qualityMeaning", "median")`), and less positive (`r feat_ttest_apa(results_df, "qualityOverall", "median")`). Thus, while more research is needed for a conclusive test, our data seems to suggest that the differences in reported interactions are a meaningful difference between the clusters. Such a finding would also be in line with past research highlighting the role of negative intergroup interactions in explaining intergroup relations \citep[e.g.,][]{Barlow2012, Prati2021, Graf2014}. A related validity check was the inclusion of the missingness handling, where we compared the two clusters on the average number of measurements removed as part of the missingness handling. We find that the clusters did not significantly differ on this metric suggesting that the missingness handling did not affect the cluster separation (also see \appref[]{app:ValidationAnalyses} and \situtorial).
+
+```{=tex}
+\begin{figure}[!ht] %hbtp
+  \caption{Comparison Cluster Differences by Features and Variables.}
+  \label{fig:cluster_comparison_features}
+  \centering\includegraphics[width=\textwidth]{figures/feature_comparison_combined.pdf}
+  \caption*{Note:\\
+  The figure shows the differences between the clusters in the standardized features that were entered into the dimensionality reduction (for each input variable). We display the median (panel A), the median absolute deviation (MAD, panel B), the univariate linear slope (panel C), as well as the estimated degrees of freedom of the generalized additive model splines (GAM edf, panel D). Please also note that as part of \situtorial, we provide readers with an interactive selection tool to compare cluster differences on all variables and features.}
 \end{figure}
 ```
 
@@ -400,7 +500,7 @@ This cluster separation, then, has a number of empirical and practical applicati
   \label{fig:clusterTs}
   \centering\includegraphics[width=\textwidth]{figures/clusterTsComb.pdf}
   \caption*{Note: \\
-  Subplot (A) displays the variable cluster means at every measurement occasion. Subplot (B) shows the GAM spline for each cluster across the measurement occasions. The thinner lines present all individual time series.}
+  Subplot (A) displays the variable cluster means at every measurement occasion. The thinner lines present all individual time series. Subplot (B) shows the GAM spline for each cluster across the measurement occasions. The thinner lines present all individual GAM Splines.}
 \end{figure}
 ```
 
@@ -482,8 +582,8 @@ clusterTS
 ```{r clusterTSTrend, include=FALSE}
 clusterTSTrend <- rawCluster %>% 
   ggplot(., aes(x=TIDnum, y=value, group=cluster, color=as.factor(cluster))) +
-  geom_line(aes(x=TIDnum, y=value, group=ID, color=as.factor(cluster)), alpha=0.05) +
-  geom_smooth(aes(group=cluster)) +
+  geom_line(stat="smooth", method = "gam", aes(group=ID, color=as.factor(cluster)), se = FALSE, alpha=0.1) +
+  geom_smooth(aes(group=cluster), method = "gam", se = FALSE) +
   scale_colour_manual(values = c("#384B6B", "#E2892B")) + 
   #stat_summary(fun=mean, geom="line") +
   facet_wrap(~ label, scales = "free_y") +
@@ -501,7 +601,7 @@ clusterTsComb <- ggpubr::ggarrange(
   clusterTS + theme(axis.title.x = element_blank()),
   clusterTSTrend,
   ncol = 1,
-  labels = c("(A) Timepoint Means", "(B) Average Spline Trends"),
+  labels = c("(A) Timepoint Means", "(B) Spline Trends"),
   common.legend = TRUE,
   legend = "bottom"
 )

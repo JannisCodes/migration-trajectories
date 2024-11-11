@@ -16,7 +16,11 @@ lib <- c(
   "kableExtra",
   "tsFeatureExtracR",
   "factoextra",
-  "fpc"
+  "fpc",
+  "shiny",
+  "shinyWidgets",
+  "shinyjs",
+  "bslib"
 )
 invisible(lapply(lib, library, character.only = TRUE))
 rm(lib)
@@ -143,9 +147,11 @@ We thus, save the $k=2$ solution as the final model `kmeans_final`.
 ```{r}
 #| label: kmeans choice
 
-set.seed(42)
+set.seed(12345)
 kmeans_final <- kmeans(pca_scores, centers = 2, nstart = 100)
+kmeans_final$cluster
 
+saveRDS(kmeans_final, file = "data/kmeans_final.Rds")
 ```
 
 We can then use the cluster assignments to visualize the two clusters. This is commonly done using a projection method where the group separation is visualized on a two-dimensional pane. This is not ideal (because the clustering takes a multi-dimensional space into account), but can give a first indivation of the cluster separation.
@@ -156,7 +162,6 @@ We can then use the cluster assignments to visualize the two clusters. This is c
 fviz_cluster(kmeans_final, geom = "point", data = z_data, ggtheme = theme_Publication())
 ```
 
-
 ## Interpretation
 
 The interpretation of feature-based time series clustering in psychology involves understanding the meaning and implications of the obtained clusters. In order to make sense of the clustering results, we here focus on three general aspects of the results [@kaufman1990]. (1) Assessing differences between the clusters in the original time series features, (2) comparing the clusters based on prototype developments, (3) comparing the clusters based on between-person differences that were not included in the initial clustering.
@@ -165,26 +170,49 @@ The interpretation of feature-based time series clustering in psychology involve
 
 We first inspect the clusters based on the average values of meaningful features. To do so, we merge the cluster assignments from the `kmeans_final` object back to the original set of standardized time series features `z_data` (same as `scaled_data` earlier). We then are able to group the features by the clusters and calculate average feature values for each cluster. We also pivot the dataframe into long format for easier visualizations, separate the variable and the feature identifiers, and add more descriptive labels for the visualizations.
 
+::: scrolling
 ```{r}
 #| label: Extract cluster assignments and summarize
 #| message: false
 #| warning: false  
 
+# calculate number of removed datapoints
+missingness_ooc_id <- full_join(
+  featData %>%
+    mutate(uid = paste(study, PID, sep = "_")) %>%
+    group_by(uid, ID) %>%
+    summarise(n_feature = n()) %>%
+    ungroup(),
+  dt_raw %>%
+    mutate(uid = paste(study, PID, sep = "_")) %>%
+    group_by(uid) %>%
+    summarise(n_raw = n()) %>%
+    ungroup(),
+  by = "uid"
+) %>%
+  mutate(
+    n_rm = n_raw - n_feature
+  ) %>%
+  filter(
+    !is.na(ID)
+  ) %>%
+  mutate(nrm_z = scale(n_rm)) %>%
+  select(ID, nrm_z)
+discrimination_ooc_id <- featData %>% 
+  select(ID, EvDayDiscr.post) %>% 
+  distinct(ID, EvDayDiscr.post, .keep_all = TRUE) %>%
+  mutate(EvDayDiscr.post_z = scale(EvDayDiscr.post, scale = TRUE)) %>%
+  replace_na(list(EvDayDiscr.post_z = NA)) %>%
+  select(
+    ID,
+    EvDayDiscr.post_z
+  )
+
 featCluster <- data.frame(ID = as.numeric(names(kmeans_final$cluster)), 
                             cluster = kmeans_final$cluster) %>%
   left_join(z_data, by = "ID") %>%
-  left_join(
-    featData %>% 
-      select(ID, EvDayDiscr.post) %>% 
-      distinct(ID, EvDayDiscr.post, .keep_all = TRUE) %>%
-      mutate(EvDayDiscr.post_z = scale(EvDayDiscr.post, scale = TRUE)) %>%
-      replace_na(list(EvDayDiscr.post_z = NA)) %>%
-      select(
-        ID,
-        EvDayDiscr.post_z
-      ), 
-    by = "ID"
-  ) %>%
+  left_join(discrimination_ooc_id, by = "ID") %>% 
+  left_join(missingness_ooc_id, by = "ID") %>%
   select(-ID) %>%
   group_by(cluster) %>%
   summarise(across(everything(), list(mean = mean), na.rm=TRUE)) %>%
@@ -201,7 +229,7 @@ featCluster <- data.frame(ID = as.numeric(names(kmeans_final$cluster)),
     feature = gsub("^.*?\\_", "", nam)
   ) %>% 
   mutate(feature = ifelse(feature == "z", "mean", feature)) %>%
-  left_join(var_meta %>% select(name, label), by = c("variable" = "name")) %>%
+  left_join(var_meta %>% select(name, label) %>% rbind(c("nrm", "OOC: Measurements removed")), by = c("variable" = "name")) %>%
   select(
     cluster,
     nam,
@@ -209,8 +237,12 @@ featCluster <- data.frame(ID = as.numeric(names(kmeans_final$cluster)),
     label,
     feature,
     everything()
-  )
+  ) %>% 
+  mutate(feature = gsub("^n$", "n (within ooc)", feature)) %>% 
+  mutate(feature = gsub("^mean$", "between ooc (mean)", feature))
+
 ```
+:::
 
 We can then plot the average features and for each variable and flipping the axes allows us to assess the same data once with a focus on the variable (see [@fig-clusterFeatVarComb] A) and once with a focus on the features (see [@fig-clusterFeatVarComb] B).
 
@@ -225,7 +257,8 @@ We can then plot the average features and for each variable and flipping the axe
 # clusterVariableGrid
 clusterVariableGrid <- featCluster %>% 
   filter(variable != "EvDayDiscr.post",
-         feature != "n") %>%
+         variable != "nrm",
+         feature != "n (within ooc)") %>%
   ggplot(., aes(x = feature, y = mean, group = cluster, color = as.factor(cluster))) +
   geom_point() +
   geom_line() +
@@ -242,7 +275,7 @@ clusterVariableGrid <- featCluster %>%
 
 # clusterFeatureGrid
 clusterFeatureGrid <- featCluster %>% 
-  ggplot(., aes(x = reorder(label, -as.numeric(label == "Post: Discrimination")), y = mean, group = cluster, color = as.factor(cluster))) +
+  ggplot(., aes(x = reorder(label, as.numeric(!label %in% c("OOC: Discrimination", "OOC: Measurements removed"))), y = mean, group = cluster, color = as.factor(cluster))) +
   geom_point() +
   geom_line() +
   #geom_ribbon(aes(ymin = mean-se, ymax = mean+se), alpha = 0.2) +
@@ -257,7 +290,7 @@ clusterFeatureGrid <- featCluster %>%
   facet_wrap(~ factor(feature, levels = unique(featCluster$feature)), ncol=4) +
   theme_Publication()
 
-ggpubr::ggarrange(
+clusterFeatVarComb <- ggpubr::ggarrange(
   clusterVariableGrid + theme(axis.title.x = element_blank()),
   clusterFeatureGrid,
   ncol = 1,
@@ -266,6 +299,8 @@ ggpubr::ggarrange(
   legend = "bottom",
   align = "v"
 ) 
+ggsave("../Figures/clusterFeatVarComb_tutorial.pdf", clusterFeatVarComb, width = 12, height = 12)
+clusterFeatVarComb
 ```
 
 We discuss the individual differences and their theoretical relevance as part of the main manuscript. However, in terms of methodological insight, we find variables and features that distinguish the clusters better than others and a combination of variables and features lets us explore meaningful group differences in more detail. In our case, we see that the central tendency, variability, and linear trend are best at distinguishing a group with mainly positive experiences (cluster 1) from a group with a more negative experience (cluster 2). We also see that our clusters line up with the past literature on the importance of focusing on simpler and more meaningful statistics [@bringmann2018c;@eronen2021a].
@@ -315,11 +350,11 @@ clusterTS <- rawCluster %>%
 
 clusterTSTrend <- rawCluster %>% 
   ggplot(., aes(x=TIDnum, y=value, group=cluster, color=as.factor(cluster))) +
-  geom_line(aes(x=TIDnum, y=value, group=ID, color=as.factor(cluster)), alpha=0.05) +
-  geom_smooth(aes(group=cluster)) +
+  geom_line(stat="smooth", method = "gam", aes(group=ID, color=as.factor(cluster)), se = FALSE, alpha=0.1) +
+  geom_smooth(aes(group=cluster), method = "gam", se = FALSE) +
   scale_colour_manual(values = c("#384B6B", "#E2892B")) + 
-  #stat_summary(fun=mean, geom="line") +
   facet_wrap(~ label) +
+  scale_y_continuous(limits = c(0, 100)) +
   labs(
     x = "Time ID",
     y = "Response (Mean Cluster Response Bold)",
@@ -331,7 +366,7 @@ ggpubr::ggarrange(
   clusterTS + theme(axis.title.x = element_blank()),
   clusterTSTrend,
   ncol = 1,
-  labels = c("(A) Timepoint Means", "(B) Average Spline Trends"),
+  labels = c("(A) Timepoint Means", "(B) Spline Trends"),
   common.legend = TRUE,
   legend = "bottom"
 )
@@ -339,12 +374,13 @@ ggpubr::ggarrange(
 
 While we discuss the interpretations in more detail in the manuscript, the average cluster trajectories offer clearer insights into the mean differences, the variances, as well as the trends over time.
 
-### Out-of-cluster Comparison
+### (Out-of-)Cluster Comparison
 
 Finally, we can also assess the clusters across other individual difference variables [@monden2022]. This out-of-feature comparison allows us to check for data artifacts, as well as check whether the developmental clusters are associated with important social markers and individual differences. 
 
-To illustrate artifact checks, we added the number of ESM measurements into the comparison and find that the participants in the deterioration cluster (cluster 2) on average completed slightly more ESM surveys in general and reported on more intergroup interactions in particular (see $n$ in [@fig-clusterFeatVarComb] B). This difference in the reported number of interactions might indicate either a clustering artifact or a meaningful difference. The higher average number of interactions in cluster 2 could, for example, indicate a clustering artifact if variances are substantially larger due to the larger samples (e.g., restriction of range in the smaller sample; @kogan2006). In our case, this seems less likely because one out of four variables did not differ in terms of the MAD (i.e., our selected measurement of the time series variance; see [@fig-mad-cluster-comparison] below). 
+To illustrate artifact checks, we added the number of ESM measurements into the comparison and find that the participants in the deterioration cluster (cluster 2) on average completed slightly more ESM surveys in general and reported on more intergroup interactions in particular (see $n$ in [@fig-clusterFeatVarComb] B). This difference in the reported number of interactions might indicate either a clustering artifact or a meaningful difference. The higher average number of interactions in cluster 2 could, for example, indicate a clustering artifact if variances are substantially larger due to the larger samples (e.g., restriction of range in the smaller sample; @kogan2006). In our case, this seems less likely because one out of four variables did not differ in terms of the MAD (i.e., our selected measurement of the time series variance; see plot selection below). 
 
+::: scrolling
 ```{r}
 #| label: fig-mad-cluster-comparison
 #| message: false
@@ -375,8 +411,37 @@ results_df <- convert_test_to_dataframe(
 )
 
 
-# validation feature
-validation_feature <-
+# validation features
+missingness_ooc <- full_join(
+  featData %>%
+    mutate(uid = paste(study, PID, sep = "_")) %>%
+    group_by(uid, ID) %>%
+    summarise(n_feature = n()) %>%
+    ungroup(),
+  dt_raw %>%
+    mutate(uid = paste(study, PID, sep = "_")) %>%
+    group_by(uid) %>%
+    summarise(n_raw = n()) %>%
+    ungroup(),
+  by = "uid"
+) %>%
+  mutate(
+    n_rm = n_raw - n_feature
+  ) %>%
+  filter(
+    !is.na(ID)
+  ) %>%
+  select(ID, n_rm) %>%
+  mutate(n_rm_z = scale(n_rm)) %>%
+  left_join(data.frame(ID = as.numeric(names(kmeans_final$cluster)),
+             cluster = kmeans_final$cluster), by = "ID")
+t_missingness <- t.test(
+  missingness_ooc$n_rm_z[missingness_ooc$cluster == 1],
+  missingness_ooc$n_rm_z[missingness_ooc$cluster == 2],
+  na.action = na.omit
+)
+
+discrimination_ooc <-
   featData %>% 
   select(ID, EvDayDiscr.post) %>% 
   distinct(ID, EvDayDiscr.post, .keep_all = TRUE) %>%
@@ -390,32 +455,75 @@ validation_feature <-
              cluster = kmeans_final$cluster), by = "ID")
 
 t_discrimination <- t.test(
-  validation_feature$EvDayDiscr.post_z[validation_feature$cluster == 1],
-  validation_feature$EvDayDiscr.post_z[validation_feature$cluster == 2],
+  discrimination_ooc$EvDayDiscr.post_z[discrimination_ooc$cluster == 1],
+  discrimination_ooc$EvDayDiscr.post_z[discrimination_ooc$cluster == 2],
   na.action = na.omit
 )
 
 results_df <- rbind(
   results_df,
   data.frame(
-    concept = "EvDayDiscr.post",
-    feature = "mean",
-    difference = t_discrimination$estimate[1] - t_discrimination$estimate[2],
-    t_value = t_discrimination$statistic,
-    df = t_discrimination$parameter,
-    p_value = t_discrimination$p.value,
-    lwr = t_discrimination$conf.int[1],
-    upr = t_discrimination$conf.int[2]
+    concept = c("EvDayDiscr.post", "missingness"),
+    feature = c("mean", "mean"),
+    difference = c(t_discrimination$estimate[1] - t_discrimination$estimate[2], t_missingness$estimate[1] - t_missingness$estimate[2]),
+    t_value = c(t_discrimination$statistic, t_missingness$statistic),
+    df = c(t_discrimination$parameter, t_missingness$parameter),
+    p_value = c(t_discrimination$p.value, t_missingness$p.value),
+    lwr = c(t_discrimination$conf.int[1], t_missingness$conf.int[1]),
+    upr = c(t_discrimination$conf.int[2], t_missingness$conf.int[2])
   )
 ) %>%
   annotate_significance(., 
                         variableLab = var_meta %>% select(name, label), 
                         join_by = c('concept' = 'name'))
 
-feature_plot_list <- generate_feature_plots(results_df)
+results_df[results_df$concept=="missingness",colnames(results_df)=="label"] <- "Missingness (N removed)"
 
-feature_plot_list$mad
+feature_plot_list <- generate_feature_plots(results_df)
 ```
+:::
+
+```{r}
+#| label: render hidden plots
+#| echo: false
+#| results: asis
+
+for (name in names(feature_plot_list)) {
+  # Only hide plots that are not plot_mad
+  cat(paste0('<div id="plot_', name, '" style="display: ', ifelse(name == "mad", 'block', 'none'), ';">'))
+  print(feature_plot_list[[name]])
+  cat('</div>')
+}
+```
+
+<select id="plot_selector" onchange="showPlot()">
+  <option value="plot_mad" selected>MAD</option>
+  <option value="plot_median">Median</option>
+  <option value="plot_n">Measurements</option>
+  <option value="plot_lin">linear slope</option>
+  <option value="plot_mac">MAC</option>
+  <option value="plot_edf">GAM edf</option>
+  <option value="plot_ar01">AR lag1</option>
+  <option value="plot_mean">Validation</option>
+</select>
+
+<script>
+function showPlot() {
+  var selectedPlot = document.getElementById("plot_selector").value;
+  var plots = document.querySelectorAll('div[id^="plot_"]');
+  
+  plots.forEach(function(plot) {
+    if (plot.id === selectedPlot) {
+      plot.style.display = 'block';
+    } else {
+      plot.style.display = 'none';
+    }
+  });
+}
+
+// Call showPlot on page load to display the default plot
+document.addEventListener('DOMContentLoaded', showPlot);
+</script>
 
 At the same time, however, the difference in the number of experienced interactions might also indicate a meaningful difference, where the deteriorating cluster (cluster 2) on average reported more outgroup interactions (`r feature_ttest_apa(results_df, "InteractionContextvoluntary", "n", "html")`), but these interactions were less voluntary (`r feature_ttest_apa(results_df, "InteractionContextvoluntary", "median", "html")`), less meaningful (`r feature_ttest_apa(results_df, "qualityMeaning", "median", "html")`), and less positive (`r feature_ttest_apa(results_df, "qualityOverall", "median", "html")`). 
 
