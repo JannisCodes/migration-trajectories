@@ -1,3 +1,6 @@
+# from the main project folder run:
+# quarto render tutorial
+
 project:
   type: website
   render:
@@ -10,15 +13,15 @@ website:
   page-navigation: true
   title: "Tutorial: Feature Based Time Series Clustering in Psychology"
   description: "Short description goes here."
-  site-url: "https://github.com/JannisCodes" 
-  repo-url: https://github.com/JannisCodes
+  site-url: "https://www.tsfeatureclustr.com/" 
+  repo-url: "https://github.com/JannisCodes/migration-trajectories"
   open-graph: true
   
   favicon: "images/android-chrome-192x192.png"
 
-  # twitter-card:
-  #   creator: "@JannisWrites"
-  #   image: "images/twitter-card.png"
+  twitter-card:
+    creator: "@JannisWrites"
+    image: "images/twitter-card.png"
   
   sidebar:
     background: "#D9E3E4"
@@ -31,14 +34,11 @@ website:
     
     tools: 
       - icon: database-fill
-        href: https://osf.io/j8dzv/?view_only=c765efa51e6545e588b29999611eb789
+        href: https://doi.org/10.17605/OSF.IO/J8DZV
         text: OSF Repository
       - icon: github
-        menu:
-          - text: Project Repository (masked)
-            href:  https://github.com/
-          - text: Illustration Repository (masked)
-            href:  https://github.com/
+        text: Project Repository
+        href: https://github.com/JannisCodes/migration-trajectories
       
     
     contents:

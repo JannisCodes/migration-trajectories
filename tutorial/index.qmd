@@ -1,47 +1,47 @@
 ---
 title: "Illustration: Feature Based Time Series Clustering in Psychology [tsFeatureClustR]"
 author:
-  - name: Masked for Peer Review
-  - name: ██████ ██████████
-    orcid: 0000-0000-0000-0000
-  - name: ██████████ ████████
-    orcid: 0000-0000-0000-0000
-  - name: ███ ██████
-    orcid: 0000-0000-0000-0000
-  - name: ███ ███████
-    orcid: 0000-0000-0000-0000
-  - name: █████ ██ █████
-    orcid: 0000-0000-0000-0000
-  - name: █████ ██ █████████
-    orcid: 0000-0000-0000-0000
-  # - name: Jannis Kreienkamp
-  #   orcid: 0000-0002-1831-5604
-  #   email: j.kreienkamp@rug.nl
-  #   corresponding: true
-  #   # affiliations:
-  #   #   - ref: rug
-  # - name: Maximilian Agostini
-  #   orcid: 0000-0001-6435-7621
-  #   # affiliations:
-  #   #   - ref: rug
-  # - name: Rei Monden
-  #   orcid: 0000-0003-1744-5447
-  #   # affiliations:
-  #   #   - ref: hu
-  # - name: Kai Epstude
-  #   orcid: 0000-0001-9817-3847
-  #   # affiliations:
-  #   #   - ref: rug
-  # - name: Peter de Jonge
-  #   orcid: 0000-0002-0866-6929
-  #   # affiliations:
-  #   #   - ref: rug
-  #   #   - ref: icpe
-  # - name: Laura F. Bringmann
-  #   orcid: 0000-0002-8091-9935
-  #   # affiliations:
-  #   #   - ref: rug
-  #   #   - ref: icpe
+  # - name: Masked for Peer Review
+  # - name: ██████ ██████████
+  #   orcid: 0000-0000-0000-0000
+  # - name: ██████████ ████████
+  #   orcid: 0000-0000-0000-0000
+  # - name: ███ ██████
+  #   orcid: 0000-0000-0000-0000
+  # - name: ███ ███████
+  #   orcid: 0000-0000-0000-0000
+  # - name: █████ ██ █████
+  #   orcid: 0000-0000-0000-0000
+  # - name: █████ ██ █████████
+  #   orcid: 0000-0000-0000-0000
+- name: Jannis Kreienkamp
+  orcid: 0000-0002-1831-5604
+  email: jannis@thedataflowcompany.com
+  corresponding: true
+  # affiliations:
+  #   - ref: rug
+- name: Maximilian Agostini
+  orcid: 0000-0001-6435-7621
+  # affiliations:
+  #   - ref: rug
+- name: Rei Monden
+  orcid: 0000-0003-1744-5447
+  # affiliations:
+  #   - ref: hu
+- name: Kai Epstude
+  orcid: 0000-0001-9817-3847
+  # affiliations:
+  #   - ref: rug
+- name: Peter de Jonge
+  orcid: 0000-0002-0866-6929
+  # affiliations:
+  #   - ref: rug
+  #   - ref: icpe
+- name: Laura F. Bringmann
+  orcid: 0000-0002-8091-9935
+  # affiliations:
+  #   - ref: rug
+  #   - ref: icpe
 # affiliations:
 #   - id: rug
 #     name: University of Groningen

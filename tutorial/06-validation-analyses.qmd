@@ -889,7 +889,7 @@ We allow users to try out different combinations of dimensionality reduction alg
 If you would like to explore the different alternative models, you can follow the following link:
 
 <div class="d-flex justify-content-center">
-  <a class="btn btn-primary btn-lg" href="https://jannis-kreienkamp.shinyapps.io/tsFeatureClustR/" target="_blank" role="button">To the Web App</a>
+  <a class="btn btn-primary btn-lg" href="https://tsfeatureclustr.shinyapps.io/webapp/" target="_blank" role="button">To the Web App</a>
 </div>
 
 
