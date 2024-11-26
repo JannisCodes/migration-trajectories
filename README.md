@@ -5,7 +5,7 @@
 [![minimal R version](https://img.shields.io/badge/R%3E%3D-4.1.1-6666ff.svg)](https://cran.r-project.org/)
 [![python version](https://img.shields.io/badge/python-v3.10.6-blue)](https://www.python.org/downloads/release/python-3106/)
 
-Welcome to the GitHub Repository for the 'Migration Trajectories' Project. This repository accompanies the publication "_A Gentle Introduction and Application of Feature-Based Clustering with Psychological Time Series_" in [Multivariate Behavioral Research](https://www.tandfonline.com/toc/hmbr20/current).
+Welcome to the GitHub Repository for the 'Migration Trajectories' Project. This repository accompanies the publication "_A Gentle Introduction and Application of Feature-Based Clustering with Psychological Time Series_" in [Multivariate Behavioral Research](https://doi.org/10.1080/00273171.2024.2432918).
 
 This repository brings together the full manuscript (synchronized from Overleaf) as well as all data sets and their analysis markdown files (syncronized from a local RStudio instance in RMarkdown files).
 
